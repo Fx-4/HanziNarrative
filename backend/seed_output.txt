@@ -1,0 +1,9 @@
+Adding HSK 4 characters to database...
+Added: dàn - light (color); bland; indifferent
+Added: shòu - to sell
+Added: yì - benefit; profit; advantage
+Added: huì - can; to meet; meeting
+Added: zhí - to plant; to grow
+Added: jú - bureau; office; situation
+Added: xùn - rapid; swift
+Error: 'charmap' codec can't encode character '\u012b' in position 9: character maps to <undefined>
