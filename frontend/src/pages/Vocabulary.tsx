@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { vocabularyApi } from '@/services/api'
 import { HanziWord } from '@/types'
 import VocabularyCard from '@/components/VocabularyCard'
@@ -12,28 +12,16 @@ export default function Vocabulary() {
   const [categories, setCategories] = useState<{ value: string; label: string }[]>([])
   const [isSearchMode, setIsSearchMode] = useState(false)
 
-  useEffect(() => {
-    loadCategories()
-  }, [selectedLevel])
-
-  useEffect(() => {
-    if (searchQuery.trim()) {
-      handleSearch()
-    } else {
-      loadVocabulary()
-    }
-  }, [selectedLevel, selectedCategory])
-
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
     try {
       const data = await vocabularyApi.getCategories(selectedLevel)
       setCategories(data)
     } catch (error) {
       console.error('Failed to load categories:', error)
     }
-  }
+  }, [selectedLevel])
 
-  const loadVocabulary = async () => {
+  const loadVocabulary = useCallback(async () => {
     setLoading(true)
     setIsSearchMode(false)
     try {
@@ -44,9 +32,9 @@ export default function Vocabulary() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [selectedLevel, selectedCategory])
 
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     if (!searchQuery.trim()) {
       loadVocabulary()
       return
@@ -62,7 +50,19 @@ export default function Vocabulary() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [searchQuery, selectedLevel, loadVocabulary])
+
+  useEffect(() => {
+    loadCategories()
+  }, [loadCategories])
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      handleSearch()
+    } else {
+      loadVocabulary()
+    }
+  }, [selectedLevel, selectedCategory, searchQuery, handleSearch, loadVocabulary])
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value

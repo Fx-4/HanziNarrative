@@ -33,6 +33,8 @@ export default function SentenceBuilder() {
   const [validation, setValidation] = useState<ValidationFeedback | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [hskLevel, setHskLevel] = useState(1);
+  const [hintLevel, setHintLevel] = useState(0); // 0 = no hints, 1-3 = progressive hints
+  const [targetSentence, setTargetSentence] = useState<string>(''); // For example sentence
 
   // Fetch vocabulary for the selected HSK level
   useEffect(() => {
@@ -45,7 +47,13 @@ export default function SentenceBuilder() {
       const allWords = response.data;
       // Randomly select 10-15 words for the exercise
       const shuffled = allWords.sort(() => 0.5 - Math.random());
-      setSelectedWords(shuffled.slice(0, 12));
+      const words = shuffled.slice(0, 12);
+      setSelectedWords(words);
+
+      // Generate a simple example sentence using some of the words
+      if (words.length >= 3) {
+        setTargetSentence(words.slice(0, 3).map(w => w.simplified).join(''));
+      }
     } catch (error) {
       console.error('Failed to fetch vocabulary:', error);
       toast.error('Failed to load vocabulary');
@@ -146,6 +154,48 @@ export default function SentenceBuilder() {
     fetchVocabulary();
     setSentence([]);
     setValidation(null);
+    setHintLevel(0);
+  };
+
+  const showNextHint = () => {
+    if (hintLevel < 3) {
+      setHintLevel(hintLevel + 1);
+      toast.success(`Hint ${hintLevel + 1} revealed!`);
+    } else {
+      toast('No more hints available!', { icon: '💡' });
+    }
+  };
+
+  const getHintContent = () => {
+    const hints = [];
+
+    if (hintLevel >= 1) {
+      hints.push({
+        level: 1,
+        title: '📝 Grammar Pattern',
+        content: hskLevel <= 2
+          ? 'Basic pattern: Subject + Verb / Subject + Verb + Object'
+          : 'Try: Subject + Time/Location + Verb + Object / Modifier + Noun'
+      });
+    }
+
+    if (hintLevel >= 2) {
+      hints.push({
+        level: 2,
+        title: '🔢 Word Count',
+        content: `A good sentence uses 3-5 words. Try combining ${selectedWords.length} available words.`
+      });
+    }
+
+    if (hintLevel >= 3 && targetSentence) {
+      hints.push({
+        level: 3,
+        title: '✨ Example',
+        content: `Example sentence: ${targetSentence} (${selectedWords.slice(0, 3).map(w => w.pinyin).join(' ')})`
+      });
+    }
+
+    return hints;
   };
 
   const activeWord = selectedWords.find(w => w.id === activeId);
@@ -219,12 +269,33 @@ export default function SentenceBuilder() {
                 {isValidating ? 'Validating...' : 'Validate Sentence'}
               </button>
               <button
+                onClick={showNextHint}
+                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-600 transition-all"
+              >
+                💡 Hint ({hintLevel}/3)
+              </button>
+              <button
                 onClick={generateNewExercise}
                 className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
               >
                 New Words
               </button>
             </div>
+
+            {/* Hints Display */}
+            {hintLevel > 0 && (
+              <div className="mt-4 space-y-2">
+                {getHintContent().map((hint) => (
+                  <div
+                    key={hint.level}
+                    className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg"
+                  >
+                    <p className="font-semibold text-blue-900 mb-1">{hint.title}</p>
+                    <p className="text-blue-800 text-sm">{hint.content}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Validation Result */}

@@ -164,11 +164,20 @@ export default function Writing() {
 
     // Record attempt to backend (if logged in)
     try {
+      // Validate data before sending
+      const accuracy = Math.max(0, Math.min(100, result.accuracy || 0))
+      const timeTaken = Math.max(0, result.timeTaken || 0)
+
+      if (!currentCharacter.id || typeof currentCharacter.id !== 'number') {
+        console.error('Invalid word_id:', currentCharacter.id)
+        return
+      }
+
       await writingApi.recordAttempt({
         word_id: currentCharacter.id,
-        accuracy_score: result.accuracy,
-        time_taken: result.timeTaken,
-        stroke_accuracy: result.strokeData?.strokeAccuracy
+        accuracy_score: accuracy,
+        time_taken: timeTaken,
+        stroke_accuracy: result.strokeData?.strokeAccuracy || []
       })
 
       // Reload stats and progress
@@ -183,6 +192,12 @@ export default function Writing() {
         })
       } else {
         console.error('Failed to record attempt:', error)
+        console.error('Error response:', error.response?.data)
+        console.error('Attempt data:', {
+          word_id: currentCharacter.id,
+          accuracy: result.accuracy,
+          timeTaken: result.timeTaken
+        })
         toast.error('Failed to save progress')
       }
     }

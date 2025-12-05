@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import { learningApi } from '@/services/api'
+import { useAuthStore } from '@/store/authStore'
 import { Card } from '@/components/ui/Card'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Badge } from '@/components/ui/Badge'
+import { Button } from '@/components/ui/Button'
 import {
   BarChart,
   Bar,
@@ -25,7 +28,8 @@ import {
   Target,
   Award,
   Calendar,
-  BarChart3
+  BarChart3,
+  LogIn
 } from 'lucide-react'
 
 interface Stats {
@@ -45,16 +49,23 @@ interface HSKLevelData {
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
 
 export default function Dashboard() {
+  const { isAuthenticated } = useAuthStore()
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [overallStats, setOverallStats] = useState<Stats | null>(null)
   const [hskLevelStats, setHSKLevelStats] = useState<HSKLevelData[]>([])
 
   useEffect(() => {
-    fetchDashboardData()
-  }, [])
+    if (isAuthenticated) {
+      fetchDashboardData()
+    } else {
+      setLoading(false)
+    }
+  }, [isAuthenticated])
 
   const fetchDashboardData = async () => {
     setLoading(true)
+    setError(null)
     try {
       // Fetch overall stats
       const overall = await learningApi.getStats()
@@ -67,17 +78,61 @@ export default function Dashboard() {
         levelData.push({ level, stats: data.stats })
       }
       setHSKLevelStats(levelData)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch dashboard data:', error)
+      setError(error.response?.data?.detail || error.message || 'Failed to load dashboard data')
     } finally {
       setLoading(false)
     }
+  }
+
+  // Show login prompt if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center"
+        >
+          <LogIn className="w-16 h-16 text-primary-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Login Required</h2>
+          <p className="text-gray-600 mb-6">Please login to view your learning dashboard</p>
+          <Link to="/login">
+            <Button variant="primary" size="lg">
+              Login Now
+            </Button>
+          </Link>
+        </motion.div>
+      </div>
+    )
   }
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <LoadingSpinner size="lg" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center max-w-md"
+        >
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-3xl">⚠️</span>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Failed to Load Dashboard</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <Button variant="primary" onClick={fetchDashboardData}>
+            Try Again
+          </Button>
+        </motion.div>
       </div>
     )
   }
