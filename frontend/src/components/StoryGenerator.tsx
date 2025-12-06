@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { storiesApi } from '@/services/api'
@@ -84,6 +84,11 @@ export default function StoryGenerator() {
       console.error('Failed to load usage stats:', err)
     }
   }
+
+  // Load usage stats on component mount
+  useEffect(() => {
+    loadUsageStats()
+  }, [])
 
   return (
     <div className="space-y-6">

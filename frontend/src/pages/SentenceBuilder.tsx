@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from '@dnd-kit/core';
 import { SortableContext, arrayMove } from '@dnd-kit/sortable';
-import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
+import { vocabularyApi } from '@/services/api';
 import DraggableWord from '../components/sentencebuilder/DraggableWord';
 import SentenceDropZone from '../components/sentencebuilder/SentenceDropZone';
 import ValidationResult from '../components/sentencebuilder/ValidationResult';
@@ -43,8 +43,7 @@ export default function SentenceBuilder() {
 
   const fetchVocabulary = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/vocabulary/hsk/${hskLevel}`);
-      const allWords = response.data;
+      const allWords = await vocabularyApi.getByHSKLevel(hskLevel);
       // Randomly select 10-15 words for the exercise
       const shuffled = allWords.sort(() => 0.5 - Math.random());
       const words = shuffled.slice(0, 12);
