@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import { storiesApi } from '@/services/api'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { Sparkles, AlertCircle, BookOpen, GraduationCap, Users, AlignLeft } from 'lucide-react'
+import { Sparkles, AlertCircle, BookOpen, GraduationCap, Users, AlignLeft, Eye } from 'lucide-react'
 
 interface GeneratedStory {
   title: string
@@ -14,6 +15,12 @@ interface GeneratedStory {
   hsk_level: number
   vocabulary?: Array<{ word: string; pinyin: string; meaning: string }>
   grammar_points?: string[]
+}
+
+interface GenerateResponse {
+  story: GeneratedStory
+  story_id: number
+  usage_stats: UsageStats
 }
 
 interface UsageStats {
@@ -32,6 +39,7 @@ export default function StoryGenerator() {
   const [length, setLength] = useState<'short' | 'medium' | 'long'>('short')
   const [loading, setLoading] = useState(false)
   const [generatedStory, setGeneratedStory] = useState<GeneratedStory | null>(null)
+  const [generatedStoryId, setGeneratedStoryId] = useState<number | null>(null)
   const [usageStats, setUsageStats] = useState<UsageStats | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -39,6 +47,7 @@ export default function StoryGenerator() {
     setLoading(true)
     setError(null)
     setGeneratedStory(null)
+    setGeneratedStoryId(null)
 
     try {
       const characterNamesArray = characterNames
@@ -46,7 +55,7 @@ export default function StoryGenerator() {
         .map(name => name.trim())
         .filter(name => name.length > 0)
 
-      const response = await storiesApi.generateStory({
+      const response: GenerateResponse = await storiesApi.generateStory({
         hsk_level: hskLevel,
         topic: topic || undefined,
         character_names: characterNamesArray.length > 0 ? characterNamesArray : undefined,
@@ -54,6 +63,7 @@ export default function StoryGenerator() {
       })
 
       setGeneratedStory(response.story)
+      setGeneratedStoryId(response.story_id)
       setUsageStats(response.usage_stats)
     } catch (err: any) {
       if (err.response?.status === 429) {
@@ -178,7 +188,7 @@ export default function StoryGenerator() {
                 type="text"
                 value={characterNames}
                 onChange={(e) => setCharacterNames(e.target.value)}
-                placeholder="e.g., , ›=, N (comma separated)"
+                placeholder="e.g., , ï¿½=, N (comma separated)"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
               <p className="text-xs text-gray-500 mt-1">
@@ -258,10 +268,25 @@ export default function StoryGenerator() {
         >
           <Card className="bg-gradient-to-br from-primary-50 to-purple-50">
             <div className="flex justify-between items-start mb-4">
-              <h2 className="text-2xl font-bold text-gray-900">
-                {generatedStory.title}
-              </h2>
-              <Badge variant="default">HSK {generatedStory.hsk_level}</Badge>
+              <div className="flex-1">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  {generatedStory.title}
+                </h2>
+                <p className="text-sm text-green-700 font-medium">
+                  Story saved successfully! You can now find it in Browse Stories.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="default">HSK {generatedStory.hsk_level}</Badge>
+                {generatedStoryId && (
+                  <Link to={`/stories/${generatedStoryId}`}>
+                    <Button variant="primary" size="sm">
+                      <Eye className="w-4 h-4 mr-1" />
+                      View Story
+                    </Button>
+                  </Link>
+                )}
+              </div>
             </div>
 
             {/* Story Content */}

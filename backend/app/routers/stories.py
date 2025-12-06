@@ -110,7 +110,7 @@ async def generate_ai_story(
     db: Session = Depends(get_db)
 ):
     """
-    Generate a new story using AI
+    Generate a new story using AI and save it to database
     Rate limited to 5 requests per day per user
     """
     # Check rate limit
@@ -125,6 +125,18 @@ async def generate_ai_story(
             length=request.length
         )
 
+        # Save generated story to database
+        db_story = models.Story(
+            title=story_data.get('title', 'Generated Story'),
+            content=story_data.get('content', ''),
+            hsk_level=request.hsk_level,
+            author_id=current_user.id,
+            is_published=True  # Auto-publish AI generated stories
+        )
+        db.add(db_story)
+        db.commit()
+        db.refresh(db_story)
+
         # Record AI usage
         record_ai_usage(
             db=db,
@@ -133,7 +145,8 @@ async def generate_ai_story(
             request_data={
                 'hsk_level': request.hsk_level,
                 'topic': request.topic,
-                'length': request.length
+                'length': request.length,
+                'story_id': db_story.id
             }
         )
 
@@ -142,6 +155,7 @@ async def generate_ai_story(
 
         return {
             "story": story_data,
+            "story_id": db_story.id,
             "usage_stats": usage_stats
         }
 
