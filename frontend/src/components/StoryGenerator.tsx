@@ -85,10 +85,11 @@ export default function StoryGenerator() {
     }
   }
 
-  // Load usage stats on component mount
-  useEffect(() => {
-    loadUsageStats()
-  }, [])
+  // Load usage stats on component mount (disabled to prevent 422 errors on not logged in)
+  // Users can manually click "Refresh Usage Stats" button instead
+  // useEffect(() => {
+  //   loadUsageStats()
+  // }, [])
 
   return (
     <div className="space-y-6">
