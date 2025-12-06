@@ -7,9 +7,13 @@ import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { BookOpen, Calendar } from 'lucide-react'
+import { BookOpen, Calendar, Sparkles } from 'lucide-react'
+import StoryGenerator from '@/components/StoryGenerator'
+
+type TabType = 'browse' | 'generate'
 
 export default function Stories() {
+  const [activeTab, setActiveTab] = useState<TabType>('browse')
   const [stories, setStories] = useState<Story[]>([])
   const [selectedLevel, setSelectedLevel] = useState<number | undefined>()
   const [loading, setLoading] = useState(true)
@@ -52,34 +56,78 @@ export default function Stories() {
         Interactive Stories
       </motion.h1>
 
+      {/* Tabs */}
       <motion.div
-        className="mb-8"
+        className="mb-8 border-b border-gray-200"
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2 }}
+        transition={{ delay: 0.15 }}
       >
-        <label className="block text-sm font-medium text-gray-700 mb-3">
-          Filter by HSK Level
-        </label>
-        <div className="flex flex-wrap gap-2">
-          {levels.map((level, index) => (
-            <motion.div
-              key={level.label}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.3 + index * 0.05 }}
-            >
-              <Button
-                variant={selectedLevel === level.value ? 'primary' : 'secondary'}
-                size="sm"
-                onClick={() => setSelectedLevel(level.value)}
-              >
-                {level.label}
-              </Button>
-            </motion.div>
-          ))}
+        <div className="flex gap-4">
+          <button
+            onClick={() => setActiveTab('browse')}
+            className={`pb-4 px-4 font-medium transition-colors border-b-2 ${
+              activeTab === 'browse'
+                ? 'border-primary-500 text-primary-600'
+                : 'border-transparent text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <BookOpen className="w-5 h-5" />
+              Browse Stories
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('generate')}
+            className={`pb-4 px-4 font-medium transition-colors border-b-2 ${
+              activeTab === 'generate'
+                ? 'border-primary-500 text-primary-600'
+                : 'border-transparent text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5" />
+              Generate Story
+            </div>
+          </button>
         </div>
       </motion.div>
+
+      {/* Browse Stories Tab */}
+      {activeTab === 'browse' && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <motion.div
+            className="mb-8"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Filter by HSK Level
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {levels.map((level, index) => (
+                <motion.div
+                  key={level.label}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.3 + index * 0.05 }}
+                >
+                  <Button
+                    variant={selectedLevel === level.value ? 'primary' : 'secondary'}
+                    size="sm"
+                    onClick={() => setSelectedLevel(level.value)}
+                  >
+                    {level.label}
+                  </Button>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
 
       {loading ? (
         <motion.div
@@ -133,6 +181,19 @@ export default function Stories() {
             </motion.div>
           ))}
         </div>
+      )}
+    </motion.div>
+      )}
+
+      {/* Generate Story Tab */}
+      {activeTab === 'generate' && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <StoryGenerator />
+        </motion.div>
       )}
     </motion.div>
   )
