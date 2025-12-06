@@ -87,10 +87,10 @@ def get_usage_stats(db: Session, user: User, feature: str = None) -> dict:
     
     return {
         'feature': feature or 'all',
-        'hourly_used': hourly_count,
-        'hourly_limit': limits.get('hourly', 'unlimited'),
-        'hourly_remaining': max(0, limits.get('hourly', 999) - hourly_count) if 'hourly' in limits else 'unlimited',
-        'daily_used': daily_count,
-        'daily_limit': limits.get('daily', 'unlimited'),
-        'daily_remaining': max(0, limits.get('daily', 999) - daily_count) if 'daily' in limits else 'unlimited',
+        'used_this_hour': hourly_count,
+        'limit_hourly': limits.get('hourly', 'unlimited'),
+        'remaining_hourly': max(0, limits.get('hourly', 999) - hourly_count) if 'hourly' in limits else 'unlimited',
+        'used_today': daily_count,
+        'limit_daily': limits.get('daily', 'unlimited'),
+        'remaining_daily': max(0, limits.get('daily', 999) - daily_count) if 'daily' in limits else 'unlimited',
     }
