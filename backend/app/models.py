@@ -127,3 +127,16 @@ class WritingProgress(Base):
 
     user = relationship("User")
     word = relationship("HanziWord")
+
+
+class AIUsage(Base):
+    __tablename__ = "ai_usage"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    feature = Column(String, nullable=False)  # 'story_generation', 'sentence_validation', etc.
+    tokens_used = Column(Integer, default=0)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    request_data = Column(JSON, nullable=True)  # Store request details for debugging
+
+    user = relationship("User")

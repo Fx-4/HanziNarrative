@@ -73,6 +73,21 @@ export const storiesApi = {
     const response = await api.post('/stories', story)
     return response.data
   },
+
+  generateStory: async (request: {
+    hsk_level: number
+    topic?: string
+    character_names?: string[]
+    length?: 'short' | 'medium' | 'long'
+  }) => {
+    const response = await api.post('/stories/generate', request)
+    return response.data
+  },
+
+  getAIUsageStats: async () => {
+    const response = await api.get('/stories/ai-usage-stats')
+    return response.data
+  },
 }
 
 export const vocabularyApi = {

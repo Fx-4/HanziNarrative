@@ -1,10 +1,20 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 from .. import models, schemas, auth
 from ..database import get_db
+from ..rate_limit import check_rate_limit, record_ai_usage, get_usage_stats
+from ..services.gemini_service import generate_story
 
 router = APIRouter(prefix="/stories", tags=["stories"])
+
+
+class StoryGenerateRequest(BaseModel):
+    hsk_level: int
+    topic: Optional[str] = None
+    character_names: Optional[List[str]] = None
+    length: str = "short"  # short, medium, long
 
 
 @router.get("/", response_model=List[schemas.Story])
@@ -91,3 +101,61 @@ def delete_story(
     db.delete(db_story)
     db.commit()
     return {"message": "Story deleted successfully"}
+
+
+@router.post("/generate")
+async def generate_ai_story(
+    request: StoryGenerateRequest,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Generate a new story using AI
+    Rate limited to 5 requests per day per user
+    """
+    # Check rate limit
+    check_rate_limit(db, current_user, 'story_generation')
+
+    try:
+        # Generate story using Gemini
+        story_data = await generate_story(
+            hsk_level=request.hsk_level,
+            topic=request.topic,
+            character_names=request.character_names,
+            length=request.length
+        )
+
+        # Record AI usage
+        record_ai_usage(
+            db=db,
+            user=current_user,
+            feature='story_generation',
+            request_data={
+                'hsk_level': request.hsk_level,
+                'topic': request.topic,
+                'length': request.length
+            }
+        )
+
+        # Get updated usage stats
+        usage_stats = get_usage_stats(db, current_user, 'story_generation')
+
+        return {
+            "story": story_data,
+            "usage_stats": usage_stats
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/ai-usage-stats")
+def get_ai_usage(
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get AI usage statistics for current user"""
+    return {
+        "story_generation": get_usage_stats(db, current_user, 'story_generation'),
+        "sentence_validation": get_usage_stats(db, current_user, 'sentence_validation'),
+    }

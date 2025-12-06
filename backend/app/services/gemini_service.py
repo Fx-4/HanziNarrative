@@ -195,6 +195,89 @@ Format as JSON:
         }
 
 
+async def generate_story(
+    hsk_level: int,
+    topic: Optional[str] = None,
+    character_names: Optional[List[str]] = None,
+    length: str = "short"
+) -> Dict:
+    """
+    Generate a Chinese story using Gemini AI
+
+    Args:
+        hsk_level: HSK level (1-6) for vocabulary complexity
+        topic: Story topic/theme (e.g., "family", "school", "food")
+        character_names: Optional character names to use
+        length: "short" (100-200 chars), "medium" (200-400 chars), or "long" (400-600 chars)
+
+    Returns:
+        Dict with story data including Chinese text, pinyin, English translation
+    """
+
+    # Determine word count based on length
+    length_guide = {
+        "short": "100-200 Chinese characters",
+        "medium": "200-400 Chinese characters",
+        "long": "400-600 Chinese characters"
+    }
+
+    # Build character names string
+    characters_str = ""
+    if character_names:
+        characters_str = f"\nCharacter names to use: {', '.join(character_names)}"
+
+    # Build topic string
+    topic_str = f"Topic: {topic}" if topic else "Topic: Daily life"
+
+    prompt = f"""You are a creative Chinese language teacher. Create an engaging story for HSK Level {hsk_level} students.
+
+Requirements:
+- HSK Level: {hsk_level}
+- {topic_str}
+- Length: {length_guide.get(length, length_guide['short'])}
+- Use ONLY HSK Level {hsk_level} vocabulary (and levels below)
+- Simple, clear grammar appropriate for the level
+- Engaging plot that students can relate to{characters_str}
+
+Provide the story in JSON format:
+{{
+  "title": "Story title in Chinese",
+  "title_pinyin": "Title in pinyin",
+  "title_english": "Title in English",
+  "content": "Full story text in simplified Chinese",
+  "content_pinyin": "Full story with pinyin",
+  "content_english": "Full English translation",
+  "difficulty_level": {hsk_level},
+  "word_count": <number of Chinese characters>,
+  "key_vocabulary": [
+    {{"simplified": "word", "pinyin": "pinyin", "english": "meaning"}},
+    ...
+  ],
+  "grammar_points": ["grammar point 1", "grammar point 2"],
+  "moral": "Story moral/lesson in English"
+}}
+
+Make it interesting and educational!"""
+
+    try:
+        response = model.generate_content(prompt)
+        response_text = response.text
+
+        # Parse JSON
+        import json
+        if "```json" in response_text:
+            response_text = response_text.split("```json")[1].split("```")[0].strip()
+        elif "```" in response_text:
+            response_text = response_text.split("```")[1].split("```")[0].strip()
+
+        story_data = json.loads(response_text)
+        return story_data
+
+    except Exception as e:
+        print(f"Gemini API Error: {e}")
+        raise Exception(f"Failed to generate story: {str(e)}")
+
+
 async def test_gemini_connection() -> bool:
     """Test if Gemini AI is configured correctly"""
     try:
