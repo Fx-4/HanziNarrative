@@ -10,6 +10,7 @@ import Practice from './pages/Practice'
 import Review from './pages/Review'
 import Writing from './pages/Writing'
 import Dashboard from './pages/Dashboard'
+import Quiz from './pages/Quiz'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Profile from './pages/Profile'
@@ -54,6 +55,7 @@ function App() {
           <Route path="review" element={<Review />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="writing" element={<Writing />} />
+          <Route path="quiz" element={<Quiz />} />
           <Route path="stories" element={<Stories />} />
           <Route path="stories/:id" element={<StoryReader />} />
           <Route path="vocabulary" element={<Vocabulary />} />

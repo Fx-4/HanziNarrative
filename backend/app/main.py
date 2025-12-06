@@ -1,7 +1,7 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import auth, stories, vocabulary, progress, vocabulary_sets, exercises, learning, writing
+from .routers import auth, stories, vocabulary, progress, vocabulary_sets, exercises, learning, writing, quiz
 from .database import engine, Base
 
 Base.metadata.create_all(bind=engine)
@@ -32,6 +32,7 @@ app.include_router(vocabulary_sets.router)
 app.include_router(exercises.router)
 app.include_router(learning.router)
 app.include_router(writing.router)
+app.include_router(quiz.router)
 
 
 @app.get("/")

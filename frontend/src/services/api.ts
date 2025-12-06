@@ -237,4 +237,22 @@ export const learningApi = {
   },
 }
 
+// Quiz API
+export const quizApi = {
+  generate: async (hskLevel: number, quizType: string = 'multiple_choice', numQuestions: number = 10, category?: string) => {
+    const response = await api.post('/quiz/generate', {
+      hsk_level: hskLevel,
+      quiz_type: quizType,
+      num_questions: numQuestions,
+      category
+    })
+    return response.data
+  },
+
+  submit: async (quizResults: any) => {
+    const response = await api.post('/quiz/submit', quizResults)
+    return response.data
+  }
+}
+
 export default api

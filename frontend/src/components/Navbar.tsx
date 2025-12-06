@@ -99,6 +99,7 @@ export default function Navbar() {
       items: [
         { to: '/review', label: 'Review', icon: Brain, badge: true },
         { to: '/writing', label: 'Writing', icon: PenTool },
+        { to: '/quiz', label: 'Quiz', icon: GraduationCap },
       ]
     },
     {
