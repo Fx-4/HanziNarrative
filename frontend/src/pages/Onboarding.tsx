@@ -6,7 +6,6 @@ import { useAuthStore } from '@/store/authStore'
 export default function Onboarding() {
   const navigate = useNavigate()
   const fetchUser = useAuthStore((state) => state.fetchUser)
-  const [selectedLevel, setSelectedLevel] = useState<number>(1)
   const [loading, setLoading] = useState(false)
 
   const handleComplete = async () => {
@@ -33,37 +32,11 @@ export default function Onboarding() {
         </div>
 
         <div className="card">
-          <div className="mb-6">
-            <h3 className="text-xl font-semibold mb-4">What's your current HSK level?</h3>
-            <p className="text-gray-600 mb-4">
-              This will help us recommend appropriate content for you. Don't worry, you can change this later!
-            </p>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {[1, 2, 3, 4].map((level) => (
-                <button
-                  key={level}
-                  onClick={() => setSelectedLevel(level)}
-                  className={`p-4 rounded-lg border-2 transition-all ${
-                    selectedLevel === level
-                      ? 'border-primary-600 bg-primary-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="text-2xl font-bold">HSK {level}</div>
-                  <div className="text-sm text-gray-600 mt-1">
-                    {level === 1 && 'Beginner'}
-                    {level === 2 && 'Elementary'}
-                    {level === 3 && 'Intermediate'}
-                    {level === 4 && 'Upper Int.'}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
           <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="font-semibold text-blue-900 mb-2">What you can do:</h4>
+            <h3 className="font-semibold text-blue-900 mb-3">Welcome to HanziNarrative!</h3>
+            <p className="text-blue-800 mb-4">
+              Your interactive Chinese learning platform. Here's what you can do:
+            </p>
             <ul className="space-y-2 text-blue-800">
               <li>📖 Read interactive stories with clickable words</li>
               <li>✍️ Practice writing Chinese characters</li>
