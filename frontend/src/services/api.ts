@@ -50,6 +50,11 @@ export const authApi = {
     const response = await api.get('/auth/me')
     return response.data
   },
+
+  completeOnboarding: async (): Promise<User> => {
+    const response = await api.post('/auth/complete-onboarding')
+    return response.data
+  },
 }
 
 export const storiesApi = {

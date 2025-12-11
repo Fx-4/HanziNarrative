@@ -14,6 +14,7 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
+    onboarding_completed: bool
     created_at: datetime
 
     class Config:

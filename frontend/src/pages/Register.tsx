@@ -24,7 +24,7 @@ export default function Register() {
 
     try {
       await authApi.register({ username, email, password })
-      navigate('/login')
+      navigate('/onboarding')
     } catch (err) {
       setError('Registration failed. Username or email may already exist.')
     } finally {

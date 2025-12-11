@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import { useEffect } from 'react'
 import Layout from './components/Layout'
+import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
 import Stories from './pages/Stories'
 import StoryReader from './pages/StoryReader'
@@ -13,6 +14,7 @@ import Dashboard from './pages/Dashboard'
 import Quiz from './pages/Quiz'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import Onboarding from './pages/Onboarding'
 import Profile from './pages/Profile'
 import { Toaster } from './components/ui/Toast'
 import { useAuthStore } from './store/authStore'
@@ -51,19 +53,20 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="practice" element={<Practice />} />
-          <Route path="review" element={<Review />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="writing" element={<Writing />} />
-          <Route path="quiz" element={<Quiz />} />
+          <Route path="practice" element={<ProtectedRoute><Practice /></ProtectedRoute>} />
+          <Route path="review" element={<ProtectedRoute><Review /></ProtectedRoute>} />
+          <Route path="dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="writing" element={<ProtectedRoute><Writing /></ProtectedRoute>} />
+          <Route path="quiz" element={<ProtectedRoute><Quiz /></ProtectedRoute>} />
           <Route path="stories" element={<Stories />} />
           <Route path="stories/:id" element={<StoryReader />} />
           <Route path="vocabulary" element={<Vocabulary />} />
-          <Route path="sentence-builder" element={<SentenceBuilder />} />
-          <Route path="profile" element={<Profile />} />
+          <Route path="sentence-builder" element={<ProtectedRoute><SentenceBuilder /></ProtectedRoute>} />
+          <Route path="profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/onboarding" element={<ProtectedRoute requireOnboarding={false}><Onboarding /></ProtectedRoute>} />
       </Routes>
     </>
   )
