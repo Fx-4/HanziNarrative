@@ -2,6 +2,7 @@ export interface User {
   id: number
   username: string
   email: string
+  onboarding_completed: boolean
   created_at: string
 }
 

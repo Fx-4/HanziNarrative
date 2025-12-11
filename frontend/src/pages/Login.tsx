@@ -17,7 +17,12 @@ export default function Login() {
 
     try {
       await login(username, password)
-      navigate('/')
+      const user = useAuthStore.getState().user
+      if (user && !user.onboarding_completed) {
+        navigate('/onboarding')
+      } else {
+        navigate('/')
+      }
     } catch (err) {
       setError('Invalid username or password')
     } finally {

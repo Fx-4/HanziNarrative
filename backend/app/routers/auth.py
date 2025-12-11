@@ -54,3 +54,11 @@ def login(
 @router.get("/me", response_model=schemas.User)
 async def read_users_me(current_user: models.User = Depends(auth.get_current_user)):
     return current_user
+
+
+@router.post("/complete-onboarding", response_model=schemas.User)
+async def complete_onboarding(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    current_user.onboarding_completed = True
+    db.commit()
+    db.refresh(current_user)
+    return current_user
