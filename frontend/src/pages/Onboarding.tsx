@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { onboardingApi } from '@/services/api'
 import type { Goals, Preferences } from '@/types'
+import toast from 'react-hot-toast'
 
 // Components
 import ProgressIndicator from '@/components/onboarding/ProgressIndicator'
@@ -21,14 +22,12 @@ const Onboarding = () => {
 
   const [loading, setLoading] = useState(true)
   const [currentStep, setCurrentStep] = useState(1)
-  const [totalSteps] = useState(5)
 
   // State
   const [goals, setGoals] = useState<Goals>({})
   const [preferences, setPreferences] = useState<Preferences>({})
   const [tookAssessment, setTookAssessment] = useState(false)
   const [determinedLevel, setDeterminedLevel] = useState(1)
-  const [_assessmentXP, setAssessmentXP] = useState(0)
 
   // Completion data
   const [completionData, setCompletionData] = useState<any>(null)
@@ -41,13 +40,12 @@ const Onboarding = () => {
     try {
       const status = await onboardingApi.getStatus()
 
-      // If already completed, redirect to dashboard
       if (status.onboarding_completed) {
         navigate('/dashboard')
         return
       }
 
-      // Resume from current step if needed
+      // Resume from saved step
       if (status.current_step > 0) {
         setCurrentStep(status.current_step)
         if (status.goals) setGoals(status.goals)
@@ -62,20 +60,16 @@ const Onboarding = () => {
     }
   }
 
-  const handleWelcomeNext = () => {
-    setCurrentStep(2)
-  }
+  const handleWelcomeNext = () => setCurrentStep(2)
 
   const handleGoalsNext = async (selectedGoals: Goals) => {
     setGoals(selectedGoals)
-
-    // Save goals to backend
     try {
       await onboardingApi.saveGoals(selectedGoals)
-    } catch (error) {
-      console.error('Failed to save goals:', error)
+    } catch {
+      toast.error('Could not save goals. Please try again.')
+      return
     }
-
     setCurrentStep(3)
   }
 
@@ -86,47 +80,47 @@ const Onboarding = () => {
 
   const handleSkipAssessment = async () => {
     setTookAssessment(false)
-
     try {
       await onboardingApi.skipAssessment()
       setDeterminedLevel(1)
       setCurrentStep(5)
-    } catch (error) {
-      console.error('Failed to skip assessment:', error)
+    } catch {
+      toast.error('Something went wrong. Please try again.')
     }
   }
 
   const handleAssessmentComplete = (level: number, xp: number) => {
     setDeterminedLevel(level)
-    setAssessmentXP(xp)
+    void xp // xp tracked server-side
     setCurrentStep(5)
   }
 
   const handlePreferencesNext = async (selectedPreferences: Preferences) => {
     setPreferences(selectedPreferences)
-
-    // Complete onboarding
     try {
       const result = await onboardingApi.complete({
         took_assessment: tookAssessment,
         determined_hsk_level: determinedLevel,
         goals,
-        preferences: selectedPreferences
+        preferences: selectedPreferences,
       })
-
       setCompletionData(result)
-
-      // Update auth store
       await checkOnboardingStatus()
-
-      // Move to completion screen
       setCurrentStep(6)
-    } catch (error) {
-      console.error('Failed to complete onboarding:', error)
+    } catch {
+      toast.error('Could not complete setup. Please try again.')
     }
   }
 
+  /**
+   * Back navigation:
+   *  - step 5 (Preferences) → step 3 (Level selector), skipping assessment sub-step
+   *  - step 3 (Level) → step 2 (Goals)
+   *  - step 2 (Goals) → step 1 (Welcome)
+   *  - step 4 (Assessment) and step 6 (Completion) have no back button
+   */
   const handleBack = () => {
+    if (currentStep === 5) { setCurrentStep(3); return }
     if (currentStep > 1 && currentStep !== 4 && currentStep !== 6) {
       setCurrentStep(currentStep - 1)
     }
@@ -134,39 +128,52 @@ const Onboarding = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-indigo-50 via-white to-violet-50 gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <p className="text-sm text-gray-500">Loading your profile…</p>
       </div>
     )
   }
 
-  const showProgress = currentStep > 1 && currentStep <= totalSteps
+  // Show progress for steps 2–5 (not welcome, not completion)
+  const showProgress  = currentStep >= 2 && currentStep <= 5
+  // Show back button for steps 2, 3, 5 (not assessment=4, not completion=6)
   const showBackButton = currentStep > 1 && currentStep !== 4 && currentStep !== 6
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4 max-w-6xl">
-        {/* Progress Indicator */}
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-violet-50 py-8">
+      <div className="container mx-auto px-4 max-w-4xl">
+
+        {/* Logo + Brand */}
+        {currentStep < 6 && (
+          <div className="flex items-center justify-center gap-2.5 mb-8">
+            <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center">
+              <span className="text-white text-sm font-bold font-chinese">汉</span>
+            </div>
+            <span className="text-sm font-bold text-gray-500 tracking-tight">HanziNarrative</span>
+          </div>
+        )}
+
+        {/* Progress bar */}
         {showProgress && (
-          <div className="mb-8">
+          <div className="mb-6">
             <ProgressIndicator
               currentStep={currentStep}
-              totalSteps={totalSteps}
               onBack={handleBack}
               showBackButton={showBackButton}
             />
           </div>
         )}
 
-        {/* Content Area */}
+        {/* Card */}
         <AnimatePresence mode="wait">
           <motion.div
             key={currentStep}
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-            className="bg-white rounded-3xl shadow-xl p-8 md:p-12"
+            exit={{ opacity: 0, x: -16 }}
+            transition={{ duration: 0.25 }}
+            className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 md:p-10"
           >
             {currentStep === 1 && <WelcomeScreen onNext={handleWelcomeNext} />}
 

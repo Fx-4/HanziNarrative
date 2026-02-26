@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion'
-import MascotCharacter from './MascotCharacter'
-import { GraduationCap, PlayCircle } from 'lucide-react'
+import { GraduationCap, PlayCircle, Check } from 'lucide-react'
 
 interface LevelSelectorProps {
   onTakeAssessment: () => void
@@ -9,138 +8,87 @@ interface LevelSelectorProps {
 
 const LevelSelector = ({ onTakeAssessment, onSkipAssessment }: LevelSelectorProps) => {
   return (
-    <div className="flex flex-col items-center px-4 max-w-4xl mx-auto">
-      {/* Mascot */}
-      <MascotCharacter
-        mood="thoughtful"
-        message="How should we determine your starting level?"
-        size="md"
-      />
-
-      {/* Title */}
-      <h2 className="mt-8 text-2xl font-bold text-gray-900 text-center">
-        Choose Your Path
-      </h2>
+    <div className="flex flex-col items-center px-2 max-w-3xl mx-auto w-full">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center mb-8"
+      >
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
+          What's your Chinese level?
+        </h2>
+        <p className="text-gray-500 text-sm">
+          We'll use this to match content to your skill. You can adjust it later.
+        </p>
+      </motion.div>
 
       {/* Option Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 w-full max-w-3xl">
-        {/* Take Assessment Option */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full max-w-2xl">
+
+        {/* Take Assessment */}
         <motion.button
-          initial={{ opacity: 0, x: -20 }}
+          initial={{ opacity: 0, x: -16 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.15 }}
           onClick={onTakeAssessment}
-          className="group relative p-8 bg-primary-50 border-2 border-primary-200 rounded-2xl shadow-lg hover:shadow-2xl hover:border-primary-400 transition-all transform hover:scale-105"
+          className="group relative p-6 bg-indigo-50 border-2 border-indigo-200 rounded-2xl text-left hover:border-indigo-400 hover:shadow-lg transition-all"
         >
-          {/* Recommended Badge */}
-          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 bg-primary-600 text-white text-xs font-semibold rounded-full shadow-md">
+          {/* Recommended badge */}
+          <div className="absolute -top-3 left-5 px-3 py-0.5 bg-indigo-600 text-white text-xs font-semibold rounded-full shadow">
             Recommended
           </div>
 
-          <div className="flex flex-col items-center text-center">
-            {/* Icon */}
-            <div className="flex items-center justify-center w-16 h-16 bg-primary-600 rounded-full text-white mb-4 group-hover:scale-110 transition-transform">
-              <GraduationCap className="w-8 h-8" />
-            </div>
+          <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-105 transition-transform shadow-md shadow-indigo-500/25">
+            <GraduationCap className="w-6 h-6 text-white" />
+          </div>
 
-            {/* Title */}
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
-              Take Quick Test
-            </h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-1">Take a Quick Test</h3>
+          <p className="text-sm text-gray-500 mb-4">~5 minutes · adaptive difficulty</p>
 
-            {/* Description */}
-            <p className="text-gray-600 mb-4">
-              ~5 minutes
-            </p>
+          <ul className="space-y-1.5 text-sm text-gray-700">
+            {['Personalized placement', 'Adaptive difficulty', 'Earn XP while testing', 'Start at your true level'].map(b => (
+              <li key={b} className="flex items-center gap-2">
+                <Check className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                {b}
+              </li>
+            ))}
+          </ul>
 
-            {/* Benefits */}
-            <ul className="text-left text-sm text-gray-700 space-y-2">
-              <li className="flex items-start gap-2">
-                <span className="text-primary-600 mt-0.5">✓</span>
-                <span>Personalized placement</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary-600 mt-0.5">✓</span>
-                <span>Adaptive difficulty</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary-600 mt-0.5">✓</span>
-                <span>Earn XP while testing</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary-600 mt-0.5">✓</span>
-                <span>Start at your true level</span>
-              </li>
-            </ul>
-
-            {/* CTA */}
-            <div className="mt-6 px-6 py-2 bg-white rounded-full text-primary-600 font-semibold group-hover:bg-primary-600 group-hover:text-white transition-colors">
-              Start Test
-            </div>
+          <div className="mt-5 px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg text-center group-hover:bg-indigo-700 transition-colors">
+            Start Test
           </div>
         </motion.button>
 
-        {/* Skip to HSK 1 Option */}
+        {/* Start from Scratch */}
         <motion.button
-          initial={{ opacity: 0, x: 20 }}
+          initial={{ opacity: 0, x: 16 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.2 }}
           onClick={onSkipAssessment}
-          className="group relative p-8 bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-2xl hover:border-gray-400 transition-all transform hover:scale-105"
+          className="group p-6 bg-gray-50 border-2 border-gray-200 rounded-2xl text-left hover:border-gray-400 hover:shadow-lg transition-all"
         >
-          <div className="flex flex-col items-center text-center">
-            {/* Icon */}
-            <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full text-white mb-4 group-hover:scale-110 transition-transform">
-              <PlayCircle className="w-8 h-8" />
-            </div>
+          <div className="w-12 h-12 bg-gray-700 rounded-xl flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+            <PlayCircle className="w-6 h-6 text-white" />
+          </div>
 
-            {/* Title */}
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
-              Start from Scratch
-            </h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-1">Start from Scratch</h3>
+          <p className="text-sm text-gray-500 mb-4">Begin with HSK 1 · no pressure</p>
 
-            {/* Description */}
-            <p className="text-gray-600 mb-4">
-              Begin with HSK 1
-            </p>
+          <ul className="space-y-1.5 text-sm text-gray-700">
+            {['No testing required', 'Start from the basics', 'Build a strong foundation', 'Perfect for beginners'].map(b => (
+              <li key={b} className="flex items-center gap-2">
+                <Check className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                {b}
+              </li>
+            ))}
+          </ul>
 
-            {/* Benefits */}
-            <ul className="text-left text-sm text-gray-700 space-y-2">
-              <li className="flex items-start gap-2">
-                <span className="text-gray-600 mt-0.5">✓</span>
-                <span>No pressure, no testing</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-gray-600 mt-0.5">✓</span>
-                <span>Start from the basics</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-gray-600 mt-0.5">✓</span>
-                <span>Build strong foundation</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-gray-600 mt-0.5">✓</span>
-                <span>Perfect for beginners</span>
-              </li>
-            </ul>
-
-            {/* CTA */}
-            <div className="mt-6 px-6 py-2 bg-white rounded-full text-gray-600 font-semibold group-hover:bg-gray-600 group-hover:text-white transition-colors">
-              Skip to HSK 1
-            </div>
+          <div className="mt-5 px-4 py-2 bg-gray-200 text-gray-700 text-sm font-semibold rounded-lg text-center group-hover:bg-gray-300 transition-colors">
+            Skip to HSK 1
           </div>
         </motion.button>
       </div>
-
-      {/* Helper Text */}
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="mt-8 text-sm text-gray-600 text-center max-w-xl"
-      >
-        Don't worry! You can always adjust your level later in your profile settings.
-      </motion.p>
     </div>
   )
 }

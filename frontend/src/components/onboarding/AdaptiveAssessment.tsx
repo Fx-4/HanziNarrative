@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import MascotCharacter from './MascotCharacter'
 import { onboardingApi } from '@/services/api'
 import type { QuestionData, AssessmentAnswer } from '@/types'
-import { Loader2, Award } from 'lucide-react'
+import { Loader2, Award, Check, X } from 'lucide-react'
 
 interface AdaptiveAssessmentProps {
   onComplete: (determinedLevel: number, xpEarned: number) => void
@@ -12,7 +11,7 @@ interface AdaptiveAssessmentProps {
 const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
   const [loading, setLoading] = useState(true)
   const [questionsPool, setQuestionsPool] = useState<QuestionData[]>([])
-  const [currentLevel, setCurrentLevel] = useState(2) // Start at HSK 2
+  const [currentLevel, setCurrentLevel] = useState(2)
   const [questionIndex, setQuestionIndex] = useState(0)
   const [currentQuestion, setCurrentQuestion] = useState<any>(null)
   const [answers, setAnswers] = useState<AssessmentAnswer[]>([])
@@ -22,12 +21,8 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
   const [startTime] = useState(Date.now())
   const [questionStartTime, setQuestionStartTime] = useState(Date.now())
 
-  // Load questions pool
-  useEffect(() => {
-    loadQuestions()
-  }, [])
+  useEffect(() => { loadQuestions() }, [])
 
-  // Generate next question when needed
   useEffect(() => {
     if (questionsPool.length > 0 && !currentQuestion) {
       generateNextQuestion()
@@ -46,55 +41,31 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
   }
 
   const generateNextQuestion = () => {
-    // Get questions from current level that haven't been used
     const usedWordIds = new Set(answers.map(a => a.word_id))
-    const availableQuestions = questionsPool.filter(
+    const available = questionsPool.filter(
       q => q.hsk_level === currentLevel && !usedWordIds.has(q.word_id)
     )
+    if (available.length === 0) { submitAssessment(); return }
 
-    if (availableQuestions.length === 0) {
-      // No more questions at this level, submit
-      submitAssessment()
-      return
-    }
+    const q = available[Math.floor(Math.random() * available.length)]
+    const wrongs = questionsPool
+      .filter(x => x.hsk_level === currentLevel && x.word_id !== q.word_id)
+      .sort(() => 0.5 - Math.random()).slice(0, 3).map(x => x.english)
 
-    // Pick random question
-    const randomQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)]
-
-    // Generate wrong options from same level
-    const wrongOptions = questionsPool
-      .filter(q => q.hsk_level === currentLevel && q.word_id !== randomQuestion.word_id)
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 3)
-      .map(q => q.english)
-
-    // Shuffle options
-    const allOptions = [randomQuestion.english, ...wrongOptions].sort(() => 0.5 - Math.random())
-    const correctIndex = allOptions.indexOf(randomQuestion.english)
-
-    setCurrentQuestion({
-      ...randomQuestion,
-      options: allOptions,
-      correctIndex
-    })
+    const options = [q.english, ...wrongs].sort(() => 0.5 - Math.random())
+    setCurrentQuestion({ ...q, options, correctIndex: options.indexOf(q.english) })
     setQuestionStartTime(Date.now())
   }
 
   const handleAnswer = (optionIndex: number) => {
     if (showFeedback) return
-
     setSelectedAnswer(optionIndex)
     setShowFeedback(true)
 
     const isCorrect = optionIndex === currentQuestion.correctIndex
     const timeTaken = (Date.now() - questionStartTime) / 1000
+    if (isCorrect) setTotalXP(prev => prev + 5)
 
-    // Award XP for correct answer
-    if (isCorrect) {
-      setTotalXP(prev => prev + 5)
-    }
-
-    // Record answer
     const answer: AssessmentAnswer = {
       question_id: questionIndex,
       word_id: currentQuestion.word_id,
@@ -102,67 +73,44 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
       user_answer: currentQuestion.options[optionIndex],
       correct_answer: currentQuestion.options[currentQuestion.correctIndex],
       is_correct: isCorrect,
-      time_taken: timeTaken
+      time_taken: timeTaken,
     }
-
     setAnswers(prev => [...prev, answer])
 
-    // Adaptive logic: adjust level every 3 questions
     if ((questionIndex + 1) % 3 === 0 && questionIndex > 0) {
-      const recentAnswers = [...answers, answer].slice(-3)
-      const correctCount = recentAnswers.filter(a => a.is_correct).length
-
-      if (correctCount >= 2) {
-        // 2/3 or 3/3 correct → level up
-        setCurrentLevel(prev => Math.min(6, prev + 1))
-      } else if (correctCount <= 1) {
-        // 0/3 or 1/3 correct → level down
-        setCurrentLevel(prev => Math.max(1, prev - 1))
-      }
+      const recent = [...answers, answer].slice(-3)
+      const correct = recent.filter(a => a.is_correct).length
+      if (correct >= 2) setCurrentLevel(prev => Math.min(6, prev + 1))
+      else if (correct <= 1) setCurrentLevel(prev => Math.max(1, prev - 1))
     }
 
-    // Move to next question or finish
     setTimeout(() => {
       setShowFeedback(false)
       setSelectedAnswer(null)
       setQuestionIndex(prev => prev + 1)
       setCurrentQuestion(null)
-
-      // Stop condition: 30 questions or stable level (increased from 20)
       if (questionIndex >= 29 || hasStableLevel([...answers, answer])) {
         submitAssessment([...answers, answer])
       }
-    }, 1500)
+    }, 1200)
   }
 
-  const hasStableLevel = (allAnswers: AssessmentAnswer[]) => {
-    // Check if user has answered 6+ at same level with 70%+ accuracy (increased from 4)
-    const levelGroups: Record<number, AssessmentAnswer[]> = {}
-    allAnswers.forEach(a => {
-      if (!levelGroups[a.hsk_level]) levelGroups[a.hsk_level] = []
-      levelGroups[a.hsk_level].push(a)
-    })
-
-    for (const level in levelGroups) {
-      const levelAnswers = levelGroups[level]
-      // Require at least 6 questions at same level for stability
-      if (levelAnswers.length >= 6) {
-        const correct = levelAnswers.filter(a => a.is_correct).length
-        const accuracy = correct / levelAnswers.length
-        if (accuracy >= 0.7) return true
-      }
+  const hasStableLevel = (all: AssessmentAnswer[]) => {
+    const groups: Record<number, AssessmentAnswer[]> = {}
+    all.forEach(a => { if (!groups[a.hsk_level]) groups[a.hsk_level] = []; groups[a.hsk_level].push(a) })
+    for (const lvl in groups) {
+      const g = groups[lvl]
+      if (g.length >= 6 && g.filter(a => a.is_correct).length / g.length >= 0.7) return true
     }
     return false
   }
 
   const submitAssessment = async (finalAnswers = answers) => {
     try {
-      const totalTime = (Date.now() - startTime) / 1000
       const result = await onboardingApi.submitAssessment({
         answers: finalAnswers,
-        total_time: totalTime
+        total_time: (Date.now() - startTime) / 1000,
       })
-
       onComplete(result.determined_level, result.xp_earned)
     } catch (error) {
       console.error('Failed to submit assessment:', error)
@@ -171,128 +119,104 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <p className="text-sm text-gray-500">Loading assessment questions…</p>
       </div>
     )
   }
 
-  if (!currentQuestion) {
-    return null
-  }
+  if (!currentQuestion) return null
 
   const progress = ((questionIndex + 1) / 30) * 100
 
   return (
-    <div className="flex flex-col items-center px-4 max-w-3xl mx-auto">
-      {/* Header with XP Counter */}
-      <div className="w-full flex justify-between items-center mb-6">
-        <div className="text-sm font-medium text-gray-600">
+    <div className="flex flex-col items-center max-w-2xl mx-auto w-full px-2">
+      {/* Header */}
+      <div className="w-full flex items-center justify-between mb-4">
+        <span className="text-sm font-medium text-gray-500">
           Question {questionIndex + 1} / ~30
-        </div>
+        </span>
         <motion.div
           key={totalXP}
-          initial={{ scale: 1.2 }}
+          initial={{ scale: 1.3 }}
           animate={{ scale: 1 }}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-400 to-primary-600 text-white rounded-full shadow-lg"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 text-white rounded-full text-sm font-bold shadow-md"
         >
-          <Award className="w-4 h-4" />
-          <span className="font-bold">{totalXP} XP</span>
+          <Award className="w-3.5 h-3.5" />
+          {totalXP} XP
         </motion.div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-8">
+      {/* Progress bar */}
+      <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mb-6">
         <motion.div
-          className="h-full bg-primary-600"
-          initial={{ width: 0 }}
+          className="h-full bg-indigo-600 rounded-full"
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.3 }}
         />
       </div>
 
-      {/* Mascot with encouragement */}
+      {/* HSK level badge */}
+      <div className="mb-4">
+        <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-semibold rounded-full border border-indigo-100">
+          HSK {currentQuestion.hsk_level}
+        </span>
+      </div>
+
+      {/* Question card */}
       <AnimatePresence mode="wait">
-        {showFeedback && (
-          <motion.div
-            key="feedback"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="mb-6"
-          >
-            <MascotCharacter
-              mood={selectedAnswer === currentQuestion.correctIndex ? "excited" : "encouraging"}
-              message={
-                selectedAnswer === currentQuestion.correctIndex
-                  ? "Perfect! +5 XP 🎉"
-                  : "Good try! Keep going! 💪"
-              }
-              size="sm"
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+        <motion.div
+          key={questionIndex}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
+          className="w-full"
+        >
+          <div className="mb-5 p-6 bg-gray-50 border border-gray-200 rounded-2xl text-center">
+            <p className="text-4xl font-bold text-gray-900 font-chinese mb-2">
+              {currentQuestion.chinese}
+            </p>
+            <p className="text-base text-gray-500">{currentQuestion.pinyin}</p>
+          </div>
 
-      {/* Question */}
-      <motion.div
-        key={questionIndex}
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full"
-      >
-        <div className="mb-6 p-6 bg-white border-2 border-gray-200 rounded-2xl shadow-sm">
-          <p className="text-sm text-gray-600 mb-2">HSK {currentQuestion.hsk_level}</p>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
-            {currentQuestion.chinese}
-          </h3>
-          <p className="text-lg text-gray-600">{currentQuestion.pinyin}</p>
-        </div>
+          <p className="text-sm text-center text-gray-500 mb-3">What does this mean?</p>
 
-        {/* Options */}
-        <div className="grid grid-cols-1 gap-3">
-          {currentQuestion.options.map((option: string, index: number) => {
-            const isSelected = selectedAnswer === index
-            const isCorrect = index === currentQuestion.correctIndex
-            const showResult = showFeedback
+          {/* Options */}
+          <div className="grid grid-cols-1 gap-2.5">
+            {currentQuestion.options.map((option: string, idx: number) => {
+              const isSelected = selectedAnswer === idx
+              const isCorrect  = idx === currentQuestion.correctIndex
 
-            let buttonClass = "w-full p-4 text-left rounded-xl border-2 transition-all font-medium "
-
-            if (showResult) {
-              if (isCorrect) {
-                buttonClass += "bg-primary-50 border-primary-500 text-primary-900"
-              } else if (isSelected && !isCorrect) {
-                buttonClass += "bg-red-50 border-red-500 text-red-900"
+              let cls = 'w-full px-4 py-3 text-left rounded-xl border-2 transition-all font-medium text-sm flex items-center justify-between '
+              if (showFeedback) {
+                if (isCorrect)            cls += 'bg-emerald-50 border-emerald-400 text-emerald-900'
+                else if (isSelected)       cls += 'bg-red-50 border-red-400 text-red-900'
+                else                       cls += 'bg-white border-gray-200 text-gray-400'
               } else {
-                buttonClass += "bg-gray-50 border-gray-200 text-gray-600"
+                cls += isSelected
+                  ? 'bg-indigo-50 border-indigo-400 text-indigo-900'
+                  : 'bg-white border-gray-200 text-gray-800 hover:border-indigo-300 hover:bg-indigo-50'
               }
-            } else {
-              buttonClass += isSelected
-                ? "bg-primary-50 border-primary-500 text-primary-900"
-                : "bg-white border-gray-200 text-gray-900 hover:border-primary-300 hover:bg-primary-50"
-            }
 
-            return (
-              <motion.button
-                key={index}
-                onClick={() => handleAnswer(index)}
-                disabled={showFeedback}
-                className={buttonClass}
-                whileHover={!showFeedback ? { scale: 1.02 } : {}}
-                whileTap={!showFeedback ? { scale: 0.98 } : {}}
-              >
-                <span className="text-lg">{option}</span>
-                {showResult && isCorrect && (
-                  <span className="ml-2 text-primary-600">✓</span>
-                )}
-                {showResult && isSelected && !isCorrect && (
-                  <span className="ml-2 text-red-600">✗</span>
-                )}
-              </motion.button>
-            )
-          })}
-        </div>
-      </motion.div>
+              return (
+                <motion.button
+                  key={idx}
+                  onClick={() => handleAnswer(idx)}
+                  disabled={showFeedback}
+                  className={cls}
+                  whileHover={!showFeedback ? { scale: 1.01 } : {}}
+                  whileTap={!showFeedback ? { scale: 0.99 } : {}}
+                >
+                  <span>{option}</span>
+                  {showFeedback && isCorrect  && <Check className="w-4 h-4 text-emerald-600 shrink-0" />}
+                  {showFeedback && isSelected && !isCorrect && <X className="w-4 h-4 text-red-500 shrink-0" />}
+                </motion.button>
+              )
+            })}
+          </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   )
 }

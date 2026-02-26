@@ -1,31 +1,42 @@
-﻿import { motion } from 'framer-motion'
-import { ChevronLeft } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ChevronLeft, Check } from 'lucide-react'
 
 interface ProgressIndicatorProps {
-  currentStep: number
-  totalSteps: number
+  currentStep: number   // internal step 2–5
   onBack?: () => void
   showBackButton?: boolean
 }
 
+const STEPS = [
+  { label: 'Goals' },
+  { label: 'Level' },
+  { label: 'Preferences' },
+]
+
+// Maps internal step numbers to visual progress (1–3)
+function getVisualStep(currentStep: number): number {
+  if (currentStep === 2) return 1
+  if (currentStep === 3 || currentStep === 4) return 2
+  if (currentStep === 5) return 3
+  return 0
+}
+
 const ProgressIndicator = ({
   currentStep,
-  totalSteps,
   onBack,
-  showBackButton = true
+  showBackButton = true,
 }: ProgressIndicatorProps) => {
-  const progress = (currentStep / totalSteps) * 100
+  const visual = getVisualStep(currentStep)
 
   return (
-    <div className="w-full">
-      {/* Header with back button and step counter */}
+    <div className="w-full max-w-lg mx-auto">
       <div className="flex items-center justify-between mb-4">
         {/* Back button */}
-        <div className="w-20">
-          {showBackButton && currentStep > 1 && onBack && (
+        <div className="w-16">
+          {showBackButton && onBack && (
             <button
               onClick={onBack}
-              className="flex items-center gap-1 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              className="flex items-center gap-1 px-2 py-1.5 text-sm text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
               Back
@@ -33,49 +44,49 @@ const ProgressIndicator = ({
           )}
         </div>
 
-        {/* Step counter */}
-        <div className="text-sm font-medium text-gray-600">
-          Step {currentStep} of {totalSteps}
+        {/* Named step pills */}
+        <div className="flex items-center gap-1.5">
+          {STEPS.map((s, idx) => {
+            const stepVisual = idx + 1
+            const isCompleted = stepVisual < visual
+            const isCurrent   = stepVisual === visual
+
+            return (
+              <div key={s.label} className="flex items-center gap-1.5">
+                <div
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${
+                    isCompleted
+                      ? 'bg-indigo-100 text-indigo-600'
+                      : isCurrent
+                      ? 'bg-indigo-600 text-white shadow-sm'
+                      : 'bg-gray-100 text-gray-400'
+                  }`}
+                >
+                  {isCompleted
+                    ? <Check className="w-3 h-3 shrink-0" />
+                    : <span className="w-3 h-3 flex items-center justify-center font-bold text-[10px]">{stepVisual}</span>
+                  }
+                  {s.label}
+                </div>
+                {idx < STEPS.length - 1 && (
+                  <div className={`h-px w-3 transition-colors ${stepVisual < visual ? 'bg-indigo-300' : 'bg-gray-200'}`} />
+                )}
+              </div>
+            )
+          })}
         </div>
 
-        {/* Spacer for balance */}
-        <div className="w-20"></div>
+        <div className="w-16" />
       </div>
 
       {/* Progress bar */}
-      <div className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
         <motion.div
-          className="absolute top-0 left-0 h-full bg-primary-600"
+          className="h-full bg-indigo-600 rounded-full"
           initial={{ width: 0 }}
-          animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          animate={{ width: `${(visual / 3) * 100}%` }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
         />
-      </div>
-
-      {/* Step dots */}
-      <div className="flex justify-between mt-2">
-        {Array.from({ length: totalSteps }).map((_, index) => {
-          const stepNumber = index + 1
-          const isCompleted = stepNumber < currentStep
-          const isCurrent = stepNumber === currentStep
-
-          return (
-            <div
-              key={stepNumber}
-              className="flex flex-col items-center"
-            >
-              <div
-                className={`w-3 h-3 rounded-full transition-all ${
-                  isCompleted
-                    ? 'bg-primary-600 scale-110'
-                    : isCurrent
-                    ? 'bg-primary-500 scale-125 ring-4 ring-primary-200'
-                    : 'bg-gray-300'
-                }`}
-              />
-            </div>
-          )
-        })}
       </div>
     </div>
   )

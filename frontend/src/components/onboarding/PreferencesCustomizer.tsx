@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import MascotCharacter from './MascotCharacter'
-import { Eye, Volume2, BookText, Bell, Clock } from 'lucide-react'
+import { Eye, Volume2, BookText, Bell, Clock, ArrowRight } from 'lucide-react'
 import type { Preferences } from '@/types'
 
 interface PreferencesCustomizerProps {
@@ -9,186 +8,155 @@ interface PreferencesCustomizerProps {
   onNext: (preferences: Preferences) => void
 }
 
+const LEARNING_STYLES = [
+  { id: 'visual',   Icon: Eye,      label: 'Visual',   desc: 'Images & characters',  color: 'text-sky-500',    bg: 'bg-sky-50',    border: 'border-sky-200' },
+  { id: 'auditory', Icon: Volume2,  label: 'Auditory', desc: 'Listening & speaking',  color: 'text-violet-500', bg: 'bg-violet-50', border: 'border-violet-200' },
+  { id: 'reading',  Icon: BookText, label: 'Reading',  desc: 'Text & stories',        color: 'text-emerald-500',bg: 'bg-emerald-50',border: 'border-emerald-200' },
+]
+
+const DIFFICULTIES = [
+  { id: 'easy',   label: 'Relaxed',   desc: 'Take it slow' },
+  { id: 'medium', label: 'Balanced',  desc: 'Steady progress' },
+  { id: 'hard',   label: 'Challenge', desc: 'Push your limits' },
+]
+
 const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustomizerProps) => {
-  const [preferences, setPreferences] = useState<Preferences>({
-    learning_style: initialPreferences?.learning_style || 'visual',
+  const [prefs, setPrefs] = useState<Preferences>({
+    learning_style:        initialPreferences?.learning_style        || 'visual',
     difficulty_preference: initialPreferences?.difficulty_preference || 'medium',
-    reminder_enabled: initialPreferences?.reminder_enabled || false,
-    reminder_time: initialPreferences?.reminder_time || '09:00',
-    show_pinyin_by_default: initialPreferences?.show_pinyin_by_default ?? true
+    reminder_enabled:      initialPreferences?.reminder_enabled      || false,
+    reminder_time:         initialPreferences?.reminder_time         || '09:00',
+    show_pinyin_by_default: initialPreferences?.show_pinyin_by_default ?? true,
   })
 
-  const handleSubmit = () => {
-    onNext(preferences)
-  }
-
-  const learningStyles = [
-    { id: 'visual', icon: <Eye className="w-6 h-6" />, label: 'Visual', description: 'Learn through images and characters' },
-    { id: 'auditory', icon: <Volume2 className="w-6 h-6" />, label: 'Auditory', description: 'Focus on listening and pronunciation' },
-    { id: 'reading', icon: <BookText className="w-6 h-6" />, label: 'Reading', description: 'Emphasis on text and stories' }
-  ]
-
-  const difficultyLevels = [
-    { id: 'easy', label: 'Relaxed', description: 'Take it slow and steady' },
-    { id: 'medium', label: 'Balanced', description: 'Steady progress' },
-    { id: 'hard', label: 'Challenge', description: 'Push your limits' }
-  ]
-
   return (
-    <div className="flex flex-col items-center px-4 max-w-4xl mx-auto">
-      {/* Mascot */}
-      <MascotCharacter
-        mood="happy"
-        message="Almost done! Let's customize your learning experience."
-        size="md"
-      />
+    <div className="flex flex-col items-center px-2 max-w-3xl mx-auto w-full">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center mb-8"
+      >
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
+          Personalize your experience
+        </h2>
+        <p className="text-gray-500 text-sm">These help us tailor content to how you learn best.</p>
+      </motion.div>
 
-      {/* Title */}
-      <h2 className="mt-8 text-2xl font-bold text-gray-900 text-center">
-        Customize Your Experience
-      </h2>
-
-      <div className="w-full space-y-8 mt-8">
-        {/* Learning Style */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="space-y-4"
-        >
-          <h3 className="text-lg font-semibold text-gray-900">Learning Style</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {learningStyles.map((style) => (
+      <div className="w-full space-y-6">
+        {/* Learning style */}
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <p className="text-sm font-semibold text-gray-700 mb-3">Learning style</p>
+          <div className="grid grid-cols-3 gap-3">
+            {LEARNING_STYLES.map(({ id, Icon, label, desc, color, bg, border }) => (
               <button
-                key={style.id}
-                onClick={() => setPreferences({ ...preferences, learning_style: style.id })}
-                className={`p-4 rounded-xl border-2 transition-all ${
-                  preferences.learning_style === style.id
-                    ? 'border-primary-500 bg-primary-50 shadow-md'
-                    : 'border-gray-200 bg-white hover:border-primary-200'
+                key={id}
+                onClick={() => setPrefs({ ...prefs, learning_style: id })}
+                className={`p-4 rounded-xl border-2 transition-all text-center ${
+                  prefs.learning_style === id
+                    ? `${bg} ${border} shadow-sm`
+                    : 'bg-white border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <div className="flex flex-col items-center text-center gap-2">
-                  <div className={`${preferences.learning_style === style.id ? 'text-primary-600' : 'text-gray-600'}`}>
-                    {style.icon}
-                  </div>
-                  <h4 className="font-semibold text-gray-900">{style.label}</h4>
-                  <p className="text-sm text-gray-600">{style.description}</p>
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2 ${prefs.learning_style === id ? bg : 'bg-gray-100'}`}>
+                  <Icon className={`w-4 h-4 ${prefs.learning_style === id ? color : 'text-gray-400'}`} />
                 </div>
+                <p className="font-semibold text-gray-900 text-sm">{label}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
               </button>
             ))}
           </div>
         </motion.div>
 
-        {/* Difficulty Preference */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="space-y-4"
-        >
-          <h3 className="text-lg font-semibold text-gray-900">Difficulty Preference</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {difficultyLevels.map((level) => (
+        {/* Difficulty */}
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <p className="text-sm font-semibold text-gray-700 mb-3">Difficulty preference</p>
+          <div className="grid grid-cols-3 gap-3">
+            {DIFFICULTIES.map(({ id, label, desc }) => (
               <button
-                key={level.id}
-                onClick={() => setPreferences({ ...preferences, difficulty_preference: level.id })}
-                className={`p-4 rounded-xl border-2 transition-all ${
-                  preferences.difficulty_preference === level.id
-                    ? 'border-primary-500 bg-primary-50 shadow-md'
-                    : 'border-gray-200 bg-white hover:border-primary-200'
+                key={id}
+                onClick={() => setPrefs({ ...prefs, difficulty_preference: id })}
+                className={`p-4 rounded-xl border-2 transition-all text-center ${
+                  prefs.difficulty_preference === id
+                    ? 'bg-indigo-50 border-indigo-300 shadow-sm'
+                    : 'bg-white border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <div className="text-center">
-                  <h4 className="font-semibold text-gray-900 mb-1">{level.label}</h4>
-                  <p className="text-sm text-gray-600">{level.description}</p>
-                </div>
+                <p className={`font-semibold text-sm ${prefs.difficulty_preference === id ? 'text-indigo-700' : 'text-gray-900'}`}>{label}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
               </button>
             ))}
           </div>
         </motion.div>
 
-        {/* Daily Reminders */}
+        {/* Toggles */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="space-y-4"
+          className="space-y-3"
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Bell className="w-5 h-5 text-gray-600" />
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">Daily Reminders</h3>
-                <p className="text-sm text-gray-600">Get notified to practice every day</p>
-              </div>
+          {/* Show pinyin */}
+          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+            <div>
+              <p className="font-semibold text-gray-900 text-sm">Show Pinyin by default</p>
+              <p className="text-xs text-gray-500">Display romanization with Chinese characters</p>
             </div>
             <button
-              onClick={() => setPreferences({ ...preferences, reminder_enabled: !preferences.reminder_enabled })}
-              className={`relative w-14 h-7 rounded-full transition-colors ${
-                preferences.reminder_enabled ? 'bg-primary-600' : 'bg-gray-300'
-              }`}
+              onClick={() => setPrefs({ ...prefs, show_pinyin_by_default: !prefs.show_pinyin_by_default })}
+              className={`relative w-12 h-6 rounded-full transition-colors shrink-0 ${prefs.show_pinyin_by_default ? 'bg-indigo-600' : 'bg-gray-300'}`}
             >
-              <div
-                className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow-md transition-transform ${
-                  preferences.reminder_enabled ? 'translate-x-7' : 'translate-x-0.5'
-                }`}
-              />
+              <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${prefs.show_pinyin_by_default ? 'translate-x-6' : 'translate-x-0.5'}`} />
             </button>
           </div>
 
-          {preferences.reminder_enabled && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              className="flex items-center gap-3 pl-8"
-            >
-              <Clock className="w-5 h-5 text-gray-600" />
-              <input
-                type="time"
-                value={preferences.reminder_time}
-                onChange={(e) => setPreferences({ ...preferences, reminder_time: e.target.value })}
-                className="px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:outline-none"
-              />
-            </motion.div>
-          )}
-        </motion.div>
+          {/* Reminders */}
+          <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Bell className="w-4 h-4 text-gray-500" />
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">Daily reminders</p>
+                  <p className="text-xs text-gray-500">Get notified to practice every day</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setPrefs({ ...prefs, reminder_enabled: !prefs.reminder_enabled })}
+                className={`relative w-12 h-6 rounded-full transition-colors shrink-0 ${prefs.reminder_enabled ? 'bg-indigo-600' : 'bg-gray-300'}`}
+              >
+                <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${prefs.reminder_enabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
+              </button>
+            </div>
 
-        {/* Show Pinyin */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="flex items-center justify-between p-4 bg-gray-50 rounded-xl"
-        >
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900">Show Pinyin by Default</h3>
-            <p className="text-sm text-gray-600">Display romanization with Chinese characters</p>
+            {prefs.reminder_enabled && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="flex items-center gap-2 pl-6"
+              >
+                <Clock className="w-4 h-4 text-gray-400" />
+                <input
+                  type="time"
+                  value={prefs.reminder_time}
+                  onChange={(e) => setPrefs({ ...prefs, reminder_time: e.target.value })}
+                  className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:border-indigo-400 focus:outline-none bg-white"
+                />
+              </motion.div>
+            )}
           </div>
-            <button
-              onClick={() => setPreferences({ ...preferences, show_pinyin_by_default: !preferences.show_pinyin_by_default })}
-              className={`relative w-14 h-7 rounded-full transition-colors ${
-              preferences.show_pinyin_by_default ? 'bg-primary-600' : 'bg-gray-300'
-            }`}
-          >
-            <div
-              className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow-md transition-transform ${
-                preferences.show_pinyin_by_default ? 'translate-x-7' : 'translate-x-0.5'
-              }`}
-            />
-          </button>
         </motion.div>
       </div>
 
-      {/* Continue Button */}
+      {/* Complete button */}
       <motion.button
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        onClick={handleSubmit}
-        className="mt-12 btn-primary text-lg px-12 py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+        transition={{ delay: 0.4 }}
+        onClick={() => onNext(prefs)}
+        className="mt-8 inline-flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/20 transition-colors"
       >
         Complete Setup
+        <ArrowRight className="w-4 h-4" />
       </motion.button>
     </div>
   )

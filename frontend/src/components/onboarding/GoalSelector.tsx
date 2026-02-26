@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import MascotCharacter from './MascotCharacter'
-import { Clock, BookMarked, Trophy, Calendar } from 'lucide-react'
+import { Clock, BookMarked, Trophy, Zap, ArrowRight } from 'lucide-react'
 import type { Goals } from '@/types'
 
 interface GoalSelectorProps {
@@ -14,202 +13,172 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
     daily_time_minutes: initialGoals?.daily_time_minutes || 15,
     daily_words: initialGoals?.daily_words || 10,
     target_hsk_level: initialGoals?.target_hsk_level || 3,
-    weekly_xp: initialGoals?.weekly_xp || 300
+    weekly_xp: initialGoals?.weekly_xp || 300,
   })
 
-  const handleSubmit = () => {
-    onNext(goals)
+  const LEVEL_LABELS: Record<number, string> = {
+    1: 'Beginner',
+    2: 'Elementary',
+    3: 'Intermediate',
+    4: 'Upper-Int.',
+    5: 'Advanced',
+    6: 'Mastery',
+  }
+
+  const XP_LABELS: Record<number, string> = {
+    100: 'Casual · ~15 min/day',
+    300: 'Regular · ~30 min/day',
+    500: 'Dedicated · ~1 hr/day',
+    1000: 'Intensive · ~2 hr/day',
   }
 
   return (
-    <div className="flex flex-col items-center px-4 max-w-4xl mx-auto">
-      {/* Mascot */}
-      <MascotCharacter
-        mood="thoughtful"
-        message="Let's set some goals to keep you motivated! You can always change these later."
-        size="md"
-      />
-
-      {/* Title */}
-      <h2 className="mt-8 text-2xl font-bold text-gray-900 text-center">
-        What are your learning goals?
-      </h2>
+    <div className="flex flex-col items-center px-2 max-w-3xl mx-auto w-full">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center mb-8"
+      >
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
+          Set your learning goals
+        </h2>
+        <p className="text-gray-500 text-sm">You can change these anytime in your profile.</p>
+      </motion.div>
 
       {/* Goal Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 w-full">
-        {/* Daily Time Goal */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+
+        {/* Daily Time */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="p-6 bg-white border-2 border-gray-200 rounded-2xl shadow-sm hover:border-primary-300 transition-colors"
+          className="p-5 bg-white border border-gray-200 rounded-2xl shadow-sm"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="flex items-center justify-center w-10 h-10 bg-primary-100 rounded-full">
-              <Clock className="w-5 h-5 text-primary-600" />
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-9 h-9 bg-sky-50 rounded-xl flex items-center justify-center">
+              <Clock className="w-4.5 h-4.5 text-sky-500" />
             </div>
-            <h3 className="font-semibold text-gray-900">Daily Practice Time</h3>
+            <span className="font-semibold text-gray-900 text-sm">Daily Practice Time</span>
           </div>
-
           <input
-            type="range"
-            min="5"
-            max="60"
-            step="5"
+            type="range" min="5" max="60" step="5"
             value={goals.daily_time_minutes}
-            onChange={(e) =>
-              setGoals({ ...goals, daily_time_minutes: parseInt(e.target.value) })
-            }
-            className="w-full h-2 bg-primary-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
+            onChange={(e) => setGoals({ ...goals, daily_time_minutes: parseInt(e.target.value) })}
+            className="w-full h-1.5 accent-indigo-600 rounded-full cursor-pointer"
           />
-
           <div className="mt-3 text-center">
-            <span className="text-3xl font-bold text-primary-600">
-              {goals.daily_time_minutes}
-            </span>
-            <span className="ml-2 text-gray-600">minutes/day</span>
+            <span className="text-2xl font-extrabold text-indigo-600">{goals.daily_time_minutes}</span>
+            <span className="ml-1.5 text-sm text-gray-500">min / day</span>
           </div>
         </motion.div>
 
-        {/* Daily Words Goal */}
+        {/* Daily Words */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="p-6 bg-white border-2 border-gray-200 rounded-2xl shadow-sm hover:border-primary-300 transition-colors"
+          transition={{ delay: 0.15 }}
+          className="p-5 bg-white border border-gray-200 rounded-2xl shadow-sm"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="flex items-center justify-center w-10 h-10 bg-primary-100 rounded-full">
-              <BookMarked className="w-5 h-5 text-primary-600" />
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-9 h-9 bg-violet-50 rounded-xl flex items-center justify-center">
+              <BookMarked className="w-4.5 h-4.5 text-violet-500" />
             </div>
-            <h3 className="font-semibold text-gray-900">New Words Daily</h3>
+            <span className="font-semibold text-gray-900 text-sm">New Words Daily</span>
           </div>
-
           <input
-            type="range"
-            min="5"
-            max="50"
-            step="5"
+            type="range" min="5" max="50" step="5"
             value={goals.daily_words}
-            onChange={(e) =>
-              setGoals({ ...goals, daily_words: parseInt(e.target.value) })
-            }
-            className="w-full h-2 bg-primary-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
+            onChange={(e) => setGoals({ ...goals, daily_words: parseInt(e.target.value) })}
+            className="w-full h-1.5 accent-indigo-600 rounded-full cursor-pointer"
           />
-
           <div className="mt-3 text-center">
-            <span className="text-3xl font-bold text-primary-600">
-              {goals.daily_words}
-            </span>
-            <span className="ml-2 text-gray-600">words/day</span>
+            <span className="text-2xl font-extrabold text-indigo-600">{goals.daily_words}</span>
+            <span className="ml-1.5 text-sm text-gray-500">words / day</span>
           </div>
         </motion.div>
 
         {/* Target HSK Level */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="p-6 bg-white border-2 border-gray-200 rounded-2xl shadow-sm hover:border-primary-300 transition-colors"
+          transition={{ delay: 0.2 }}
+          className="p-5 bg-white border border-gray-200 rounded-2xl shadow-sm"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="flex items-center justify-center w-10 h-10 bg-primary-100 rounded-full">
-              <Trophy className="w-5 h-5 text-primary-600" />
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center">
+              <Trophy className="w-4.5 h-4.5 text-amber-500" />
             </div>
-            <h3 className="font-semibold text-gray-900">Target HSK Level</h3>
+            <span className="font-semibold text-gray-900 text-sm">Target HSK Level</span>
           </div>
-
-          <div className="flex gap-2 mt-4">
+          <div className="flex gap-1.5">
             {[1, 2, 3, 4, 5, 6].map((level) => (
               <button
                 key={level}
                 onClick={() => setGoals({ ...goals, target_hsk_level: level })}
-                className={`flex-1 py-3 rounded-lg font-semibold transition-all ${
+                className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${
                   goals.target_hsk_level === level
-                    ? 'bg-primary-600 text-white scale-110 shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-indigo-600 text-white shadow-md scale-105'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
                 {level}
               </button>
             ))}
           </div>
-
-          <p className="mt-3 text-sm text-center text-gray-600">
-            HSK {goals.target_hsk_level} - {getLevelDescription(goals.target_hsk_level || 3)}
+          <p className="mt-2 text-xs text-center text-gray-400">
+            HSK {goals.target_hsk_level} — {LEVEL_LABELS[goals.target_hsk_level || 3]}
           </p>
         </motion.div>
 
-        {/* Weekly XP Goal */}
+        {/* Weekly XP Target */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="p-6 bg-white border-2 border-gray-200 rounded-2xl shadow-sm hover:border-primary-300 transition-colors"
+          transition={{ delay: 0.25 }}
+          className="p-5 bg-white border border-gray-200 rounded-2xl shadow-sm"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="flex items-center justify-center w-10 h-10 bg-primary-100 rounded-full">
-              <Calendar className="w-5 h-5 text-primary-600" />
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center">
+              <Zap className="w-4.5 h-4.5 text-emerald-500" />
             </div>
-            <h3 className="font-semibold text-gray-900">Weekly XP Target</h3>
+            <span className="font-semibold text-gray-900 text-sm">Weekly XP Target</span>
           </div>
-
-          <div className="flex gap-2 mt-4">
+          <div className="flex gap-1.5">
             {[100, 300, 500, 1000].map((xp) => (
               <button
                 key={xp}
                 onClick={() => setGoals({ ...goals, weekly_xp: xp })}
-                className={`flex-1 py-3 rounded-lg font-semibold transition-all ${
+                className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
                   goals.weekly_xp === xp
-                    ? 'bg-primary-600 text-white scale-105 shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-indigo-600 text-white shadow-md scale-105'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
                 {xp}
               </button>
             ))}
           </div>
-
-          <p className="mt-3 text-sm text-center text-gray-600">
-            {getXPDescription(goals.weekly_xp || 300)}
+          <p className="mt-2 text-xs text-center text-gray-400">
+            {XP_LABELS[goals.weekly_xp || 300]}
           </p>
         </motion.div>
       </div>
 
-      {/* Continue Button */}
+      {/* Continue */}
       <motion.button
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        onClick={handleSubmit}
-        className="mt-12 btn-primary text-lg px-12 py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+        transition={{ delay: 0.35 }}
+        onClick={() => onNext(goals)}
+        className="mt-8 inline-flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/20 transition-colors"
       >
         Continue
+        <ArrowRight className="w-4 h-4" />
       </motion.button>
     </div>
   )
-}
-
-function getLevelDescription(level: number): string {
-  const descriptions: Record<number, string> = {
-    1: 'Beginner (150 words)',
-    2: 'Elementary (300 words)',
-    3: 'Intermediate (600 words)',
-    4: 'Upper Intermediate (1200 words)',
-    5: 'Advanced (2500 words)',
-    6: 'Mastery (5000+ words)'
-  }
-  return descriptions[level] || ''
-}
-
-function getXPDescription(xp: number): string {
-  const descriptions: Record<number, string> = {
-    100: 'Casual learner - ~15 min/day',
-    300: 'Regular practice - ~30 min/day',
-    500: 'Dedicated student - ~1 hour/day',
-    1000: 'Intensive learning - ~2 hours/day'
-  }
-  return descriptions[xp] || ''
 }
 
 export default GoalSelector

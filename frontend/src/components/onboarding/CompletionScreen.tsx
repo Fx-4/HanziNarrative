@@ -1,7 +1,6 @@
-﻿import { motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import Confetti from 'react-confetti'
-import MascotCharacter from './MascotCharacter'
-import { Trophy, Target, Award, TrendingUp } from 'lucide-react'
+import { Trophy, Target, Award, TrendingUp, ArrowRight, Check } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 interface CompletionScreenProps {
@@ -19,128 +18,107 @@ const CompletionScreen = ({
   currentLevel,
   leveledUp,
   achievementUnlocked,
-  initialWordsCount
+  initialWordsCount,
 }: CompletionScreenProps) => {
   const navigate = useNavigate()
 
-  const handleStart = () => {
-    navigate('/dashboard')
-  }
+  const STATS = [
+    { Icon: Trophy,    label: 'Starting Level', value: `HSK ${determinedLevel}`,    bg: 'bg-indigo-600' },
+    { Icon: Award,     label: 'XP Earned',       value: `${xpEarned} XP`,            bg: 'bg-violet-600', note: achievementUnlocked ? 'Achievement unlocked!' : undefined },
+    { Icon: TrendingUp,label: 'Player Level',    value: `Level ${currentLevel}`,     bg: 'bg-indigo-500', note: leveledUp ? 'Level Up!' : undefined },
+    { Icon: Target,    label: 'Words Ready',     value: `${initialWordsCount}`,      bg: 'bg-indigo-700', note: 'to learn' },
+  ]
+
+  const NEXT_STEPS = [
+    `Start learning ${initialWordsCount} words at HSK ${determinedLevel}`,
+    'Track progress on your dashboard',
+    'Earn XP and unlock achievements',
+    'Practice with exercises and AI stories',
+  ]
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-[600px] px-4">
-      {/* Confetti */}
+    <div className="relative flex flex-col items-center justify-center py-8 px-4 text-center">
       <Confetti
         width={window.innerWidth}
         height={window.innerHeight}
         recycle={false}
-        numberOfPieces={500}
-        gravity={0.3}
+        numberOfPieces={400}
+        gravity={0.25}
       />
 
-      {/* Mascot */}
+      {/* Hero badge */}
       <motion.div
-        initial={{ scale: 0, rotate: -180 }}
-        animate={{ scale: 1, rotate: 0 }}
-        transition={{ type: "spring", duration: 1 }}
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: 'spring', duration: 0.8 }}
+        className="w-24 h-24 rounded-3xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mb-6 shadow-2xl shadow-indigo-500/30"
       >
-        <MascotCharacter
-          mood="celebrating"
-          message="🎉 Congratulations! You're all set to start your Chinese learning journey!"
-          size="lg"
-        />
+        <span className="text-white text-5xl font-bold font-chinese">学</span>
       </motion.div>
 
-      {/* Title */}
       <motion.h1
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="mt-8 text-4xl font-bold text-gray-900 text-center"
+        transition={{ delay: 0.2 }}
+        className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-3"
       >
-        You're All Set!
+        You're all set!
       </motion.h1>
 
-      {/* Stats Cards */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.5 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-12 w-full max-w-4xl"
+      <motion.p
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="text-gray-500 text-lg mb-10"
       >
-        {/* Starting Level */}
-        <div className="p-6 bg-primary-600 rounded-2xl shadow-lg text-white">
-          <Trophy className="w-8 h-8 mb-3" />
-          <p className="text-sm opacity-90 mb-1">Starting Level</p>
-          <p className="text-3xl font-bold">HSK {determinedLevel}</p>
-        </div>
+        Your Chinese learning journey begins now.
+      </motion.p>
 
-        {/* XP Earned */}
-        <div className="p-6 bg-primary-500 rounded-2xl shadow-lg text-white">
-          <Award className="w-8 h-8 mb-3" />
-          <p className="text-sm opacity-90 mb-1">XP Earned</p>
-          <p className="text-3xl font-bold">{xpEarned}</p>
-          {achievementUnlocked && (
-            <p className="text-xs mt-1 opacity-90">+ Achievement!</p>
-          )}
-        </div>
-
-        {/* Current Level */}
-        <div className="p-6 bg-primary-700 rounded-2xl shadow-lg text-white">
-          <TrendingUp className="w-8 h-8 mb-3" />
-          <p className="text-sm opacity-90 mb-1">Your Level</p>
-          <p className="text-3xl font-bold">Level {currentLevel}</p>
-          {leveledUp && (
-            <p className="text-xs mt-1 opacity-90">Level Up! 🎉</p>
-          )}
-        </div>
-
-        {/* Words Ready */}
-        <div className="p-6 bg-primary-800 rounded-2xl shadow-lg text-white">
-          <Target className="w-8 h-8 mb-3" />
-          <p className="text-sm opacity-90 mb-1">Words Ready</p>
-          <p className="text-3xl font-bold">{initialWordsCount}</p>
-          <p className="text-xs mt-1 opacity-90">to learn</p>
-        </div>
+      {/* Stats */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.4 }}
+        className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-2xl mb-8"
+      >
+        {STATS.map(({ Icon, label, value, bg, note }) => (
+          <div key={label} className={`${bg} rounded-2xl p-4 text-white shadow-lg`}>
+            <Icon className="w-6 h-6 mb-2 opacity-80" />
+            <p className="text-xs opacity-75 mb-1">{label}</p>
+            <p className="text-xl font-extrabold">{value}</p>
+            {note && <p className="text-xs mt-1 opacity-75">{note}</p>}
+          </div>
+        ))}
       </motion.div>
 
-      {/* Summary Box */}
+      {/* What's next */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7 }}
-        className="mt-8 p-6 bg-white border-2 border-gray-200 rounded-2xl shadow-sm max-w-2xl w-full"
+        transition={{ delay: 0.5 }}
+        className="w-full max-w-md text-left bg-gray-50 border border-gray-200 rounded-2xl p-5 mb-8"
       >
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">What's Next?</h3>
-        <ul className="space-y-2 text-gray-700">
-          <li className="flex items-start gap-2">
-            <span className="text-primary-600 mt-1">✓</span>
-            <span>Start learning with {initialWordsCount} words at HSK {determinedLevel}</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-primary-600 mt-1">✓</span>
-            <span>Track your progress on the dashboard</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-primary-600 mt-1">✓</span>
-            <span>Earn XP and unlock achievements</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-primary-600 mt-1">✓</span>
-            <span>Practice with interactive exercises and stories</span>
-          </li>
+        <p className="font-semibold text-gray-900 text-sm mb-3">What's next?</p>
+        <ul className="space-y-2">
+          {NEXT_STEPS.map(step => (
+            <li key={step} className="flex items-start gap-2 text-sm text-gray-600">
+              <Check className="w-4 h-4 text-indigo-500 shrink-0 mt-0.5" />
+              {step}
+            </li>
+          ))}
         </ul>
       </motion.div>
 
-      {/* CTA Button */}
+      {/* CTA */}
       <motion.button
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.9 }}
-        onClick={handleStart}
-        className="mt-12 btn-primary text-xl px-16 py-5 rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all"
+        transition={{ delay: 0.6 }}
+        onClick={() => navigate('/dashboard')}
+        className="inline-flex items-center gap-2 px-10 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-xl shadow-indigo-500/25 transition-colors text-base"
       >
-        Start Learning Now! 🚀
+        Start Learning Now
+        <ArrowRight className="w-4 h-4" />
       </motion.button>
     </div>
   )
