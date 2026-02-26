@@ -1,10 +1,18 @@
 import os
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import auth, stories, vocabulary, progress, vocabulary_sets, exercises, learning, writing, quiz, gamification, onboarding, typing
 from .database import engine, Base
 
-Base.metadata.create_all(bind=engine)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+try:
+    Base.metadata.create_all(bind=engine)
+    logger.info("Database tables created/verified successfully")
+except Exception as e:
+    logger.warning(f"Could not create tables on startup (will retry on first request): {e}")
 
 app = FastAPI(
     title="HanziNarrative API",
@@ -46,10 +54,9 @@ def root():
         "redoc": "/redoc"
     }
 
-
 @app.get("/health")
-def health_check():
-    return {"status": "healthy"}
+def health():
+    return {"status": "ok"}
 
 
 @app.get("/debug/routes")
