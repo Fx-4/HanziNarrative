@@ -77,6 +77,14 @@ Thumbs.db
 *.bak
 *.tmp
 
+# Google Cloud credentials
+google-credentials.json
+*-credentials.json
+*.json.key
+
+# TTS audio cache
+tts_cache/
+
 # Claude Code temp files (auto-generated, safe to ignore)
 tmpclaude-*-cwd
 nul

@@ -21,9 +21,9 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 export function useTTS(options: UseTTSOptions = {}): UseTTSReturn {
   const {
-    language = 'zh-CN',
+    language = 'cmn-CN',
     rate = 1.0,
-    voiceName = 'zh-CN-Wavenet-A',
+    voiceName = 'cmn-CN-Chirp3-HD-Aoede',
   } = options
 
   const [isSpeaking, setIsSpeaking] = useState(false)
@@ -42,7 +42,7 @@ export function useTTS(options: UseTTSOptions = {}): UseTTSReturn {
     if (!('speechSynthesis' in window)) return
     window.speechSynthesis.cancel()
     const utterance = new SpeechSynthesisUtterance(text)
-    utterance.lang = language
+    utterance.lang = 'zh-CN'
     utterance.rate = rate
     utterance.onstart = () => setIsSpeaking(true)
     utterance.onend = () => setIsSpeaking(false)
