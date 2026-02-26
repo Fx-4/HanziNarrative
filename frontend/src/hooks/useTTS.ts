@@ -1,11 +1,13 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { toast } from 'react-hot-toast'
+import axios from 'axios'
 
 interface UseTTSOptions {
   language?: string
   rate?: number
   pitch?: number
   volume?: number
+  voiceName?: string
 }
 
 interface UseTTSReturn {
@@ -15,62 +17,85 @@ interface UseTTSReturn {
   isSupported: boolean
 }
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
 export function useTTS(options: UseTTSOptions = {}): UseTTSReturn {
   const {
     language = 'zh-CN',
     rate = 1.0,
-    pitch = 1.0,
-    volume = 1.0,
+    voiceName = 'zh-CN-Wavenet-A',
   } = options
 
   const [isSpeaking, setIsSpeaking] = useState(false)
-
-  // Check browser support
-  const isSupported = typeof window !== 'undefined' &&
-    ('speechSynthesis' in window || 'webkitSpeechSynthesis' in window)
-
-  const speak = useCallback((text: string) => {
-    if (!isSupported) {
-      toast.error('Text-to-Speech is not supported in your browser')
-      return
-    }
-
-    if (!text || text.trim() === '') {
-      return
-    }
-
-    // Stop any ongoing speech
-    window.speechSynthesis.cancel()
-
-    try {
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.lang = language
-      utterance.rate = rate
-      utterance.pitch = pitch
-      utterance.volume = volume
-
-      utterance.onstart = () => setIsSpeaking(true)
-      utterance.onend = () => setIsSpeaking(false)
-      utterance.onerror = (event) => {
-        console.error('Speech synthesis error:', event.error)
-        setIsSpeaking(false)
-        toast.error(`TTS Error: ${event.error}`)
-      }
-
-      window.speechSynthesis.speak(utterance)
-    } catch (error) {
-      console.error('Failed to initialize speech synthesis:', error)
-      toast.error('Failed to play audio')
-      setIsSpeaking(false)
-    }
-  }, [isSupported, language, rate, pitch, volume])
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const isSupported = true
 
   const stop = useCallback(() => {
-    if (isSupported) {
-      window.speechSynthesis.cancel()
-      setIsSpeaking(false)
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
     }
-  }, [isSupported])
+    setIsSpeaking(false)
+  }, [])
+
+  const speakFallback = useCallback((text: string) => {
+    if (!('speechSynthesis' in window)) return
+    window.speechSynthesis.cancel()
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.lang = language
+    utterance.rate = rate
+    utterance.onstart = () => setIsSpeaking(true)
+    utterance.onend = () => setIsSpeaking(false)
+    utterance.onerror = () => setIsSpeaking(false)
+    window.speechSynthesis.speak(utterance)
+  }, [language, rate])
+
+  const speak = useCallback(async (text: string) => {
+    if (!text || !text.trim()) return
+
+    stop()
+
+    const token = localStorage.getItem('access_token')
+    if (!token) {
+      speakFallback(text)
+      return
+    }
+
+    setIsSpeaking(true)
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/tts/synthesize`,
+        { text, language, voice_name: voiceName, speaking_rate: rate },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          responseType: 'blob',
+        }
+      )
+
+      const audioBlob = new Blob([response.data], { type: 'audio/mpeg' })
+      const audioUrl = URL.createObjectURL(audioBlob)
+
+      const audio = new Audio(audioUrl)
+      audioRef.current = audio
+
+      audio.onended = () => {
+        setIsSpeaking(false)
+        URL.revokeObjectURL(audioUrl)
+      }
+      audio.onerror = () => {
+        setIsSpeaking(false)
+        URL.revokeObjectURL(audioUrl)
+      }
+
+      await audio.play()
+    } catch (error) {
+      console.error('Google TTS failed, falling back to browser TTS:', error)
+      setIsSpeaking(false)
+      speakFallback(text)
+      toast.error('Google TTS unavailable, using browser voice')
+    }
+  }, [language, rate, voiceName, stop, speakFallback])
 
   return { speak, stop, isSpeaking, isSupported }
 }
