@@ -27,6 +27,8 @@ class User(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
+    full_name = Column(String, nullable=True)
+    profile_picture = Column(String, nullable=True)  # URL or base64 data URI
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     stories = relationship("Story", back_populates="author")
@@ -47,6 +49,7 @@ class HanziWord(Base):
     radical = Column(String, nullable=True)
     strokes = Column(Integer, nullable=True)
     image_url = Column(String, nullable=True)
+    evolution_history = Column(Text, nullable=True)  # Character evolution from oracle bone script to modern
 
     stories = relationship("Story", secondary=story_words, back_populates="words")
     progress = relationship("UserProgress", back_populates="word")
@@ -58,7 +61,9 @@ class Story(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
+    title_english = Column(String, nullable=True)
     content = Column(Text, nullable=False)
+    content_pinyin = Column(Text, nullable=True)  # Context-aware pinyin from AI
     english_translation = Column(Text, nullable=True)
     hsk_level = Column(Integer, index=True, nullable=False)
     author_id = Column(Integer, ForeignKey("users.id"), nullable=False)
@@ -91,6 +96,34 @@ class UserProgress(Base):
 
     user = relationship("User", back_populates="progress")
     word = relationship("HanziWord", back_populates="progress")
+
+
+class UserGamification(Base):
+    __tablename__ = "user_gamification"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, unique=True)
+
+    # XP and Levels
+    total_xp = Column(Integer, default=0)
+    level = Column(Integer, default=1)
+    xp_to_next_level = Column(Integer, default=100)
+
+    # Streaks
+    current_streak = Column(Integer, default=0)
+    longest_streak = Column(Integer, default=0)
+    last_activity_date = Column(DateTime(timezone=True), nullable=True)
+
+    # Stats
+    total_words_reviewed = Column(Integer, default=0)
+    total_correct_answers = Column(Integer, default=0)
+    total_stories_read = Column(Integer, default=0)
+
+    # Achievements (JSON array of achievement IDs)
+    achievements = Column(JSON, default=list)
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
 
 class VocabularySet(Base):
@@ -129,6 +162,41 @@ class WritingProgress(Base):
     word = relationship("HanziWord")
 
 
+class TypingProgress(Base):
+    __tablename__ = "typing_progress"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    word_id = Column(Integer, ForeignKey("hanzi_words.id"), nullable=False)
+    mode = Column(String, nullable=False)  # 'pinyin', 'ime', 'speed'
+
+    # Common metrics
+    total_attempts = Column(Integer, default=0)
+    successful_attempts = Column(Integer, default=0)
+    accuracy_score = Column(Float, default=0.0)  # 0-100
+
+    # Mode-specific metrics
+    pinyin_accuracy = Column(Float, default=0.0)  # Tone accuracy for pinyin mode
+    tone_mistakes = Column(JSON, nullable=True)  # Track which tones are difficult
+    best_wpm = Column(Float, default=0.0)  # Best words per minute for speed mode
+    average_wpm = Column(Float, default=0.0)  # Average WPM
+    average_time_per_char = Column(Float, default=0.0)  # Milliseconds per character
+    ime_selection_accuracy = Column(Float, default=0.0)  # Correct on first try
+    ime_average_attempts = Column(Float, default=0.0)  # How many candidates tried
+
+    # General tracking
+    mastery_level = Column(Integer, default=0)  # 0-10 scale
+    last_practiced = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    __table_args__ = (
+        UniqueConstraint('user_id', 'word_id', 'mode', name='unique_user_word_typing_mode'),
+    )
+
+    user = relationship("User")
+    word = relationship("HanziWord")
+
+
 class AIUsage(Base):
     __tablename__ = "ai_usage"
 
@@ -140,3 +208,64 @@ class AIUsage(Base):
     request_data = Column(JSON, nullable=True)  # Store request details for debugging
 
     user = relationship("User")
+
+
+class QuizResult(Base):
+    __tablename__ = "quiz_results"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    quiz_type = Column(String, nullable=False)  # 'multiple_choice', 'fill_blank', 'character_match'
+    hsk_level = Column(Integer, nullable=False)
+    score = Column(Integer, nullable=False)
+    total_questions = Column(Integer, nullable=False)
+    percentage = Column(Float, nullable=False)
+    time_spent = Column(Integer, nullable=True)  # seconds
+    answers = Column(JSON, nullable=True)  # Store user answers for analysis
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User")
+
+
+class UserOnboarding(Base):
+    __tablename__ = "user_onboarding"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, unique=True)
+
+    # Onboarding status
+    onboarding_completed = Column(Boolean, default=False)
+    current_step = Column(Integer, default=0)  # For resuming mid-onboarding
+    completed_at = Column(DateTime(timezone=True), nullable=True)
+
+    # Initial assessment
+    took_assessment = Column(Boolean, default=False)
+    assessment_score = Column(Float, nullable=True)  # Percentage
+    assessment_questions_answered = Column(Integer, default=0)
+    assessment_correct_answers = Column(Integer, default=0)
+    determined_hsk_level = Column(Integer, default=1)  # 1-6
+
+    # Goals (stored as JSON for flexibility)
+    goals = Column(JSON, nullable=True)
+    # Example: {
+    #   "daily_time_minutes": 15,
+    #   "daily_words": 10,
+    #   "target_hsk_level": 3,
+    #   "target_date": "2024-12-31",
+    #   "weekly_xp": 500
+    # }
+
+    # Preferences
+    preferences = Column(JSON, nullable=True)
+    # Example: {
+    #   "learning_style": "visual/auditory/reading",
+    #   "difficulty_preference": "easy/medium/hard",
+    #   "reminder_enabled": true,
+    #   "reminder_time": "09:00",
+    #   "show_pinyin_by_default": true
+    # }
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    user = relationship("User", backref="onboarding")

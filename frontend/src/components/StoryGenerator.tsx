@@ -10,6 +10,7 @@ import { Sparkles, AlertCircle, BookOpen, GraduationCap, Users, AlignLeft, Eye }
 
 interface GeneratedStory {
   title: string
+  title_english?: string
   content: string
   pinyin?: string
   hsk_level: number
@@ -80,16 +81,24 @@ export default function StoryGenerator() {
     try {
       const stats = await storiesApi.getAIUsageStats()
       setUsageStats(stats)
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to load usage stats:', err)
+      // Set default stats structure on error
+      setUsageStats({
+        story_generation: {
+          used_today: 0,
+          limit_daily: 5,
+          used_this_hour: 0,
+          limit_hourly: 2
+        }
+      })
     }
   }
 
-  // Load usage stats on component mount (disabled to prevent 422 errors on not logged in)
-  // Users can manually click "Refresh Usage Stats" button instead
-  // useEffect(() => {
-  //   loadUsageStats()
-  // }, [])
+  // Load usage stats on component mount
+  useEffect(() => {
+    loadUsageStats()
+  }, [])
 
   return (
     <div className="space-y-6">
@@ -107,20 +116,40 @@ export default function StoryGenerator() {
               <p className="text-sm text-gray-600 mb-3">
                 Generate personalized Chinese stories tailored to your HSK level using AI
               </p>
-              {usageStats?.story_generation && (
-                <div className="flex gap-4 text-sm">
-                  <div>
-                    <span className="text-gray-600">Today: </span>
-                    <span className="font-semibold text-primary-600">
-                      {usageStats.story_generation.used_today}/{usageStats.story_generation.limit_daily}
-                    </span>
+              {usageStats?.story_generation ? (
+                <div className="space-y-2">
+                  <div className="flex gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-600">Daily Limit: </span>
+                      <span className={`font-semibold ${
+                        usageStats.story_generation.used_today >= usageStats.story_generation.limit_daily
+                          ? 'text-red-600'
+                          : 'text-primary-600'
+                      }`}>
+                        {usageStats.story_generation.used_today}/{usageStats.story_generation.limit_daily}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Hourly Limit: </span>
+                      <span className={`font-semibold ${
+                        usageStats.story_generation.used_this_hour >= usageStats.story_generation.limit_hourly
+                          ? 'text-red-600'
+                          : 'text-primary-600'
+                      }`}>
+                        {usageStats.story_generation.used_this_hour}/{usageStats.story_generation.limit_hourly}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-gray-600">This Hour: </span>
-                    <span className="font-semibold text-primary-600">
-                      {usageStats.story_generation.used_this_hour}/{usageStats.story_generation.limit_hourly}
-                    </span>
-                  </div>
+                  {(usageStats.story_generation.used_today >= usageStats.story_generation.limit_daily ||
+                    usageStats.story_generation.used_this_hour >= usageStats.story_generation.limit_hourly) && (
+                    <div className="text-xs text-red-600 font-medium">
+                      ⚠️ You've reached your AI generation limit. Please try again later.
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-sm text-gray-600">
+                  Loading usage stats...
                 </div>
               )}
               <Button
@@ -197,7 +226,7 @@ export default function StoryGenerator() {
                 placeholder="e.g., , �=, N (comma separated)"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-600 mt-1">
                 Separate multiple names with commas
               </p>
             </div>
@@ -275,9 +304,14 @@ export default function StoryGenerator() {
           <Card className="bg-gradient-to-br from-primary-50 to-purple-50">
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                <h2 className="text-2xl font-bold text-gray-900 mb-1">
                   {generatedStory.title}
                 </h2>
+                {generatedStory.title_english && (
+                  <p className="text-lg text-gray-600 mb-2 italic">
+                    {generatedStory.title_english}
+                  </p>
+                )}
                 <p className="text-sm text-green-700 font-medium">
                   Story saved successfully! You can now find it in Browse Stories.
                 </p>

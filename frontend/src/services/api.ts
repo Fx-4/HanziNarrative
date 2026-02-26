@@ -1,4 +1,4 @@
-import axios from 'axios'
+﻿import axios from 'axios'
 import type {
   User,
   Story,
@@ -8,10 +8,22 @@ import type {
   LoginCredentials,
   RegisterData,
   AuthTokens,
+  UserUpdate,
   WritingProgress,
   WritingAttempt,
-  WritingStats
+  WritingStats,
+  TypingProgress,
+  TypingAttempt,
+  TypingStats,
+  OnboardingStatus,
+  AssessmentQuestionsResponse,
+  AssessmentSubmission,
+  AssessmentResult,
+  Goals,
+  OnboardingCompleteRequest,
+  OnboardingCompleteResponse,
 } from '@/types'
+import { apiLogger } from '@/utils/debugLogger'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -27,8 +39,40 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+  apiLogger.debug(`→ ${config.method?.toUpperCase()} ${config.url}`, config.params ?? undefined)
   return config
 })
+
+// Response interceptor to handle errors globally with detailed logging
+api.interceptors.response.use(
+  (response) => {
+    apiLogger.debug(`← ${response.status} ${response.config.url}`)
+    return response
+  },
+  (error) => {
+    const status = error.response?.status
+    const url = error.config?.url ?? 'unknown'
+    const method = error.config?.method?.toUpperCase() ?? '?'
+    const detail = error.response?.data?.detail ?? error.message
+
+    if (status === 401) {
+      apiLogger.warn(`← 401 ${method} ${url} — session expired, redirecting to login`)
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('user')
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = '/login'
+      }
+    } else if (status === 422) {
+      apiLogger.warn(`← 422 ${method} ${url} — validation error`, error.response?.data)
+    } else if (status >= 500) {
+      apiLogger.error(`← ${status} ${method} ${url} — server error: ${detail}`, error.response?.data)
+    } else {
+      apiLogger.warn(`← ${status ?? 'ERR'} ${method} ${url} — ${detail}`)
+    }
+
+    return Promise.reject(error)
+  }
+)
 
 export const authApi = {
   login: async (credentials: LoginCredentials): Promise<AuthTokens> => {
@@ -48,6 +92,11 @@ export const authApi = {
 
   getCurrentUser: async (): Promise<User> => {
     const response = await api.get('/auth/me')
+    return response.data
+  },
+
+  updateProfile: async (data: UserUpdate): Promise<User> => {
+    const response = await api.put('/auth/me', data)
     return response.data
   },
 }
@@ -88,6 +137,34 @@ export const storiesApi = {
     const response = await api.get('/stories/ai-usage-stats')
     return response.data
   },
+
+  delete: async (id: number): Promise<void> => {
+    await api.delete(`/stories/${id}`)
+  },
+
+  getStoryQuiz: async (storyId: number) => {
+    const response = await api.get(`/stories/${storyId}/quiz`)
+    return response.data
+  },
+
+  bookmarkStory: async (storyId: number) => {
+    const response = await api.post(`/stories/${storyId}/bookmark`)
+    return response.data
+  },
+
+  unbookmarkStory: async (storyId: number) => {
+    await api.delete(`/stories/${storyId}/bookmark`)
+  },
+
+  getMyBookmarks: async (): Promise<Story[]> => {
+    const response = await api.get('/stories/bookmarks/my-bookmarks')
+    return response.data
+  },
+
+  isBookmarked: async (storyId: number): Promise<{ is_bookmarked: boolean }> => {
+    const response = await api.get(`/stories/${storyId}/is-bookmarked`)
+    return response.data
+  },
 }
 
 export const vocabularyApi = {
@@ -113,6 +190,16 @@ export const vocabularyApi = {
       ? `/vocabulary/categories/hsk/${hskLevel}`
       : '/vocabulary/categories/all'
     const response = await api.get(endpoint)
+    return response.data
+  },
+
+  getMnemonic: async (wordId: number): Promise<{ mnemonic: string; memory_technique: string }> => {
+    const response = await api.get(`/vocabulary/${wordId}/mnemonic`)
+    return response.data
+  },
+
+  getWordOfTheDay: async (): Promise<{ word: HanziWord; date: string; message: string }> => {
+    const response = await api.get('/vocabulary/word-of-the-day')
     return response.data
   },
 }
@@ -179,6 +266,42 @@ export const writingApi = {
 
   getCharacterProgress: async (wordId: number): Promise<WritingProgress | null> => {
     const response = await api.get(`/writing/character/${wordId}/progress`)
+    return response.data
+  },
+}
+
+// Typing Practice API
+export const typingApi = {
+  getWords: async (hskLevel: number, mode: string, limit: number = 20): Promise<HanziWord[]> => {
+    const response = await api.get('/typing/words', {
+      params: { hsk_level: hskLevel, mode, limit }
+    })
+    return response.data
+  },
+
+  recordAttempt: async (attempt: TypingAttempt): Promise<TypingProgress> => {
+    const response = await api.post('/typing/attempt', attempt)
+    return response.data
+  },
+
+  getProgress: async (mode?: string, hskLevel?: number): Promise<TypingProgress[]> => {
+    const params: any = {}
+    if (mode) params.mode = mode
+    if (hskLevel) params.hsk_level = hskLevel
+    const response = await api.get('/typing/progress', { params })
+    return response.data
+  },
+
+  getStats: async (mode?: string, hskLevel?: number): Promise<TypingStats> => {
+    const params: any = {}
+    if (mode) params.mode = mode
+    if (hskLevel) params.hsk_level = hskLevel
+    const response = await api.get('/typing/stats', { params })
+    return response.data
+  },
+
+  getWordProgress: async (wordId: number, mode: string): Promise<TypingProgress | null> => {
+    const response = await api.get(`/typing/word/${wordId}/progress/${mode}`)
     return response.data
   },
 }
@@ -251,6 +374,76 @@ export const quizApi = {
 
   submit: async (quizResults: any) => {
     const response = await api.post('/quiz/submit', quizResults)
+    return response.data
+  }
+}
+
+// Onboarding API
+export const onboardingApi = {
+  // Get onboarding status
+  getStatus: async (): Promise<OnboardingStatus> => {
+    const response = await api.get('/onboarding/status')
+    return response.data
+  },
+
+  // Get assessment questions
+  getAssessmentQuestions: async (): Promise<AssessmentQuestionsResponse> => {
+    const response = await api.get('/onboarding/assessment/questions')
+    return response.data
+  },
+
+  // Submit assessment
+  submitAssessment: async (submission: AssessmentSubmission): Promise<AssessmentResult> => {
+    const response = await api.post('/onboarding/assessment/submit', submission)
+    return response.data
+  },
+
+  // Save goals
+  saveGoals: async (goals: Goals) => {
+    const response = await api.post('/onboarding/goals', goals)
+    return response.data
+  },
+
+  // Skip assessment
+  skipAssessment: async () => {
+    const response = await api.post('/onboarding/skip-assessment')
+    return response.data
+  },
+
+  // Complete onboarding
+  complete: async (data: OnboardingCompleteRequest): Promise<OnboardingCompleteResponse> => {
+    const response = await api.post('/onboarding/complete', data)
+    return response.data
+  }
+}
+
+export const gamificationApi = {
+  getStats: async () => {
+    const response = await api.get('/gamification/stats')
+    return response.data
+  },
+
+  dailyCheckin: async () => {
+    const response = await api.post('/gamification/daily-checkin')
+    return response.data
+  },
+
+  generateBadge: async (achievementId: string, style: 'modern' | 'traditional' | 'minimalist' | 'vibrant' = 'modern') => {
+    const response = await api.post(`/gamification/generate-badge/${achievementId}`, null, {
+      params: { style }
+    })
+    return response.data
+  },
+
+  getBadgeUsageStats: async () => {
+    const response = await api.get('/gamification/badge-usage-stats')
+    return response.data
+  },
+
+  getLeaderboard: async (limit: number = 50, metric: string = 'total_xp') => {
+    const response = await api.get('/gamification/leaderboard', {
+      params: { limit, metric }
+    })
     return response.data
   }
 }

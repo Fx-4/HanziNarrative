@@ -2,11 +2,17 @@ import { useState, useEffect } from 'react';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from '@dnd-kit/core';
 import { SortableContext, arrayMove } from '@dnd-kit/sortable';
 import { useAuthStore } from '../store/authStore';
-import { vocabularyApi } from '@/services/api';
+import { vocabularyApi, storiesApi } from '@/services/api';
 import DraggableWord from '../components/sentencebuilder/DraggableWord';
 import SentenceDropZone from '../components/sentencebuilder/SentenceDropZone';
 import ValidationResult from '../components/sentencebuilder/ValidationResult';
 import toast from 'react-hot-toast';
+import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
+import BlurText from '@/components/animations/BlurText';
+import { FadeInOnMount } from '@/components/animations/FadeIn';
+import { StaggerOnMount } from '@/components/animations/StaggerContainer';
+import StaggerItem from '@/components/animations/StaggerItem';
 
 interface HanziWord {
   id: number;
@@ -25,6 +31,15 @@ interface ValidationFeedback {
   suggestions: string[];
 }
 
+interface UsageStats {
+  sentence_validation?: {
+    used_today: number;
+    limit_daily: number;
+    used_this_hour: number;
+    limit_hourly: number;
+  };
+}
+
 export default function SentenceBuilder() {
   const { token } = useAuthStore();
   const [selectedWords, setSelectedWords] = useState<HanziWord[]>([]);
@@ -35,11 +50,34 @@ export default function SentenceBuilder() {
   const [hskLevel, setHskLevel] = useState(1);
   const [hintLevel, setHintLevel] = useState(0); // 0 = no hints, 1-3 = progressive hints
   const [targetSentence, setTargetSentence] = useState<string>(''); // For example sentence
+  const [usageStats, setUsageStats] = useState<UsageStats | null>(null);
 
   // Fetch vocabulary for the selected HSK level
   useEffect(() => {
     fetchVocabulary();
   }, [hskLevel]);
+
+  // Load usage stats on component mount
+  useEffect(() => {
+    // Only load if user has token
+    if (token) {
+      loadUsageStats();
+    }
+  }, [token]);
+
+  const loadUsageStats = async () => {
+    try {
+      const stats = await storiesApi.getAIUsageStats();
+      setUsageStats(stats);
+    } catch (err: any) {
+      // Only log error if it's not a 401/422 (not authenticated)
+      if (err?.response?.status !== 401 && err?.response?.status !== 422) {
+        console.error('Failed to load usage stats:', err);
+      }
+      // Set empty stats on error so it doesn't show "Loading..." forever
+      setUsageStats({});
+    }
+  };
 
   const fetchVocabulary = async () => {
     try {
@@ -116,7 +154,7 @@ export default function SentenceBuilder() {
 
     try {
       const response = await axios.post(
-        'http://localhost:8000/exercises/validate-sentence',
+        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/exercises/validate-sentence`,
         {
           sentence: sentenceText,
           hsk_level: hskLevel
@@ -129,6 +167,9 @@ export default function SentenceBuilder() {
       );
 
       setValidation(response.data);
+
+      // Refresh usage stats after validation
+      loadUsageStats();
 
       if (response.data.is_correct) {
         toast.success(`Great job! Score: ${response.data.score}/100`);
@@ -200,53 +241,103 @@ export default function SentenceBuilder() {
   const activeWord = selectedWords.find(w => w.id === activeId);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 py-4 sm:py-6 md:py-8 px-3 sm:px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
+        <FadeInOnMount direction="up" distance={20} className="text-center mb-6 sm:mb-8">
+          <BlurText
+            as="h1"
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 dark:text-gray-200 mb-2 justify-center"
+            wordDelay={0.07}
+          >
             Sentence Builder 造句练习
-          </h1>
-          <p className="text-lg text-gray-600">
+          </BlurText>
+          <p className="text-sm sm:text-base lg:text-lg text-gray-600 dark:text-gray-300 mb-4">
             Drag words to build Chinese sentences and get AI-powered feedback
           </p>
-        </div>
+
+          {/* AI Usage Stats */}
+          {usageStats?.sentence_validation && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="inline-block bg-white dark:bg-gray-900 rounded-xl shadow-md p-4 mt-4 border border-gray-100 dark:border-gray-800"
+            >
+              <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">AI Validation Limits:</div>
+              <div className="flex gap-6 text-sm">
+                <div>
+                  <span className="text-gray-600 dark:text-gray-400">Daily: </span>
+                  <span className={`font-semibold ${
+                    usageStats.sentence_validation.used_today >= usageStats.sentence_validation.limit_daily
+                      ? 'text-red-600' : 'text-primary-600'
+                  }`}>
+                    {usageStats.sentence_validation.used_today}/{usageStats.sentence_validation.limit_daily}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-600 dark:text-gray-400">Hourly: </span>
+                  <span className={`font-semibold ${
+                    usageStats.sentence_validation.used_this_hour >= usageStats.sentence_validation.limit_hourly
+                      ? 'text-red-600' : 'text-primary-600'
+                  }`}>
+                    {usageStats.sentence_validation.used_this_hour}/{usageStats.sentence_validation.limit_hourly}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </FadeInOnMount>
 
         {/* HSK Level Selector */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.4 }}
+          className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-3 sm:p-4 mb-4 sm:mb-6 border border-gray-100 dark:border-gray-800"
+        >
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             HSK Level:
           </label>
-          <div className="flex gap-2">
+          <StaggerOnMount className="flex flex-wrap gap-2" staggerDelay={0.05} delay={0.35}>
             {[1, 2, 3, 4, 5, 6].map(level => (
-              <button
-                key={level}
-                onClick={() => setHskLevel(level)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  hskLevel === level
-                    ? 'bg-orange-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                HSK {level}
-              </button>
+              <StaggerItem key={level}>
+                <motion.button
+                  onClick={() => setHskLevel(level)}
+                  whileHover={{ scale: 1.06 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base rounded-lg font-medium transition-colors cursor-pointer ${
+                    hskLevel === level
+                      ? 'bg-orange-500 text-white shadow-md shadow-orange-300/40'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  HSK {level}
+                </motion.button>
+              </StaggerItem>
             ))}
-          </div>
-        </div>
+          </StaggerOnMount>
+        </motion.div>
 
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
           {/* Sentence Construction Area */}
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45, duration: 0.4 }}
+            className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 mb-6 border border-gray-100 dark:border-gray-800"
+          >
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-800">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
                 Your Sentence: {sentence.map(w => w.simplified).join('')}
               </h2>
-              <button
+              <motion.button
                 onClick={clearSentence}
-                className="text-sm text-red-600 hover:text-red-700 font-medium"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="text-sm text-red-600 hover:text-red-700 font-medium cursor-pointer"
               >
                 Clear
-              </button>
+              </motion.button>
             </div>
 
             <SentenceDropZone
@@ -259,61 +350,99 @@ export default function SentenceBuilder() {
               onRemoveWord={(id) => removeFromSentence(Number(id))}
             />
 
-            <div className="mt-4 flex gap-3">
-              <button
+            <div className="mt-4 flex gap-3 flex-wrap">
+              <motion.button
                 onClick={validateSentence}
                 disabled={isValidating || sentence.length === 0}
-                className="flex-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white px-6 py-3 rounded-lg font-semibold hover:from-orange-600 hover:to-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                whileHover={{ scale: isValidating || sentence.length === 0 ? 1 : 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white px-6 py-3 rounded-xl font-semibold hover:from-orange-600 hover:to-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-orange-300/30 cursor-pointer"
               >
-                {isValidating ? 'Validating...' : 'Validate Sentence'}
-              </button>
-              <button
+                {isValidating ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <motion.span
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 0.8, ease: 'linear' }}
+                      className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
+                    />
+                    Validating...
+                  </span>
+                ) : 'Validate Sentence'}
+              </motion.button>
+              <motion.button
                 onClick={showNextHint}
-                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-600 transition-all"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-purple-600 transition-all shadow-md shadow-blue-300/30 cursor-pointer"
               >
-                💡 Hint ({hintLevel}/3)
-              </button>
-              <button
+                Hint ({hintLevel}/3)
+              </motion.button>
+              <motion.button
                 onClick={generateNewExercise}
-                className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors cursor-pointer"
               >
                 New Words
-              </button>
+              </motion.button>
             </div>
 
-            {/* Hints Display */}
-            {hintLevel > 0 && (
-              <div className="mt-4 space-y-2">
-                {getHintContent().map((hint) => (
-                  <div
-                    key={hint.level}
-                    className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg"
-                  >
-                    <p className="font-semibold text-blue-900 mb-1">{hint.title}</p>
-                    <p className="text-blue-800 text-sm">{hint.content}</p>
-                  </div>
-                ))}
-              </div>
+            {/* Hints Display - staggered reveal */}
+            <AnimatePresence>
+              {hintLevel > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-4 space-y-2 overflow-hidden"
+                >
+                  {getHintContent().map((hint, i) => (
+                    <motion.div
+                      key={hint.level}
+                      initial={{ opacity: 0, x: -16 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.1, duration: 0.35 }}
+                      className="bg-blue-50 dark:bg-blue-950/40 border-l-4 border-blue-500 p-4 rounded-r-lg"
+                    >
+                      <p className="font-semibold text-blue-900 dark:text-blue-100 mb-1">{hint.title}</p>
+                      <p className="text-blue-800 dark:text-blue-200 text-sm">{hint.content}</p>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Validation Result - animated appearance */}
+          <AnimatePresence>
+            {validation && (
+              <motion.div
+                initial={{ opacity: 0, y: 16, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                transition={{ duration: 0.4 }}
+                className="mb-6"
+              >
+                <ValidationResult
+                  isCorrect={validation.is_correct}
+                  score={validation.score}
+                  feedback={validation.feedback}
+                  corrections={validation.corrections}
+                  grammarIssues={validation.grammar_issues}
+                  suggestions={validation.suggestions}
+                />
+              </motion.div>
             )}
-          </div>
-
-          {/* Validation Result */}
-          {validation && (
-            <div className="mb-6">
-              <ValidationResult
-                isCorrect={validation.is_correct}
-                score={validation.score}
-                feedback={validation.feedback}
-                corrections={validation.corrections}
-                grammarIssues={validation.grammar_issues}
-                suggestions={validation.suggestions}
-              />
-            </div>
-          )}
+          </AnimatePresence>
 
           {/* Word Bank */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.4 }}
+            className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 border border-gray-100 dark:border-gray-800"
+          >
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
               Word Bank 词库
             </h2>
             <SortableContext items={selectedWords.map(w => w.id.toString())}>
@@ -330,12 +459,12 @@ export default function SentenceBuilder() {
                 ))}
               </div>
             </SortableContext>
-          </div>
+          </motion.div>
 
           <DragOverlay>
             {activeWord && (
-              <div className="bg-orange-100 border-2 border-orange-400 rounded-lg p-3 shadow-xl cursor-grabbing">
-                <div className="text-2xl font-bold text-center text-gray-800">
+              <div className="bg-orange-100 dark:bg-orange-900/60 border-2 border-orange-400 rounded-lg p-3 shadow-xl cursor-grabbing">
+                <div className="text-2xl font-bold text-center text-gray-800 dark:text-gray-200">
                   {activeWord.simplified}
                 </div>
               </div>
@@ -344,15 +473,20 @@ export default function SentenceBuilder() {
         </DndContext>
 
         {/* Tips */}
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="font-semibold text-blue-800 mb-2">Tips:</h3>
-          <ul className="text-sm text-blue-700 space-y-1">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+          className="mt-6 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4"
+        >
+          <h3 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">Tips:</h3>
+          <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
             <li>• Drag words from the word bank to build your sentence</li>
             <li>• You can reorder words in your sentence by dragging them</li>
             <li>• Click the X to remove a word from your sentence</li>
             <li>• AI will check grammar, naturalness, and provide feedback</li>
           </ul>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

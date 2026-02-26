@@ -27,7 +27,7 @@ hsk4_part2_words = [
     ("电台", "電台", "diàn tái", "radio station", 5, "noun", "电"),
     ("钓", "釣", "diào", "to fish; to angle", 8, "verb", "钅"),
     ("丁", "丁", "dīng", "fourth (in sequence); man; cube", 2, "noun", "一"),
-    ("订", "訂", "dìng", "to订购; to订阅", 4, "verb", "讠"),
+    ("订", "訂", "dìng", "to order; to subscribe; to book", 4, "verb", "讠"),
     ("丢", "丟", "diū", "to lose; to throw", 6, "verb", "丿"),
     ("东西", "東西", "dōng xī", "thing; stuff", 5, "noun", "一"),
     ("动画片", "動畫片", "dòng huà piàn", "animated cartoon", 8, "noun", "力"),

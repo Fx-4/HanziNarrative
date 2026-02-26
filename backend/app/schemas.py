@@ -10,10 +10,18 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    full_name: Optional[str] = None
+
+
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    profile_picture: Optional[str] = None
 
 
 class User(UserBase):
     id: int
+    full_name: Optional[str] = None
+    profile_picture: Optional[str] = None
     created_at: datetime
 
     class Config:
@@ -27,6 +35,7 @@ class HanziWordBase(BaseModel):
     english: str
     hsk_level: int
     image_url: Optional[str] = None
+    evolution_history: Optional[str] = None
 
 
 class HanziWordCreate(HanziWordBase):
@@ -35,6 +44,9 @@ class HanziWordCreate(HanziWordBase):
 
 class HanziWord(HanziWordBase):
     id: int
+    category: Optional[str] = None
+    radical: Optional[str] = None
+    strokes: Optional[int] = None
 
     class Config:
         from_attributes = True
@@ -42,7 +54,9 @@ class HanziWord(HanziWordBase):
 
 class StoryBase(BaseModel):
     title: str
+    title_english: Optional[str] = None
     content: str
+    content_pinyin: Optional[str] = None
     english_translation: Optional[str] = None
     hsk_level: int
 
@@ -158,3 +172,59 @@ class WritingStatsResponse(BaseModel):
     mastered_characters: int  # mastery_level >= 8
     characters_in_progress: int  # mastery_level 3-7
     new_characters: int  # mastery_level 0-2
+
+
+# Typing Practice Schemas
+class TypingAttemptCreate(BaseModel):
+    word_id: int
+    mode: str  # 'pinyin', 'ime', 'speed'
+    is_correct: bool
+    time_taken: float  # seconds
+    typed_text: str
+    expected_text: str
+    wpm: Optional[float] = None  # For speed mode
+    ime_attempts: Optional[int] = None  # For IME mode
+    tone_errors: Optional[List[int]] = None  # Positions of tone errors for pinyin mode
+
+
+class TypingProgressBase(BaseModel):
+    word_id: int
+    mode: str
+    total_attempts: int
+    successful_attempts: int
+    accuracy_score: float
+    pinyin_accuracy: float
+    best_wpm: float
+    average_wpm: float
+    mastery_level: int
+
+
+class TypingProgress(TypingProgressBase):
+    id: int
+    user_id: int
+    average_time_per_char: float
+    ime_selection_accuracy: float
+    ime_average_attempts: float
+    last_practiced: datetime
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class TypingProgressWithWord(TypingProgress):
+    word: HanziWord
+
+    class Config:
+        from_attributes = True
+
+
+class TypingStatsResponse(BaseModel):
+    total_words_practiced: int
+    total_attempts: int
+    average_accuracy: float
+    average_wpm: float
+    best_wpm: float
+    mastered_words: int  # mastery_level >= 8
+    words_in_progress: int  # mastery_level 3-7
+    new_words: int  # mastery_level 0-2

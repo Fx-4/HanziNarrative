@@ -239,13 +239,29 @@ Requirements:
 - Simple, clear grammar appropriate for the level
 - Engaging plot that students can relate to{characters_str}
 
+CRITICAL PINYIN REQUIREMENTS:
+- For "content_pinyin", provide CONTEXT-AWARE pinyin for ALL characters
+- Use LOWERCASE pinyin with DIACRITIC tone marks ONLY (e.g., "wǒ", "hǎo", "ma", "le")
+- NEVER use numbers (1/2/3/4/5/6) to represent tones — use diacritics: ā á ǎ à / ō ó ǒ ò / ē é ě è / ī í ǐ ì / ū ú ǔ ù
+- Neutral tone syllables have NO tone mark at all (e.g., "le", "ma", "ne", "ba", "de", "ge", "men")
+- For multi-pronunciation characters (多音字), use the CORRECT pronunciation based on context:
+  * 了 → "le" (neutral tone, NO mark) when sentence-final particle or post-verb aspect marker (99% of cases)
+       → "liǎo" ONLY when it is a main verb meaning "to finish" or in "了解/了不起" pattern
+  * 还 → "hái" for "still/yet/also", "huán" for "to return (sth)"
+  * 行 → "xíng" for "OK/to go/to walk", "háng" for "row/profession/bank"
+  * 得 → "de" as structural particle (verb+得+complement), "dé" for "to get/obtain", "děi" for "must/have to"
+  * 地 → "de" as adverbial particle (adjective+地+verb), "dì" for "ground/earth/place"
+  * 的 → always "de" (never "dí" or "dì")
+- Separate each syllable with a SINGLE SPACE
+- Match the EXACT order and count of characters in "content" — one pinyin syllable per character, NO skipping punctuation in the count
+
 Provide the story in JSON format:
 {{
   "title": "Story title in Chinese",
   "title_pinyin": "Title in pinyin",
   "title_english": "Title in English",
   "content": "Full story text in simplified Chinese",
-  "content_pinyin": "Full story with pinyin",
+  "content_pinyin": "Full story with context-aware pinyin, one syllable per character, space-separated",
   "content_english": "Full English translation",
   "difficulty_level": {hsk_level},
   "word_count": <number of Chinese characters>,
@@ -276,6 +292,130 @@ Make it interesting and educational!"""
     except Exception as e:
         print(f"Gemini API Error: {e}")
         raise Exception(f"Failed to generate story: {str(e)}")
+
+
+async def generate_story_quiz(story_title: str, story_content: str, hsk_level: int) -> dict:
+    """
+    Generate comprehension quiz questions based on a specific story
+    """
+    prompt = f"""Generate 3 comprehension questions about this Chinese story for HSK Level {hsk_level} learners.
+
+Story Title: {story_title}
+Story Content:
+{story_content}
+
+Create questions that test:
+1. Main idea / theme understanding
+2. Character actions / plot details
+3. Vocabulary or grammar usage from the story
+
+For EACH question provide:
+- A clear question in English
+- 4 multiple choice options (in English)
+- The correct answer index (0-3)
+- A brief explanation
+
+Return as JSON:
+{{
+  "questions": [
+    {{
+      "question": "Question text here",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correctAnswer": 0,
+      "explanation": "Why this is correct"
+    }},
+    ...
+  ]
+}}
+
+Make questions specific to THIS story, not generic!"""
+
+    try:
+        response = model.generate_content(prompt)
+        response_text = response.text
+
+        # Parse JSON
+        import json
+        if "```json" in response_text:
+            response_text = response_text.split("```json")[1].split("```")[0].strip()
+        elif "```" in response_text:
+            response_text = response_text.split("```")[1].split("```")[0].strip()
+
+        quiz_data = json.loads(response_text)
+        return quiz_data
+
+    except Exception as e:
+        print(f"Gemini API Error generating quiz: {e}")
+        raise Exception(f"Failed to generate quiz: {str(e)}")
+
+
+async def generate_mnemonic(
+    hanzi: str,
+    pinyin: str,
+    english: str,
+    hsk_level: int = 1
+) -> Dict:
+    """
+    Generate a mnemonic story to help remember a Chinese character
+
+    Args:
+        hanzi: The Chinese character
+        pinyin: Pinyin pronunciation
+        english: English meaning
+        hsk_level: HSK level for context
+
+    Returns:
+        Dict with mnemonic story and memory tips
+    """
+
+    prompt = f"""You are a creative Chinese language teacher. Create a memorable mnemonic story for this character:
+
+Character: {hanzi}
+Pinyin: {pinyin}
+English: {english}
+HSK Level: {hsk_level}
+
+Create a vivid, memorable story that helps students remember this character. Include:
+1. Visual imagery of the character's shape/radicals
+2. Connection to the meaning
+3. A short, creative mnemonic story (2-3 sentences)
+4. Memory hook (one sentence)
+
+Return as JSON:
+{{
+  "character": "{hanzi}",
+  "visual_description": "Description of how the character looks",
+  "mnemonic_story": "Creative 2-3 sentence story connecting visuals to meaning",
+  "memory_hook": "One catchy sentence to remember",
+  "radical_breakdown": "Brief breakdown of components if applicable"
+}}
+
+Make it fun, memorable, and educational!"""
+
+    try:
+        response = model.generate_content(prompt)
+        response_text = response.text
+
+        # Parse JSON
+        import json
+        if "```json" in response_text:
+            response_text = response_text.split("```json")[1].split("```")[0].strip()
+        elif "```" in response_text:
+            response_text = response_text.split("```")[1].split("```")[0].strip()
+
+        mnemonic_data = json.loads(response_text)
+        return mnemonic_data
+
+    except Exception as e:
+        print(f"Gemini API Error generating mnemonic: {e}")
+        # Fallback mnemonic
+        return {
+            "character": hanzi,
+            "visual_description": f"The character {hanzi} ({pinyin})",
+            "mnemonic_story": f"Remember {hanzi} means '{english}'. Practice writing it several times!",
+            "memory_hook": f"{hanzi} = {english}",
+            "radical_breakdown": "See character breakdown for details"
+        }
 
 
 async def test_gemini_connection() -> bool:

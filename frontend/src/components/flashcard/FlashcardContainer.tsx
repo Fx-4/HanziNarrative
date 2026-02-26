@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import { HanziWord } from '@/types'
 import FlashcardFront from './FlashcardFront'
 import FlashcardBack from './FlashcardBack'
@@ -7,31 +6,45 @@ import FlashcardBack from './FlashcardBack'
 interface FlashcardContainerProps {
   word: HanziWord
   showAnswer?: boolean
+  isFlipped?: boolean
+  onFlip?: () => void
 }
 
 export default function FlashcardContainer({
   word,
-  showAnswer: initialShowAnswer = false
+  showAnswer: initialShowAnswer = false,
+  isFlipped: externalIsFlipped,
+  onFlip
 }: FlashcardContainerProps) {
-  const [isFlipped, setIsFlipped] = useState(initialShowAnswer)
+  const [internalIsFlipped, setInternalIsFlipped] = useState(initialShowAnswer)
+
+  // Use external state if provided, otherwise use internal state
+  const isFlipped = externalIsFlipped !== undefined ? externalIsFlipped : internalIsFlipped
+  const handleFlip = () => {
+    if (onFlip) {
+      onFlip()
+    } else {
+      setInternalIsFlipped(!internalIsFlipped)
+    }
+  }
 
   return (
-    <div className="w-full perspective-1000">
-      <div className="relative w-full" style={{ paddingBottom: '140%' }}>
-        <motion.div
-          className="absolute inset-0 cursor-pointer"
-          style={{ transformStyle: 'preserve-3d' }}
-          animate={{ rotateY: isFlipped ? 180 : 0 }}
-          transition={{ duration: 0.6, type: 'spring' }}
-          onClick={() => setIsFlipped(!isFlipped)}
-          whileHover={{ scale: 1.05 }}
+    <div className="w-full perspective-1000 max-w-sm mx-auto">
+      <div className="relative w-full" style={{ paddingBottom: '50%' }}>
+        <div
+          className="absolute inset-0 cursor-pointer transition-transform duration-600"
+          style={{
+            transformStyle: 'preserve-3d',
+            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+          }}
+          onClick={handleFlip}
         >
           {/* Front of card */}
           <FlashcardFront word={word} />
 
           {/* Back of card */}
           <FlashcardBack word={word} isFlipped={isFlipped} />
-        </motion.div>
+        </div>
       </div>
     </div>
   )

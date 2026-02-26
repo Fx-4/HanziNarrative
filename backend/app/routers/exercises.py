@@ -87,10 +87,15 @@ async def validate_sentence(
             grammar_issues=result.grammar_issues,
             suggestions=result.suggestions
         )
+    except HTTPException:
+        raise
     except Exception as e:
+        # Log the error for debugging but don't expose internal details
+        import logging
+        logging.error(f"Sentence validation failed: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to validate sentence: {str(e)}"
+            detail="Failed to validate sentence. Please try again later."
         )
 
 
@@ -117,8 +122,13 @@ async def generate_exercise(
             hints=result.get("hints", []),
             english_translation=result.get("english_translation", "")
         )
+    except HTTPException:
+        raise
     except Exception as e:
+        # Log the error for debugging but don't expose internal details
+        import logging
+        logging.error(f"Exercise generation failed: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to generate exercise: {str(e)}"
+            detail="Failed to generate exercise. Please try again later."
         )

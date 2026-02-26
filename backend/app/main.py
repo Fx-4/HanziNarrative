@@ -1,7 +1,7 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import auth, stories, vocabulary, progress, vocabulary_sets, exercises, learning, writing, quiz
+from .routers import auth, stories, vocabulary, progress, vocabulary_sets, exercises, learning, writing, quiz, gamification, onboarding, typing
 from .database import engine, Base
 
 Base.metadata.create_all(bind=engine)
@@ -13,7 +13,7 @@ app = FastAPI(
 )
 
 # Get CORS origins from environment variable or use defaults
-cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:3000")
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:3000,http://localhost:5174,http://localhost:5175")
 allowed_origins = [origin.strip() for origin in cors_origins.split(",")]
 
 app.add_middleware(
@@ -32,7 +32,10 @@ app.include_router(vocabulary_sets.router)
 app.include_router(exercises.router)
 app.include_router(learning.router)
 app.include_router(writing.router)
+app.include_router(typing.router)
 app.include_router(quiz.router)
+app.include_router(gamification.router)
+app.include_router(onboarding.router)
 
 
 @app.get("/")
@@ -47,3 +50,9 @@ def root():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+
+@app.get("/debug/routes")
+def debug_routes():
+    """Debug endpoint to list all registered routes"""
+    return {"routes": [{"path": route.path, "name": route.name} for route in app.routes]}

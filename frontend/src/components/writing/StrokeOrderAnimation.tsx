@@ -24,25 +24,52 @@ export default function StrokeOrderAnimation({
   useEffect(() => {
     if (!containerRef.current) return
 
-    // Initialize HanziWriter for animation only
-    const writer = HanziWriter.create(containerRef.current, character, {
-      width: size,
-      height: size,
-      padding: 10,
-      strokeColor: '#4F46E5',
-      radicalColor: '#7C3AED',
-      outlineColor: '#E5E7EB',
-      showCharacter: false,
-      showOutline: true,
-      strokeAnimationSpeed: 2,
-      delayBetweenStrokes: 300,
-      delayBetweenLoops: 2000,
-    })
+    // Clear container before creating new writer
+    containerRef.current.innerHTML = ''
 
-    writerRef.current = writer
+    // Initialize HanziWriter for animation only with proper CDN configuration
+    try {
+      const writer = HanziWriter.create(containerRef.current, character, {
+        width: size,
+        height: size,
+        padding: 10,
+        strokeColor: '#4F46E5',
+        radicalColor: '#7C3AED',
+        outlineColor: '#E5E7EB',
+        showCharacter: false,
+        showOutline: true,
+        strokeAnimationSpeed: 2,
+        delayBetweenStrokes: 300,
+        delayBetweenLoops: 2000,
+        // Use CDN.jsdelivr.net as primary source with fallback
+        charDataLoader: (char: string) => {
+          const code = char.charCodeAt(0)
+          const hexCode = code.toString(16)
+          // Try jsdelivr CDN first, then fall back to hanziwriter CDN
+          return fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@latest/${hexCode}.json`)
+            .then(res => {
+              if (!res.ok) throw new Error('Failed from jsdelivr')
+              return res.json()
+            })
+            .catch(() => {
+              // Fallback to hanziwriter.org CDN
+              return fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data/${hexCode}.json`)
+                .then(res => res.json())
+            })
+        },
+        onLoadCharDataError: (err: any) => {
+          console.warn(`Failed to load character data for ${character}:`, err)
+          // Don't show error to user, just log it
+        }
+      })
 
-    if (autoPlay) {
-      playAnimation()
+      writerRef.current = writer
+
+      if (autoPlay) {
+        playAnimation()
+      }
+    } catch (error) {
+      console.error(`Error creating HanziWriter for ${character}:`, error)
     }
 
     return () => {

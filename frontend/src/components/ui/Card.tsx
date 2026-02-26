@@ -15,7 +15,7 @@ export function Card({
   ...props
 }: CardProps) {
   const baseClass = cn(
-    "bg-white rounded-lg shadow-md p-6 transition-shadow duration-200",
+    "bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-shadow duration-200",
     hover && "hover:shadow-lg",
     className
   )
@@ -47,11 +47,11 @@ export function CardHeader({ className, ...props }: React.HTMLAttributes<HTMLDiv
 }
 
 export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
-  return <h3 className={cn("text-2xl font-bold", className)} {...props} />
+  return <h3 className={cn("text-2xl font-bold text-gray-900 dark:text-gray-100", className)} {...props} />
 }
 
 export function CardDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn("text-sm text-gray-600", className)} {...props} />
+  return <p className={cn("text-sm text-gray-600 dark:text-gray-400", className)} {...props} />
 }
 
 export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {

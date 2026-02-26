@@ -16,7 +16,8 @@ import {
   ArrowRight,
   RefreshCw,
   BarChart3,
-  Zap
+  Zap,
+  Star
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { useAuthStore } from '@/store/authStore'
@@ -26,6 +27,14 @@ interface ReviewItem {
   word: HanziWord
   progress: any
   days_overdue: number
+}
+
+type QuizMode = 'meaning' | 'pinyin'
+
+interface QuizQuestion {
+  type: QuizMode
+  options: string[]
+  correctIndex: number
 }
 
 export default function Review() {
@@ -46,6 +55,12 @@ export default function Review() {
   const [hskLevel, setHskLevel] = useState<number | undefined>(undefined)
   const [stats, setStats] = useState<any>(null)
 
+  // Active testing states
+  const [quizQuestion, setQuizQuestion] = useState<QuizQuestion | null>(null)
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
+  const [showQuizResult, setShowQuizResult] = useState(false)
+  const [isCorrectAnswer, setIsCorrectAnswer] = useState(false)
+
   useEffect(() => {
     if (!user) {
       navigate('/login')
@@ -61,21 +76,83 @@ export default function Review() {
       const data = await learningApi.getReviewWords(hskLevel)
       setReviewItems(data.reviews)
       setSessionStats(prev => ({ ...prev, total: data.reviews.length }))
-    } catch (error) {
+
+      // Generate quiz for first word
+      if (data.reviews.length > 0) {
+        generateQuizQuestion(0, data.reviews)
+      }
+    } catch (error: any) {
       console.error('Failed to load review words:', error)
-      toast.error('Failed to load review words')
+      // Don't show error toast if user is not authenticated - they'll see the login prompt
+      if (error.response?.status !== 401 && error.response?.status !== 403) {
+        toast.error('Failed to load review words')
+      }
     } finally {
       setLoading(false)
     }
+  }
+
+  const generateQuizQuestion = (index: number, items: ReviewItem[]) => {
+    if (index >= items.length) return
+
+    const currentWord = items[index].word
+    const allWords = items.map(item => item.word)
+
+    // Randomly choose between meaning or pinyin quiz
+    const quizType: QuizMode = Math.random() > 0.5 ? 'meaning' : 'pinyin'
+
+    // Get 3 wrong options
+    const wrongWords = allWords
+      .filter(w => w.id !== currentWord.id)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
+
+    // Create options array
+    const correctIndex = Math.floor(Math.random() * 4)
+    const options: string[] = []
+
+    for (let i = 0; i < 4; i++) {
+      if (i === correctIndex) {
+        options.push(quizType === 'meaning' ? currentWord.english : currentWord.pinyin)
+      } else {
+        const wrongWord = wrongWords[options.length - (i < correctIndex ? 0 : 1)]
+        if (wrongWord) {
+          options.push(quizType === 'meaning' ? wrongWord.english : wrongWord.pinyin)
+        }
+      }
+    }
+
+    setQuizQuestion({ type: quizType, options, correctIndex })
+    setSelectedAnswer(null)
+    setShowQuizResult(false)
+    setIsCorrectAnswer(false)
+    setShowAnswer(false)
   }
 
   const loadStats = async () => {
     try {
       const data = await learningApi.getStats(hskLevel)
       setStats(data.stats)
-    } catch (error) {
-      console.error('Failed to load stats:', error)
+    } catch (error: any) {
+      // Silently fail for stats - not critical
+      if (error.response?.status !== 401 && error.response?.status !== 403) {
+        console.error('Failed to load stats:', error)
+      }
     }
+  }
+
+  const handleQuizAnswer = (answerIndex: number) => {
+    if (!quizQuestion) return
+
+    setSelectedAnswer(answerIndex)
+    const correct = answerIndex === quizQuestion.correctIndex
+    setIsCorrectAnswer(correct)
+    setShowQuizResult(true)
+
+    // Auto-show full answer after a brief delay
+    setTimeout(() => {
+      setShowAnswer(true)
+    }, 800)
   }
 
   const handleReview = async (quality: number) => {
@@ -83,34 +160,47 @@ export default function Review() {
     if (!currentItem) return
 
     try {
-      await learningApi.recordReview(currentItem.word.id, quality)
+      // Auto-adjust quality based on quiz result if quiz was attempted
+      let finalQuality = quality
+      if (selectedAnswer !== null && showQuizResult) {
+        // If they got quiz right, boost the quality
+        if (isCorrectAnswer) {
+          finalQuality = Math.max(quality, 4) // At least "easy"
+        } else {
+          // If they got quiz wrong, cap the quality
+          finalQuality = Math.min(quality, 2) // At most "hard"
+        }
+      }
+
+      await learningApi.recordReview(currentItem.word.id, finalQuality)
 
       // Update session stats
       setSessionStats(prev => {
         const newStats = { ...prev, completed: prev.completed + 1 }
-        if (quality === 5) newStats.perfect++
-        else if (quality >= 3) newStats.good++
-        else if (quality >= 2) newStats.hard++
+        if (finalQuality === 5) newStats.perfect++
+        else if (finalQuality >= 3) newStats.good++
+        else if (finalQuality >= 2) newStats.hard++
         else newStats.wrong++
         return newStats
       })
 
       // Show feedback
       const feedbackMessages = {
-        5: '🎉 Perfect! You mastered this word!',
-        4: '✨ Excellent! Great recall!',
-        3: '👍 Good job! Keep it up!',
-        2: '📚 Not bad, needs more practice',
-        1: '🔄 Hard, but you got it',
-        0: '💪 Keep trying! Practice makes perfect'
+        5: 'Perfect! You mastered this word!',
+        4: 'Excellent! Great recall!',
+        3: 'Good job! Keep it up!',
+        2: 'Not bad, needs more practice',
+        1: 'Hard, but you got it',
+        0: 'Keep trying! Practice makes perfect'
       }
-      toast.success(feedbackMessages[quality as keyof typeof feedbackMessages])
+      toast.success(feedbackMessages[finalQuality as keyof typeof feedbackMessages])
 
       // Move to next word
       setTimeout(() => {
         if (currentIndex < reviewItems.length - 1) {
-          setCurrentIndex(currentIndex + 1)
-          setShowAnswer(false)
+          const nextIndex = currentIndex + 1
+          setCurrentIndex(nextIndex)
+          generateQuizQuestion(nextIndex, reviewItems)
         } else {
           // Session complete
           toast.success(`Review session complete! You reviewed ${reviewItems.length} words.`)
@@ -123,24 +213,24 @@ export default function Review() {
     }
   }
 
-  const resetSession = () => {
-    setCurrentIndex(0)
-    setShowAnswer(false)
-    setSessionStats({
-      total: reviewItems.length,
-      completed: 0,
-      perfect: 0,
-      good: 0,
-      hard: 0,
-      wrong: 0
-    })
-  }
+  // const resetSession = () => {
+  //   setCurrentIndex(0)
+  //   setShowAnswer(false)
+  //   setSessionStats({
+  //     total: reviewItems.length,
+  //     completed: 0,
+  //     perfect: 0,
+  //     good: 0,
+  //     hard: 0,
+  //     wrong: 0
+  //   })
+  // }
 
   if (!user) {
     return (
       <div className="max-w-4xl mx-auto text-center py-20">
         <h2 className="text-2xl font-bold mb-4">Please Login</h2>
-        <p className="text-gray-600 mb-6">You need to be logged in to access the review feature.</p>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">You need to be logged in to access the review feature.</p>
         <Button onClick={() => navigate('/login')}>Go to Login</Button>
       </div>
     )
@@ -150,7 +240,7 @@ export default function Review() {
     return (
       <div className="max-w-4xl mx-auto text-center py-20">
         <LoadingSpinner />
-        <p className="text-gray-600 mt-4">Loading your review words...</p>
+        <p className="text-gray-600 dark:text-gray-300 mt-4">Loading your review words...</p>
       </div>
     )
   }
@@ -159,24 +249,25 @@ export default function Review() {
   const isSessionComplete = sessionStats.completed >= reviewItems.length
 
   return (
-    <div className="max-w-6xl mx-auto px-4">
+    <div className="max-w-6xl mx-auto px-3 sm:px-4">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
+      <div className="mb-6 sm:mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
           <div>
-            <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
-              <Brain className="text-primary-600" />
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 flex items-center gap-2 sm:gap-3">
+              <Brain className="w-6 h-6 sm:w-8 sm:h-8 text-primary-600" />
               Spaced Repetition Review
             </h1>
-            <p className="text-gray-600">Review words at optimal intervals for maximum retention</p>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Review words at optimal intervals for maximum retention</p>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setHskLevel(undefined)}>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" onClick={() => setHskLevel(undefined)}>
               All Levels
             </Button>
             {[1, 2, 3, 4].map((level) => (
               <Button
                 key={level}
+                size="sm"
                 variant={hskLevel === level ? 'primary' : 'outline'}
                 onClick={() => setHskLevel(level)}
               >
@@ -188,7 +279,7 @@ export default function Review() {
 
         {/* Stats Bar */}
         {stats && (
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 mb-4 sm:mb-6">
             <Card className="p-4">
               <div className="flex items-center gap-2 text-blue-600 mb-1">
                 <BarChart3 className="w-5 h-5" />
@@ -230,9 +321,11 @@ export default function Review() {
 
       {reviewItems.length === 0 ? (
         <Card className="p-12 text-center">
-          <div className="text-6xl mb-4">🎉</div>
+          <div className="flex justify-center mb-4">
+            <Star className="w-16 h-16 text-yellow-500" />
+          </div>
           <h2 className="text-2xl font-bold mb-2">All Caught Up!</h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
             You have no words due for review right now. Great job!
           </p>
           <div className="flex gap-4 justify-center">
@@ -246,24 +339,26 @@ export default function Review() {
         </Card>
       ) : isSessionComplete ? (
         <Card className="p-12 text-center">
-          <div className="text-6xl mb-4">🎊</div>
+          <div className="flex justify-center mb-4">
+            <Trophy className="w-16 h-16 text-yellow-500" />
+          </div>
           <h2 className="text-2xl font-bold mb-4">Session Complete!</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 max-w-2xl mx-auto">
-            <div className="bg-green-50 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-green-600">{sessionStats.perfect}</div>
-              <div className="text-sm text-gray-600">Perfect</div>
+            <div className="bg-success-50 dark:bg-success-900/20 p-4 rounded-lg">
+              <div className="text-2xl font-bold text-success-600 dark:text-success-400">{sessionStats.perfect}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Perfect</div>
             </div>
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600">{sessionStats.good}</div>
-              <div className="text-sm text-gray-600">Good</div>
+            <div className="bg-info-50 dark:bg-info-900/20 p-4 rounded-lg">
+              <div className="text-2xl font-bold text-info-600 dark:text-info-400">{sessionStats.good}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Good</div>
             </div>
-            <div className="bg-orange-50 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-orange-600">{sessionStats.hard}</div>
-              <div className="text-sm text-gray-600">Hard</div>
+            <div className="bg-warning-50 dark:bg-warning-900/20 p-4 rounded-lg">
+              <div className="text-2xl font-bold text-warning-600 dark:text-warning-400">{sessionStats.hard}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Hard</div>
             </div>
-            <div className="bg-red-50 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-red-600">{sessionStats.wrong}</div>
-              <div className="text-sm text-gray-600">Wrong</div>
+            <div className="bg-error-50 dark:bg-error-900/20 p-4 rounded-lg">
+              <div className="text-2xl font-bold text-error-600 dark:text-error-400">{sessionStats.wrong}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Wrong</div>
             </div>
           </div>
           <div className="flex gap-4 justify-center">
@@ -280,11 +375,11 @@ export default function Review() {
         <>
           {/* Progress Bar */}
           <div className="mb-6">
-            <div className="flex justify-between text-sm text-gray-600 mb-2">
+            <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300 mb-2">
               <span>Progress: {sessionStats.completed} / {sessionStats.total}</span>
               <span>{Math.round((sessionStats.completed / sessionStats.total) * 100)}%</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3">
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
               <div
                 className="bg-gradient-to-r from-primary-500 to-primary-600 h-3 rounded-full transition-all duration-300"
                 style={{ width: `${(sessionStats.completed / sessionStats.total) * 100}%` }}
@@ -314,22 +409,101 @@ export default function Review() {
 
                 {/* Question */}
                 <div className="text-center mb-8">
-                  <div className="text-8xl md:text-9xl font-bold mb-6 text-gray-900">
+                  <div className="text-8xl md:text-9xl font-bold mb-6 text-gray-900 dark:text-gray-100">
                     {currentItem?.word.simplified}
                   </div>
-                  <div className="text-2xl text-gray-500 mb-2">
-                    What does this character mean?
+                  <div className="text-2xl text-gray-600 mb-2">
+                    {quizQuestion?.type === 'meaning'
+                      ? 'What does this character mean?'
+                      : 'What is the pinyin pronunciation?'}
                   </div>
                 </div>
 
-                {/* Answer (Hidden initially) */}
+                {/* Quiz Result Feedback */}
+                {showQuizResult && (
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className={`text-center mb-6 p-4 rounded-lg ${
+                      isCorrectAnswer
+                        ? 'bg-success-50 dark:bg-success-900/20 border-2 border-success-300 dark:border-success-700'
+                        : 'bg-error-50 dark:bg-error-900/20 border-2 border-error-300 dark:border-error-700'
+                    }`}
+                  >
+                    {isCorrectAnswer ? (
+                      <div className="flex items-center justify-center gap-2 text-success-700 dark:text-success-400">
+                        <CheckCircle className="w-6 h-6" />
+                        <span className="text-lg font-semibold">Correct!</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center gap-2 text-error-700 dark:text-error-400">
+                        <XCircle className="w-6 h-6" />
+                        <span className="text-lg font-semibold">Incorrect - See the answer below</span>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+
+                {/* Multiple Choice Quiz - Show before answer */}
+                {!showAnswer && quizQuestion && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-8"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {quizQuestion.options.map((option, index) => {
+                        const isSelected = selectedAnswer === index
+                        const isCorrect = index === quizQuestion.correctIndex
+                        const showResult = showQuizResult
+
+                        let buttonClass = "py-4 px-6 text-left transition-all"
+                        if (showResult) {
+                          if (isCorrect) {
+                            buttonClass += " border-success-500 bg-success-50 dark:bg-success-900/20 text-success-900 dark:text-success-200"
+                          } else if (isSelected && !isCorrect) {
+                            buttonClass += " border-error-500 bg-error-50 dark:bg-error-900/20 text-error-900 dark:text-error-200"
+                          } else {
+                            buttonClass += " border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                          }
+                        } else {
+                          buttonClass += isSelected
+                            ? " border-primary-500 bg-primary-50 dark:bg-primary-900/20"
+                            : " border-gray-300 dark:border-gray-600 hover:border-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900/20"
+                        }
+
+                        return (
+                          <Button
+                            key={index}
+                            variant="outline"
+                            className={buttonClass}
+                            onClick={() => !showQuizResult && handleQuizAnswer(index)}
+                            disabled={showQuizResult}
+                          >
+                            <div className="flex items-center justify-between w-full">
+                              <span className="text-lg">{option}</span>
+                              {showResult && isCorrect && (
+                                <CheckCircle className="w-5 h-5 text-success-600 dark:text-success-400" />
+                              )}
+                              {showResult && isSelected && !isCorrect && (
+                                <XCircle className="w-5 h-5 text-error-600 dark:text-error-400" />
+                              )}
+                            </div>
+                          </Button>
+                        )
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Answer (Show after quiz attempt) */}
                 <AnimatePresence>
                   {showAnswer && currentItem && (
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
-                      className="text-center mb-8 p-6 bg-gray-50 rounded-lg"
+                      className="text-center mb-8 p-6 bg-gradient-to-br from-primary-50 to-info-50 dark:from-primary-900/20 dark:to-info-900/20 rounded-xl border-2 border-primary-200 dark:border-primary-700"
                     >
                       <div className="flex items-center justify-center gap-2 mb-2">
                         <div className="text-3xl font-bold text-primary-600">
@@ -343,7 +517,7 @@ export default function Review() {
                           tooltipText="Hear the pronunciation"
                         />
                       </div>
-                      <div className="text-2xl text-gray-800 mb-4">
+                      <div className="text-2xl text-gray-800 dark:text-gray-200 mb-4">
                         {currentItem.word.english}
                       </div>
                       {currentItem.word.category && (
@@ -359,66 +533,67 @@ export default function Review() {
                     <Button
                       size="lg"
                       onClick={() => setShowAnswer(true)}
+                      variant="outline"
                       className="px-12"
                     >
-                      Show Answer
+                      Skip Quiz - Show Answer
                       <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <p className="text-center text-gray-600 mb-4">How well did you know this?</p>
+                    <p className="text-center text-gray-600 dark:text-gray-300 mb-4">How well did you know this?</p>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                       <Button
                         variant="outline"
-                        className="py-6 border-red-300 hover:bg-red-50"
+                        className="py-6 border-error-300 dark:border-error-700 hover:bg-error-50 dark:hover:bg-error-900/20"
                         onClick={() => handleReview(0)}
                       >
-                        <XCircle className="w-5 h-5 mr-2 text-red-500" />
+                        <XCircle className="w-5 h-5 mr-2 text-error-500" />
                         <div className="text-left">
                           <div className="font-bold">Wrong</div>
-                          <div className="text-xs text-gray-500">Completely forgot</div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400">Completely forgot</div>
                         </div>
                       </Button>
                       <Button
                         variant="outline"
-                        className="py-6 border-orange-300 hover:bg-orange-50"
+                        className="py-6 border-warning-300 dark:border-warning-700 hover:bg-warning-50 dark:hover:bg-warning-900/20"
                         onClick={() => handleReview(2)}
                       >
                         <div className="text-left">
                           <div className="font-bold">Hard</div>
-                          <div className="text-xs text-gray-500">Difficult to recall</div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400">Difficult to recall</div>
                         </div>
                       </Button>
                       <Button
                         variant="outline"
-                        className="py-6 border-blue-300 hover:bg-blue-50"
+                        className="py-6 border-info-300 dark:border-info-700 hover:bg-info-50 dark:hover:bg-info-900/20"
                         onClick={() => handleReview(3)}
                       >
                         <div className="text-left">
                           <div className="font-bold">Good</div>
-                          <div className="text-xs text-gray-500">Remembered with effort</div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400">Remembered with effort</div>
                         </div>
                       </Button>
                       <Button
                         variant="outline"
-                        className="py-6 border-green-300 hover:bg-green-50"
+                        className="py-6 border-success-300 dark:border-success-700 hover:bg-success-50 dark:hover:bg-success-900/20"
                         onClick={() => handleReview(4)}
                       >
                         <div className="text-left">
                           <div className="font-bold">Easy</div>
-                          <div className="text-xs text-gray-500">Quick recall</div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400">Quick recall</div>
                         </div>
                       </Button>
                       <Button
                         variant="outline"
-                        className="py-6 border-purple-300 hover:bg-purple-50 md:col-span-2"
+                        className="py-6 border-purple-300 dark:border-purple-700 hover:bg-purple-50 dark:hover:bg-purple-900/20 md:col-span-2"
                         onClick={() => handleReview(5)}
                       >
-                        <CheckCircle className="w-5 h-5 mr-2 text-purple-500" />
+                        <CheckCircle className="w-5 h-5 mr-2 text-purple-500 dark:text-purple-400" />
                         <div className="text-left">
                           <div className="font-bold">Perfect</div>
-                          <div className="text-xs text-gray-500">Instant recall</div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400">Instant recall</div>
                         </div>
                       </Button>
                     </div>

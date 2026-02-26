@@ -41,53 +41,60 @@ export default function WritingCanvas({
   useEffect(() => {
     if (!canvasRef.current) return
 
-    // Initialize HanziWriter
-    const writer = HanziWriter.create(canvasRef.current, character.simplified, {
-      width: 300,
-      height: 300,
-      padding: 20,
-      strokeColor: '#4F46E5',
-      radicalColor: '#7C3AED',
-      outlineColor: '#E5E7EB',
-      showCharacter: false,
-      showOutline: showHints,
-      showHintAfterMisses: 2,
-      highlightOnComplete: true,
-      highlightCompleteColor: '#10B981',
-      drawingColor: '#1F2937',
-      drawingWidth: 4,
-      strokeAnimationSpeed: 1,
-      delayBetweenStrokes: 200,
-    })
+    // Clear container before creating new writer
+    canvasRef.current.innerHTML = ''
 
-    writerRef.current = writer
+    // Initialize HanziWriter with proper CDN configuration
+    try {
+      const writer = HanziWriter.create(canvasRef.current, character.simplified, {
+        width: 300,
+        height: 300,
+        padding: 20,
+        strokeColor: '#4F46E5',
+        radicalColor: '#7C3AED',
+        outlineColor: '#E5E7EB',
+        showCharacter: false,
+        showOutline: showHints,
+        showHintAfterMisses: 2,
+        highlightOnComplete: true,
+        highlightCompleteColor: '#10B981',
+        drawingColor: '#1F2937',
+        drawingWidth: 4,
+        strokeAnimationSpeed: 1,
+        delayBetweenStrokes: 200
+      })
 
-    // Get total strokes
-    writer.quiz({
-      onMistake: () => {
-        setMistakes(prev => prev + 1)
-      },
-      onCorrectStroke: () => {
-        setStrokesCompleted(prev => {
-          const newCount = prev + 1
+      writerRef.current = writer
 
-          // Start timing on first stroke
-          if (newCount === 1 && !startTime) {
-            setStartTime(Date.now())
-          }
+      // Get total strokes
+      writer.quiz({
+        onMistake: () => {
+          setMistakes(prev => prev + 1)
+        },
+        onCorrectStroke: () => {
+          setStrokesCompleted(prev => {
+            const newCount = prev + 1
 
-          return newCount
-        })
-      },
-      onComplete: (summaryData: any) => {
-        handleComplete(summaryData)
+            // Start timing on first stroke
+            if (newCount === 1 && !startTime) {
+              setStartTime(Date.now())
+            }
+
+            return newCount
+          })
+        },
+        onComplete: (summaryData: any) => {
+          handleComplete(summaryData)
+        }
+      })
+
+      // Extract total strokes from character data (using any type to avoid complex type definitions)
+      const charData = (writer.target as any).character
+      if (charData && charData.strokes) {
+        setTotalStrokes(charData.strokes.length)
       }
-    })
-
-    // Extract total strokes from character data (using any type to avoid complex type definitions)
-    const charData = (writer.target as any).character
-    if (charData && charData.strokes) {
-      setTotalStrokes(charData.strokes.length)
+    } catch (error) {
+      console.error(`Error creating HanziWriter for ${character.simplified}:`, error)
     }
 
     return () => {
@@ -182,7 +189,7 @@ export default function WritingCanvas({
       <Card className="p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <div className="text-sm text-gray-500 mb-1">Character</div>
+            <div className="text-sm text-gray-600 mb-1">Character</div>
             <div className="flex items-center gap-4">
               <span className="text-5xl font-chinese">{character.simplified}</span>
               <div>
@@ -195,12 +202,12 @@ export default function WritingCanvas({
           </div>
 
           <div className="flex flex-col gap-2">
-            <div className="text-sm text-gray-500">Progress</div>
+            <div className="text-sm text-gray-600">Progress</div>
             <div className="flex items-center gap-2">
               <div className="text-2xl font-bold text-gray-900">
                 {strokesCompleted} / {totalStrokes}
               </div>
-              <div className="text-sm text-gray-500">strokes</div>
+              <div className="text-sm text-gray-600">strokes</div>
             </div>
             {mistakes > 0 && (
               <div className="text-sm text-orange-600">

@@ -2,56 +2,303 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════════
+   BASE — Global resets & typography defaults
+   ═══════════════════════════════════════════════ */
 @layer base {
+  /* ── Root font & color setup ── */
+  html {
+    @apply scroll-smooth;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
-    @apply font-chinese bg-gray-50 text-gray-900;
+    @apply font-sans bg-gray-50 dark:bg-surface-page text-gray-900 dark:text-gray-100 transition-colors duration-200 leading-relaxed;
+  }
+
+  /* ── Heading scale (matches tailwind.config.js fontSize tokens) ── */
+  h1 {
+    @apply text-h1 font-bold tracking-tighter text-gray-900 dark:text-gray-50 leading-heading;
+  }
+
+  h2 {
+    @apply text-h2 font-bold tracking-tighter text-gray-900 dark:text-gray-50 leading-heading;
+  }
+
+  h3 {
+    @apply text-h3 font-semibold tracking-tight text-gray-800 dark:text-gray-100 leading-snug;
+  }
+
+  h4 {
+    @apply text-h4 font-semibold tracking-tight text-gray-800 dark:text-gray-100 leading-snug;
+  }
+
+  h5 {
+    @apply text-body-lg font-semibold text-gray-700 dark:text-gray-200;
+  }
+
+  h6 {
+    @apply text-body font-semibold text-gray-700 dark:text-gray-200;
+  }
+
+  p {
+    @apply text-body leading-relaxed;
+  }
+
+  /* ── Links ── */
+  a {
+    @apply transition-colors duration-150;
+  }
+
+  /* ── Accessible focus ring — keyboard only ── */
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-white dark:ring-offset-surface-page rounded;
+  }
+
+  /* Remove focus ring on mouse click */
+  :focus:not(:focus-visible) {
+    @apply outline-none ring-0;
+  }
+
+  /* ── Form element resets ── */
+  input,
+  textarea,
+  select {
+    @apply font-sans text-body text-gray-900 dark:text-gray-100
+           bg-white dark:bg-surface-card
+           border border-gray-300 dark:border-gray-600
+           rounded-lg px-3 py-2
+           placeholder:text-gray-400 dark:placeholder:text-gray-500
+           transition-colors duration-150;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    @apply outline-none ring-2 ring-primary-500 border-primary-500;
+  }
+
+  /* ── Selection highlight ── */
+  ::selection {
+    @apply bg-primary-200 dark:bg-primary-800 text-primary-900 dark:text-primary-100;
+  }
+
+  /* ── Reduced motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
+/* ═══════════════════════════════════════════════
+   COMPONENTS — Reusable component classes
+   ═══════════════════════════════════════════════ */
 @layer components {
-  .hanzi-word {
-    @apply inline-block cursor-pointer hover:bg-yellow-100 transition-colors duration-200 px-1 rounded;
-  }
 
-  .hanzi-word.clicked {
-    @apply bg-blue-100;
-  }
-
+  /* ── Surface / Card ── */
   .card {
-    @apply bg-white rounded-lg shadow-md p-6;
+    @apply bg-white dark:bg-surface-card rounded-xl shadow-card
+           border border-gray-200/80 dark:border-gray-700/60
+           transition-colors duration-200;
   }
 
+  .card-elevated {
+    @apply bg-white dark:bg-surface-elevated rounded-xl shadow-card-md
+           border border-gray-200/80 dark:border-gray-700/60
+           transition-colors duration-200;
+  }
+
+  /* ── Button primitives ── */
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    @apply inline-flex items-center justify-center gap-2
+           bg-primary-600 hover:bg-primary-700 active:bg-primary-800
+           text-white font-semibold text-body-sm
+           py-2.5 px-5 rounded-xl
+           transition-colors duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed
+           focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2;
   }
 
   .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    @apply inline-flex items-center justify-center gap-2
+           bg-gray-100 hover:bg-gray-200 active:bg-gray-300
+           dark:bg-gray-700 dark:hover:bg-gray-600 dark:active:bg-gray-500
+           text-gray-800 dark:text-gray-100 font-semibold text-body-sm
+           py-2.5 px-5 rounded-xl
+           transition-colors duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed
+           focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2;
   }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700
+           text-gray-700 dark:text-gray-300 font-medium text-body-sm
+           py-2 px-3 rounded-lg
+           transition-colors duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2
+           bg-error-600 hover:bg-error-700 active:bg-error-800
+           text-white font-semibold text-body-sm
+           py-2.5 px-5 rounded-xl
+           transition-colors duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* ── Hanzi word highlighting ── */
+  .hanzi-word {
+    @apply inline-block cursor-pointer rounded px-0.5
+           hover:bg-accent-100 dark:hover:bg-accent-900/40
+           transition-colors duration-150;
+  }
+
+  .hanzi-word.clicked {
+    @apply bg-primary-100 dark:bg-primary-900/50
+           text-primary-800 dark:text-primary-200;
+  }
+
+  /* ── Badge / pill ── */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full
+           text-label font-semibold;
+  }
+
+  .badge-primary   { @apply badge bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300; }
+  .badge-success   { @apply badge bg-success-100 text-success-700 dark:bg-success-900/40 dark:text-success-300; }
+  .badge-warning   { @apply badge bg-warning-100 text-warning-700 dark:bg-warning-900/40 dark:text-warning-300; }
+  .badge-error     { @apply badge bg-error-100   text-error-700   dark:bg-error-900/40   dark:text-error-300; }
+  .badge-info      { @apply badge bg-info-100    text-info-700    dark:bg-info-900/40    dark:text-info-300; }
+  .badge-neutral   { @apply badge bg-gray-100    text-gray-700    dark:bg-gray-700       dark:text-gray-300; }
+
+  /* ── Section headings ── */
+  .section-title {
+    @apply text-h2 font-bold text-gray-900 dark:text-gray-50 tracking-tighter leading-heading;
+  }
+
+  .section-subtitle {
+    @apply text-body-lg text-gray-600 dark:text-gray-400 leading-relaxed;
+  }
+
+  /* ── Page wrapper ── */
+  .page-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+  }
+
+  /* ── Divider ── */
+  .divider {
+    @apply border-t border-gray-200 dark:border-gray-700;
+  }
+
+  /* ── Status alert banners ── */
+  .alert {
+    @apply flex items-start gap-3 rounded-xl p-4 text-body-sm;
+  }
+
+  .alert-success { @apply alert bg-success-50 dark:bg-success-900/20 text-success-800 dark:text-success-200 border border-success-200 dark:border-success-800/40; }
+  .alert-warning { @apply alert bg-warning-50 dark:bg-warning-900/20 text-warning-800 dark:text-warning-200 border border-warning-200 dark:border-warning-800/40; }
+  .alert-error   { @apply alert bg-error-50   dark:bg-error-900/20   text-error-800   dark:text-error-200   border border-error-200   dark:border-error-800/40; }
+  .alert-info    { @apply alert bg-info-50    dark:bg-info-900/20    text-info-800    dark:text-info-200    border border-info-200    dark:border-info-800/40; }
 }
 
+/* ═══════════════════════════════════════════════
+   UTILITIES — One-off helpers
+   ═══════════════════════════════════════════════ */
 @layer utilities {
-  /* Custom Scrollbar Styling */
+
+  /* ── Scrollbars ── */
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: rgb(209 213 219) rgb(243 244 246);
+    scrollbar-color: rgb(203 213 225) rgb(241 245 249);
+  }
+
+  .dark .scrollbar-thin {
+    scrollbar-color: rgb(71 85 105) rgb(30 41 59);
   }
 
   .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
+    width: 5px;
+    height: 5px;
   }
 
   .scrollbar-thin::-webkit-scrollbar-track {
-    background: rgb(243 244 246);
-    border-radius: 3px;
+    background: rgb(241 245 249);
+    border-radius: 10px;
+  }
+
+  .dark .scrollbar-thin::-webkit-scrollbar-track {
+    background: rgb(30 41 59);
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgb(209 213 219);
-    border-radius: 3px;
+    background: rgb(203 213 225);
+    border-radius: 10px;
+  }
+
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgb(71 85 105);
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: rgb(156 163 175);
+    background: rgb(148 163 184);
+  }
+
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgb(100 116 139);
+  }
+
+  /* ── Text balance for headings ── */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* ── Gradient text ── */
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent;
+  }
+
+  .gradient-text-gold {
+    @apply bg-gradient-to-r from-accent-600 to-accent-400 bg-clip-text text-transparent;
+  }
+
+  /* ── Glass morphism surface ── */
+  .glass {
+    @apply bg-white/80 dark:bg-surface-card/80 backdrop-blur-md
+           border border-white/60 dark:border-gray-700/60;
+  }
+
+  /* ── Perspective helpers for 3D cards ── */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .perspective-2000 {
+    perspective: 2000px;
+  }
+
+  /* ── Truncate multiple lines ── */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }

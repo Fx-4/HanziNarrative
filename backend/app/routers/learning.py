@@ -9,6 +9,7 @@ from app.database import get_db
 from app.auth import get_current_user
 from app.models import User
 from app.services.learning_service import LearningService
+from app.services.gamification_service import record_word_review
 from app import schemas
 
 router = APIRouter(prefix="/learning", tags=["learning"])
@@ -124,6 +125,11 @@ def record_review(
         word_id=request.word_id,
         quality=request.quality
     )
+
+    # Record for gamification (XP, streaks, achievements)
+    is_correct = request.quality >= 3
+    is_perfect = request.quality == 5
+    gamification_result = record_word_review(db, current_user, is_correct, is_perfect)
 
     # Generate feedback message
     if request.quality >= 4:

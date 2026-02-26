@@ -49,7 +49,7 @@ export default function DraggableWord({ id, word, pinyin, english, isInSentence 
       </div>
 
       {/* Pinyin - Small and subtle */}
-      <div className={`text-xs text-center ${isInSentence ? 'text-blue-100' : 'text-gray-500'}`}>
+      <div className={`text-xs text-center ${isInSentence ? 'text-blue-100' : 'text-gray-600'}`}>
         {pinyin}
       </div>
 

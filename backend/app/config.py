@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     # Gemini AI
     GEMINI_API_KEY: str = ""
 
+    # Pexels — free image API (register at https://www.pexels.com/api/)
+    PEXELS_API_KEY: str = ""
+
     class Config:
         env_file = ".env"
 

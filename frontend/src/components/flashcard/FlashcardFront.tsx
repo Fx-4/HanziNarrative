@@ -8,7 +8,7 @@ interface FlashcardFrontProps {
 export default function FlashcardFront({ word }: FlashcardFrontProps) {
   return (
     <motion.div
-      className="absolute inset-0 rounded-xl shadow-2xl p-8 flex flex-col justify-center items-center overflow-hidden"
+      className="absolute inset-0 rounded-lg shadow-lg p-2 flex flex-col justify-center items-center overflow-hidden"
       style={{
         backfaceVisibility: 'hidden',
         WebkitBackfaceVisibility: 'hidden',
@@ -23,7 +23,7 @@ export default function FlashcardFront({ word }: FlashcardFrontProps) {
       >
         {/* Chinese Character */}
         <motion.h3
-          className="text-5xl sm:text-6xl font-bold mb-2"
+          className="text-2xl sm:text-3xl font-bold mb-0.5"
           style={{
             fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif',
             color: '#2d3748',
@@ -37,7 +37,7 @@ export default function FlashcardFront({ word }: FlashcardFrontProps) {
         {/* Traditional (if different) */}
         {word.traditional !== word.simplified && (
           <p
-            className="text-2xl sm:text-3xl font-semibold text-gray-700 mb-2"
+            className="text-sm sm:text-base font-semibold text-gray-700"
             style={{
               fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif',
             }}
@@ -48,13 +48,13 @@ export default function FlashcardFront({ word }: FlashcardFrontProps) {
 
         {/* Click to Reveal Indicator */}
         <motion.div
-          className="mt-4 flex flex-col items-center space-y-2"
-          animate={{ y: [0, -5, 0] }}
+          className="mt-1 flex flex-col items-center"
+          animate={{ y: [0, -3, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <div className="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center">
+          <div className="w-4 h-4 rounded-full bg-white shadow-sm flex items-center justify-center">
             <svg
-              className="w-5 h-5 text-orange-600"
+              className="w-2 h-2 text-orange-600"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -67,7 +67,6 @@ export default function FlashcardFront({ word }: FlashcardFrontProps) {
               />
             </svg>
           </div>
-          <p className="text-xs text-gray-700 font-semibold">Tap</p>
         </motion.div>
       </motion.div>
     </motion.div>

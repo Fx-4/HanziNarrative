@@ -9,6 +9,7 @@ RATE_LIMITS = {
     'story_generation': {'daily': 5, 'hourly': 2},
     'sentence_validation': {'daily': 15, 'hourly': 5},
     'translation': {'daily': 20, 'hourly': 10},
+    'badge_generation': {'daily': 10, 'hourly': 3},
 }
 
 def check_rate_limit(db: Session, user: User, feature: str) -> bool:

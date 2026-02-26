@@ -1,136 +1,310 @@
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HanziWord } from '@/types'
-import { Button } from './ui/Button'
-import { Badge } from './ui/Badge'
-import { BookmarkPlus, X } from 'lucide-react'
+import { X, BookMarked, BookOpen, Brush, Hash, Tag, Loader2 } from 'lucide-react'
+import AudioButton from './AudioButton'
 import toast from 'react-hot-toast'
 
+/* ─────────────────────────────────────
+   Wikipedia REST API — free, no API key
+   Returns thumbnail + short extract for
+   most common vocabulary words.
+───────────────────────────────────── */
+interface WikiData {
+  thumbnail?: string
+  extract?: string
+}
+
+// Categories where Wikipedia image lookup produces irrelevant results
+const SKIP_WIKI_CATEGORIES = ['particle', 'pronoun', 'conjunction', 'preposition', 'interjection']
+
+function useWikipedia(englishWord: string, category?: string) {
+  const [data, setData] = useState<WikiData | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  const shouldSkip = !!(category && SKIP_WIKI_CATEGORIES.includes(category.toLowerCase()))
+
+  useEffect(() => {
+    if (shouldSkip) {
+      setData(null)
+      setLoading(false)
+      return
+    }
+
+    setLoading(true)
+    setData(null)
+    // Use the first word/phrase only (strip alternatives like "to eat; to consume")
+    let keyword = englishWord.split(/[,;]/)[0].trim()
+    // Strip verb "to " prefix: "to eat" → "eat" for a better Wikipedia match
+    if (keyword.toLowerCase().startsWith('to ')) keyword = keyword.slice(3)
+    const ctrl = new AbortController()
+
+    fetch(
+      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`,
+      { signal: ctrl.signal }
+    )
+      .then(r => (r.ok ? r.json() : null))
+      .then(json => {
+        if (json) {
+          setData({
+            thumbnail: json.thumbnail?.source,
+            extract: json.extract
+              ? json.extract.substring(0, 140) + (json.extract.length > 140 ? '…' : '')
+              : undefined,
+          })
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+
+    return () => ctrl.abort()
+  }, [englishWord, shouldSkip])
+
+  return { data, loading }
+}
+
+/* ─────────────────────────────────────
+   Smart popup position — keep in viewport
+───────────────────────────────────── */
+function calcPosition(x: number, y: number) {
+  const POP_W = 344
+  const POP_H = 430 // estimated
+  const vw = window.innerWidth
+  const vh = window.innerHeight
+
+  let left = x - POP_W / 2
+  let top = y - POP_H - 14 // default: above the word
+
+  // Clamp horizontally
+  left = Math.max(8, Math.min(left, vw - POP_W - 8))
+  // Too close to top → show below instead
+  if (top < 60) top = y + 24
+  // Clamp vertically
+  top = Math.max(8, Math.min(top, vh - POP_H - 8))
+
+  return { left, top }
+}
+
+/* ─────────────────────────────────────
+   Category pill styling
+───────────────────────────────────── */
+const categoryColors: Record<string, string> = {
+  noun:        'bg-success-50 dark:bg-success-900/30 text-success-700 dark:text-success-300',
+  verb:        'bg-info-50 dark:bg-info-900/30 text-info-700 dark:text-info-300',
+  adjective:   'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300',
+  adverb:      'bg-warning-50 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300',
+  pronoun:     'bg-pink-50 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300',
+  particle:    'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400',
+  preposition: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300',
+  conjunction: 'bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300',
+  number:      'bg-accent-50 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300',
+}
+
+function getCategoryColor(cat?: string) {
+  if (!cat) return 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+  return categoryColors[cat.toLowerCase()] ?? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+}
+
+/* ─────────────────────────────────────
+   Main component
+───────────────────────────────────── */
 interface HanziWordPopupProps {
   word: HanziWord
   position: { x: number; y: number }
   onClose: () => void
+  onOpenDetails?: () => void
 }
 
-export default function HanziWordPopup({ word, position, onClose }: HanziWordPopupProps) {
-  const handleSaveWord = () => {
-    toast.success(`Saved "${word.simplified}" to your collection!`)
-    console.log('Add to set:', word.id)
+export default function HanziWordPopup({
+  word,
+  position,
+  onClose,
+  onOpenDetails,
+}: HanziWordPopupProps) {
+  const { data: wiki, loading: wikiLoading } = useWikipedia(word.english, word.category)
+  const pos = calcPosition(position.x, position.y)
+
+  const handleSave = () => {
+    toast.success(`"${word.simplified}" saved to collection!`)
   }
+
+  const imageUrl = word.image_url || wiki?.thumbnail
 
   return (
     <AnimatePresence>
+      {/* Invisible backdrop — click to close */}
       <motion.div
-        className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
+        key="backdrop"
+        className="fixed inset-0 z-40"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
       />
+
+      {/* Popup card */}
       <motion.div
-        className="fixed z-50 bg-white rounded-xl shadow-2xl p-6 max-w-sm border-2 border-primary-100"
-        style={{
-          left: `${position.x}px`,
-          top: `${position.y}px`,
-          transform: 'translate(-50%, -120%)',
-        }}
-        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+        key="popup"
+        className="fixed z-50"
+        style={{ left: pos.left, top: pos.top, width: 344 }}
+        initial={{ opacity: 0, scale: 0.88, y: 8 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.8, y: 20 }}
-        transition={{ type: "spring", duration: 0.5 }}
+        exit={{ opacity: 0, scale: 0.88, y: 8 }}
+        transition={{ type: 'spring', stiffness: 380, damping: 26 }}
       >
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
-        >
-          <X className="w-5 h-5 text-gray-500" />
-        </button>
+        <div className="bg-white dark:bg-surface-card rounded-2xl shadow-[0_20px_60px_-10px_rgb(0_0_0/0.25)] border border-gray-200/80 dark:border-gray-700/80 overflow-hidden">
 
-        <motion.div
-          className="space-y-4"
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: {
-                staggerChildren: 0.1,
-              },
-            },
-          }}
-        >
-          <motion.div
-            className="text-center"
-            variants={{
-              hidden: { opacity: 0, y: -20 },
-              visible: { opacity: 1, y: 0 },
-            }}
-          >
-            <motion.h2
-              className="text-6xl font-bold text-gray-900 mb-2"
-              whileHover={{ scale: 1.1 }}
-              transition={{ type: "spring", stiffness: 300 }}
+          {/* ── Row 1: Character + close ── */}
+          <div className="flex items-start justify-between px-4 pt-4 pb-0">
+            <div className="flex items-end gap-2.5">
+              <motion.span
+                className="text-[52px] font-bold text-gray-900 dark:text-gray-50 leading-none"
+                style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
+                whileHover={{ scale: 1.08 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+              >
+                {word.simplified}
+              </motion.span>
+              {word.traditional && word.traditional !== word.simplified && (
+                <div className="mb-0.5">
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-widest font-medium mb-0.5">
+                    trad.
+                  </p>
+                  <span
+                    className="text-2xl text-gray-400 dark:text-gray-500 leading-none"
+                    style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
+                  >
+                    {word.traditional}
+                  </span>
+                </div>
+              )}
+            </div>
+            <button
+              onClick={onClose}
+              className="p-1.5 -mr-1 -mt-0.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              aria-label="Close"
             >
-              {word.simplified}
-            </motion.h2>
-            {word.traditional !== word.simplified && (
-              <p className="text-2xl text-gray-600">{word.traditional}</p>
-            )}
-          </motion.div>
+              <X className="w-4 h-4" />
+            </button>
+          </div>
 
-          <motion.div
-            className="border-t pt-4"
-            variants={{
-              hidden: { opacity: 0, x: -20 },
-              visible: { opacity: 1, x: 0 },
-            }}
-          >
-            <p className="text-2xl text-primary-600 font-medium mb-2">
-              {word.pinyin}
-            </p>
-            <p className="text-lg text-gray-700">
+          {/* ── Row 2: Pinyin + audio + English ── */}
+          <div className="px-4 pt-2 pb-3">
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="text-lg font-semibold text-primary-600 dark:text-primary-400 tracking-wide">
+                {word.pinyin}
+              </span>
+              <AudioButton
+                text={word.simplified}
+                language="zh-CN"
+                size="sm"
+                variant="ghost"
+                tooltipText="Hear pronunciation"
+              />
+            </div>
+            <p className="text-sm text-gray-700 dark:text-gray-300 leading-snug">
               {word.english}
             </p>
-          </motion.div>
+          </div>
 
-          {word.image_url && (
-            <motion.div
-              className="border-t pt-4"
-              variants={{
-                hidden: { opacity: 0, scale: 0.8 },
-                visible: { opacity: 1, scale: 1 },
-              }}
-            >
-              <motion.img
-                src={word.image_url}
-                alt={word.english}
-                className="w-full h-48 object-cover rounded-lg"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.3 }}
-              />
-            </motion.div>
-          )}
+          {/* ── Row 3: Visual image (Wikipedia / fallback) ── */}
+          <div className="mx-3 mb-3 h-36 rounded-xl overflow-hidden relative bg-gray-100 dark:bg-gray-800">
+            {wikiLoading ? (
+              /* Shimmer skeleton */
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 flex items-center justify-center"
+                animate={{ backgroundPosition: ['0% 0%', '100% 0%', '0% 0%'] }}
+                transition={{ duration: 1.4, repeat: Infinity }}
+              >
+                <Loader2 className="w-5 h-5 text-gray-400 dark:text-gray-500 animate-spin" />
+              </motion.div>
+            ) : imageUrl ? (
+              <>
+                <img
+                  src={imageUrl}
+                  alt={`Visual for ${word.english}`}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+                {/* Dark gradient for readable text overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+                {wiki?.extract && (
+                  <p className="absolute bottom-2 left-3 right-3 text-[10px] text-white/90 leading-snug line-clamp-2 drop-shadow">
+                    {wiki.extract}
+                  </p>
+                )}
+                {/* "via Wikipedia" badge */}
+                <span className="absolute top-2 right-2 text-[9px] text-white/70 bg-black/25 backdrop-blur-sm px-1.5 py-0.5 rounded-full">
+                  via Wikipedia
+                </span>
+              </>
+            ) : (
+              /* No image: big character on gradient bg */
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100/50 dark:from-primary-950/60 dark:to-primary-900/30">
+                <span
+                  className="text-[80px] font-bold text-primary-200 dark:text-primary-800 select-none leading-none"
+                  style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
+                >
+                  {word.simplified}
+                </span>
+              </div>
+            )}
+          </div>
 
-          <motion.div
-            className="border-t pt-4 flex justify-between items-center"
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0 },
-            }}
-          >
-            <Badge variant="default">
-              HSK Level {word.hsk_level}
-            </Badge>
-            <Button
-              size="sm"
-              variant="primary"
-              onClick={handleSaveWord}
+          {/* ── Row 4: Meta pills ── */}
+          <div className="px-4 pb-3 flex flex-wrap gap-1.5">
+            {/* HSK level */}
+            <span className="inline-flex items-center text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300">
+              HSK {word.hsk_level}
+            </span>
+            {/* Category */}
+            {word.category && (
+              <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full capitalize ${getCategoryColor(word.category)}`}>
+                <Tag className="w-2.5 h-2.5" />
+                {word.category}
+              </span>
+            )}
+            {/* Radical */}
+            {word.radical && (
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-accent-50 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300">
+                <Brush className="w-2.5 h-2.5" />
+                {word.radical}
+              </span>
+            )}
+            {/* Strokes */}
+            {word.strokes && (
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700/60 text-gray-600 dark:text-gray-400">
+                <Hash className="w-2.5 h-2.5" />
+                {word.strokes} strokes
+              </span>
+            )}
+          </div>
+
+          {/* ── Row 5: Action buttons ── */}
+          <div className="px-3 pb-3 flex gap-2 border-t border-gray-100 dark:border-gray-700 pt-2.5">
+            <button
+              onClick={handleSave}
+              className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold
+                bg-gray-50 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300
+                hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600
+                transition-colors"
             >
-              <BookmarkPlus className="w-4 h-4 mr-1" />
-              Save
-            </Button>
-          </motion.div>
-        </motion.div>
+              <BookMarked className="w-3.5 h-3.5" />
+              Save word
+            </button>
+            {onOpenDetails && (
+              <button
+                onClick={() => { onOpenDetails(); onClose() }}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold
+                  bg-primary-600 hover:bg-primary-700 active:bg-primary-800 text-white
+                  transition-colors"
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                Full details
+              </button>
+            )}
+          </div>
+        </div>
       </motion.div>
     </AnimatePresence>
   )

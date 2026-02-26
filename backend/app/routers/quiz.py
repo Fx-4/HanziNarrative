@@ -190,17 +190,46 @@ def submit_quiz(
 ):
     """Submit quiz results and update user progress"""
 
-    # In a full implementation, we would:
-    # 1. Store quiz results
-    # 2. Update user's word familiarity based on correctness
-    # 3. Calculate statistics
-
     score = quiz_results.get('score', 0)
     total = quiz_results.get('total', 0)
+    quiz_type = quiz_results.get('quiz_type', 'unknown')
+    hsk_level = quiz_results.get('hsk_level', 1)
+    time_spent = quiz_results.get('time_spent')
+    answers = quiz_results.get('answers')
+
+    # Calculate percentage
+    percentage = round((score / total * 100) if total > 0 else 0, 2)
+
+    # Store quiz results in database
+    db_quiz_result = models.QuizResult(
+        user_id=current_user.id,
+        quiz_type=quiz_type,
+        hsk_level=hsk_level,
+        score=score,
+        total_questions=total,
+        percentage=percentage,
+        time_spent=time_spent,
+        answers=answers
+    )
+    db.add(db_quiz_result)
+    db.commit()
+    db.refresh(db_quiz_result)
+
+    # Award XP for quiz completion using gamification service
+    from app.services.gamification_service import add_xp
+    xp_result = add_xp(
+        db,
+        current_user,
+        score * 5,  # 5 XP per correct answer
+        f"Quiz completed: {score}/{total} correct"
+    )
 
     return {
         "message": "Quiz submitted successfully",
         "score": score,
         "total": total,
-        "percentage": round((score / total * 100) if total > 0 else 0, 2)
+        "percentage": percentage,
+        "xp_gained": xp_result.get('xp_gained', 0),
+        "level": xp_result.get('level', 1),
+        "leveled_up": xp_result.get('leveled_up', False)
     }
