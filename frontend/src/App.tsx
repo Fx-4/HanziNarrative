@@ -18,6 +18,7 @@ import Register from './pages/Register'
 import Profile from './pages/Profile'
 import Leaderboard from './pages/Leaderboard'
 import Onboarding from './pages/Onboarding'
+import Landing from './pages/Landing'
 import { Toaster } from './components/ui/Toast'
 import ErrorBoundary from './components/ErrorBoundary'
 import { useAuthStore } from './store/authStore'
@@ -36,12 +37,12 @@ function OnboardingGuard({ children }: { children: React.ReactElement }) {
   return children
 }
 
-// Auth Guard - Redirect to login if not authenticated
+// Auth Guard - Redirect to landing page if not authenticated
 function AuthGuard({ children }: { children: React.ReactElement }) {
   const { isAuthenticated } = useAuthStore()
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/landing" replace />
   }
 
   return children
@@ -78,6 +79,11 @@ function App() {
       <Toaster />
       <Routes>
         {/* Public routes */}
+        <Route path="/landing" element={
+          <ErrorBoundary name="Landing">
+            <Landing />
+          </ErrorBoundary>
+        } />
         <Route path="/login" element={
           <ErrorBoundary name="Login">
             <Login />

@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { authApi } from '@/services/api'
 import { useAuthStore } from '@/store/authStore'
 import { motion, AnimatePresence } from 'framer-motion'
-import { User, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
+import { User, Mail, Lock, Eye, EyeOff, ArrowRight, BookOpen, Sparkles, Trophy } from 'lucide-react'
 
 // ---------------------------------------------------------------------------
 // Floating character config — positions are fixed to avoid layout thrash
@@ -37,9 +37,9 @@ const FLOAT_CONFIG: FloatItem[] = [
 
 // Feature badges shown in the left panel
 const FEATURE_BADGES = [
-  { icon: '📚', label: 'HSK 1-6' },
-  { icon: '🤖', label: 'AI Stories' },
-  { icon: '🎮', label: 'Gamification' },
+  { Icon: BookOpen, label: 'HSK 1-6' },
+  { Icon: Sparkles, label: 'AI Stories' },
+  { Icon: Trophy,   label: 'Gamification' },
 ]
 
 // ---------------------------------------------------------------------------
@@ -84,7 +84,8 @@ export default function Register() {
     setLoading(true)
 
     try {
-      await authApi.register({ username, email, password })
+      const tokens = await authApi.register({ username, email, password })
+      localStorage.setItem('access_token', tokens.access_token)
       const { fetchUser } = useAuthStore.getState()
       await fetchUser()
       navigate('/onboarding')
@@ -168,7 +169,7 @@ export default function Register() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.5 + i * 0.1 }}
               >
-                <span>{badge.icon}</span>
+                <badge.Icon className="w-3.5 h-3.5" />
                 <span>{badge.label}</span>
               </motion.div>
             ))}
