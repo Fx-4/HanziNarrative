@@ -89,20 +89,20 @@ function calcPosition(x: number, y: number) {
    Category pill styling
 ───────────────────────────────────── */
 const categoryColors: Record<string, string> = {
-  noun:        'bg-success-50 dark:bg-success-900/30 text-success-700 dark:text-success-300',
-  verb:        'bg-info-50 dark:bg-info-900/30 text-info-700 dark:text-info-300',
-  adjective:   'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300',
-  adverb:      'bg-warning-50 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300',
-  pronoun:     'bg-pink-50 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300',
-  particle:    'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400',
-  preposition: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300',
-  conjunction: 'bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300',
-  number:      'bg-accent-50 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300',
+  noun:        'bg-emerald-50 text-emerald-700',
+  verb:        'bg-blue-50 text-blue-700',
+  adjective:   'bg-purple-50 text-purple-700',
+  adverb:      'bg-orange-50 text-orange-700',
+  pronoun:     'bg-pink-50 text-pink-700',
+  particle:    'bg-gray-100 text-gray-600',
+  preposition: 'bg-indigo-50 text-indigo-700',
+  conjunction: 'bg-teal-50 text-teal-700',
+  number:      'bg-amber-50 text-amber-700',
 }
 
 function getCategoryColor(cat?: string) {
-  if (!cat) return 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
-  return categoryColors[cat.toLowerCase()] ?? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+  if (!cat) return 'bg-gray-100 text-gray-600'
+  return categoryColors[cat.toLowerCase()] ?? 'bg-indigo-50 text-indigo-700'
 }
 
 /* ─────────────────────────────────────
@@ -152,13 +152,13 @@ export default function HanziWordPopup({
         exit={{ opacity: 0, scale: 0.88, y: 8 }}
         transition={{ type: 'spring', stiffness: 380, damping: 26 }}
       >
-        <div className="bg-white dark:bg-surface-card rounded-2xl shadow-[0_20px_60px_-10px_rgb(0_0_0/0.25)] border border-gray-200/80 dark:border-gray-700/80 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-[0_20px_60px_-10px_rgb(0_0_0/0.25)] border border-gray-200/80 overflow-hidden">
 
           {/* ── Row 1: Character + close ── */}
           <div className="flex items-start justify-between px-4 pt-4 pb-0">
             <div className="flex items-end gap-2.5">
               <motion.span
-                className="text-[52px] font-bold text-gray-900 dark:text-gray-50 leading-none"
+                className="text-[52px] font-bold text-gray-900 leading-none"
                 style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
                 whileHover={{ scale: 1.08 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 15 }}
@@ -167,11 +167,11 @@ export default function HanziWordPopup({
               </motion.span>
               {word.traditional && word.traditional !== word.simplified && (
                 <div className="mb-0.5">
-                  <p className="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-widest font-medium mb-0.5">
+                  <p className="text-[10px] text-gray-400 uppercase tracking-widest font-medium mb-0.5">
                     trad.
                   </p>
                   <span
-                    className="text-2xl text-gray-400 dark:text-gray-500 leading-none"
+                    className="text-2xl text-gray-400 leading-none"
                     style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
                   >
                     {word.traditional}
@@ -181,7 +181,7 @@ export default function HanziWordPopup({
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 -mr-1 -mt-0.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="p-1.5 -mr-1 -mt-0.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
               aria-label="Close"
             >
               <X className="w-4 h-4" />
@@ -191,7 +191,7 @@ export default function HanziWordPopup({
           {/* ── Row 2: Pinyin + audio + English ── */}
           <div className="px-4 pt-2 pb-3">
             <div className="flex items-center gap-1.5 mb-1">
-              <span className="text-lg font-semibold text-primary-600 dark:text-primary-400 tracking-wide">
+              <span className="text-lg font-semibold text-indigo-600 tracking-wide">
                 {word.pinyin}
               </span>
               <AudioButton
@@ -202,21 +202,21 @@ export default function HanziWordPopup({
                 tooltipText="Hear pronunciation"
               />
             </div>
-            <p className="text-sm text-gray-700 dark:text-gray-300 leading-snug">
+            <p className="text-sm text-gray-700 leading-snug">
               {word.english}
             </p>
           </div>
 
           {/* ── Row 3: Visual image (Wikipedia / fallback) ── */}
-          <div className="mx-3 mb-3 h-36 rounded-xl overflow-hidden relative bg-gray-100 dark:bg-gray-800">
+          <div className="mx-3 mb-3 h-36 rounded-xl overflow-hidden relative bg-gray-100">
             {wikiLoading ? (
               /* Shimmer skeleton */
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 flex items-center justify-center"
+                className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 flex items-center justify-center"
                 animate={{ backgroundPosition: ['0% 0%', '100% 0%', '0% 0%'] }}
                 transition={{ duration: 1.4, repeat: Infinity }}
               >
-                <Loader2 className="w-5 h-5 text-gray-400 dark:text-gray-500 animate-spin" />
+                <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
               </motion.div>
             ) : imageUrl ? (
               <>
@@ -240,9 +240,9 @@ export default function HanziWordPopup({
               </>
             ) : (
               /* No image: big character on gradient bg */
-              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100/50 dark:from-primary-950/60 dark:to-primary-900/30">
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-indigo-50 to-indigo-100/50">
                 <span
-                  className="text-[80px] font-bold text-primary-200 dark:text-primary-800 select-none leading-none"
+                  className="text-[80px] font-bold text-indigo-200 select-none leading-none"
                   style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
                 >
                   {word.simplified}
@@ -254,7 +254,7 @@ export default function HanziWordPopup({
           {/* ── Row 4: Meta pills ── */}
           <div className="px-4 pb-3 flex flex-wrap gap-1.5">
             {/* HSK level */}
-            <span className="inline-flex items-center text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300">
+            <span className="inline-flex items-center text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">
               HSK {word.hsk_level}
             </span>
             {/* Category */}
@@ -266,14 +266,14 @@ export default function HanziWordPopup({
             )}
             {/* Radical */}
             {word.radical && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-accent-50 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300">
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">
                 <Brush className="w-2.5 h-2.5" />
                 {word.radical}
               </span>
             )}
             {/* Strokes */}
             {word.strokes && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700/60 text-gray-600 dark:text-gray-400">
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
                 <Hash className="w-2.5 h-2.5" />
                 {word.strokes} strokes
               </span>

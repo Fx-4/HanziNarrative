@@ -66,11 +66,11 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex bg-white dark:bg-surface-page">
+    <div className="min-h-screen flex bg-white">
       {/* ================================================================
           LEFT DECORATIVE PANEL — hidden on mobile
       ================================================================ */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-indigo-600 via-primary-700 to-indigo-900 flex-col items-center justify-center px-12">
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900 flex-col items-center justify-center px-12">
         {/* Floating Chinese characters */}
         {FLOAT_CONFIG.map((item, i) => (
           <motion.span
@@ -138,7 +138,7 @@ export default function Login() {
       {/* ================================================================
           RIGHT FORM PANEL
       ================================================================ */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white dark:bg-surface-page">
+      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white">
         <motion.div
           className="w-full max-w-md"
           initial={{ opacity: 0, x: 24 }}
@@ -152,10 +152,10 @@ export default function Login() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <div className="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center shadow-md shadow-primary-500/30">
+            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-md shadow-indigo-500/30">
               <span className="text-white text-lg font-bold font-chinese">汉</span>
             </div>
-            <span className="text-xl font-bold text-gray-900 dark:text-gray-100">HanziNarrative</span>
+            <span className="text-xl font-bold text-gray-900">HanziNarrative</span>
           </motion.div>
 
           {/* Heading */}
@@ -165,10 +165,10 @@ export default function Login() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
           >
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
+            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
               Welcome back
             </h2>
-            <p className="mt-2 text-gray-500 dark:text-gray-400">
+            <p className="mt-2 text-gray-500">
               Sign in to continue your learning journey
             </p>
           </motion.div>
@@ -184,7 +184,7 @@ export default function Login() {
                   exit={{ opacity: 0, height: 0 }}
                   className="overflow-hidden"
                 >
-                  <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-xl text-sm">
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
                     {error}
                   </div>
                 </motion.div>
@@ -197,12 +197,12 @@ export default function Login() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
                 Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                  <User className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                  <User className="w-4 h-4 text-gray-400" />
                 </div>
                 <input
                   id="username"
@@ -212,7 +212,7 @@ export default function Login() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your username"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-surface-card text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 bg-gray-50 text-gray-900 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                 />
               </div>
             </motion.div>
@@ -223,12 +223,12 @@ export default function Login() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
             >
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                  <Lock className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                  <Lock className="w-4 h-4 text-gray-400" />
                 </div>
                 <input
                   id="password"
@@ -238,12 +238,12 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-surface-card text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-200 bg-gray-50 text-gray-900 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -260,7 +260,7 @@ export default function Login() {
               <motion.button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-md shadow-primary-500/25 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-surface-page transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-md shadow-indigo-500/25 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors"
                 whileHover={{ scale: loading ? 1 : 1.01 }}
                 whileTap={{ scale: loading ? 1 : 0.98 }}
               >
@@ -284,7 +284,7 @@ export default function Login() {
 
             {/* Register link */}
             <motion.p
-              className="text-center text-sm text-gray-500 dark:text-gray-400"
+              className="text-center text-sm text-gray-500"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.38 }}
@@ -292,7 +292,7 @@ export default function Login() {
               Don't have an account?{' '}
               <Link
                 to="/register"
-                className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold transition-colors"
+                className="text-indigo-600 hover:text-indigo-700 font-semibold transition-colors"
               >
                 Create one
               </Link>

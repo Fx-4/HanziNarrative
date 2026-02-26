@@ -101,7 +101,7 @@ export default function Vocabulary() {
         >
           HSK Vocabulary
         </BlurText>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-gray-600">
           Browse, search, and study Chinese vocabulary from HSK levels 1–6.
         </p>
       </div>
@@ -117,7 +117,7 @@ export default function Vocabulary() {
             className={`flex-shrink-0 px-4 py-2 rounded-xl font-semibold text-sm transition-all cursor-pointer
               ${selectedLevel === level
                 ? `${activeBg} text-white shadow-lg`
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
           >
             HSK {level}
@@ -170,15 +170,15 @@ export default function Vocabulary() {
               }}
               onKeyDown={e => e.key === 'Enter' && handleSearch()}
               placeholder="Search character, pinyin, or English…"
-              className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700
-                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
-                focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
-                placeholder:text-gray-400 dark:placeholder:text-gray-500"
+              className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-gray-200
+                bg-white text-gray-900
+                focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                placeholder:text-gray-400"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -190,26 +190,26 @@ export default function Vocabulary() {
             onClick={() => setShowFilters(v => !v)}
             className={`px-3 py-2.5 rounded-xl border text-sm font-medium flex items-center gap-1.5 transition-colors cursor-pointer
               ${showFilters || selectedCategory
-                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
-                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
               }`}
           >
             <SlidersHorizontal className="w-4 h-4" />
             <span className="hidden sm:inline">Filter</span>
-            {selectedCategory && <span className="w-2 h-2 rounded-full bg-primary-500" />}
+            {selectedCategory && <span className="w-2 h-2 rounded-full bg-indigo-500" />}
           </button>
 
           {/* View toggle */}
-          <div className="flex rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="flex rounded-xl border border-gray-200 overflow-hidden">
             <button
               onClick={() => setViewMode('grid')}
-              className={`px-3 py-2.5 transition-colors cursor-pointer ${viewMode === 'grid' ? 'bg-primary-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+              className={`px-3 py-2.5 transition-colors cursor-pointer ${viewMode === 'grid' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
             >
               <LayoutGrid className="w-4 h-4" />
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`px-3 py-2.5 transition-colors cursor-pointer ${viewMode === 'list' ? 'bg-primary-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+              className={`px-3 py-2.5 transition-colors cursor-pointer ${viewMode === 'list' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
             >
               <List className="w-4 h-4" />
             </button>
@@ -230,8 +230,8 @@ export default function Vocabulary() {
                   onClick={() => setSelectedCategory('')}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer
                     ${!selectedCategory
-                      ? 'bg-primary-600 text-white border-primary-600'
-                      : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-primary-400 hover:text-primary-600 dark:hover:text-primary-400'
+                      ? 'bg-indigo-600 text-white border-indigo-600'
+                      : 'border-gray-200 text-gray-600 hover:border-indigo-400 hover:text-indigo-600'
                     }`}
                 >
                   All
@@ -242,8 +242,8 @@ export default function Vocabulary() {
                     onClick={() => setSelectedCategory(cat.value)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all capitalize cursor-pointer
                       ${selectedCategory === cat.value
-                        ? 'bg-primary-600 text-white border-primary-600'
-                        : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-primary-400 hover:text-primary-600 dark:hover:text-primary-400'
+                        ? 'bg-indigo-600 text-white border-indigo-600'
+                        : 'border-gray-200 text-gray-600 hover:border-indigo-400 hover:text-indigo-600'
                       }`}
                   >
                     {cat.label}
@@ -259,7 +259,7 @@ export default function Vocabulary() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400"
+            className="flex items-center justify-between text-sm text-gray-600"
           >
             <span>
               {isSearchMode ? `Results for "${searchQuery}"` : selectedCategory ? `HSK ${selectedLevel} · ${selectedCategory}` : ''}
@@ -267,7 +267,7 @@ export default function Vocabulary() {
             </span>
             <button
               onClick={clearFilters}
-              className="flex items-center gap-1 text-primary-600 dark:text-primary-400 hover:underline cursor-pointer text-xs"
+              className="flex items-center gap-1 text-indigo-600 hover:underline cursor-pointer text-xs"
             >
               <X className="w-3 h-3" />
               Clear
@@ -291,10 +291,10 @@ export default function Vocabulary() {
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-              className={`w-12 h-12 rounded-full border-4 border-gray-200 dark:border-gray-700`}
+              className={`w-12 h-12 rounded-full border-4 border-gray-200`}
               style={{ borderTopColor: 'transparent' }}
             />
-            <p className="text-gray-600 dark:text-gray-400 text-sm">Loading vocabulary…</p>
+            <p className="text-gray-600 text-sm">Loading vocabulary…</p>
           </motion.div>
 
         ) : words.length === 0 ? (
@@ -307,8 +307,8 @@ export default function Vocabulary() {
             className="flex flex-col items-center justify-center py-20 text-center gap-3"
           >
             <div className="text-5xl">📚</div>
-            <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">No words found</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400 max-w-sm">
+            <p className="text-lg font-semibold text-gray-700">No words found</p>
+            <p className="text-sm text-gray-600 max-w-sm">
               {isSearchMode
                 ? `No results for "${searchQuery}". Try a different keyword.`
                 : `No vocabulary in${selectedCategory ? ` "${selectedCategory}"` : ''} HSK Level ${selectedLevel}.`}
@@ -316,7 +316,7 @@ export default function Vocabulary() {
             {hasActiveFilter && (
               <button
                 onClick={clearFilters}
-                className="mt-2 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors cursor-pointer"
+                className="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors cursor-pointer"
               >
                 Clear Filters
               </button>
@@ -355,10 +355,10 @@ export default function Vocabulary() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-800"
+            className="rounded-xl border border-gray-100 overflow-hidden bg-white"
           >
             {/* Column headers */}
-            <div className="grid grid-cols-12 gap-3 px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+            <div className="grid grid-cols-12 gap-3 px-4 py-3 bg-gray-50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wide">
               <div className="col-span-2 sm:col-span-1">Char</div>
               <div className="col-span-3 sm:col-span-2">Pinyin</div>
               <div className="col-span-7 sm:col-span-5">English</div>
@@ -373,13 +373,13 @@ export default function Vocabulary() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: Math.min(index * 0.015, 0.4) }}
                 className="grid grid-cols-12 gap-3 px-4 py-3.5 items-center
-                  border-b border-gray-50 dark:border-gray-700/50 last:border-0
-                  hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors group"
+                  border-b border-gray-50 last:border-0
+                  hover:bg-gray-50 transition-colors group"
               >
                 {/* Character */}
                 <div className="col-span-2 sm:col-span-1">
                   <span
-                    className="text-2xl font-bold text-gray-900 dark:text-gray-100"
+                    className="text-2xl font-bold text-gray-900"
                     style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
                   >
                     {word.simplified}
@@ -388,7 +388,7 @@ export default function Vocabulary() {
 
                 {/* Pinyin + audio */}
                 <div className="col-span-3 sm:col-span-2 flex items-center gap-1">
-                  <span className="text-sm font-medium text-primary-600 dark:text-primary-400 truncate">
+                  <span className="text-sm font-medium text-indigo-600 truncate">
                     {word.pinyin}
                   </span>
                   <span className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
@@ -397,7 +397,7 @@ export default function Vocabulary() {
                 </div>
 
                 {/* English */}
-                <div className="col-span-7 sm:col-span-5 text-sm text-gray-700 dark:text-gray-300 line-clamp-1">
+                <div className="col-span-7 sm:col-span-5 text-sm text-gray-700 line-clamp-1">
                   {word.english}
                 </div>
 
@@ -405,11 +405,11 @@ export default function Vocabulary() {
                 <div className="hidden sm:flex sm:col-span-2 items-center">
                   {word.category && (
                     <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full capitalize
-                      ${word.category.toLowerCase() === 'verb'        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300'
-                      : word.category.toLowerCase() === 'noun'        ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300'
-                      : word.category.toLowerCase() === 'adjective'   ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300'
-                      : word.category.toLowerCase() === 'adverb'      ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300'
-                      : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'}`}
+                      ${word.category.toLowerCase() === 'verb'        ? 'bg-blue-100 text-blue-800'
+                      : word.category.toLowerCase() === 'noun'        ? 'bg-green-100 text-green-800'
+                      : word.category.toLowerCase() === 'adjective'   ? 'bg-purple-100 text-purple-800'
+                      : word.category.toLowerCase() === 'adverb'      ? 'bg-orange-100 text-orange-800'
+                      : 'bg-gray-100 text-gray-700'}`}
                     >
                       {word.category}
                     </span>
@@ -421,8 +421,8 @@ export default function Vocabulary() {
                   <button
                     onClick={() => setListDetail(word)}
                     className="opacity-0 group-hover:opacity-100 transition-opacity text-xs px-3 py-1.5 rounded-lg
-                      bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300
-                      hover:bg-primary-100 dark:hover:bg-primary-900/50 font-medium cursor-pointer"
+                      bg-indigo-50 text-indigo-700
+                      hover:bg-indigo-100 font-medium cursor-pointer"
                   >
                     Details
                   </button>

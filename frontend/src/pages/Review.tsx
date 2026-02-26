@@ -2,9 +2,6 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { learningApi } from '@/services/api'
 import { HanziWord } from '@/types'
-import { Card } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import AudioButton from '@/components/AudioButton'
 import {
@@ -228,19 +225,26 @@ export default function Review() {
 
   if (!user) {
     return (
-      <div className="max-w-4xl mx-auto text-center py-20">
-        <h2 className="text-2xl font-bold mb-4">Please Login</h2>
-        <p className="text-gray-600 dark:text-gray-300 mb-6">You need to be logged in to access the review feature.</p>
-        <Button onClick={() => navigate('/login')}>Go to Login</Button>
+      <div className="max-w-md mx-auto text-center py-20 px-4">
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+          <Brain className="w-16 h-16 text-indigo-300 mx-auto mb-4" />
+          <h2 className="text-2xl font-extrabold text-gray-900 mb-2">Please Login</h2>
+          <p className="text-gray-500 mb-6 text-sm">You need to be logged in to access the review feature.</p>
+          <button
+            onClick={() => navigate('/login')}
+            className="bg-indigo-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-indigo-700 transition-all cursor-pointer"
+          >
+            Go to Login
+          </button>
+        </div>
       </div>
     )
   }
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto text-center py-20">
-        <LoadingSpinner />
-        <p className="text-gray-600 dark:text-gray-300 mt-4">Loading your review words...</p>
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner size="lg" />
       </div>
     )
   }
@@ -249,140 +253,158 @@ export default function Review() {
   const isSessionComplete = sessionStats.completed >= reviewItems.length
 
   return (
-    <div className="max-w-6xl mx-auto px-3 sm:px-4">
+    <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
       {/* Header */}
-      <div className="mb-6 sm:mb-8">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+      <div className="mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 flex items-center gap-2 sm:gap-3">
-              <Brain className="w-6 h-6 sm:w-8 sm:h-8 text-primary-600" />
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-1 flex items-center gap-2">
+              <Brain className="w-6 h-6 sm:w-7 sm:h-7 text-indigo-500" />
               Spaced Repetition Review
             </h1>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Review words at optimal intervals for maximum retention</p>
+            <p className="text-sm text-gray-500">Review words at optimal intervals for maximum retention</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" onClick={() => setHskLevel(undefined)}>
+            <button
+              onClick={() => setHskLevel(undefined)}
+              className={`px-3 py-1.5 rounded-xl font-semibold text-sm transition-all cursor-pointer ${hskLevel === undefined ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+            >
               All Levels
-            </Button>
+            </button>
             {[1, 2, 3, 4].map((level) => (
-              <Button
+              <button
                 key={level}
-                size="sm"
-                variant={hskLevel === level ? 'primary' : 'outline'}
                 onClick={() => setHskLevel(level)}
+                className={`px-3 py-1.5 rounded-xl font-semibold text-sm transition-all cursor-pointer ${hskLevel === level ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
               >
                 HSK {level}
-              </Button>
+              </button>
             ))}
           </div>
         </div>
 
         {/* Stats Bar */}
         {stats && (
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 mb-4 sm:mb-6">
-            <Card className="p-4">
-              <div className="flex items-center gap-2 text-blue-600 mb-1">
-                <BarChart3 className="w-5 h-5" />
-                <span className="text-sm font-medium">Learning</span>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 mb-4">
+            <div className="bg-indigo-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg shadow-indigo-500/20">
+              <div className="flex items-center gap-1.5 mb-1 opacity-80">
+                <BarChart3 className="w-4 h-4" />
+                <span className="text-xs font-medium">Learning</span>
               </div>
-              <div className="text-2xl font-bold">{stats.total_words_learning}</div>
-            </Card>
-            <Card className="p-4">
-              <div className="flex items-center gap-2 text-green-600 mb-1">
-                <Trophy className="w-5 h-5" />
-                <span className="text-sm font-medium">Mastered</span>
+              <div className="text-xl sm:text-2xl font-bold">{stats.total_words_learning}</div>
+            </div>
+            <div className="bg-emerald-500 rounded-2xl p-3 sm:p-4 text-white shadow-lg shadow-emerald-500/20">
+              <div className="flex items-center gap-1.5 mb-1 opacity-80">
+                <Trophy className="w-4 h-4" />
+                <span className="text-xs font-medium">Mastered</span>
               </div>
-              <div className="text-2xl font-bold">{stats.mastered_words}</div>
-            </Card>
-            <Card className="p-4">
-              <div className="flex items-center gap-2 text-orange-600 mb-1">
-                <Clock className="w-5 h-5" />
-                <span className="text-sm font-medium">Due Today</span>
+              <div className="text-xl sm:text-2xl font-bold">{stats.mastered_words}</div>
+            </div>
+            <div className="bg-orange-500 rounded-2xl p-3 sm:p-4 text-white shadow-lg shadow-orange-500/20">
+              <div className="flex items-center gap-1.5 mb-1 opacity-80">
+                <Clock className="w-4 h-4" />
+                <span className="text-xs font-medium">Due Today</span>
               </div>
-              <div className="text-2xl font-bold">{stats.due_for_review}</div>
-            </Card>
-            <Card className="p-4">
-              <div className="flex items-center gap-2 text-purple-600 mb-1">
-                <Zap className="w-5 h-5" />
-                <span className="text-sm font-medium">Total Reviews</span>
+              <div className="text-xl sm:text-2xl font-bold">{stats.due_for_review}</div>
+            </div>
+            <div className="bg-violet-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg shadow-violet-500/20">
+              <div className="flex items-center gap-1.5 mb-1 opacity-80">
+                <Zap className="w-4 h-4" />
+                <span className="text-xs font-medium">Total Reviews</span>
               </div>
-              <div className="text-2xl font-bold">{stats.total_reviews}</div>
-            </Card>
-            <Card className="p-4">
-              <div className="flex items-center gap-2 text-pink-600 mb-1">
-                <CheckCircle className="w-5 h-5" />
-                <span className="text-sm font-medium">Accuracy</span>
+              <div className="text-xl sm:text-2xl font-bold">{stats.total_reviews}</div>
+            </div>
+            <div className="bg-pink-500 rounded-2xl p-3 sm:p-4 text-white shadow-lg shadow-pink-500/20 col-span-2 sm:col-span-1">
+              <div className="flex items-center gap-1.5 mb-1 opacity-80">
+                <CheckCircle className="w-4 h-4" />
+                <span className="text-xs font-medium">Accuracy</span>
               </div>
-              <div className="text-2xl font-bold">{stats.accuracy.toFixed(0)}%</div>
-            </Card>
+              <div className="text-xl sm:text-2xl font-bold">{stats.accuracy.toFixed(0)}%</div>
+            </div>
           </div>
         )}
       </div>
 
       {reviewItems.length === 0 ? (
-        <Card className="p-12 text-center">
-          <div className="flex justify-center mb-4">
-            <Star className="w-16 h-16 text-yellow-500" />
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
+          <div className="p-8 sm:p-12 text-center">
+            <Star className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
+            <h2 className="text-2xl font-extrabold text-gray-900 mb-2">All Caught Up!</h2>
+            <p className="text-gray-500 mb-6 text-sm sm:text-base">
+              You have no words due for review right now. Great job!
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={() => navigate('/practice')}
+                className="bg-indigo-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-indigo-700 transition-all cursor-pointer"
+              >
+                Start Learning New Words
+              </button>
+              <button
+                onClick={() => navigate('/vocabulary')}
+                className="border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:border-indigo-300 hover:bg-indigo-50 transition-all cursor-pointer"
+              >
+                Browse Vocabulary
+              </button>
+            </div>
           </div>
-          <h2 className="text-2xl font-bold mb-2">All Caught Up!</h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
-            You have no words due for review right now. Great job!
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Button onClick={() => navigate('/practice')}>
-              Start Learning New Words
-            </Button>
-            <Button variant="outline" onClick={() => navigate('/vocabulary')}>
-              Browse Vocabulary
-            </Button>
-          </div>
-        </Card>
+        </div>
       ) : isSessionComplete ? (
-        <Card className="p-12 text-center">
-          <div className="flex justify-center mb-4">
-            <Trophy className="w-16 h-16 text-yellow-500" />
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
+          <div className="p-8 sm:p-12 text-center">
+            <Trophy className="w-16 h-16 sm:w-20 sm:h-20 text-yellow-500 mx-auto mb-4" />
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-6">Session Complete!</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8 max-w-lg mx-auto">
+              <div className="bg-emerald-500 rounded-2xl p-4 text-white text-center">
+                <div className="text-2xl sm:text-3xl font-bold">{sessionStats.perfect}</div>
+                <div className="text-xs sm:text-sm opacity-90 mt-0.5">Perfect</div>
+              </div>
+              <div className="bg-indigo-500 rounded-2xl p-4 text-white text-center">
+                <div className="text-2xl sm:text-3xl font-bold">{sessionStats.good}</div>
+                <div className="text-xs sm:text-sm opacity-90 mt-0.5">Good</div>
+              </div>
+              <div className="bg-orange-500 rounded-2xl p-4 text-white text-center">
+                <div className="text-2xl sm:text-3xl font-bold">{sessionStats.hard}</div>
+                <div className="text-xs sm:text-sm opacity-90 mt-0.5">Hard</div>
+              </div>
+              <div className="bg-red-500 rounded-2xl p-4 text-white text-center">
+                <div className="text-2xl sm:text-3xl font-bold">{sessionStats.wrong}</div>
+                <div className="text-xs sm:text-sm opacity-90 mt-0.5">Wrong</div>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={() => loadReviewWords()}
+                className="bg-indigo-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Start New Session
+              </button>
+              <button
+                onClick={() => navigate('/practice')}
+                className="border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:border-indigo-300 hover:bg-indigo-50 transition-all cursor-pointer"
+              >
+                Practice More Words
+              </button>
+            </div>
           </div>
-          <h2 className="text-2xl font-bold mb-4">Session Complete!</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 max-w-2xl mx-auto">
-            <div className="bg-success-50 dark:bg-success-900/20 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-success-600 dark:text-success-400">{sessionStats.perfect}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Perfect</div>
-            </div>
-            <div className="bg-info-50 dark:bg-info-900/20 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-info-600 dark:text-info-400">{sessionStats.good}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Good</div>
-            </div>
-            <div className="bg-warning-50 dark:bg-warning-900/20 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-warning-600 dark:text-warning-400">{sessionStats.hard}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Hard</div>
-            </div>
-            <div className="bg-error-50 dark:bg-error-900/20 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-error-600 dark:text-error-400">{sessionStats.wrong}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Wrong</div>
-            </div>
-          </div>
-          <div className="flex gap-4 justify-center">
-            <Button onClick={() => loadReviewWords()}>
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Start New Session
-            </Button>
-            <Button variant="outline" onClick={() => navigate('/practice')}>
-              Practice More Words
-            </Button>
-          </div>
-        </Card>
+        </div>
       ) : (
         <>
           {/* Progress Bar */}
-          <div className="mb-6">
-            <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300 mb-2">
+          <div className="mb-4">
+            <div className="flex justify-between text-sm text-gray-500 mb-2">
               <span>Progress: {sessionStats.completed} / {sessionStats.total}</span>
               <span>{Math.round((sessionStats.completed / sessionStats.total) * 100)}%</span>
             </div>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-              <div
-                className="bg-gradient-to-r from-primary-500 to-primary-600 h-3 rounded-full transition-all duration-300"
-                style={{ width: `${(sessionStats.completed / sessionStats.total) * 100}%` }}
+            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${(sessionStats.completed / sessionStats.total) * 100}%` }}
+                transition={{ duration: 0.3 }}
               />
             </div>
           </div>
@@ -396,210 +418,202 @@ export default function Review() {
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.3 }}
             >
-              <Card className="p-8 md:p-12">
-                {/* Days Overdue Badge */}
-                {currentItem && currentItem.days_overdue > 0 && (
-                  <div className="mb-4">
-                    <Badge variant="warning">
-                      <Clock className="w-4 h-4 mr-1" />
-                      {currentItem.days_overdue} day{currentItem.days_overdue > 1 ? 's' : ''} overdue
-                    </Badge>
-                  </div>
-                )}
-
-                {/* Question */}
-                <div className="text-center mb-8">
-                  <div className="text-8xl md:text-9xl font-bold mb-6 text-gray-900 dark:text-gray-100">
-                    {currentItem?.word.simplified}
-                  </div>
-                  <div className="text-2xl text-gray-600 mb-2">
-                    {quizQuestion?.type === 'meaning'
-                      ? 'What does this character mean?'
-                      : 'What is the pinyin pronunciation?'}
-                  </div>
-                </div>
-
-                {/* Quiz Result Feedback */}
-                {showQuizResult && (
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className={`text-center mb-6 p-4 rounded-lg ${
-                      isCorrectAnswer
-                        ? 'bg-success-50 dark:bg-success-900/20 border-2 border-success-300 dark:border-success-700'
-                        : 'bg-error-50 dark:bg-error-900/20 border-2 border-error-300 dark:border-error-700'
-                    }`}
-                  >
-                    {isCorrectAnswer ? (
-                      <div className="flex items-center justify-center gap-2 text-success-700 dark:text-success-400">
-                        <CheckCircle className="w-6 h-6" />
-                        <span className="text-lg font-semibold">Correct!</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center gap-2 text-error-700 dark:text-error-400">
-                        <XCircle className="w-6 h-6" />
-                        <span className="text-lg font-semibold">Incorrect - See the answer below</span>
-                      </div>
-                    )}
-                  </motion.div>
-                )}
-
-                {/* Multiple Choice Quiz - Show before answer */}
-                {!showAnswer && quizQuestion && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mb-8"
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {quizQuestion.options.map((option, index) => {
-                        const isSelected = selectedAnswer === index
-                        const isCorrect = index === quizQuestion.correctIndex
-                        const showResult = showQuizResult
-
-                        let buttonClass = "py-4 px-6 text-left transition-all"
-                        if (showResult) {
-                          if (isCorrect) {
-                            buttonClass += " border-success-500 bg-success-50 dark:bg-success-900/20 text-success-900 dark:text-success-200"
-                          } else if (isSelected && !isCorrect) {
-                            buttonClass += " border-error-500 bg-error-50 dark:bg-error-900/20 text-error-900 dark:text-error-200"
-                          } else {
-                            buttonClass += " border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
-                          }
-                        } else {
-                          buttonClass += isSelected
-                            ? " border-primary-500 bg-primary-50 dark:bg-primary-900/20"
-                            : " border-gray-300 dark:border-gray-600 hover:border-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900/20"
-                        }
-
-                        return (
-                          <Button
-                            key={index}
-                            variant="outline"
-                            className={buttonClass}
-                            onClick={() => !showQuizResult && handleQuizAnswer(index)}
-                            disabled={showQuizResult}
-                          >
-                            <div className="flex items-center justify-between w-full">
-                              <span className="text-lg">{option}</span>
-                              {showResult && isCorrect && (
-                                <CheckCircle className="w-5 h-5 text-success-600 dark:text-success-400" />
-                              )}
-                              {showResult && isSelected && !isCorrect && (
-                                <XCircle className="w-5 h-5 text-error-600 dark:text-error-400" />
-                              )}
-                            </div>
-                          </Button>
-                        )
-                      })}
+              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+                <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
+                <div className="p-6 sm:p-8 md:p-10">
+                  {/* Days Overdue Badge */}
+                  {currentItem && currentItem.days_overdue > 0 && (
+                    <div className="mb-4">
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">
+                        <Clock className="w-3.5 h-3.5" />
+                        {currentItem.days_overdue} day{currentItem.days_overdue > 1 ? 's' : ''} overdue
+                      </span>
                     </div>
-                  </motion.div>
-                )}
+                  )}
 
-                {/* Answer (Show after quiz attempt) */}
-                <AnimatePresence>
-                  {showAnswer && currentItem && (
+                  {/* Question */}
+                  <div className="text-center mb-6 sm:mb-8">
+                    <div className="text-7xl sm:text-8xl md:text-9xl font-bold mb-4 text-gray-900"
+                      style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}>
+                      {currentItem?.word.simplified}
+                    </div>
+                    <div className="text-base sm:text-lg text-gray-500">
+                      {quizQuestion?.type === 'meaning'
+                        ? 'What does this character mean?'
+                        : 'What is the pinyin pronunciation?'}
+                    </div>
+                  </div>
+
+                  {/* Quiz Result Feedback */}
+                  {showQuizResult && (
                     <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      className="text-center mb-8 p-6 bg-gradient-to-br from-primary-50 to-info-50 dark:from-primary-900/20 dark:to-info-900/20 rounded-xl border-2 border-primary-200 dark:border-primary-700"
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className={`text-center mb-6 p-4 rounded-2xl border-2 ${
+                        isCorrectAnswer
+                          ? 'bg-emerald-50 border-emerald-200'
+                          : 'bg-red-50 border-red-200'
+                      }`}
                     >
-                      <div className="flex items-center justify-center gap-2 mb-2">
-                        <div className="text-3xl font-bold text-primary-600">
-                          {currentItem.word.pinyin}
+                      {isCorrectAnswer ? (
+                        <div className="flex items-center justify-center gap-2 text-emerald-700">
+                          <CheckCircle className="w-5 h-5" />
+                          <span className="text-base font-semibold">Correct!</span>
                         </div>
-                        <AudioButton
-                          text={currentItem.word.simplified}
-                          language="zh-CN"
-                          size="md"
-                          variant="secondary"
-                          tooltipText="Hear the pronunciation"
-                        />
-                      </div>
-                      <div className="text-2xl text-gray-800 dark:text-gray-200 mb-4">
-                        {currentItem.word.english}
-                      </div>
-                      {currentItem.word.category && (
-                        <Badge>{currentItem.word.category}</Badge>
+                      ) : (
+                        <div className="flex items-center justify-center gap-2 text-red-700">
+                          <XCircle className="w-5 h-5" />
+                          <span className="text-base font-semibold">Incorrect – See the answer below</span>
+                        </div>
                       )}
                     </motion.div>
                   )}
-                </AnimatePresence>
 
-                {/* Action Buttons */}
-                {!showAnswer ? (
-                  <div className="flex justify-center">
-                    <Button
-                      size="lg"
-                      onClick={() => setShowAnswer(true)}
-                      variant="outline"
-                      className="px-12"
+                  {/* Multiple Choice Quiz */}
+                  {!showAnswer && quizQuestion && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mb-6 sm:mb-8"
                     >
-                      Skip Quiz - Show Answer
-                      <ArrowRight className="ml-2 w-5 h-5" />
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <p className="text-center text-gray-600 dark:text-gray-300 mb-4">How well did you know this?</p>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      <Button
-                        variant="outline"
-                        className="py-6 border-error-300 dark:border-error-700 hover:bg-error-50 dark:hover:bg-error-900/20"
-                        onClick={() => handleReview(0)}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {quizQuestion.options.map((option, index) => {
+                          const isSelected = selectedAnswer === index
+                          const isCorrect = index === quizQuestion.correctIndex
+                          const showResult = showQuizResult
+
+                          let btnClass = 'w-full p-4 sm:p-5 text-left rounded-2xl border-2 transition-all cursor-pointer font-medium'
+                          if (showResult) {
+                            if (isCorrect) {
+                              btnClass += ' border-emerald-400 bg-emerald-50 text-emerald-900'
+                            } else if (isSelected && !isCorrect) {
+                              btnClass += ' border-red-400 bg-red-50 text-red-900'
+                            } else {
+                              btnClass += ' border-gray-200 bg-gray-50 text-gray-400'
+                            }
+                          } else {
+                            btnClass += isSelected
+                              ? ' border-indigo-500 bg-indigo-50 text-indigo-900'
+                              : ' border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 text-gray-800'
+                          }
+
+                          return (
+                            <button
+                              key={index}
+                              className={btnClass}
+                              onClick={() => !showQuizResult && handleQuizAnswer(index)}
+                              disabled={showQuizResult}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="text-base sm:text-lg">{option}</span>
+                                {showResult && isCorrect && (
+                                  <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+                                )}
+                                {showResult && isSelected && !isCorrect && (
+                                  <XCircle className="w-5 h-5 text-red-600 shrink-0" />
+                                )}
+                              </div>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Answer */}
+                  <AnimatePresence>
+                    {showAnswer && currentItem && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className="text-center mb-6 sm:mb-8 p-5 sm:p-6 bg-gradient-to-br from-indigo-50 to-violet-50 rounded-2xl border border-indigo-100"
                       >
-                        <XCircle className="w-5 h-5 mr-2 text-error-500" />
-                        <div className="text-left">
-                          <div className="font-bold">Wrong</div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400">Completely forgot</div>
+                        <div className="flex items-center justify-center gap-2 mb-2">
+                          <div className="text-2xl sm:text-3xl font-bold text-indigo-600">
+                            {currentItem.word.pinyin}
+                          </div>
+                          <AudioButton
+                            text={currentItem.word.simplified}
+                            language="zh-CN"
+                            size="md"
+                            variant="secondary"
+                            tooltipText="Hear the pronunciation"
+                          />
                         </div>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="py-6 border-warning-300 dark:border-warning-700 hover:bg-warning-50 dark:hover:bg-warning-900/20"
-                        onClick={() => handleReview(2)}
+                        <div className="text-lg sm:text-xl text-gray-800 mb-3">
+                          {currentItem.word.english}
+                        </div>
+                        {currentItem.word.category && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
+                            {currentItem.word.category}
+                          </span>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Action Buttons */}
+                  {!showAnswer ? (
+                    <div className="flex justify-center">
+                      <button
+                        onClick={() => setShowAnswer(true)}
+                        className="border-2 border-gray-200 text-gray-700 rounded-2xl px-8 py-3.5 font-semibold hover:border-indigo-300 hover:bg-indigo-50 transition-all flex items-center gap-2 cursor-pointer"
                       >
-                        <div className="text-left">
-                          <div className="font-bold">Hard</div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400">Difficult to recall</div>
-                        </div>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="py-6 border-info-300 dark:border-info-700 hover:bg-info-50 dark:hover:bg-info-900/20"
-                        onClick={() => handleReview(3)}
-                      >
-                        <div className="text-left">
-                          <div className="font-bold">Good</div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400">Remembered with effort</div>
-                        </div>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="py-6 border-success-300 dark:border-success-700 hover:bg-success-50 dark:hover:bg-success-900/20"
-                        onClick={() => handleReview(4)}
-                      >
-                        <div className="text-left">
-                          <div className="font-bold">Easy</div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400">Quick recall</div>
-                        </div>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="py-6 border-purple-300 dark:border-purple-700 hover:bg-purple-50 dark:hover:bg-purple-900/20 md:col-span-2"
-                        onClick={() => handleReview(5)}
-                      >
-                        <CheckCircle className="w-5 h-5 mr-2 text-purple-500 dark:text-purple-400" />
-                        <div className="text-left">
-                          <div className="font-bold">Perfect</div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400">Instant recall</div>
-                        </div>
-                      </Button>
+                        Skip Quiz – Show Answer
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
                     </div>
-                  </div>
-                )}
-              </Card>
+                  ) : (
+                    <div className="space-y-3">
+                      <p className="text-center text-sm text-gray-500 mb-3">How well did you know this?</p>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+                        <button
+                          onClick={() => handleReview(0)}
+                          className="py-4 px-3 rounded-2xl border-2 border-red-200 hover:bg-red-50 transition-all text-left cursor-pointer"
+                        >
+                          <div className="flex items-center gap-1.5 mb-0.5">
+                            <XCircle className="w-4 h-4 text-red-500" />
+                            <span className="font-bold text-gray-900 text-sm">Wrong</span>
+                          </div>
+                          <div className="text-xs text-gray-500">Completely forgot</div>
+                        </button>
+                        <button
+                          onClick={() => handleReview(2)}
+                          className="py-4 px-3 rounded-2xl border-2 border-orange-200 hover:bg-orange-50 transition-all text-left cursor-pointer"
+                        >
+                          <div className="font-bold text-gray-900 text-sm mb-0.5">Hard</div>
+                          <div className="text-xs text-gray-500">Difficult to recall</div>
+                        </button>
+                        <button
+                          onClick={() => handleReview(3)}
+                          className="py-4 px-3 rounded-2xl border-2 border-blue-200 hover:bg-blue-50 transition-all text-left cursor-pointer"
+                        >
+                          <div className="font-bold text-gray-900 text-sm mb-0.5">Good</div>
+                          <div className="text-xs text-gray-500">Remembered with effort</div>
+                        </button>
+                        <button
+                          onClick={() => handleReview(4)}
+                          className="py-4 px-3 rounded-2xl border-2 border-emerald-200 hover:bg-emerald-50 transition-all text-left cursor-pointer"
+                        >
+                          <div className="font-bold text-gray-900 text-sm mb-0.5">Easy</div>
+                          <div className="text-xs text-gray-500">Quick recall</div>
+                        </button>
+                        <button
+                          onClick={() => handleReview(5)}
+                          className="py-4 px-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white transition-all flex items-center gap-2 col-span-2 sm:col-span-1 cursor-pointer"
+                        >
+                          <CheckCircle className="w-4 h-4" />
+                          <div className="text-left">
+                            <div className="font-bold text-sm">Perfect</div>
+                            <div className="text-xs opacity-80">Instant recall</div>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </motion.div>
           </AnimatePresence>
         </>

@@ -62,16 +62,16 @@ export default class ErrorBoundary extends Component<Props, State> {
 
     return (
       <div className="min-h-[400px] flex items-center justify-center p-6">
-        <div className="max-w-2xl w-full bg-white dark:bg-gray-800 border-2 border-red-300 dark:border-red-700 rounded-2xl shadow-xl overflow-hidden">
+        <div className="max-w-2xl w-full bg-white border-2 border-red-300 rounded-2xl shadow-xl overflow-hidden">
           {/* Header */}
-          <div className="bg-red-50 dark:bg-red-950 border-b border-red-200 dark:border-red-800 px-6 py-4">
+          <div className="bg-red-50 border-b border-red-200 px-6 py-4">
             <div className="flex items-start gap-3">
               <span className="text-3xl">💥</span>
               <div>
-                <h2 className="text-lg font-bold text-red-700 dark:text-red-400">
+                <h2 className="text-lg font-bold text-red-700">
                   Something crashed in: <span className="font-mono">{name}</span>
                 </h2>
-                <p className="text-sm text-red-600 dark:text-red-400 mt-0.5">
+                <p className="text-sm text-red-600 mt-0.5">
                   A render error was caught. Check the browser console for full details.
                 </p>
               </div>
@@ -80,18 +80,18 @@ export default class ErrorBoundary extends Component<Props, State> {
 
           {/* Error message */}
           <div className="px-6 py-4">
-            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Error message:</p>
-            <code className="block bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-300 text-sm p-3 rounded-lg font-mono whitespace-pre-wrap break-words">
+            <p className="text-sm font-semibold text-gray-700 mb-1">Error message:</p>
+            <code className="block bg-red-50 text-red-800 text-sm p-3 rounded-lg font-mono whitespace-pre-wrap break-words">
               {error?.message ?? 'Unknown error'}
             </code>
 
             {/* Stack trace — dev only */}
             {isDev && errorInfo?.componentStack && (
               <details className="mt-4">
-                <summary className="text-sm font-semibold text-gray-600 dark:text-gray-400 cursor-pointer hover:text-gray-900 dark:hover:text-gray-200">
+                <summary className="text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900">
                   Component stack trace (dev only)
                 </summary>
-                <pre className="mt-2 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 text-xs p-3 rounded-lg overflow-auto max-h-48 font-mono">
+                <pre className="mt-2 bg-gray-50 text-gray-700 text-xs p-3 rounded-lg overflow-auto max-h-48 font-mono">
                   {errorInfo.componentStack}
                 </pre>
               </details>
@@ -99,10 +99,10 @@ export default class ErrorBoundary extends Component<Props, State> {
 
             {isDev && error?.stack && (
               <details className="mt-2">
-                <summary className="text-sm font-semibold text-gray-600 dark:text-gray-400 cursor-pointer hover:text-gray-900 dark:hover:text-gray-200">
+                <summary className="text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900">
                   JS stack trace (dev only)
                 </summary>
-                <pre className="mt-2 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 text-xs p-3 rounded-lg overflow-auto max-h-48 font-mono">
+                <pre className="mt-2 bg-gray-50 text-gray-700 text-xs p-3 rounded-lg overflow-auto max-h-48 font-mono">
                   {error.stack}
                 </pre>
               </details>
@@ -119,7 +119,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             </button>
             <button
               onClick={() => window.location.href = '/'}
-              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 text-sm font-medium rounded-lg transition-colors"
+              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium rounded-lg transition-colors"
             >
               Go to Home
             </button>

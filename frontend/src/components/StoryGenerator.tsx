@@ -2,9 +2,6 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { storiesApi } from '@/services/api'
-import { Card } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Sparkles, AlertCircle, BookOpen, GraduationCap, Users, AlignLeft, Eye } from 'lucide-react'
 
@@ -108,9 +105,9 @@ export default function StoryGenerator() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="bg-gradient-to-br from-primary-50 to-purple-50">
+        <div className="rounded-2xl shadow-sm border border-gray-100 p-6 bg-gradient-to-br from-indigo-50 to-purple-50">
           <div className="flex items-start gap-3">
-            <Sparkles className="w-6 h-6 text-primary-600 flex-shrink-0 mt-1" />
+            <Sparkles className="w-6 h-6 text-indigo-600 flex-shrink-0 mt-1" />
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900 mb-2">AI Story Generator</h3>
               <p className="text-sm text-gray-600 mb-3">
@@ -124,7 +121,7 @@ export default function StoryGenerator() {
                       <span className={`font-semibold ${
                         usageStats.story_generation.used_today >= usageStats.story_generation.limit_daily
                           ? 'text-red-600'
-                          : 'text-primary-600'
+                          : 'text-indigo-600'
                       }`}>
                         {usageStats.story_generation.used_today}/{usageStats.story_generation.limit_daily}
                       </span>
@@ -134,7 +131,7 @@ export default function StoryGenerator() {
                       <span className={`font-semibold ${
                         usageStats.story_generation.used_this_hour >= usageStats.story_generation.limit_hourly
                           ? 'text-red-600'
-                          : 'text-primary-600'
+                          : 'text-indigo-600'
                       }`}>
                         {usageStats.story_generation.used_this_hour}/{usageStats.story_generation.limit_hourly}
                       </span>
@@ -152,17 +149,15 @@ export default function StoryGenerator() {
                   Loading usage stats...
                 </div>
               )}
-              <Button
-                variant="secondary"
-                size="sm"
+              <button
                 onClick={loadUsageStats}
-                className="mt-3"
+                className="mt-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors"
               >
                 Refresh Usage Stats
-              </Button>
+              </button>
             </div>
           </div>
-        </Card>
+        </div>
       </motion.div>
 
       {/* Generator Form */}
@@ -171,9 +166,9 @@ export default function StoryGenerator() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
-        <Card>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-primary-600" />
+            <Sparkles className="w-5 h-5 text-indigo-600" />
             Story Settings
           </h3>
 
@@ -186,14 +181,17 @@ export default function StoryGenerator() {
               </label>
               <div className="flex flex-wrap gap-2">
                 {[1, 2, 3, 4, 5, 6].map((level) => (
-                  <Button
+                  <button
                     key={level}
-                    variant={hskLevel === level ? 'primary' : 'secondary'}
-                    size="sm"
                     onClick={() => setHskLevel(level)}
+                    className={`rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors ${
+                      hskLevel === level
+                        ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                    }`}
                   >
                     HSK {level}
-                  </Button>
+                  </button>
                 ))}
               </div>
             </div>
@@ -209,7 +207,7 @@ export default function StoryGenerator() {
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 placeholder="e.g., daily life, school, travel, food..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               />
             </div>
 
@@ -223,8 +221,8 @@ export default function StoryGenerator() {
                 type="text"
                 value={characterNames}
                 onChange={(e) => setCharacterNames(e.target.value)}
-                placeholder="e.g., , �=, N (comma separated)"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                placeholder="e.g., , &lt;=, N (comma separated)"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               />
               <p className="text-xs text-gray-600 mt-1">
                 Separate multiple names with commas
@@ -239,26 +237,26 @@ export default function StoryGenerator() {
               </label>
               <div className="flex gap-2">
                 {(['short', 'medium', 'long'] as const).map((len) => (
-                  <Button
+                  <button
                     key={len}
-                    variant={length === len ? 'primary' : 'secondary'}
-                    size="sm"
                     onClick={() => setLength(len)}
-                    className="capitalize"
+                    className={`capitalize rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors ${
+                      length === len
+                        ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                    }`}
                   >
                     {len}
-                  </Button>
+                  </button>
                 ))}
               </div>
             </div>
 
             {/* Generate Button */}
-            <Button
-              variant="primary"
-              size="lg"
+            <button
               onClick={handleGenerate}
               disabled={loading}
-              className="w-full"
+              className="w-full flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-6 py-3 font-semibold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -271,9 +269,9 @@ export default function StoryGenerator() {
                   Generate Story
                 </>
               )}
-            </Button>
+            </button>
           </div>
-        </Card>
+        </div>
       </motion.div>
 
       {/* Error Message */}
@@ -282,7 +280,7 @@ export default function StoryGenerator() {
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
         >
-          <Card className="bg-red-50 border-red-200">
+          <div className="rounded-2xl shadow-sm border border-red-200 p-6 bg-red-50">
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
               <div>
@@ -290,7 +288,7 @@ export default function StoryGenerator() {
                 <p className="text-sm text-red-700">{error}</p>
               </div>
             </div>
-          </Card>
+          </div>
         </motion.div>
       )}
 
@@ -301,7 +299,7 @@ export default function StoryGenerator() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className="bg-gradient-to-br from-primary-50 to-purple-50">
+          <div className="rounded-2xl shadow-sm border border-gray-100 p-6 bg-gradient-to-br from-indigo-50 to-purple-50">
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1">
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">
@@ -317,13 +315,15 @@ export default function StoryGenerator() {
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant="default">HSK {generatedStory.hsk_level}</Badge>
+                <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
+                  HSK {generatedStory.hsk_level}
+                </span>
                 {generatedStoryId && (
                   <Link to={`/stories/${generatedStoryId}`}>
-                    <Button variant="primary" size="sm">
+                    <button className="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors">
                       <Eye className="w-4 h-4 mr-1" />
                       View Story
-                    </Button>
+                    </button>
                   </Link>
                 )}
               </div>
@@ -352,7 +352,7 @@ export default function StoryGenerator() {
                 <div className="grid md:grid-cols-2 gap-3">
                   {generatedStory.vocabulary.map((vocab, index) => (
                     <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                      <span className="text-xl font-medium text-primary-600">{vocab.word}</span>
+                      <span className="text-xl font-medium text-indigo-600">{vocab.word}</span>
                       <div className="flex-1">
                         <div className="text-sm text-gray-600">{vocab.pinyin}</div>
                         <div className="text-sm text-gray-800">{vocab.meaning}</div>
@@ -370,14 +370,14 @@ export default function StoryGenerator() {
                 <ul className="space-y-2">
                   {generatedStory.grammar_points.map((point, index) => (
                     <li key={index} className="flex items-start gap-2">
-                      <span className="text-primary-600 mt-1">"</span>
+                      <span className="text-indigo-600 mt-1">"</span>
                       <span className="text-gray-700">{point}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
-          </Card>
+          </div>
         </motion.div>
       )}
     </div>

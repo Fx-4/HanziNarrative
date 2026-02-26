@@ -1,8 +1,6 @@
-﻿import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import type { HanziWord, TypingAttempt } from '@/types'
-import { Card } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
 import { typingApi } from '@/services/api'
 import { calculateWPM } from '@/utils/pinyinInput'
 import { toast } from 'react-hot-toast'
@@ -129,10 +127,15 @@ export default function SpeedTypingMode({ words, hskLevel: _hskLevel, onBack }: 
 
   if (!currentWord) {
     return (
-      <Card className="p-8 text-center">
-        <p className="text-gray-600 dark:text-gray-400">No words available for this HSK level.</p>
-        <Button onClick={onBack} className="mt-4">Go Back</Button>
-      </Card>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+        <p className="text-gray-600">No words available for this HSK level.</p>
+        <button
+          onClick={onBack}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors mt-4"
+        >
+          Go Back
+        </button>
+      </div>
     )
   }
 
@@ -140,7 +143,7 @@ export default function SpeedTypingMode({ words, hskLevel: _hskLevel, onBack }: 
     const stats = getSessionStats()!
     return (
       <div className="space-y-6">
-        <Card className="p-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
           <div className="text-center">
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
@@ -148,43 +151,46 @@ export default function SpeedTypingMode({ words, hskLevel: _hskLevel, onBack }: 
               className="mb-6"
             >
               <Trophy className="w-20 h-20 mx-auto text-yellow-500 mb-4" />
-              <h2 className="text-4xl font-bold mb-2 dark:text-gray-100">Session Complete!</h2>
-              <p className="text-gray-600 dark:text-gray-400">Great job on your typing practice!</p>
+              <h2 className="text-4xl font-bold mb-2">Session Complete!</h2>
+              <p className="text-gray-600">Great job on your typing practice!</p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto mb-6">
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg p-6">
-                <Zap className="w-8 h-8 mx-auto mb-2 text-purple-600 dark:text-purple-400" />
-                <p className="text-sm text-purple-700 dark:text-purple-300 font-medium mb-1">Average WPM</p>
-                <p className="text-3xl font-bold text-purple-900 dark:text-purple-100">
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6">
+                <Zap className="w-8 h-8 mx-auto mb-2 text-purple-600" />
+                <p className="text-sm text-purple-700 font-medium mb-1">Average WPM</p>
+                <p className="text-3xl font-bold text-purple-900">
                   {Math.round(stats.avgWpm)}
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-lg p-6">
-                <Trophy className="w-8 h-8 mx-auto mb-2 text-orange-600 dark:text-orange-400" />
-                <p className="text-sm text-orange-700 dark:text-orange-300 font-medium mb-1">Best WPM</p>
-                <p className="text-3xl font-bold text-orange-900 dark:text-orange-100">
+              <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-6">
+                <Trophy className="w-8 h-8 mx-auto mb-2 text-orange-600" />
+                <p className="text-sm text-orange-700 font-medium mb-1">Best WPM</p>
+                <p className="text-3xl font-bold text-orange-900">
                   {Math.round(stats.bestWpm)}
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg p-6">
-                <TrendingUp className="w-8 h-8 mx-auto mb-2 text-green-600 dark:text-green-400" />
-                <p className="text-sm text-green-700 dark:text-green-300 font-medium mb-1">Accuracy</p>
-                <p className="text-3xl font-bold text-green-900 dark:text-green-100">
+              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6">
+                <TrendingUp className="w-8 h-8 mx-auto mb-2 text-green-600" />
+                <p className="text-sm text-green-700 font-medium mb-1">Accuracy</p>
+                <p className="text-3xl font-bold text-green-900">
                   {Math.round(stats.accuracy)}%
                 </p>
               </div>
             </div>
 
             <div className="flex gap-3 justify-center">
-              <Button onClick={onBack} size="lg" variant="primary">
+              <button
+                onClick={onBack}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-3 font-semibold cursor-pointer transition-colors text-lg"
+              >
                 Back to Modes
-              </Button>
+              </button>
             </div>
           </div>
-        </Card>
+        </div>
       </div>
     )
   }
@@ -193,36 +199,36 @@ export default function SpeedTypingMode({ words, hskLevel: _hskLevel, onBack }: 
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Zap className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-          <span className="text-lg font-semibold dark:text-gray-100">Speed Typing</span>
+          <Zap className="w-5 h-5 text-orange-600" />
+          <span className="text-lg font-semibold">Speed Typing</span>
         </div>
         <div className="flex gap-4">
-          <Card className="px-4 py-2">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-4 py-2">
             <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-              <span className="text-lg font-bold dark:text-gray-100">{formatTime(timer)}</span>
+              <Clock className="w-5 h-5 text-orange-600" />
+              <span className="text-lg font-bold">{formatTime(timer)}</span>
             </div>
-          </Card>
-          <Card className="px-4 py-2">
+          </div>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-4 py-2">
             <div className="flex items-center gap-2">
-              <Zap className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
-              <span className="text-lg font-bold dark:text-gray-100">{Math.round(currentWPM)} WPM</span>
+              <Zap className="w-5 h-5 text-yellow-600" />
+              <span className="text-lg font-bold">{Math.round(currentWPM)} WPM</span>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
 
-      <Card className="p-8">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
         <div className="text-center mb-8">
           <motion.div
             key={currentWord.id}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
           >
-            <div className="text-7xl font-chinese mb-4 text-gray-900 dark:text-gray-100">
+            <div className="text-7xl font-chinese mb-4 text-gray-900">
               {currentWord.simplified}
             </div>
-            <p className="text-2xl text-gray-700 dark:text-gray-300">{currentWord.english}</p>
+            <p className="text-2xl text-gray-700">{currentWord.english}</p>
           </motion.div>
         </div>
 
@@ -233,34 +239,34 @@ export default function SpeedTypingMode({ words, hskLevel: _hskLevel, onBack }: 
             value={inputValue}
             onChange={handleInputChange}
             placeholder="Type as fast as you can..."
-            className="w-full px-6 py-4 text-2xl border-2 border-gray-300 dark:border-gray-600 rounded-lg text-center bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-primary-500 dark:focus:border-primary-400 focus:outline-none transition-colors"
+            className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-indigo-500 focus:outline-none transition-colors"
             autoComplete="off"
           />
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center">
-            Target: <span className="font-semibold text-primary-600 dark:text-primary-400">{currentWord.pinyin}</span>
+          <p className="text-sm text-gray-600 mt-2 text-center">
+            Target: <span className="font-semibold text-indigo-600">{currentWord.pinyin}</span>
           </p>
         </div>
 
         <div className="mt-8 text-center">
-          <p className="text-lg font-semibold dark:text-gray-100">
+          <p className="text-lg font-semibold">
             Progress: {currentIndex + 1} / {words.length}
           </p>
         </div>
-      </Card>
+      </div>
 
       {/* Progress bar */}
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium dark:text-gray-300">Session Progress</span>
-          <span className="text-sm text-gray-600 dark:text-gray-400">
+          <span className="text-sm font-medium">Session Progress</span>
+          <span className="text-sm text-gray-600">
             {sessionResults.length > 0
               ? `Avg: ${Math.round(sessionResults.reduce((acc, r) => acc + r.wpm, 0) / sessionResults.length)} WPM`
               : 'Start typing!'}
           </span>
         </div>
-        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+        <div className="w-full bg-gray-200 rounded-full h-2">
           <div
-            className="bg-primary-600 dark:bg-primary-400 h-2 rounded-full transition-all duration-300"
+            className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${((currentIndex + 1) / words.length) * 100}%` }}
           />
         </div>

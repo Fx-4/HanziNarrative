@@ -1,10 +1,8 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { learningApi } from '@/services/api'
 import { HanziWord } from '@/types'
-import { Card } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import FlashcardContainer from '@/components/flashcard/FlashcardContainer'
 import {
@@ -183,134 +181,171 @@ export default function Flashcards() {
     })
   }
 
+  // ─── Settings Screen ───────────────────────────────────────────────────────
   if (!sessionStarted && showSettings) {
     return (
-      <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6">
+      <div className="min-h-screen py-6 sm:py-10 px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-2xl mx-auto"
+          className="max-w-xl mx-auto"
         >
+          {/* Back + Title header */}
           <div className="flex items-center gap-3 mb-6">
-            <Button
-              variant="secondary"
-              size="sm"
+            <button
               onClick={() => navigate('/practice')}
+              className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-indigo-300 transition-all"
+              aria-label="Go back"
             >
               <ArrowLeft className="w-4 h-4" />
-            </Button>
+            </button>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
                 Flashcard Study
               </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-gray-500">
                 Master vocabulary with spaced repetition
               </p>
             </div>
           </div>
 
-          <Card className="p-6">
-            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">Study Settings</h2>
+          {/* Main card */}
+          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+            {/* Accent bar */}
+            <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
 
-            {/* Study Mode */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Study Mode
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <button
-                  onClick={() => setStudyMode('review')}
-                  className={`p-4 rounded-lg border-2 transition-all ${
-                    studyMode === 'review'
-                      ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-primary-300'
-                  }`}
-                >
-                  <Brain className="w-6 h-6 mx-auto mb-2 text-primary-600 dark:text-primary-400" />
-                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Review</div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">Due words only</div>
-                </button>
-
-                <button
-                  onClick={() => setStudyMode('learn')}
-                  className={`p-4 rounded-lg border-2 transition-all ${
-                    studyMode === 'learn'
-                      ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-primary-300'
-                  }`}
-                >
-                  <Zap className="w-6 h-6 mx-auto mb-2 text-orange-600 dark:text-orange-400" />
-                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Learn New</div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">Fresh words</div>
-                </button>
-
-                <button
-                  onClick={() => setStudyMode('all')}
-                  className={`p-4 rounded-lg border-2 transition-all ${
-                    studyMode === 'all'
-                      ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-primary-300'
-                  }`}
-                >
-                  <Shuffle className="w-6 h-6 mx-auto mb-2 text-purple-600 dark:text-purple-400" />
-                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Mixed</div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">Review + New</div>
-                </button>
-              </div>
-            </div>
-
-            {/* HSK Level */}
-            {studyMode !== 'review' && (
+            <div className="p-6 sm:p-8">
+              {/* Study Mode section */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  HSK Level
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {[1, 2, 3, 4, 5, 6].map(level => (
-                    <button
-                      key={level}
-                      onClick={() => setSelectedHSK(level)}
-                      className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                        selectedHSK === level
-                          ? 'bg-primary-600 text-white'
-                          : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                <p className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">
+                  Study Mode
+                </p>
+                <div className="grid grid-cols-3 gap-3">
+                  {/* Review */}
+                  <button
+                    onClick={() => setStudyMode('review')}
+                    className={`p-4 rounded-2xl border-2 text-center transition-all cursor-pointer ${
+                      studyMode === 'review'
+                        ? 'border-indigo-500 bg-indigo-50'
+                        : 'border-gray-200 hover:border-indigo-200'
+                    }`}
+                  >
+                    <Brain
+                      className={`w-6 h-6 mx-auto mb-2 ${
+                        studyMode === 'review' ? 'text-indigo-600' : 'text-gray-400'
+                      }`}
+                    />
+                    <div
+                      className={`text-sm font-semibold ${
+                        studyMode === 'review' ? 'text-indigo-700' : 'text-gray-700'
                       }`}
                     >
-                      HSK {level}
-                    </button>
-                  ))}
+                      Review
+                    </div>
+                    <div className="text-xs text-gray-500 mt-0.5">Due words</div>
+                  </button>
+
+                  {/* Learn */}
+                  <button
+                    onClick={() => setStudyMode('learn')}
+                    className={`p-4 rounded-2xl border-2 text-center transition-all cursor-pointer ${
+                      studyMode === 'learn'
+                        ? 'border-orange-500 bg-orange-50'
+                        : 'border-gray-200 hover:border-orange-200'
+                    }`}
+                  >
+                    <Zap
+                      className={`w-6 h-6 mx-auto mb-2 ${
+                        studyMode === 'learn' ? 'text-orange-500' : 'text-gray-400'
+                      }`}
+                    />
+                    <div
+                      className={`text-sm font-semibold ${
+                        studyMode === 'learn' ? 'text-orange-600' : 'text-gray-700'
+                      }`}
+                    >
+                      Learn New
+                    </div>
+                    <div className="text-xs text-gray-500 mt-0.5">Fresh words</div>
+                  </button>
+
+                  {/* Mixed */}
+                  <button
+                    onClick={() => setStudyMode('all')}
+                    className={`p-4 rounded-2xl border-2 text-center transition-all cursor-pointer ${
+                      studyMode === 'all'
+                        ? 'border-violet-500 bg-violet-50'
+                        : 'border-gray-200 hover:border-violet-200'
+                    }`}
+                  >
+                    <Shuffle
+                      className={`w-6 h-6 mx-auto mb-2 ${
+                        studyMode === 'all' ? 'text-violet-600' : 'text-gray-400'
+                      }`}
+                    />
+                    <div
+                      className={`text-sm font-semibold ${
+                        studyMode === 'all' ? 'text-violet-700' : 'text-gray-700'
+                      }`}
+                    >
+                      Mixed
+                    </div>
+                    <div className="text-xs text-gray-500 mt-0.5">Review + New</div>
+                  </button>
                 </div>
               </div>
-            )}
 
-            {/* Instructions */}
-            <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4 mb-6">
-              <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                How it works:
-              </h3>
-              <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-                <li>• Click to flip and see the answer</li>
-                <li>• Swipe left (Again) or right (Easy)</li>
-                <li>• Rate difficulty to improve spaced repetition</li>
-                <li>• Track your progress in real-time</li>
-              </ul>
+              {/* HSK Level (only for non-review modes) */}
+              {studyMode !== 'review' && (
+                <div className="mb-6">
+                  <p className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">
+                    HSK Level
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {[1, 2, 3, 4, 5, 6].map(level => (
+                      <button
+                        key={level}
+                        onClick={() => setSelectedHSK(level)}
+                        className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all ${
+                          selectedHSK === level
+                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        HSK {level}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Info box */}
+              <div className="bg-indigo-50 rounded-2xl p-4 border border-indigo-100 mb-6">
+                <h3 className="text-sm font-bold text-indigo-800 mb-2">How it works</h3>
+                <ul className="text-sm text-indigo-700 space-y-1">
+                  <li>• Click to flip and see the answer</li>
+                  <li>• Swipe left (Again) or right (Easy)</li>
+                  <li>• Rate difficulty to improve spaced repetition</li>
+                  <li>• Track your progress in real-time</li>
+                </ul>
+              </div>
+
+              {/* Start button */}
+              <button
+                onClick={startSession}
+                className="w-full bg-indigo-600 text-white rounded-2xl py-4 font-bold text-lg hover:bg-indigo-700 transition-all flex items-center justify-center gap-2"
+              >
+                <Brain className="w-5 h-5" />
+                Start Study Session
+              </button>
             </div>
-
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={startSession}
-              className="w-full"
-            >
-              <Brain className="w-5 h-5 mr-2" />
-              Start Study Session
-            </Button>
-          </Card>
+          </div>
         </motion.div>
       </div>
     )
   }
 
+  // ─── Loading State ─────────────────────────────────────────────────────────
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -319,19 +354,26 @@ export default function Flashcards() {
     )
   }
 
+  // ─── No Words State ────────────────────────────────────────────────────────
   if (words.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <Card className="max-w-md mx-auto text-center p-8">
-          <Brain className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">No Words Available</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
-            Try selecting a different study mode or HSK level
-          </p>
-          <Button onClick={resetSession}>
-            Back to Settings
-          </Button>
-        </Card>
+      <div className="min-h-screen py-6 sm:py-10 px-4 sm:px-6 flex items-center justify-center">
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden max-w-md w-full">
+          <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
+          <div className="p-8 text-center">
+            <Brain className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h2 className="text-xl font-extrabold text-gray-900 mb-2">No Words Available</h2>
+            <p className="text-gray-500 mb-6 text-sm sm:text-base">
+              Try selecting a different study mode or HSK level
+            </p>
+            <button
+              onClick={resetSession}
+              className="bg-indigo-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-indigo-700 transition-all"
+            >
+              Back to Settings
+            </button>
+          </div>
+        </div>
       </div>
     )
   }
@@ -340,134 +382,152 @@ export default function Flashcards() {
   const progress = ((currentIndex + 1) / words.length) * 100
   const isSessionComplete = currentIndex >= words.length
 
+  // ─── Session Complete Screen ───────────────────────────────────────────────
   if (isSessionComplete) {
     const accuracy = sessionStats.total > 0
       ? Math.round((sessionStats.correct / sessionStats.total) * 100)
       : 0
 
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="min-h-screen py-6 sm:py-10 px-4 sm:px-6 flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="max-w-2xl mx-auto"
+          className="max-w-lg w-full mx-auto"
         >
-          <Card className="text-center p-8">
-            <Trophy className="w-20 h-20 text-yellow-500 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">
-              Session Complete!
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Great work! Keep up the momentum
-            </p>
+          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+            {/* Accent bar */}
+            <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4">
-                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                  {sessionStats.total}
+            <div className="p-8 sm:p-12 text-center">
+              <Trophy className="w-16 h-16 sm:w-20 sm:h-20 text-yellow-500 mx-auto mb-4" />
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
+                Session Complete!
+              </h2>
+              <p className="text-gray-500 text-sm sm:text-base mb-8">
+                Great work! Keep up the momentum
+              </p>
+
+              {/* Stat tiles */}
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-8 max-w-sm mx-auto">
+                <div className="bg-indigo-600 rounded-2xl p-4 text-white text-center">
+                  <div className="text-2xl sm:text-3xl font-bold">{sessionStats.total}</div>
+                  <div className="text-xs sm:text-sm opacity-90 mt-0.5">Total Cards</div>
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Total Cards</div>
+                <div className="bg-emerald-500 rounded-2xl p-4 text-white text-center">
+                  <div className="text-2xl sm:text-3xl font-bold">{sessionStats.correct}</div>
+                  <div className="text-xs sm:text-sm opacity-90 mt-0.5">Correct</div>
+                </div>
+                <div className="bg-violet-600 rounded-2xl p-4 text-white text-center">
+                  <div className="text-2xl sm:text-3xl font-bold">{accuracy}%</div>
+                  <div className="text-xs sm:text-sm opacity-90 mt-0.5">Accuracy</div>
+                </div>
+                <div className="bg-orange-500 rounded-2xl p-4 text-white text-center">
+                  <div className="text-2xl sm:text-3xl font-bold">
+                    {Math.floor(sessionStats.timeElapsed / 60)}m
+                  </div>
+                  <div className="text-xs sm:text-sm opacity-90 mt-0.5">Time</div>
+                </div>
               </div>
-              <div className="bg-green-50 dark:bg-green-900/30 rounded-lg p-4">
-                <div className="text-3xl font-bold text-green-600 dark:text-green-400">
-                  {sessionStats.correct}
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Correct</div>
-              </div>
-              <div className="bg-purple-50 dark:bg-purple-900/30 rounded-lg p-4">
-                <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
-                  {accuracy}%
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Accuracy</div>
-              </div>
-              <div className="bg-orange-50 dark:bg-orange-900/30 rounded-lg p-4">
-                <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">
-                  {Math.floor(sessionStats.timeElapsed / 60)}m
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Time</div>
+
+              {/* Action buttons */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={resetSession}
+                  className="w-full sm:w-auto flex-1 border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:border-indigo-300 transition-all"
+                >
+                  New Session
+                </button>
+                <button
+                  onClick={() => navigate('/dashboard')}
+                  className="w-full sm:w-auto flex-1 bg-indigo-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-indigo-700 transition-all"
+                >
+                  View Progress
+                </button>
               </div>
             </div>
-
-            <div className="flex gap-4">
-              <Button variant="secondary" onClick={resetSession} className="flex-1">
-                New Session
-              </Button>
-              <Button variant="primary" onClick={() => navigate('/dashboard')} className="flex-1">
-                View Progress
-              </Button>
-            </div>
-          </Card>
+          </div>
         </motion.div>
       </div>
     )
   }
 
+  // ─── Active Session ────────────────────────────────────────────────────────
   return (
     <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 min-h-screen">
-      {/* Header */}
+      {/* Header area */}
       <div className="max-w-4xl mx-auto mb-4">
+        {/* Top row: back btn + title + shuffle btn */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <Button variant="secondary" size="sm" onClick={resetSession}>
+            <button
+              onClick={resetSession}
+              className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-indigo-300 transition-all"
+              aria-label="Back to settings"
+            >
               <ArrowLeft className="w-4 h-4" />
-            </Button>
+            </button>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-gray-900">
                 Flashcard Study
               </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-gray-500">
                 {currentIndex + 1} of {words.length}
               </p>
             </div>
           </div>
-          <Button variant="secondary" size="sm" onClick={shuffleWords}>
+          <button
+            onClick={shuffleWords}
+            className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-indigo-300 transition-all"
+            aria-label="Shuffle cards"
+          >
             <Shuffle className="w-4 h-4" />
-          </Button>
+          </button>
         </div>
 
         {/* Progress bar */}
-        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-4">
+        <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-4">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
-            className="bg-primary-600 h-2 rounded-full"
+            className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full"
             transition={{ duration: 0.3 }}
           />
         </div>
 
-        {/* Session Stats */}
+        {/* 3 stat tiles */}
         <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4">
-          <Card className="p-2 sm:p-3 text-center">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center">
             <div className="flex items-center justify-center gap-1 sm:gap-2 mb-1">
-              <CheckCircle className="w-4 h-4 text-green-500" />
-              <span className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
+              <CheckCircle className="w-4 h-4 text-emerald-500" />
+              <span className="text-lg sm:text-xl font-bold text-gray-900">
                 {sessionStats.correct}
               </span>
             </div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">Correct</div>
-          </Card>
-          <Card className="p-2 sm:p-3 text-center">
+            <div className="text-xs text-gray-500">Correct</div>
+          </div>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center">
             <div className="flex items-center justify-center gap-1 sm:gap-2 mb-1">
-              <XCircle className="w-4 h-4 text-red-500" />
-              <span className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
+              <XCircle className="w-4 h-4 text-red-400" />
+              <span className="text-lg sm:text-xl font-bold text-gray-900">
                 {sessionStats.incorrect}
               </span>
             </div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">Incorrect</div>
-          </Card>
-          <Card className="p-2 sm:p-3 text-center">
+            <div className="text-xs text-gray-500">Incorrect</div>
+          </div>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center">
             <div className="flex items-center justify-center gap-1 sm:gap-2 mb-1">
-              <Clock className="w-4 h-4 text-blue-500" />
-              <span className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
+              <Clock className="w-4 h-4 text-indigo-400" />
+              <span className="text-lg sm:text-xl font-bold text-gray-900">
                 {sessionStats.averageTime}s
               </span>
             </div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">Avg Time</div>
-          </Card>
+            <div className="text-xs text-gray-500">Avg Time</div>
+          </div>
         </div>
       </div>
 
-      {/* Flashcard */}
+      {/* Flashcard area */}
       <div className="max-w-2xl mx-auto">
         <AnimatePresence mode="wait">
           <motion.div
@@ -487,87 +547,69 @@ export default function Flashcards() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Swipe Indicators */}
+        {/* Swipe buttons – shown after flip */}
         {isFlipped && (
-          <div className="flex justify-center gap-4 mt-6">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button
-                variant="secondary"
-                size="lg"
+          <div className="flex justify-center gap-3 mt-6">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <button
                 onClick={() => handleSwipe('left')}
-                className="min-w-[120px]"
+                className="border-2 border-red-200 text-gray-700 rounded-2xl px-6 sm:px-8 py-3 font-semibold hover:bg-red-50 transition-all flex items-center gap-2"
               >
-                <XCircle className="w-5 h-5 mr-2 text-red-500" />
+                <XCircle className="w-5 h-5 text-red-400" />
                 Again
-              </Button>
+              </button>
             </motion.div>
 
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button
-                variant="primary"
-                size="lg"
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <button
                 onClick={() => handleSwipe('right')}
-                className="min-w-[120px]"
+                className="bg-emerald-500 text-white rounded-2xl px-6 sm:px-8 py-3 font-semibold hover:bg-emerald-600 transition-all flex items-center gap-2"
               >
-                <CheckCircle className="w-5 h-5 mr-2" />
+                <CheckCircle className="w-5 h-5" />
                 Easy
-              </Button>
+              </button>
             </motion.div>
           </div>
         )}
 
-        {/* Detailed Rating (shown after flip) */}
+        {/* Detailed rating card – shown after flip */}
         {isFlipped && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4"
+            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mt-4"
           >
-            <Card className="p-4">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 text-center">
-                How well did you know this?
-              </h3>
-              <div className="grid grid-cols-3 gap-2">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => recordReview(1)}
-                  className="text-xs"
-                >
-                  Hard
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => recordReview(3)}
-                  className="text-xs"
-                >
-                  Good
-                </Button>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => recordReview(5)}
-                  className="text-xs"
-                >
-                  Perfect
-                </Button>
-              </div>
-            </Card>
+            <h3 className="text-sm font-semibold text-gray-500 mb-3 text-center">
+              How well did you know this?
+            </h3>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => recordReview(1)}
+                className="rounded-xl py-3 text-sm font-semibold transition-all bg-red-50 text-red-600 hover:bg-red-100 border border-red-100"
+              >
+                Hard
+              </button>
+              <button
+                onClick={() => recordReview(3)}
+                className="rounded-xl py-3 text-sm font-semibold transition-all bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-100"
+              >
+                Good
+              </button>
+              <button
+                onClick={() => recordReview(5)}
+                className="rounded-xl py-3 text-sm font-semibold transition-all bg-indigo-600 text-white hover:bg-indigo-700"
+              >
+                Perfect
+              </button>
+            </div>
           </motion.div>
         )}
 
-        {/* Instructions */}
+        {/* Instruction text – before flip */}
         {!isFlipped && (
-          <div className="text-center mt-6 text-sm text-gray-600 dark:text-gray-400">
-            Click card to flip • Swipe left (Again) or right (Easy)
-          </div>
+          <p className="text-center text-sm text-gray-400 mt-6">
+            Click card to flip &bull; Swipe left (Again) or right (Easy)
+          </p>
         )}
       </div>
     </div>

@@ -29,22 +29,23 @@ export default function FlashcardContainer({
   }
 
   return (
-    <div className="w-full perspective-1000 max-w-sm mx-auto">
-      <div className="relative w-full" style={{ paddingBottom: '50%' }}>
-        <div
-          className="absolute inset-0 cursor-pointer transition-transform duration-600"
-          style={{
-            transformStyle: 'preserve-3d',
-            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
-          }}
-          onClick={handleFlip}
-        >
-          {/* Front of card */}
-          <FlashcardFront word={word} />
+    <div className="w-full" style={{ perspective: '1200px' }}>
+      {/* Responsive fixed height - tall enough for all screen sizes */}
+      <div
+        className="relative w-full cursor-pointer"
+        style={{
+          height: 'clamp(200px, 52vw, 320px)',
+          transformStyle: 'preserve-3d',
+          transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+          transition: 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)',
+        }}
+        onClick={handleFlip}
+      >
+        {/* Front of card */}
+        <FlashcardFront word={word} />
 
-          {/* Back of card */}
-          <FlashcardBack word={word} isFlipped={isFlipped} />
-        </div>
+        {/* Back of card */}
+        <FlashcardBack word={word} isFlipped={isFlipped} />
       </div>
     </div>
   )

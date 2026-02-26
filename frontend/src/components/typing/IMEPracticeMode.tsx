@@ -1,8 +1,6 @@
-﻿import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { HanziWord, TypingAttempt } from '@/types'
-import { Card } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
 import { typingApi } from '@/services/api'
 import { toast } from 'react-hot-toast'
 import { Target, CheckCircle, XCircle, ArrowRight } from 'lucide-react'
@@ -139,10 +137,15 @@ export default function IMEPracticeMode({ words, hskLevel: _hskLevel, onBack }: 
 
   if (!currentWord) {
     return (
-      <Card className="p-8 text-center">
-        <p className="text-gray-600 dark:text-gray-400">No words available for this HSK level.</p>
-        <Button onClick={onBack} className="mt-4">Go Back</Button>
-      </Card>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+        <p className="text-gray-600">No words available for this HSK level.</p>
+        <button
+          onClick={onBack}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors mt-4"
+        >
+          Go Back
+        </button>
+      </div>
     )
   }
 
@@ -150,17 +153,17 @@ export default function IMEPracticeMode({ words, hskLevel: _hskLevel, onBack }: 
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Target className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-          <span className="text-lg font-semibold dark:text-gray-100">IME Practice</span>
+          <Target className="w-5 h-5 text-purple-600" />
+          <span className="text-lg font-semibold">IME Practice</span>
         </div>
-        <div className="text-lg font-semibold dark:text-gray-100">
+        <div className="text-lg font-semibold">
           {currentIndex + 1} / {words.length}
         </div>
       </div>
 
-      <Card className="p-8">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
         <div className="text-center mb-8">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          <p className="text-sm text-gray-600 mb-4">
             Type pinyin and select the correct character:
           </p>
           <motion.div
@@ -169,8 +172,8 @@ export default function IMEPracticeMode({ words, hskLevel: _hskLevel, onBack }: 
             animate={{ scale: 1, opacity: 1 }}
             className="mb-4"
           >
-            <p className="text-2xl text-gray-700 dark:text-gray-300 mb-2">{currentWord.english}</p>
-            <p className="text-lg text-gray-600 dark:text-gray-400">Pinyin: {currentWord.pinyin}</p>
+            <p className="text-2xl text-gray-700 mb-2">{currentWord.english}</p>
+            <p className="text-lg text-gray-600">Pinyin: {currentWord.pinyin}</p>
           </motion.div>
         </div>
 
@@ -181,7 +184,7 @@ export default function IMEPracticeMode({ words, hskLevel: _hskLevel, onBack }: 
             value={inputValue}
             onChange={handleInputChange}
             placeholder="Type pinyin..."
-            className="w-full px-6 py-4 text-2xl border-2 border-gray-300 dark:border-gray-600 rounded-lg text-center bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-primary-500 dark:focus:border-primary-400 focus:outline-none transition-colors"
+            className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-indigo-500 focus:outline-none transition-colors"
             disabled={showFeedback}
             autoComplete="off"
           />
@@ -201,7 +204,7 @@ export default function IMEPracticeMode({ words, hskLevel: _hskLevel, onBack }: 
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: index * 0.05 }}
                     onClick={() => handleCandidateSelect(candidate)}
-                    className="text-4xl font-chinese h-20 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all active:scale-95"
+                    className="text-4xl font-chinese h-20 bg-white border-2 border-gray-300 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all active:scale-95 cursor-pointer"
                   >
                     {candidate}
                   </motion.button>
@@ -218,32 +221,35 @@ export default function IMEPracticeMode({ words, hskLevel: _hskLevel, onBack }: 
             >
               <div className={`p-6 rounded-lg ${
                 isCorrect
-                  ? 'bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-700'
-                  : 'bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-700'
+                  ? 'bg-green-50 border-2 border-green-200'
+                  : 'bg-red-50 border-2 border-red-200'
               }`}>
                 <div className="flex items-center justify-center gap-3 mb-4">
                   {isCorrect ? (
                     <>
-                      <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
-                      <span className="text-2xl font-semibold text-green-900 dark:text-green-100">
+                      <CheckCircle className="w-8 h-8 text-green-600" />
+                      <span className="text-2xl font-semibold text-green-900">
                         {attempts === 1 ? 'Perfect!' : 'Correct!'}
                       </span>
                     </>
                   ) : (
                     <>
-                      <XCircle className="w-8 h-8 text-red-600 dark:text-red-400" />
-                      <span className="text-2xl font-semibold text-red-900 dark:text-red-100">Incorrect</span>
+                      <XCircle className="w-8 h-8 text-red-600" />
+                      <span className="text-2xl font-semibold text-red-900">Incorrect</span>
                     </>
                   )}
                 </div>
                 <div className="text-center space-y-2">
-                  <p className="text-5xl font-chinese mb-2 dark:text-gray-100">{currentWord.simplified}</p>
-                  <p className="text-lg dark:text-gray-200">
+                  <p className="text-5xl font-chinese mb-2">{currentWord.simplified}</p>
+                  <p className="text-lg">
                     <span className="font-semibold">Attempts:</span> {attempts}
                   </p>
                 </div>
               </div>
-              <Button onClick={handleNext} size="lg" className="w-full mt-4">
+              <button
+                onClick={handleNext}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors w-full mt-4 flex items-center justify-center text-lg py-3"
+              >
                 {currentIndex < words.length - 1 ? (
                   <>
                     Next Word <ArrowRight className="w-5 h-5 ml-2" />
@@ -251,25 +257,25 @@ export default function IMEPracticeMode({ words, hskLevel: _hskLevel, onBack }: 
                 ) : (
                   'Finish Session'
                 )}
-              </Button>
+              </button>
             </motion.div>
           )}
         </div>
-      </Card>
+      </div>
 
       {/* Progress bar */}
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium dark:text-gray-300">Session Progress</span>
-          <span className="text-sm text-gray-600 dark:text-gray-400">
+          <span className="text-sm font-medium">Session Progress</span>
+          <span className="text-sm text-gray-600">
             {sessionResults.length > 0
               ? `${Math.round((sessionResults.filter(r => r).length / sessionResults.length) * 100)}% accuracy`
               : 'No attempts yet'}
           </span>
         </div>
-        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+        <div className="w-full bg-gray-200 rounded-full h-2">
           <div
-            className="bg-primary-600 dark:bg-primary-400 h-2 rounded-full transition-all duration-300"
+            className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${((currentIndex + (showFeedback ? 1 : 0)) / words.length) * 100}%` }}
           />
         </div>

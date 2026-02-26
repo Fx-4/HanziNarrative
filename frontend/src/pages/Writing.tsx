@@ -3,9 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { writingApi } from '@/services/api'
 import { HanziWord, WritingStats, WritingProgress, AttemptResult } from '@/types'
-import { Card } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import {
   Pencil,
@@ -92,7 +89,6 @@ export default function Writing() {
       setStats(data)
     } catch (error: any) {
       if (error.response?.status === 401) {
-        // User not logged in - show default empty stats
         setStats({
           total_characters_practiced: 0,
           total_attempts: 0,
@@ -115,7 +111,6 @@ export default function Writing() {
       setProgressData(data)
     } catch (error: any) {
       if (error.response?.status === 401) {
-        // User not logged in - no progress data
         setProgressData([])
       } else {
         console.error('Failed to load progress:', error)
@@ -166,9 +161,7 @@ export default function Writing() {
     setShowFeedback(true)
     setSessionResults(prev => [...prev, result])
 
-    // Record attempt to backend (if logged in)
     try {
-      // Validate data before sending
       const accuracy = Math.max(0, Math.min(100, result.accuracy || 0))
       const timeTaken = Math.max(0, result.timeTaken || 0)
 
@@ -184,12 +177,10 @@ export default function Writing() {
         stroke_accuracy: result.strokeData?.strokeAccuracy || []
       })
 
-      // Reload stats and progress
       await loadStats()
       await loadProgress()
     } catch (error: any) {
       if (error.response?.status === 401) {
-        // User not logged in - still show feedback but don't save
         toast('Progress not saved - please log in to track your progress', {
           icon: '⚠️',
           duration: 3000
@@ -244,11 +235,11 @@ export default function Writing() {
   const renderStatsCard = () => {
     if (statsLoading) {
       return (
-        <Card className="p-6">
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6">
           <div className="flex items-center justify-center">
             <LoadingSpinner size="sm" />
           </div>
-        </Card>
+        </div>
       )
     }
 
@@ -261,74 +252,76 @@ export default function Writing() {
         transition={{ delay: 0.1 }}
         className="mb-8"
       >
-        <Card className="p-6">
+        {/* Accent bar */}
+        <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600 rounded-t-3xl" />
+        <div className="bg-white rounded-b-3xl shadow-xl border border-gray-100 border-t-0 overflow-hidden p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
-            <BarChart3 className="w-5 h-5 text-primary-600" />
-            <h3 className="text-lg font-semibold">Your Progress (HSK {hskLevel})</h3>
+            <BarChart3 className="w-5 h-5 text-indigo-600" />
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900">Your Progress (HSK {hskLevel})</h3>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/20 rounded-lg p-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+            <div className="bg-indigo-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
               <div className="flex items-center gap-2 mb-1">
-                <Award className="w-4 h-4 text-green-700 dark:text-green-400" />
-                <p className="text-xs text-green-800 dark:text-green-300 font-medium">Mastered</p>
+                <Award className="w-4 h-4 text-indigo-200" />
+                <p className="text-xs text-indigo-200 font-medium">Mastered</p>
               </div>
-              <p className="text-2xl font-bold text-green-900 dark:text-green-100">
+              <p className="text-xl sm:text-2xl font-bold">
                 <CountUp to={stats.mastered_characters} duration={1.2} />
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/20 rounded-lg p-4">
+            <div className="bg-indigo-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
               <div className="flex items-center gap-2 mb-1">
-                <TrendingUp className="w-4 h-4 text-blue-700 dark:text-blue-400" />
-                <p className="text-xs text-blue-800 dark:text-blue-300 font-medium">Learning</p>
+                <TrendingUp className="w-4 h-4 text-indigo-200" />
+                <p className="text-xs text-indigo-200 font-medium">Learning</p>
               </div>
-              <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+              <p className="text-xl sm:text-2xl font-bold">
                 <CountUp to={stats.characters_in_progress} duration={1.2} />
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/20 rounded-lg p-4">
+            <div className="bg-violet-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
               <div className="flex items-center gap-2 mb-1">
-                <BookOpen className="w-4 h-4 text-purple-700 dark:text-purple-400" />
-                <p className="text-xs text-purple-800 dark:text-purple-300 font-medium">New</p>
+                <BookOpen className="w-4 h-4 text-violet-200" />
+                <p className="text-xs text-violet-200 font-medium">New</p>
               </div>
-              <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">
+              <p className="text-xl sm:text-2xl font-bold">
                 <CountUp to={stats.new_characters} duration={1.2} />
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/30 dark:to-orange-800/20 rounded-lg p-4">
+            <div className="bg-orange-500 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
               <div className="flex items-center gap-2 mb-1">
-                <Pencil className="w-4 h-4 text-orange-700 dark:text-orange-400" />
-                <p className="text-xs text-orange-800 dark:text-orange-300 font-medium">Total Practiced</p>
+                <Pencil className="w-4 h-4 text-orange-200" />
+                <p className="text-xs text-orange-200 font-medium">Total Practiced</p>
               </div>
-              <p className="text-2xl font-bold text-orange-900 dark:text-orange-100">
+              <p className="text-xl sm:text-2xl font-bold">
                 <CountUp to={stats.total_characters_practiced} duration={1.2} />
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-900/30 dark:to-pink-800/20 rounded-lg p-4">
+            <div className="bg-pink-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
               <div className="flex items-center gap-2 mb-1">
-                <Target className="w-4 h-4 text-pink-700 dark:text-pink-400" />
-                <p className="text-xs text-pink-800 dark:text-pink-300 font-medium">Attempts</p>
+                <Target className="w-4 h-4 text-pink-200" />
+                <p className="text-xs text-pink-200 font-medium">Attempts</p>
               </div>
-              <p className="text-2xl font-bold text-pink-900 dark:text-pink-100">
+              <p className="text-xl sm:text-2xl font-bold">
                 <CountUp to={stats.total_attempts} duration={1.2} />
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/30 dark:to-yellow-800/20 rounded-lg p-4">
+            <div className="bg-amber-500 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
               <div className="flex items-center gap-2 mb-1">
-                <Zap className="w-4 h-4 text-yellow-700 dark:text-yellow-400" />
-                <p className="text-xs text-yellow-800 dark:text-yellow-300 font-medium">Accuracy</p>
+                <Zap className="w-4 h-4 text-amber-200" />
+                <p className="text-xs text-amber-200 font-medium">Accuracy</p>
               </div>
-              <p className="text-2xl font-bold text-yellow-900 dark:text-yellow-100">
+              <p className="text-xl sm:text-2xl font-bold">
                 <CountUp to={stats.average_accuracy} duration={1.2} decimals={0} suffix="%" />
               </p>
             </div>
           </div>
-        </Card>
+        </div>
       </motion.div>
     )
   }
@@ -341,16 +334,16 @@ export default function Writing() {
         className="text-center mb-8 sm:mb-12"
       >
         <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-          <Pencil className="w-8 h-8 sm:w-10 sm:h-10 text-primary-600" />
+          <Pencil className="w-8 h-8 sm:w-10 sm:h-10 text-indigo-600" />
           <BlurText
             as="h1"
-            className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900"
             wordDelay={0.08}
           >
             Writing Practice
           </BlurText>
         </div>
-        <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300">
+        <p className="text-base sm:text-lg md:text-xl text-gray-600">
           Master Chinese characters through practice
         </p>
       </motion.div>
@@ -362,39 +355,37 @@ export default function Writing() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <Card className="p-6 bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200">
+          <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-3xl shadow-xl border border-orange-200 overflow-hidden p-4 sm:p-6">
             <div className="flex items-start gap-4">
-              <div className="p-3 bg-orange-100 rounded-full">
+              <div className="p-3 bg-orange-100 rounded-full flex-shrink-0">
                 <AlertCircle className="w-6 h-6 text-orange-600" />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                   Login to Track Your Progress
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300 mb-4">
+                <p className="text-sm sm:text-base text-gray-700 mb-4">
                   You can practice writing without logging in, but your progress won't be saved.
                   Login or register to track your learning journey, save your scores, and see detailed statistics!
                 </p>
-                <div className="flex gap-3">
-                  <Button
+                <div className="flex flex-wrap gap-3">
+                  <button
                     onClick={() => navigate('/login')}
-                    size="md"
-                    variant="primary"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-5 py-2.5 font-semibold cursor-pointer flex items-center gap-2 text-sm sm:text-base transition-colors"
                   >
-                    <LogIn className="w-4 h-4 mr-2" />
+                    <LogIn className="w-4 h-4" />
                     Login
-                  </Button>
-                  <Button
+                  </button>
+                  <button
                     onClick={() => navigate('/register')}
-                    size="md"
-                    variant="outline"
+                    className="border border-indigo-600 text-indigo-600 hover:bg-indigo-50 rounded-2xl px-5 py-2.5 font-semibold cursor-pointer text-sm sm:text-base transition-colors"
                   >
                     Create Account
-                  </Button>
+                  </button>
                 </div>
               </div>
             </div>
-          </Card>
+          </div>
         </motion.div>
       )}
 
@@ -405,21 +396,24 @@ export default function Writing() {
         transition={{ delay: 0.1 }}
         className="mb-6 sm:mb-8"
       >
-        <Card>
-          <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Select HSK Level</h3>
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Select HSK Level</h3>
           <div className="flex flex-wrap gap-2">
             {[1, 2, 3, 4, 5, 6].map((level) => (
-              <Button
+              <button
                 key={level}
-                size="sm"
-                variant={hskLevel === level ? 'primary' : 'secondary'}
                 onClick={() => setHskLevel(level)}
+                className={`rounded-2xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${
+                  hskLevel === level
+                    ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                }`}
               >
                 HSK {level}
-              </Button>
+              </button>
             ))}
           </div>
-        </Card>
+        </div>
       </motion.div>
 
       {/* Stats Display */}
@@ -436,20 +430,24 @@ export default function Writing() {
         >
           <TiltCard maxTilt={8} scale={1.03}>
             <SpotlightCard spotlightColor="rgba(59,130,246,0.15)">
-              <Card hover className="h-full text-center group">
+              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden h-full text-center p-4 sm:p-6 group">
+                {/* Accent bar */}
+                <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600 -mx-4 sm:-mx-6 -mt-4 sm:-mt-6 mb-6" />
                 <div className="mb-6">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Pencil className="w-10 h-10 text-white" />
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Pencil className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">
                   Free Practice
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                <p className="text-sm sm:text-base text-gray-600 mb-4">
                   Practice writing characters at your own pace. Learn stroke order and improve muscle memory.
                 </p>
-                <Badge variant="default">Recommended for beginners</Badge>
-              </Card>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-indigo-100 text-indigo-700">
+                  Recommended for beginners
+                </span>
+              </div>
             </SpotlightCard>
           </TiltCard>
         </motion.div>
@@ -463,20 +461,24 @@ export default function Writing() {
         >
           <TiltCard maxTilt={8} scale={1.03}>
             <SpotlightCard spotlightColor="rgba(245,158,11,0.15)">
-              <Card hover className="h-full text-center group">
+              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden h-full text-center p-4 sm:p-6 group">
+                {/* Accent bar */}
+                <div className="h-1.5 bg-gradient-to-r from-orange-400 via-amber-500 to-orange-500 -mx-4 sm:-mx-6 -mt-4 sm:-mt-6 mb-6" />
                 <div className="mb-6">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Clock className="w-10 h-10 text-white" />
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Clock className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">
                   Timed Challenge
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                <p className="text-sm sm:text-base text-gray-600 mb-4">
                   Race against the clock! Complete as many characters as you can within the time limit.
                 </p>
-                <Badge variant="default">Build speed & confidence</Badge>
-              </Card>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-orange-100 text-orange-700">
+                  Build speed &amp; confidence
+                </span>
+              </div>
             </SpotlightCard>
           </TiltCard>
         </motion.div>
@@ -486,24 +488,28 @@ export default function Writing() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
           onClick={() => handleModeSelect('mastery')}
-          className="cursor-pointer"
+          className="cursor-pointer sm:col-span-2 lg:col-span-1"
         >
           <TiltCard maxTilt={8} scale={1.03}>
             <SpotlightCard spotlightColor="rgba(139,92,246,0.15)">
-              <Card hover className="h-full text-center group">
+              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden h-full text-center p-4 sm:p-6 group">
+                {/* Accent bar */}
+                <div className="h-1.5 bg-gradient-to-r from-violet-500 via-purple-500 to-violet-600 -mx-4 sm:-mx-6 -mt-4 sm:-mt-6 mb-6" />
                 <div className="mb-6">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Target className="w-10 h-10 text-white" />
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Target className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">
                   Mastery Mode
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                <p className="text-sm sm:text-base text-gray-600 mb-4">
                   Focus on characters you haven't mastered yet. Adaptive difficulty based on your performance.
                 </p>
-                <Badge variant="default">Advanced practice</Badge>
-              </Card>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-violet-100 text-violet-700">
+                  Advanced practice
+                </span>
+              </div>
             </SpotlightCard>
           </TiltCard>
         </motion.div>
@@ -514,16 +520,16 @@ export default function Writing() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="mt-8"
+        className="mt-6 sm:mt-8"
       >
-        <Card className="bg-gradient-to-r from-primary-50 to-blue-50">
+        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6">
           <div className="flex items-start gap-4">
-            <div className="p-3 bg-white rounded-lg">
-              <BookOpen className="w-6 h-6 text-primary-600" />
+            <div className="p-3 bg-white rounded-xl flex-shrink-0 shadow-sm">
+              <BookOpen className="w-6 h-6 text-indigo-600" />
             </div>
             <div>
-              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Writing Tips</h4>
-              <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
+              <h4 className="font-semibold text-gray-900 mb-2">Writing Tips</h4>
+              <ul className="text-sm text-gray-700 space-y-1">
                 <li>• Follow the stroke order animation carefully</li>
                 <li>• Practice each character multiple times for better retention</li>
                 <li>• Focus on accuracy first, speed will come naturally</li>
@@ -531,7 +537,7 @@ export default function Writing() {
               </ul>
             </div>
           </div>
-        </Card>
+        </div>
       </motion.div>
     </div>
   )
@@ -547,18 +553,21 @@ export default function Writing() {
 
     if (!currentCharacter) {
       return (
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto px-2 sm:px-4">
           <div className="mb-6">
-            <Button variant="ghost" onClick={() => setMode(null)}>
+            <button
+              onClick={() => setMode(null)}
+              className="text-gray-600 hover:text-gray-900 font-medium cursor-pointer flex items-center gap-1 transition-colors"
+            >
               ← Back to Modes
-            </Button>
+            </button>
           </div>
-          <Card className="p-8 text-center">
-            <h2 className="text-2xl font-bold mb-4">No characters available</h2>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
+          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-6 sm:p-8 text-center">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">No characters available</h2>
+            <p className="text-gray-600 mb-4">
               Please try selecting a different HSK level or mode
             </p>
-          </Card>
+          </div>
         </div>
       )
     }
@@ -570,44 +579,47 @@ export default function Writing() {
     }
 
     return (
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4">
         {/* Header with progress and timer */}
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <Button variant="ghost" onClick={() => setMode(null)}>
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <button
+              onClick={() => setMode(null)}
+              className="text-gray-600 hover:text-gray-900 font-medium cursor-pointer flex items-center gap-1 transition-colors"
+            >
               ← Back to Modes
-            </Button>
+            </button>
 
-            <div className="flex items-center gap-6">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
               {mode === 'timed' && (
-                <Card className="px-4 py-2">
+                <div className="bg-white rounded-2xl shadow border border-gray-100 overflow-hidden px-3 py-2 sm:px-4">
                   <div className="flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-orange-600" />
-                    <span className={`text-lg font-bold ${timeRemaining < 60 ? 'text-red-600' : 'text-gray-900 dark:text-gray-100'}`}>
+                    <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
+                    <span className={`text-base sm:text-lg font-bold ${timeRemaining < 60 ? 'text-red-600' : 'text-gray-900'}`}>
                       {formatTime(timeRemaining)}
                     </span>
                   </div>
-                </Card>
+                </div>
               )}
 
-              <Card className="px-4 py-2">
+              <div className="bg-white rounded-2xl shadow border border-gray-100 overflow-hidden px-3 py-2 sm:px-4">
                 <div className="flex items-center gap-2">
-                  <Target className="w-5 h-5 text-primary-600" />
-                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                  <Target className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
+                  <span className="text-base sm:text-lg font-bold text-gray-900">
                     {currentCharacterIndex + 1} / {characters.length}
                   </span>
                 </div>
-              </Card>
+              </div>
 
               {sessionResults.length > 0 && (
-                <Card className="px-4 py-2">
+                <div className="bg-white rounded-2xl shadow border border-gray-100 overflow-hidden px-3 py-2 sm:px-4">
                   <div className="flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-yellow-600" />
-                    <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                    <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
+                    <span className="text-base sm:text-lg font-bold text-gray-900">
                       Avg: {Math.round(sessionResults.reduce((acc, r) => acc + r.accuracy, 0) / sessionResults.length)}%
                     </span>
                   </div>
-                </Card>
+                </div>
               )}
             </div>
           </div>
@@ -615,7 +627,7 @@ export default function Writing() {
           {/* Progress bar */}
           <div className="w-full bg-gray-200 rounded-full h-3">
             <motion.div
-              className="bg-gradient-to-r from-primary-500 to-primary-600 h-3 rounded-full"
+              className="bg-gradient-to-r from-indigo-500 to-indigo-600 h-3 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${((currentCharacterIndex + 1) / characters.length) * 100}%` }}
               transition={{ duration: 0.3 }}
@@ -626,10 +638,10 @@ export default function Writing() {
         {/* Character Grid — compact top panel on mobile/tablet, sidebar on desktop */}
         {mode === 'practice' && (
           <div className="mb-4 lg:hidden">
-            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-              <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Select Character</h3>
-                <span className="text-xs text-gray-400 dark:text-gray-500">{currentCharacterIndex + 1}/{characters.length}</span>
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+              <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200">
+                <h3 className="text-sm font-semibold text-gray-800">Select Character</h3>
+                <span className="text-xs text-gray-400">{currentCharacterIndex + 1}/{characters.length}</span>
               </div>
               <div className="p-2.5 max-h-60 overflow-y-auto">
                 <CharacterGrid
@@ -644,14 +656,14 @@ export default function Writing() {
           </div>
         )}
 
-        <div className="grid lg:grid-cols-4 gap-6">
+        <div className="grid lg:grid-cols-4 gap-4 sm:gap-6">
           {/* Left Column: Character Grid (for practice mode only on desktop) */}
           {mode === 'practice' && (
             <div className="hidden lg:block lg:col-span-1">
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm sticky top-4 overflow-hidden">
-                <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 dark:border-gray-700">
-                  <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Characters</h3>
-                  <span className="text-xs text-gray-400 dark:text-gray-500">{characters.length}</span>
+              <div className="bg-white rounded-2xl border border-gray-200 shadow-sm sticky top-4 overflow-hidden">
+                <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200">
+                  <h3 className="text-sm font-semibold text-gray-800">Characters</h3>
+                  <span className="text-xs text-gray-400">{characters.length}</span>
                 </div>
                 <div className="p-2.5 max-h-[calc(100vh-12rem)] overflow-y-auto scrollbar-thin">
                   <CharacterGrid
@@ -684,7 +696,7 @@ export default function Writing() {
                     showStrokeOrder={mode === 'practice'}
                   />
                 ) : (
-                  <div className="space-y-6">
+                  <div className="space-y-4 sm:space-y-6">
                     {lastAttemptResult && currentCharacter && (
                       <>
                         <WritingFeedback
@@ -702,8 +714,8 @@ export default function Writing() {
                         />
 
                         {/* Stroke Order Reference */}
-                        <Card className="p-6">
-                          <h3 className="text-lg font-semibold mb-4">Stroke Order Reference</h3>
+                        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6">
+                          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Stroke Order Reference</h3>
                           <div className="flex justify-center">
                             <StrokeOrderAnimation
                               character={currentCharacter.simplified}
@@ -711,27 +723,26 @@ export default function Writing() {
                               autoPlay={false}
                             />
                           </div>
-                        </Card>
+                        </div>
 
                         {/* Next Button */}
                         <div className="flex justify-center gap-4">
-                          <Button
+                          <button
                             onClick={handleNextCharacter}
-                            size="lg"
-                            variant="primary"
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-6 sm:px-8 py-3 sm:py-4 font-semibold cursor-pointer flex items-center gap-2 text-base sm:text-lg transition-colors"
                           >
                             {currentCharacterIndex < characters.length - 1 ? (
                               <>
                                 Next Character
-                                <ArrowRight className="w-5 h-5 ml-2" />
+                                <ArrowRight className="w-5 h-5" />
                               </>
                             ) : (
                               <>
                                 Complete Session
-                                <CheckCircle className="w-5 h-5 ml-2" />
+                                <CheckCircle className="w-5 h-5" />
                               </>
                             )}
-                          </Button>
+                          </button>
                         </div>
                       </>
                     )}

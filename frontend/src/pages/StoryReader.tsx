@@ -4,9 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { pinyin } from 'pinyin-pro'
 import { storiesApi, vocabularyApi } from '@/services/api'
 import { Story } from '@/types'
-import { Card } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import HanziWordPopup from '@/components/HanziWordPopup'
 import WordDetailsModal from '@/components/WordDetailsModal'
@@ -278,13 +275,13 @@ export default function StoryReader() {
     return (
       <ruby key={index} className="inline-block mx-0.5">
         <span
-          className="text-2xl font-chinese text-gray-900 dark:text-gray-100 hover:text-primary-600 cursor-pointer transition-colors hover:bg-primary-100 rounded px-1"
+          className="text-2xl font-chinese text-gray-900 hover:text-indigo-600 cursor-pointer transition-colors hover:bg-indigo-100 rounded px-1"
           onClick={(e) => handleCharacterClick(char, e)}
         >
           {char}
         </span>
         {showPinyin && charPinyin && (
-          <rt className="text-xs text-primary-600 font-sans select-none">
+          <rt className="text-xs text-indigo-600 font-sans select-none">
             {charPinyin}
           </rt>
         )}
@@ -353,21 +350,21 @@ export default function StoryReader() {
             exit={{ opacity: 0, height: 0 }}
             className="mt-8"
           >
-            <Card className="bg-blue-50 border-blue-200">
+            <div className="bg-blue-50 border border-blue-200 rounded-3xl shadow-xl overflow-hidden p-4 sm:p-6">
               <div className="flex items-center gap-2 mb-4">
-                <Languages className="w-5 h-5 text-blue-600" />
+                <Languages className="w-5 h-5 text-blue-600 shrink-0" />
                 <h3 className="text-lg font-semibold text-blue-900">
                   English Translation
                 </h3>
               </div>
               <div className="space-y-3">
                 {paragraphs.map((para, idx) => (
-                  <p key={idx} className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                  <p key={idx} className="text-gray-700 leading-relaxed">
                     {para}
                   </p>
                 ))}
               </div>
-            </Card>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -388,20 +385,19 @@ export default function StoryReader() {
             initial={{ opacity: 0, x: 300 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 300 }}
-            className="fixed right-0 top-0 h-full w-80 bg-white shadow-2xl overflow-y-auto z-50 p-6"
+            className="fixed right-0 top-0 h-full w-72 sm:w-80 bg-white shadow-2xl overflow-y-auto z-50 p-4 sm:p-6"
           >
             <div className="flex justify-between items-center mb-6 sticky top-0 bg-white pb-4 border-b">
               <div className="flex items-center gap-2">
-                <BookMarked className="w-5 h-5 text-primary-600" />
+                <BookMarked className="w-5 h-5 text-indigo-600" />
                 <h3 className="text-lg font-bold">Vocabulary List</h3>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
+              <button
                 onClick={() => setShowVocabulary(false)}
+                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl p-1.5 cursor-pointer transition-colors"
               >
                 ✕
-              </Button>
+              </button>
             </div>
 
             <div className="text-sm text-gray-600 mb-4">
@@ -419,24 +415,24 @@ export default function StoryReader() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.02 }}
                     onClick={() => setSelectedChar(isExpanded ? null : char)}
-                    className={`p-4 rounded-lg cursor-pointer transition-all border-2 ${
+                    className={`p-4 rounded-2xl cursor-pointer transition-all border-2 ${
                       isExpanded
-                        ? 'bg-primary-100 border-primary-500 shadow-lg'
-                        : 'bg-gradient-to-r from-gray-50 to-primary-50 hover:from-primary-100 hover:to-purple-100 border-gray-200 hover:border-primary-300'
+                        ? 'bg-indigo-100 border-indigo-500 shadow-lg'
+                        : 'bg-gradient-to-r from-gray-50 to-indigo-50 hover:from-indigo-100 hover:to-purple-100 border-gray-200 hover:border-indigo-300'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-baseline gap-3">
-                        <span className="text-4xl font-bold text-gray-900 dark:text-gray-100">
+                        <span className="text-4xl font-bold text-gray-900">
                           {char}
                         </span>
-                        <span className="text-lg text-primary-600 font-semibold">
+                        <span className="text-lg text-indigo-600 font-semibold">
                           {charPinyin}
                         </span>
                       </div>
-                      <Badge variant="default" className="text-xs">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
                         #{idx + 1}
-                      </Badge>
+                      </span>
                     </div>
 
                     {!isExpanded ? (
@@ -447,7 +443,7 @@ export default function StoryReader() {
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        className="mt-4 pt-4 border-t border-primary-300"
+                        className="mt-4 pt-4 border-t border-indigo-300"
                       >
                         <div className="space-y-3">
                           <div>
@@ -456,28 +452,26 @@ export default function StoryReader() {
                           </div>
                           <div>
                             <p className="text-xs font-semibold text-gray-600 mb-1">Pinyin:</p>
-                            <p className="text-base text-primary-700">{charPinyin}</p>
+                            <p className="text-base text-indigo-700">{charPinyin}</p>
                           </div>
                           <div>
                             <p className="text-xs font-semibold text-gray-600 mb-1">Meaning:</p>
-                            <p className="text-sm text-gray-700 dark:text-gray-300">
+                            <p className="text-sm text-gray-700">
                               {/* This would come from API in real app */}
                               Click on vocabulary page to see detailed meaning and usage examples.
                             </p>
                           </div>
                           <div className="pt-2">
-                            <Button
-                              size="sm"
-                              variant="secondary"
+                            <button
                               onClick={(e) => {
                                 e.stopPropagation()
                                 navigate(`/vocabulary?search=${char}`)
                                 toast.success('Opening vocabulary page...')
                               }}
-                              className="w-full"
+                              className="w-full bg-gray-100 hover:bg-indigo-50 text-gray-700 hover:text-indigo-700 rounded-2xl px-4 py-2 font-semibold cursor-pointer transition-colors text-sm"
                             >
                               View in Vocabulary
-                            </Button>
+                            </button>
                           </div>
                         </div>
                       </motion.div>
@@ -501,9 +495,9 @@ export default function StoryReader() {
         animate={{ opacity: 1, y: 0 }}
         className="mt-8"
       >
-        <Card className="bg-purple-50 border-purple-200">
+        <div className="bg-purple-50 border border-purple-200 rounded-3xl shadow-xl overflow-hidden p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-6">
-            <HelpCircle className="w-6 h-6 text-purple-600" />
+            <HelpCircle className="w-6 h-6 text-purple-600 shrink-0" />
             <h3 className="text-xl font-bold text-purple-900">
               Comprehension Quiz
             </h3>
@@ -511,8 +505,8 @@ export default function StoryReader() {
 
           <div className="space-y-6">
             {questions.map((question, qIdx) => (
-              <div key={qIdx} className="bg-white rounded-lg p-5 shadow-sm">
-                <p className="font-semibold text-gray-900 dark:text-gray-100 mb-4">
+              <div key={qIdx} className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm">
+                <p className="font-semibold text-gray-900 mb-4">
                   {qIdx + 1}. {question.question}
                 </p>
 
@@ -527,7 +521,7 @@ export default function StoryReader() {
                         key={oIdx}
                         onClick={() => !showResults && handleQuizAnswer(qIdx, oIdx)}
                         disabled={showResults}
-                        className={`w-full text-left p-3 rounded-lg border-2 transition-all ${
+                        className={`w-full text-left p-3 rounded-xl border-2 transition-all ${
                           showAnswer && isCorrect
                             ? 'border-green-500 bg-green-50'
                             : showAnswer && isSelected && !isCorrect
@@ -539,7 +533,7 @@ export default function StoryReader() {
                       >
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${
                               showAnswer && isCorrect
                                 ? 'border-green-500 bg-green-500'
                                 : showAnswer && isSelected && !isCorrect
@@ -553,7 +547,7 @@ export default function StoryReader() {
                               <CheckCircle className="w-4 h-4 text-white" />
                             )}
                           </div>
-                          <span className="flex-1">{option}</span>
+                          <span className="flex-1 text-sm sm:text-base">{option}</span>
                         </div>
                       </button>
                     )
@@ -564,10 +558,10 @@ export default function StoryReader() {
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    className="mt-4 p-3 bg-blue-50 rounded-lg"
+                    className="mt-4 p-3 bg-blue-50 rounded-xl"
                   >
                     <div className="flex items-start gap-2">
-                      <Lightbulb className="w-5 h-5 text-blue-600 mt-0.5" />
+                      <Lightbulb className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
                       <div>
                         <p className="font-semibold text-blue-900 mb-1">
                           Explanation:
@@ -584,30 +578,28 @@ export default function StoryReader() {
           </div>
 
           {!showResults && (
-            <Button
+            <button
               onClick={handleSubmitQuiz}
-              className="mt-6 w-full"
-              size="lg"
+              className="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors"
             >
               Submit Quiz
-            </Button>
+            </button>
           )}
 
           {showResults && (
             <div className="mt-6 text-center">
-              <Button
+              <button
                 onClick={() => {
                   setQuizAnswers([])
                   setShowResults(false)
                 }}
-                variant="secondary"
-                size="lg"
+                className="bg-gray-100 hover:bg-indigo-50 text-gray-700 hover:text-indigo-700 rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors"
               >
                 Retry Quiz
-              </Button>
+              </button>
             </div>
           )}
-        </Card>
+        </div>
       </motion.div>
     )
   }
@@ -622,98 +614,118 @@ export default function StoryReader() {
 
   if (!story) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-600 dark:text-gray-300 text-lg">Story not found</p>
-        <Button onClick={() => navigate('/stories')} className="mt-4">
+      <div className="text-center py-12 px-4">
+        <p className="text-gray-600 text-lg">Story not found</p>
+        <button
+          onClick={() => navigate('/stories')}
+          className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors"
+        >
           Back to Stories
-        </Button>
+        </button>
       </div>
     )
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
+        className="mb-6 sm:mb-8"
       >
-        <div className="flex items-center justify-between mb-4">
-          <Button
-            variant="ghost"
+        {/* Navigation row */}
+        <div className="flex items-center justify-between mb-4 gap-2">
+          <button
             onClick={() => navigate('/stories')}
+            className="flex items-center gap-1.5 text-gray-600 hover:text-indigo-600 font-medium px-3 py-2 rounded-2xl hover:bg-indigo-50 cursor-pointer transition-colors text-sm sm:text-base"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Stories
-          </Button>
+            <ArrowLeft className="w-4 h-4 shrink-0" />
+            <span className="hidden sm:inline">Back to Stories</span>
+            <span className="sm:hidden">Back</span>
+          </button>
 
-          <Button
-            variant="ghost"
+          <button
             onClick={handleDeleteStory}
-            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            className="flex items-center gap-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 font-medium px-3 py-2 rounded-2xl cursor-pointer transition-colors text-sm sm:text-base"
           >
-            <Trash2 className="w-4 h-4 mr-2" />
-            Delete Story
-          </Button>
+            <Trash2 className="w-4 h-4 shrink-0" />
+            <span className="hidden sm:inline">Delete Story</span>
+            <span className="sm:hidden">Delete</span>
+          </button>
         </div>
 
-        <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-          <div className="flex-1">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-              {story.title}
-            </h1>
-            {story.title_english && (
-              <p className="text-xl text-gray-600 dark:text-gray-300 mb-3 italic">
-                {story.title_english}
-              </p>
-            )}
-            <Badge variant="default">HSK {story.hsk_level}</Badge>
-          </div>
+        {/* Title block */}
+        <div className="mb-4">
+          <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2 leading-tight">
+            {story.title}
+          </h1>
+          {story.title_english && (
+            <p className="text-base sm:text-xl text-gray-600 mb-3 italic">
+              {story.title_english}
+            </p>
+          )}
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-700">
+            HSK {story.hsk_level}
+          </span>
         </div>
 
         {/* Interactive Controls */}
-        <Card className="bg-gradient-to-r from-primary-50 to-purple-50">
-          <div className="flex flex-wrap gap-3">
-            <Button
-              variant={showPinyin ? 'primary' : 'secondary'}
-              size="sm"
+        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6">
+          <div className="flex flex-wrap gap-2 sm:gap-3">
+            <button
               onClick={() => setShowPinyin(!showPinyin)}
+              className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
+                showPinyin
+                  ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                  : 'bg-white hover:bg-indigo-50 text-gray-700 hover:text-indigo-700 border border-gray-200'
+              }`}
             >
-              <Type className="w-4 h-4 mr-2" />
-              {showPinyin ? 'Hide' : 'Show'} Pinyin
-            </Button>
+              <Type className="w-4 h-4 shrink-0" />
+              <span>{showPinyin ? 'Hide' : 'Show'} Pinyin</span>
+            </button>
 
-            <Button
-              variant={showTranslation ? 'primary' : 'secondary'}
-              size="sm"
+            <button
               onClick={() => setShowTranslation(!showTranslation)}
+              className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
+                showTranslation
+                  ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                  : 'bg-white hover:bg-indigo-50 text-gray-700 hover:text-indigo-700 border border-gray-200'
+              }`}
             >
-              {showTranslation ? <EyeOff className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
-              {showTranslation ? 'Hide' : 'Show'} Translation
-            </Button>
+              {showTranslation
+                ? <EyeOff className="w-4 h-4 shrink-0" />
+                : <Eye className="w-4 h-4 shrink-0" />}
+              <span>{showTranslation ? 'Hide' : 'Show'} Translation</span>
+            </button>
 
-            <Button
-              variant={isReading ? 'primary' : 'secondary'}
-              size="sm"
+            <button
               onClick={handleReadAloud}
+              className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
+                isReading
+                  ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                  : 'bg-white hover:bg-indigo-50 text-gray-700 hover:text-indigo-700 border border-gray-200'
+              }`}
             >
-              {isReading ? <VolumeX className="w-4 h-4 mr-2" /> : <Volume2 className="w-4 h-4 mr-2" />}
-              {isReading ? 'Stop' : 'Read Aloud'}
-            </Button>
+              {isReading
+                ? <VolumeX className="w-4 h-4 shrink-0" />
+                : <Volume2 className="w-4 h-4 shrink-0" />}
+              <span>{isReading ? 'Stop' : 'Read Aloud'}</span>
+            </button>
 
-            <Button
-              variant={showVocabulary ? 'primary' : 'secondary'}
-              size="sm"
+            <button
               onClick={() => setShowVocabulary(!showVocabulary)}
+              className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
+                showVocabulary
+                  ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                  : 'bg-white hover:bg-indigo-50 text-gray-700 hover:text-indigo-700 border border-gray-200'
+              }`}
             >
-              <BookMarked className="w-4 h-4 mr-2" />
-              Vocabulary
-            </Button>
+              <BookMarked className="w-4 h-4 shrink-0" />
+              <span>Vocabulary</span>
+            </button>
 
-            <Button
-              variant={showQuiz ? 'primary' : 'secondary'}
-              size="sm"
+            <button
               onClick={() => {
                 if (!showQuiz) {
                   loadQuizQuestions()
@@ -721,12 +733,17 @@ export default function StoryReader() {
                 setShowQuiz(!showQuiz)
               }}
               disabled={loadingQuiz}
+              className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm disabled:opacity-60 disabled:cursor-not-allowed ${
+                showQuiz
+                  ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                  : 'bg-white hover:bg-indigo-50 text-gray-700 hover:text-indigo-700 border border-gray-200'
+              }`}
             >
-              <HelpCircle className="w-4 h-4 mr-2" />
-              {loadingQuiz ? 'Loading Quiz...' : showQuiz ? 'Hide Quiz' : 'Take Quiz'}
-            </Button>
+              <HelpCircle className="w-4 h-4 shrink-0" />
+              <span>{loadingQuiz ? 'Loading Quiz...' : showQuiz ? 'Hide Quiz' : 'Take Quiz'}</span>
+            </button>
           </div>
-        </Card>
+        </div>
       </motion.div>
 
       {/* Story Content */}
@@ -735,15 +752,19 @@ export default function StoryReader() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
-        <Card className="mb-6">
-          <div className="flex items-center gap-2 text-gray-600 mb-6">
-            <BookOpen className="w-5 h-5" />
-            <p className="text-sm">
-              Click any character for details • Use controls above for interactive features
-            </p>
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-6">
+          {/* Accent bar */}
+          <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
+          <div className="p-4 sm:p-6 md:p-8">
+            <div className="flex items-center gap-2 text-gray-500 mb-6">
+              <BookOpen className="w-5 h-5 shrink-0" />
+              <p className="text-sm">
+                Click any character for details &bull; Use controls above for interactive features
+              </p>
+            </div>
+            {renderStoryContent()}
           </div>
-          {renderStoryContent()}
-        </Card>
+        </div>
       </motion.div>
 
       {/* Translation */}

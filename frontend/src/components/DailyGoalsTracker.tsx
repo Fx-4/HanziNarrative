@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { Card } from './ui/Card'
 import { Target, Clock, BookOpen, TrendingUp, CheckCircle } from 'lucide-react'
 import { onboardingApi, gamificationApi } from '@/services/api'
 
@@ -53,9 +52,9 @@ export default function DailyGoalsTracker() {
 
   if (loading) {
     return (
-      <Card className="animate-pulse">
-        <div className="h-40 bg-gray-200 dark:bg-gray-700 rounded"></div>
-      </Card>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 animate-pulse">
+        <div className="h-40 bg-gray-100 rounded"></div>
+      </div>
     )
   }
 
@@ -66,26 +65,26 @@ export default function DailyGoalsTracker() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <Card className="border-l-4 border-primary-500 dark:border-primary-600 p-3 sm:p-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-indigo-500 p-3 sm:p-4">
           <div className="flex items-center gap-2 mb-3">
-            <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 dark:text-primary-400" />
-            <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
+            <Target className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
+            <h3 className="text-base sm:text-lg font-bold text-gray-900">
               Daily Goals
             </h3>
           </div>
           <div className="text-center py-6 sm:py-8">
-            <Target className="w-10 h-10 sm:w-12 sm:h-12 text-gray-300 dark:text-gray-600 mx-auto mb-2 sm:mb-3" />
-            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3 sm:mb-4 px-2">
+            <Target className="w-10 h-10 sm:w-12 sm:h-12 text-gray-300 mx-auto mb-2 sm:mb-3" />
+            <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4 px-2">
               Set your daily learning goals to track progress
             </p>
             <Link
               to="/profile"
-              className="inline-block px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-xs sm:text-sm rounded-lg transition-colors"
+              className="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm rounded-lg transition-colors"
             >
               Set Goals
             </Link>
           </div>
-        </Card>
+        </div>
       </motion.div>
     )
   }
@@ -104,11 +103,11 @@ export default function DailyGoalsTracker() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 }}
     >
-      <Card className="border-l-4 border-primary-500 dark:border-primary-600 p-3 sm:p-4">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-indigo-500 p-3 sm:p-4">
         {/* Header */}
         <div className="flex items-center gap-2 mb-3">
-          <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 dark:text-primary-400" />
-          <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
+          <Target className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
+          <h3 className="text-base sm:text-lg font-bold text-gray-900">
             Daily Goals
           </h3>
         </div>
@@ -120,13 +119,13 @@ export default function DailyGoalsTracker() {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-1.5">
-                  <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-600 dark:text-gray-400" />
-                  <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-600" />
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">
                     Review Words
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
+                  <span className="text-xs sm:text-sm font-bold text-indigo-600">
                     {Math.min(progress.wordsReviewed, goals.daily_words)}/{goals.daily_words}
                   </span>
                   {isGoalMet(progress.wordsReviewed, goals.daily_words) && (
@@ -134,7 +133,7 @@ export default function DailyGoalsTracker() {
                   )}
                 </div>
               </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+              <div className="w-full bg-gray-100 rounded-full h-2">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${calculatePercentage(progress.wordsReviewed, goals.daily_words)}%` }}
@@ -142,7 +141,7 @@ export default function DailyGoalsTracker() {
                   className={`h-2 rounded-full ${
                     isGoalMet(progress.wordsReviewed, goals.daily_words)
                       ? 'bg-green-500'
-                      : 'bg-primary-600 dark:bg-primary-500'
+                      : 'bg-indigo-600'
                   }`}
                 />
               </div>
@@ -154,13 +153,13 @@ export default function DailyGoalsTracker() {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-600 dark:text-gray-400" />
-                  <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-600" />
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">
                     Study Time
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
+                  <span className="text-xs sm:text-sm font-bold text-indigo-600">
                     {Math.min(progress.timeStudied, goals.daily_time_minutes)}/{goals.daily_time_minutes} min
                   </span>
                   {isGoalMet(progress.timeStudied, goals.daily_time_minutes) && (
@@ -168,7 +167,7 @@ export default function DailyGoalsTracker() {
                   )}
                 </div>
               </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+              <div className="w-full bg-gray-100 rounded-full h-2">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${calculatePercentage(progress.timeStudied, goals.daily_time_minutes)}%` }}
@@ -176,7 +175,7 @@ export default function DailyGoalsTracker() {
                   className={`h-2 rounded-full ${
                     isGoalMet(progress.timeStudied, goals.daily_time_minutes)
                       ? 'bg-green-500'
-                      : 'bg-orange-500 dark:bg-orange-600'
+                      : 'bg-orange-500'
                   }`}
                 />
               </div>
@@ -185,15 +184,15 @@ export default function DailyGoalsTracker() {
 
           {/* Target HSK Level */}
           {goals.target_hsk_level && (
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="mt-4 pt-4 border-t border-gray-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <TrendingUp className="w-4 h-4 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-700">
                     Target Level
                   </span>
                 </div>
-                <span className="text-sm font-bold text-primary-600 dark:text-primary-400">
+                <span className="text-sm font-bold text-indigo-600">
                   HSK {goals.target_hsk_level}
                 </span>
               </div>
@@ -206,14 +205,14 @@ export default function DailyGoalsTracker() {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800"
+            className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200"
           >
-            <p className="text-sm text-green-800 dark:text-green-300 font-medium text-center">
-              🎉 Great job! You've reached your daily goal!
+            <p className="text-sm text-green-800 font-medium text-center">
+              Great job! You've reached your daily goal!
             </p>
           </motion.div>
         )}
-      </Card>
+      </div>
     </motion.div>
   )
 }

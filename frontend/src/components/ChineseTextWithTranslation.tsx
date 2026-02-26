@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import TranslationTooltip from './TranslationTooltip'
-import { Button } from './ui/Button'
 import { Languages } from 'lucide-react'
 
 interface Word {
@@ -91,14 +90,17 @@ export default function ChineseTextWithTranslation({
     <div>
       {showToggle && (
         <div className="mb-4">
-          <Button
-            variant={translationEnabled ? 'primary' : 'secondary'}
-            size="sm"
+          <button
             onClick={() => setTranslationEnabled(!translationEnabled)}
+            className={`flex items-center rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors ${
+              translationEnabled
+                ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+            }`}
           >
             <Languages className="w-4 h-4 mr-2" />
             {translationEnabled ? 'Hide Translations' : 'Show Translations'}
-          </Button>
+          </button>
         </div>
       )}
 

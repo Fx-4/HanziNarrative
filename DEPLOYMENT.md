@@ -19,13 +19,18 @@ Database  → Supabase (PostgreSQL)
 2. Sign up with GitHub (free)
 3. Click "New Project"
    - Name: `hanzinarrative`
-   - Database Password: (save this!)
+   - Database Password: (save this!)Haikal12!
    - Region: Choose closest to you
    - Click "Create new project"
 
 ### 1.2 Get Database URL
 1. Go to Project Settings → Database
 2. Copy "Connection string" (URI format)
+https://[YOUR-SUPABASE-PROJECT-REF].supabase.co
+publishable key: [YOUR-SUPABASE-PUBLISHABLE-KEY]
+secret key: [YOUR-SUPABASE-SECRET-KEY]
+anon public: [YOUR-SUPABASE-ANON-KEY]
+service_role secret: [YOUR-SUPABASE-SERVICE-ROLE-KEY]
 3. Replace `[YOUR-PASSWORD]` with your database password
 4. Save this URL, you'll need it for backend deployment
 

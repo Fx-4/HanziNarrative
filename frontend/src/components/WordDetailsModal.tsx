@@ -101,22 +101,22 @@ const hskLabel: Record<number, string> = {
 }
 
 const categoryColors: Record<string, string> = {
-  noun:        'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-300 border-success-200 dark:border-success-800',
-  verb:        'bg-info-50 dark:bg-info-900/20 text-info-700 dark:text-info-300 border-info-200 dark:border-info-800',
-  adjective:   'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800',
-  adverb:      'bg-warning-50 dark:bg-warning-900/20 text-warning-700 dark:text-warning-300 border-warning-200 dark:border-warning-800',
-  pronoun:     'bg-pink-50 dark:bg-pink-900/20 text-pink-700 dark:text-pink-300 border-pink-200 dark:border-pink-800',
-  particle:    'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700',
-  preposition: 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800',
-  conjunction: 'bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800',
-  number:      'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300 border-accent-200 dark:border-accent-800',
+  noun:        'bg-emerald-50 text-emerald-700 border-emerald-200',
+  verb:        'bg-blue-50 text-blue-700 border-blue-200',
+  adjective:   'bg-purple-50 text-purple-700 border-purple-200',
+  adverb:      'bg-orange-50 text-orange-700 border-orange-200',
+  pronoun:     'bg-pink-50 text-pink-700 border-pink-200',
+  particle:    'bg-gray-50 text-gray-600 border-gray-200',
+  preposition: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+  conjunction: 'bg-teal-50 text-teal-700 border-teal-200',
+  number:      'bg-amber-50 text-amber-700 border-amber-200',
 }
 
 function getCatStyle(cat?: string) {
   if (!cat) return ''
   return (
     categoryColors[cat.toLowerCase()] ??
-    'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 border-primary-200 dark:border-primary-800'
+    'bg-indigo-50 text-indigo-700 border-indigo-200'
   )
 }
 
@@ -162,7 +162,7 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white dark:bg-surface-card rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-hidden flex flex-col pointer-events-auto"
+              className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-hidden flex flex-col pointer-events-auto"
               initial={{ scale: 0.92, y: 24 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.92, y: 24 }}
@@ -256,14 +256,14 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
                 {/* ── Visual Section (Pexels image) ── */}
                 <div className="relative">
                   {imageLoading ? (
-                    <div className="aspect-video bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                    <div className="aspect-video bg-gray-100 flex items-center justify-center">
                       <div className="flex flex-col items-center gap-2">
                         <Loader2 className="w-7 h-7 text-gray-400 animate-spin" />
                         <p className="text-xs text-gray-400">Loading visual reference…</p>
                       </div>
                     </div>
                   ) : imageUrl ? (
-                    <div className="relative w-full aspect-[4/3] bg-gray-900/5 dark:bg-black/20 overflow-hidden">
+                    <div className="relative w-full aspect-[4/3] bg-gray-900/5 overflow-hidden">
                       <img
                         src={imageUrl}
                         alt={`${word.english} — visual reference`}
@@ -311,11 +311,11 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
 
                   {/* ── Wikipedia link always visible when no image ── */}
                   {!imageUrl && wiki?.pageUrl && (
-                    <div className="mx-5 mt-4 p-3 rounded-xl bg-info-50 dark:bg-info-900/15 border border-info-100 dark:border-info-800/40 flex items-start gap-3">
-                      <Globe className="w-4 h-4 text-info-500 mt-0.5 flex-shrink-0" />
+                    <div className="mx-5 mt-4 p-3 rounded-xl bg-blue-50 border border-blue-100 flex items-start gap-3">
+                      <Globe className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <div className="flex-1 min-w-0">
                         {wiki?.extract && (
-                          <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed line-clamp-3 mb-1.5">
+                          <p className="text-xs text-gray-700 leading-relaxed line-clamp-3 mb-1.5">
                             {wiki.extract}
                           </p>
                         )}
@@ -323,7 +323,7 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
                           href={wiki.pageUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-xs font-medium text-info-600 dark:text-info-400 hover:underline"
+                          className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:underline"
                           onClick={e => e.stopPropagation()}
                         >
                           Read on Wikipedia
@@ -336,7 +336,7 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
 
                 {/* ── Word Details Grid ── */}
                 <div className="p-5">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-3 flex items-center gap-2">
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-2">
                     <BookOpen className="w-3.5 h-3.5" />
                     Word Details
                   </h3>
@@ -344,13 +344,13 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
                     {/* Radical */}
                     {word.radical && (
-                      <div className="p-3 rounded-xl bg-accent-50 dark:bg-accent-900/20 border border-accent-100 dark:border-accent-800/40">
-                        <p className="text-[10px] text-accent-600 dark:text-accent-400 font-semibold uppercase tracking-widest mb-1 flex items-center gap-1">
+                      <div className="p-3 rounded-xl bg-amber-50 border border-amber-100">
+                        <p className="text-[10px] text-amber-600 font-semibold uppercase tracking-widest mb-1 flex items-center gap-1">
                           <Brush className="w-2.5 h-2.5" />
                           Radical
                         </p>
                         <p
-                          className="text-2xl font-bold text-accent-800 dark:text-accent-200 leading-none"
+                          className="text-2xl font-bold text-amber-800 leading-none"
                           style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
                         >
                           {word.radical}
@@ -360,12 +360,12 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
 
                     {/* Stroke count */}
                     {word.strokes && (
-                      <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/60 border border-gray-100 dark:border-gray-700/60">
-                        <p className="text-[10px] text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-widest mb-1 flex items-center gap-1">
+                      <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
+                        <p className="text-[10px] text-gray-500 font-semibold uppercase tracking-widest mb-1 flex items-center gap-1">
                           <Hash className="w-2.5 h-2.5" />
                           Strokes
                         </p>
-                        <p className="text-2xl font-bold text-gray-800 dark:text-gray-200 leading-none">
+                        <p className="text-2xl font-bold text-gray-800 leading-none">
                           {word.strokes}
                         </p>
                       </div>
@@ -386,12 +386,12 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
 
                     {/* Traditional form */}
                     {word.traditional && word.traditional !== word.simplified && (
-                      <div className="p-3 rounded-xl bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800/40">
-                        <p className="text-[10px] text-primary-600 dark:text-primary-400 font-semibold uppercase tracking-widest mb-1">
+                      <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-100">
+                        <p className="text-[10px] text-indigo-600 font-semibold uppercase tracking-widest mb-1">
                           Traditional
                         </p>
                         <p
-                          className="text-2xl font-bold text-primary-800 dark:text-primary-200 leading-none"
+                          className="text-2xl font-bold text-indigo-800 leading-none"
                           style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
                         >
                           {word.traditional}
@@ -400,11 +400,11 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
                     )}
 
                     {/* HSK Level */}
-                    <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/60 border border-gray-100 dark:border-gray-700/60">
-                      <p className="text-[10px] text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-widest mb-1">
+                    <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
+                      <p className="text-[10px] text-gray-500 font-semibold uppercase tracking-widest mb-1">
                         HSK Level
                       </p>
-                      <p className="text-sm font-bold text-gray-800 dark:text-gray-200">
+                      <p className="text-sm font-bold text-gray-800">
                         {word.hsk_level} — {hskLabel[word.hsk_level]}
                       </p>
                     </div>
@@ -413,12 +413,12 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
                   {/* ── Character Evolution History ── */}
                   {word.evolution_history && (
                     <div className="mb-5">
-                      <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-3 flex items-center gap-2">
+                      <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-2">
                         <ScrollText className="w-3.5 h-3.5" />
                         Character Evolution
                       </h3>
-                      <div className="p-4 rounded-xl bg-accent-50 dark:bg-accent-900/15 border border-accent-100 dark:border-accent-800/40">
-                        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                      <div className="p-4 rounded-xl bg-amber-50 border border-amber-100">
+                        <p className="text-sm text-gray-700 leading-relaxed">
                           {word.evolution_history}
                         </p>
                       </div>
@@ -431,7 +431,7 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
               {/* ══════════════════════════════════
                   FOOTER
               ════════════════════════════════════ */}
-              <div className="flex-shrink-0 p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-surface-elevated">
+              <div className="flex-shrink-0 p-4 border-t border-gray-100 bg-gray-50">
                 <button
                   onClick={onClose}
                   className={`w-full py-3 rounded-xl font-semibold text-sm text-white bg-gradient-to-r ${gradient} hover:opacity-90 active:opacity-80 transition-opacity shadow-md`}

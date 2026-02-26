@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import HanziWriter from 'hanzi-writer'
 import { HanziWord, AttemptResult } from '@/types'
-import { Card } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   RotateCcw,
@@ -186,14 +184,14 @@ export default function WritingCanvas({
   return (
     <div className="space-y-6">
       {/* Character Info */}
-      <Card className="p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <div className="text-sm text-gray-600 mb-1">Character</div>
             <div className="flex items-center gap-4">
               <span className="text-5xl font-chinese">{character.simplified}</span>
               <div>
-                <div className="text-xl text-primary-600 font-semibold">
+                <div className="text-xl text-indigo-600 font-semibold">
                   {character.pinyin}
                 </div>
                 <div className="text-gray-700">{character.english}</div>
@@ -221,17 +219,17 @@ export default function WritingCanvas({
         <div className="mt-4">
           <div className="w-full bg-gray-200 rounded-full h-2">
             <motion.div
-              className="bg-gradient-to-r from-primary-500 to-primary-600 h-2 rounded-full"
+              className="bg-gradient-to-r from-indigo-500 to-indigo-600 h-2 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.3 }}
             />
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Canvas */}
-      <Card className="p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <div className="flex flex-col items-center">
           <div
             ref={canvasRef}
@@ -240,30 +238,27 @@ export default function WritingCanvas({
 
           {/* Controls */}
           <div className="flex flex-wrap gap-3 justify-center">
-            <Button
+            <button
               onClick={handleReset}
-              variant="secondary"
-              size="md"
               disabled={isAnimating}
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <RotateCcw className="w-4 h-4 mr-2" />
               Reset
-            </Button>
+            </button>
 
-            <Button
+            <button
               onClick={handleShowStrokeOrder}
-              variant="outline"
-              size="md"
               disabled={isAnimating}
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Play className="w-4 h-4 mr-2" />
               {isAnimating ? 'Animating...' : 'Show Stroke Order'}
-            </Button>
+            </button>
 
-            <Button
+            <button
               onClick={toggleHints}
-              variant="ghost"
-              size="md"
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center"
             >
               {showHints ? (
                 <>
@@ -276,10 +271,10 @@ export default function WritingCanvas({
                   Show Hints
                 </>
               )}
-            </Button>
+            </button>
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Completion Feedback */}
       <AnimatePresence>
@@ -289,7 +284,7 @@ export default function WritingCanvas({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.9 }}
           >
-            <Card className={`p-6 ${accuracy >= 80 ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200' : 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200'}`}>
+            <div className={`rounded-2xl shadow-sm p-6 ${accuracy >= 80 ? 'bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200' : 'bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200'}`}>
               <div className="flex items-center gap-4">
                 {accuracy >= 80 ? (
                   <div className="p-3 bg-green-100 rounded-full">
@@ -320,14 +315,14 @@ export default function WritingCanvas({
                   )}
                 </div>
               </div>
-            </Card>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Tips */}
       {mode === 'practice' && !isComplete && (
-        <Card className="p-4 bg-blue-50 border-blue-200">
+        <div className="rounded-2xl shadow-sm border p-4 bg-blue-50 border-blue-200">
           <div className="flex items-start gap-3">
             <Sparkles className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-blue-900">
@@ -335,7 +330,7 @@ export default function WritingCanvas({
               You can toggle hints on/off to challenge yourself!
             </div>
           </div>
-        </Card>
+        </div>
       )}
     </div>
   )

@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HanziWord, WritingProgress } from '@/types'
-import { Badge } from '@/components/ui/Badge'
 import {
   Circle,
   TrendingUp,
@@ -66,10 +65,10 @@ export default function CharacterGrid({
   }
 
   const filters = [
-    { key: 'all' as const,      label: `All (${characters.length})`, icon: null,     activeClass: 'bg-primary-600 text-white', inactiveClass: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' },
-    { key: 'new' as const,      label: 'New',                        icon: Sparkles,  activeClass: 'bg-purple-600 text-white',  inactiveClass: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' },
-    { key: 'learning' as const, label: 'Learning',                   icon: TrendingUp,activeClass: 'bg-blue-600 text-white',    inactiveClass: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' },
-    { key: 'mastered' as const, label: 'Mastered',                   icon: Award,     activeClass: 'bg-green-600 text-white',   inactiveClass: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' },
+    { key: 'all' as const,      label: `All (${characters.length})`, icon: null,      activeClass: 'bg-indigo-600 text-white', inactiveClass: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
+    { key: 'new' as const,      label: 'New',                        icon: Sparkles,  activeClass: 'bg-purple-600 text-white',  inactiveClass: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
+    { key: 'learning' as const, label: 'Learning',                   icon: TrendingUp,activeClass: 'bg-blue-600 text-white',    inactiveClass: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
+    { key: 'mastered' as const, label: 'Mastered',                   icon: Award,     activeClass: 'bg-green-600 text-white',   inactiveClass: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
   ]
 
   return (
@@ -119,8 +118,8 @@ export default function CharacterGrid({
                   className={`relative rounded-xl border-2 p-2 text-center overflow-hidden
                     transition-all duration-200 hover:shadow-md active:scale-95
                     ${isSelected
-                      ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/40 shadow-md'
-                      : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary-300'
+                      ? 'border-indigo-500 bg-indigo-50 shadow-md'
+                      : 'border-gray-200 bg-white hover:border-indigo-300'
                     }`}
                 >
                   {/* Mastery icon top-right */}
@@ -129,30 +128,30 @@ export default function CharacterGrid({
                   </div>
 
                   {/* Chinese Character */}
-                  <div className="text-3xl font-chinese leading-tight mb-1 text-gray-900 dark:text-gray-100">
+                  <div className="text-3xl font-chinese leading-tight mb-1 text-gray-900">
                     {character.simplified}
                   </div>
 
                   {/* Pinyin */}
-                  <div className="text-[11px] text-primary-600 dark:text-primary-400 font-semibold leading-none mb-0.5">
+                  <div className="text-[11px] text-indigo-600 font-semibold leading-none mb-0.5">
                     {character.pinyin}
                   </div>
 
                   {/* English — capped at 1 line */}
-                  <div className="text-[10px] text-gray-500 dark:text-gray-400 truncate px-0.5 leading-none mb-1">
+                  <div className="text-[10px] text-gray-500 truncate px-0.5 leading-none mb-1">
                     {character.english}
                   </div>
 
                   {/* Progress bar + accuracy (if practiced) */}
                   {charProgress && charProgress.total_attempts > 0 ? (
-                    <div className="mt-1.5 pt-1.5 border-t border-gray-200 dark:border-gray-700">
+                    <div className="mt-1.5 pt-1.5 border-t border-gray-200">
                       <div className="flex items-center justify-between text-[9px] mb-1">
                         <span className="text-gray-500">{charProgress.total_attempts}×</span>
                         <span className={`font-bold ${getAccuracyColor(charProgress.accuracy_score)}`}>
                           {Math.round(charProgress.accuracy_score)}%
                         </span>
                       </div>
-                      <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-1">
+                      <div className="w-full bg-gray-200 rounded-full h-1">
                         <div
                           className={`h-1 rounded-full transition-all duration-300 ${
                             charProgress.mastery_level >= 80 ? 'bg-green-500'
@@ -164,8 +163,8 @@ export default function CharacterGrid({
                       </div>
                     </div>
                   ) : (
-                    <div className="mt-1.5 pt-1.5 border-t border-gray-200 dark:border-gray-700">
-                      <Badge variant="default" className="text-[9px] px-1.5 py-0.5">New</Badge>
+                    <div className="mt-1.5 pt-1.5 border-t border-gray-200">
+                      <span className="inline-flex px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-indigo-100 text-indigo-700">New</span>
                     </div>
                   )}
                 </div>
@@ -183,12 +182,12 @@ export default function CharacterGrid({
           className="text-center py-8"
         >
           <Circle className="w-12 h-12 mx-auto text-gray-300 mb-3" />
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500">
             No characters in this category
           </p>
           <button
             onClick={() => setFilter('all')}
-            className="mt-2 text-xs text-primary-600 hover:text-primary-700 font-medium"
+            className="mt-2 text-xs text-indigo-600 hover:text-indigo-700 font-medium"
           >
             View all →
           </button>

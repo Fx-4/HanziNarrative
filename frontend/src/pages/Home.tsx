@@ -1,229 +1,271 @@
-﻿import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
-import { BookOpen, PenLine, PenTool, Target, BarChart3 } from 'lucide-react'
-import BlurText from '@/components/animations/BlurText'
-import { FadeInOnMount } from '@/components/animations/FadeIn'
-import StaggerContainer from '@/components/animations/StaggerContainer'
-import StaggerItem from '@/components/animations/StaggerItem'
-import SpotlightCard from '@/components/animations/SpotlightCard'
-import TiltCard from '@/components/animations/TiltCard'
-import ScrollReveal from '@/components/animations/ScrollReveal'
-import GradientText from '@/components/animations/GradientText'
+import {
+  BookOpen, PenLine, PenTool, Target, BarChart3,
+  ArrowRight, Sparkles, GraduationCap, Zap,
+} from 'lucide-react'
 import { motion } from 'framer-motion'
+
+// Feature data
+const FEATURES = [
+  {
+    Icon: BookOpen,
+    title: 'Interactive Stories',
+    desc: 'Read engaging stories with clickable words that reveal Pinyin, meaning, and illustrations.',
+    bg: 'bg-indigo-600', shadow: 'shadow-indigo-500/20',
+  },
+  {
+    Icon: Target,
+    title: 'HSK Focused',
+    desc: 'Content organized by HSK levels 1–6, from everyday beginner vocabulary to advanced topics.',
+    bg: 'bg-emerald-500', shadow: 'shadow-emerald-500/20',
+  },
+  {
+    Icon: BarChart3,
+    title: 'Track Progress',
+    desc: 'Save words, review with flashcards, and watch your mastery grow over time.',
+    bg: 'bg-violet-600', shadow: 'shadow-violet-500/20',
+  },
+]
+
+const STEPS = [
+  {
+    n: '1',
+    title: 'Choose Your Level',
+    desc: 'Select stories matching your HSK level or challenge yourself with something harder.',
+  },
+  {
+    n: '2',
+    title: 'Read & Click',
+    desc: 'Tap any character to instantly see its pronunciation, English meaning, and an image.',
+  },
+  {
+    n: '3',
+    title: 'Review & Master',
+    desc: 'Save words to your personal collection and reinforce them with spaced-repetition review.',
+  },
+]
+
+const TOOLS = [
+  {
+    href: '/stories',
+    Icon: BookOpen,
+    label: 'Stories',
+    desc: 'Interactive Chinese stories with clickable word lookups',
+    accent: 'indigo',
+    cta: 'Start Reading',
+  },
+  {
+    href: '/writing',
+    Icon: PenLine,
+    label: 'Writing',
+    desc: 'Stroke order guidance and real-time character feedback',
+    accent: 'violet',
+    cta: 'Practice Writing',
+  },
+  {
+    href: '/sentence-builder',
+    Icon: PenTool,
+    label: 'Sentences',
+    desc: 'Arrange words into correct Chinese sentences to master grammar',
+    accent: 'emerald',
+    cta: 'Build Sentences',
+  },
+]
+
+const accentMap: Record<string, { bg: string; text: string; border: string; light: string }> = {
+  indigo: { bg: 'bg-indigo-600', text: 'text-indigo-600', border: 'border-indigo-200', light: 'bg-indigo-50' },
+  violet: { bg: 'bg-violet-600', text: 'text-violet-600', border: 'border-violet-200', light: 'bg-violet-50' },
+  emerald: { bg: 'bg-emerald-500', text: 'text-emerald-600', border: 'border-emerald-200', light: 'bg-emerald-50' },
+}
 
 export default function Home() {
   const { isAuthenticated } = useAuthStore()
 
   return (
-    <div className="max-w-6xl mx-auto px-4">
-      {/* Hero */}
-      <section className="text-center py-10 sm:py-16 lg:py-20">
-        <BlurText
-          as="h1"
-          className="text-3xl sm:text-4xl lg:text-6xl font-bold text-gray-900 dark:text-gray-100 mb-4 sm:mb-6 justify-center"
-          wordDelay={0.07}
+    <div className="max-w-4xl mx-auto px-4 pb-20">
+
+      {/* ── Hero ────────────────────────────────────────────────────────── */}
+      <section className="text-center py-16 sm:py-20">
+
+        {/* Decorative character */}
+        <motion.div
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', duration: 0.8 }}
+          className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-indigo-500/30"
         >
-          Learn HSK Through Stories
-        </BlurText>
+          <span className="text-white text-4xl sm:text-5xl font-bold font-chinese">汉</span>
+        </motion.div>
 
-        <FadeInOnMount delay={0.45} duration={0.6} direction="up" distance={16}>
-          <p className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-300 mb-6 max-w-3xl mx-auto px-2">
-            Immerse yourself in interactive Chinese stories. Click any word to see its Pinyin,
-            English meaning, and an illustrative image. Transform traditional memorization into
-            an intuitive and fun narrative experience.
-          </p>
-        </FadeInOnMount>
+        <motion.h1
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-3xl sm:text-5xl font-extrabold text-gray-900 mb-4 leading-tight"
+        >
+          Learn HSK Through
+          <span className="block bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">
+            Immersive Stories
+          </span>
+        </motion.h1>
 
-        <FadeInOnMount delay={0.65} duration={0.5} direction="up" distance={12}>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-              <Link to="/stories" className="btn-primary text-lg px-8 py-3">
-                Start Reading
-              </Link>
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="text-base sm:text-lg text-gray-500 mb-8 max-w-2xl mx-auto"
+        >
+          Click any Chinese word to see its Pinyin, English meaning, and an illustrative image.
+          Transform rote memorization into an intuitive, story-driven experience.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="flex flex-col sm:flex-row gap-3 justify-center"
+        >
+          <Link
+            to="/stories"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/20 transition-colors"
+          >
+            <BookOpen className="w-4 h-4" />
+            Start Reading
+          </Link>
+          {!isAuthenticated && (
+            <Link
+              to="/register"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 text-gray-700 font-semibold rounded-xl transition-colors"
+            >
+              Sign Up Free
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          )}
+        </motion.div>
+      </section>
+
+      {/* ── Feature Cards ───────────────────────────────────────────────── */}
+      <section className="mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {FEATURES.map(({ Icon, title, desc, bg, shadow }, i) => (
+            <motion.div
+              key={title}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + i * 0.1 }}
+              className={`${bg} rounded-2xl p-5 text-white shadow-lg ${shadow}`}
+            >
+              <Icon className="w-7 h-7 mb-3 opacity-90" />
+              <h3 className="font-extrabold text-base mb-1">{title}</h3>
+              <p className="text-sm opacity-80 leading-relaxed">{desc}</p>
             </motion.div>
-            {!isAuthenticated && (
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                <Link to="/register" className="btn-secondary text-lg px-8 py-3">
-                  Sign Up Free
+          ))}
+        </div>
+      </section>
+
+      {/* ── How It Works ────────────────────────────────────────────────── */}
+      <section className="mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8"
+        >
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 text-center mb-2 flex items-center justify-center gap-2">
+            <Sparkles className="w-6 h-6 text-indigo-500" />
+            How It Works
+          </h2>
+          <p className="text-center text-gray-400 text-sm mb-8">Three simple steps to Chinese fluency</p>
+
+          <div className="space-y-6">
+            {STEPS.map(({ n, title, desc }, i) => (
+              <motion.div
+                key={n}
+                initial={{ opacity: 0, x: -16 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="flex items-start gap-4"
+              >
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-extrabold text-base shrink-0 shadow-lg shadow-indigo-500/20">
+                  {n}
+                </div>
+                <div className="pt-1">
+                  <h3 className="font-extrabold text-gray-900 text-base mb-0.5">{title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ── Learning Tools ───────────────────────────────────────────────── */}
+      <section className="mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-6"
+        >
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 flex items-center justify-center gap-2">
+            <GraduationCap className="w-6 h-6 text-indigo-500" />
+            Learning Tools
+          </h2>
+          <p className="text-sm text-gray-400">Everything you need to master Chinese</p>
+        </motion.div>
+
+        <div className="grid sm:grid-cols-3 gap-4">
+          {TOOLS.map(({ href, Icon, label, desc, accent, cta }, i) => {
+            const a = accentMap[accent]
+            return (
+              <motion.div
+                key={label}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Link
+                  to={href}
+                  className={`flex flex-col h-full bg-white rounded-2xl border ${a.border} hover:shadow-lg transition-shadow p-5 group`}
+                >
+                  <div className={`w-10 h-10 rounded-xl ${a.light} flex items-center justify-center mb-3`}>
+                    <Icon className={`w-5 h-5 ${a.text}`} />
+                  </div>
+                  <h3 className="font-extrabold text-gray-900 text-sm mb-1">{label}</h3>
+                  <p className="text-xs text-gray-500 leading-relaxed flex-1 mb-3">{desc}</p>
+                  <span className={`text-xs font-semibold ${a.text} flex items-center gap-1 group-hover:gap-2 transition-all`}>
+                    {cta} <ArrowRight className="w-3 h-3" />
+                  </span>
                 </Link>
               </motion.div>
-            )}
-          </div>
-        </FadeInOnMount>
+            )
+          })}
+        </div>
       </section>
 
-      {/* Feature cards */}
-      <StaggerContainer
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 py-10 sm:py-14 lg:py-16"
-        delay={0.1}
-        staggerDelay={0.12}
-      >
-        {[
-          {
-            Icon: BookOpen,
-            title: 'Interactive Stories',
-            desc: 'Read engaging stories with clickable words revealing Pinyin and meanings',
-            color: 'rgba(79,70,229,0.10)',
-            iconColor: 'text-primary-600 dark:text-primary-400',
-          },
-          {
-            Icon: Target,
-            title: 'HSK Focused',
-            desc: 'Content organized by HSK levels from beginner to advanced',
-            color: 'rgba(34,197,94,0.10)',
-            iconColor: 'text-success-600 dark:text-success-400',
-          },
-          {
-            Icon: BarChart3,
-            title: 'Track Progress',
-            desc: 'Save words, create custom sets, and monitor your learning journey',
-            color: 'rgba(245,158,11,0.10)',
-            iconColor: 'text-accent-600 dark:text-accent-400',
-          },
-        ].map(({ Icon, title, desc, color, iconColor }) => (
-          <StaggerItem key={title}>
-            <SpotlightCard
-              className="card text-center rounded-xl"
-              spotlightColor={color}
-            >
-              <div className="flex justify-center mb-4">
-                <Icon className={`w-12 h-12 ${iconColor}`} />
-              </div>
-              <h3 className="text-xl font-bold mb-2">{title}</h3>
-              <p className="text-gray-600 dark:text-gray-300">{desc}</p>
-            </SpotlightCard>
-          </StaggerItem>
-        ))}
-      </StaggerContainer>
-
-      {/* How It Works */}
-      <section className="py-10 sm:py-14 lg:py-16 bg-primary-50 dark:bg-primary-950/30 -mx-4 px-4 rounded-lg">
-        <ScrollReveal>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-8 sm:mb-10 lg:mb-12">
-            How It{' '}
-            <GradientText colors={['#4F46E5', '#818CF8', '#22C55E', '#4F46E5']}>
-              Works
-            </GradientText>
-          </h2>
-        </ScrollReveal>
-
-        <StaggerContainer
-          className="max-w-4xl mx-auto space-y-8"
-          staggerDelay={0.15}
+      {/* ── CTA Banner ──────────────────────────────────────────────────── */}
+      {!isAuthenticated && (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-3xl p-8 text-center text-white shadow-2xl shadow-indigo-500/25"
         >
-          {[
-            {
-              n: '1',
-              title: 'Choose Your Level',
-              desc: 'Select stories matching your HSK level or challenge yourself with higher levels',
-            },
-            {
-              n: '2',
-              title: 'Read & Click',
-              desc: 'Click any Hanzi word in the story to see its pronunciation, meaning, and image',
-            },
-            {
-              n: '3',
-              title: 'Review & Master',
-              desc: 'Save words to your personal collection and review them with flashcards',
-            },
-          ].map(({ n, title, desc }) => (
-            <StaggerItem key={n} direction="left">
-              <div className="flex items-start gap-4">
-                <motion.div
-                  className="bg-primary-600 text-white rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0 text-xl font-bold"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                >
-                  {n}
-                </motion.div>
-                <div>
-                  <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-2">{title}</h3>
-                  <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300">{desc}</p>
-                </div>
-              </div>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
-      </section>
+          <Zap className="w-10 h-10 mx-auto mb-4 opacity-90" />
+          <h2 className="text-2xl font-extrabold mb-2">Ready to start?</h2>
+          <p className="text-indigo-100 text-sm mb-6">Create a free account and begin your Chinese journey today.</p>
+          <Link
+            to="/register"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-white text-indigo-700 font-bold rounded-xl hover:bg-indigo-50 transition-colors shadow-lg"
+          >
+            Get Started Free <ArrowRight className="w-4 h-4" />
+          </Link>
+        </motion.div>
+      )}
 
-      {/* More Learning Tools */}
-      <section className="py-16">
-        <ScrollReveal>
-          <h2 className="text-4xl font-bold text-center mb-4">More Learning Tools</h2>
-          <p className="text-center text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
-            Explore additional features to enhance your Chinese learning journey
-          </p>
-        </ScrollReveal>
-
-        <StaggerContainer className="grid md:grid-cols-3 gap-6" staggerDelay={0.12}>
-          <StaggerItem>
-            <TiltCard maxTilt={8} scale={1.03}>
-              <Link to="/stories">
-                <SpotlightCard
-                  className="card h-full hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/60 dark:to-blue-900/40 border-blue-200 dark:border-blue-800 rounded-xl"
-                  spotlightColor="rgba(59,130,246,0.15)"
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="bg-blue-600 text-white p-3 rounded-lg">
-                      <BookOpen className="w-6 h-6" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Stories</h3>
-                  </div>
-                  <p className="text-gray-700 dark:text-gray-300 mb-4">
-                    Read interactive Chinese stories with clickable words for instant translations and pronunciation
-                  </p>
-                  <span className="text-blue-600 font-medium hover:underline">Start Reading →</span>
-                </SpotlightCard>
-              </Link>
-            </TiltCard>
-          </StaggerItem>
-
-          <StaggerItem>
-            <TiltCard maxTilt={8} scale={1.03}>
-              <Link to="/writing">
-                <SpotlightCard
-                  className="card h-full hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/60 dark:to-purple-900/40 border-purple-200 dark:border-purple-800 rounded-xl"
-                  spotlightColor="rgba(139,92,246,0.15)"
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="bg-purple-600 text-white p-3 rounded-lg">
-                      <PenLine className="w-6 h-6" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Writing</h3>
-                  </div>
-                  <p className="text-gray-700 dark:text-gray-300 mb-4">
-                    Practice writing Chinese characters with stroke order guidance and real-time feedback
-                  </p>
-                  <span className="text-purple-600 font-medium hover:underline">Start Writing →</span>
-                </SpotlightCard>
-              </Link>
-            </TiltCard>
-          </StaggerItem>
-
-          <StaggerItem>
-            <TiltCard maxTilt={8} scale={1.03}>
-              <Link to="/sentence-builder">
-                <SpotlightCard
-                  className="card h-full hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/60 dark:to-green-900/40 border-green-200 dark:border-green-800 rounded-xl"
-                  spotlightColor="rgba(34,197,94,0.15)"
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="bg-green-600 text-white p-3 rounded-lg">
-                      <PenTool className="w-6 h-6" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Sentence Builder</h3>
-                  </div>
-                  <p className="text-gray-700 dark:text-gray-300 mb-4">
-                    Construct Chinese sentences by arranging words in the correct order to master grammar
-                  </p>
-                  <span className="text-green-600 font-medium hover:underline">Build Sentences →</span>
-                </SpotlightCard>
-              </Link>
-            </TiltCard>
-          </StaggerItem>
-        </StaggerContainer>
-      </section>
     </div>
   )
 }

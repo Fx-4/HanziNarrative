@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import { Card } from '@/components/ui/Card'
 import {
   CheckCircle,
   XCircle,
@@ -71,7 +70,7 @@ export default function WritingFeedback({
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
     >
-      <Card className={`p-6 ${cardColorClasses[feedbackLevel.color as keyof typeof cardColorClasses]}`}>
+      <div className={`rounded-2xl shadow-sm border p-6 ${cardColorClasses[feedbackLevel.color as keyof typeof cardColorClasses]}`}>
         {/* Main Feedback */}
         <div className="flex items-start gap-4 mb-6">
           <motion.div
@@ -174,7 +173,7 @@ export default function WritingFeedback({
             className="mt-4 p-3 bg-white/50 rounded-lg"
           >
             <p className="text-sm text-gray-700">
-              <strong>💡 Tip:</strong> {mistakes > 3
+              <strong>Tip:</strong> {mistakes > 3
                 ? "Watch the stroke order animation carefully before trying again."
                 : "Try to slow down and focus on accuracy rather than speed."}
             </p>
@@ -189,11 +188,11 @@ export default function WritingFeedback({
             className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200"
           >
             <p className="text-sm font-semibold text-yellow-900">
-              🏆 New Personal Record! Keep up the great work!
+              New Personal Record! Keep up the great work!
             </p>
           </motion.div>
         )}
-      </Card>
+      </div>
     </motion.div>
   )
 }

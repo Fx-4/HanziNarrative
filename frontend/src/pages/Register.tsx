@@ -52,7 +52,7 @@ interface StrengthResult {
 }
 
 function getPasswordStrength(pwd: string): StrengthResult {
-  if (pwd.length === 0) return { width: '0%',   colorClass: 'bg-gray-200 dark:bg-gray-700', label: '' }
+  if (pwd.length === 0) return { width: '0%',   colorClass: 'bg-gray-200', label: '' }
   if (pwd.length < 6)   return { width: '33%',  colorClass: 'bg-red-500',    label: 'Weak' }
   if (pwd.length <= 10) return { width: '66%',  colorClass: 'bg-yellow-500', label: 'Fair' }
   return                       { width: '100%', colorClass: 'bg-green-500',  label: 'Strong' }
@@ -99,7 +99,7 @@ export default function Register() {
   const strength = getPasswordStrength(password)
 
   return (
-    <div className="min-h-screen flex bg-white dark:bg-surface-page">
+    <div className="min-h-screen flex bg-white">
       {/* ================================================================
           LEFT DECORATIVE PANEL — hidden on mobile
       ================================================================ */}
@@ -192,7 +192,7 @@ export default function Register() {
       {/* ================================================================
           RIGHT FORM PANEL
       ================================================================ */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white dark:bg-surface-page">
+      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white">
         <motion.div
           className="w-full max-w-md"
           initial={{ opacity: 0, x: 24 }}
@@ -209,7 +209,7 @@ export default function Register() {
             <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center shadow-md">
               <span className="text-white text-lg font-bold font-chinese">学</span>
             </div>
-            <span className="text-xl font-bold text-gray-900 dark:text-gray-100">HanziNarrative</span>
+            <span className="text-xl font-bold text-gray-900">HanziNarrative</span>
           </motion.div>
 
           {/* Heading */}
@@ -219,10 +219,10 @@ export default function Register() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
           >
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
+            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
               Create account
             </h2>
-            <p className="mt-2 text-gray-500 dark:text-gray-400">
+            <p className="mt-2 text-gray-500">
               Join thousands of learners mastering Chinese
             </p>
           </motion.div>
@@ -238,7 +238,7 @@ export default function Register() {
                   exit={{ opacity: 0, height: 0 }}
                   className="overflow-hidden"
                 >
-                  <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-xl text-sm">
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
                     {error}
                   </div>
                 </motion.div>
@@ -251,12 +251,12 @@ export default function Register() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
                 Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                  <User className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                  <User className="w-4 h-4 text-gray-400" />
                 </div>
                 <input
                   id="username"
@@ -266,7 +266,7 @@ export default function Register() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Choose a username"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-surface-card text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 bg-gray-50 text-gray-900 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                 />
               </div>
             </motion.div>
@@ -277,12 +277,12 @@ export default function Register() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
             >
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                  <Mail className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                  <Mail className="w-4 h-4 text-gray-400" />
                 </div>
                 <input
                   id="email"
@@ -292,7 +292,7 @@ export default function Register() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-surface-card text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 bg-gray-50 text-gray-900 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                 />
               </div>
             </motion.div>
@@ -303,12 +303,12 @@ export default function Register() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                  <Lock className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                  <Lock className="w-4 h-4 text-gray-400" />
                 </div>
                 <input
                   id="password"
@@ -318,12 +318,12 @@ export default function Register() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Create a password"
-                  className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-surface-card text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-200 bg-gray-50 text-gray-900 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -340,7 +340,7 @@ export default function Register() {
                     exit={{ opacity: 0, height: 0 }}
                   >
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
                         <motion.div
                           className={`h-full rounded-full ${strength.colorClass}`}
                           initial={{ width: '0%' }}
@@ -348,7 +348,7 @@ export default function Register() {
                           transition={{ duration: 0.35, ease: 'easeOut' }}
                         />
                       </div>
-                      <span className="text-xs text-gray-500 dark:text-gray-400 w-12 text-right">
+                      <span className="text-xs text-gray-500 w-12 text-right">
                         {strength.label}
                       </span>
                     </div>
@@ -363,12 +363,12 @@ export default function Register() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.35 }}
             >
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
                 Confirm Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                  <Lock className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                  <Lock className="w-4 h-4 text-gray-400" />
                 </div>
                 <input
                   id="confirmPassword"
@@ -378,12 +378,12 @@ export default function Register() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Repeat your password"
-                  className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-surface-card text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-200 bg-gray-50 text-gray-900 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword((v) => !v)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                   aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                 >
                   {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -396,8 +396,8 @@ export default function Register() {
                   <motion.p
                     className={`mt-1.5 text-xs ${
                       password === confirmPassword
-                        ? 'text-green-600 dark:text-green-400'
-                        : 'text-red-500 dark:text-red-400'
+                        ? 'text-green-600'
+                        : 'text-red-500'
                     }`}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -419,7 +419,7 @@ export default function Register() {
               <motion.button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-md shadow-primary-500/25 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-surface-page transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-md shadow-indigo-500/25 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors"
                 whileHover={{ scale: loading ? 1 : 1.01 }}
                 whileTap={{ scale: loading ? 1 : 0.98 }}
               >
@@ -443,7 +443,7 @@ export default function Register() {
 
             {/* Login link */}
             <motion.p
-              className="text-center text-sm text-gray-500 dark:text-gray-400"
+              className="text-center text-sm text-gray-500"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.48 }}
@@ -451,7 +451,7 @@ export default function Register() {
               Already have an account?{' '}
               <Link
                 to="/login"
-                className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold transition-colors"
+                className="text-indigo-600 hover:text-indigo-700 font-semibold transition-colors"
               >
                 Sign in
               </Link>

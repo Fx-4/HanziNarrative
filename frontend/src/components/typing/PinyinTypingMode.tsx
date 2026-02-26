@@ -1,8 +1,6 @@
-﻿import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import type { HanziWord, TypingAttempt } from '@/types'
-import { Card } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
 import { typingApi } from '@/services/api'
 import { comparePinyin } from '@/utils/pinyinInput'
 import { toast } from 'react-hot-toast'
@@ -92,10 +90,15 @@ export default function PinyinTypingMode({ words, hskLevel: _hskLevel, onBack }:
 
   if (!currentWord) {
     return (
-      <Card className="p-8 text-center">
-        <p className="text-gray-600 dark:text-gray-400">No words available for this HSK level.</p>
-        <Button onClick={onBack} className="mt-4">Go Back</Button>
-      </Card>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+        <p className="text-gray-600">No words available for this HSK level.</p>
+        <button
+          onClick={onBack}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors mt-4"
+        >
+          Go Back
+        </button>
+      </div>
     )
   }
 
@@ -103,26 +106,26 @@ export default function PinyinTypingMode({ words, hskLevel: _hskLevel, onBack }:
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-          <span className="text-lg font-semibold dark:text-gray-100">Pinyin Typing</span>
+          <Sparkles className="w-5 h-5 text-blue-600" />
+          <span className="text-lg font-semibold">Pinyin Typing</span>
         </div>
-        <div className="text-lg font-semibold dark:text-gray-100">
+        <div className="text-lg font-semibold">
           {currentIndex + 1} / {words.length}
         </div>
       </div>
 
-      <Card className="p-8">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
         <div className="text-center mb-8">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Type the pinyin spelling for:</p>
+          <p className="text-sm text-gray-600 mb-4">Type the pinyin spelling for:</p>
           <motion.div
             key={currentWord.id}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="text-8xl font-chinese mb-4 text-gray-900 dark:text-gray-100"
+            className="text-8xl font-chinese mb-4 text-gray-900"
           >
             {currentWord.simplified}
           </motion.div>
-          <p className="text-xl text-gray-700 dark:text-gray-300">{currentWord.english}</p>
+          <p className="text-xl text-gray-700">{currentWord.english}</p>
         </div>
 
         {!showFeedback ? (
@@ -135,15 +138,18 @@ export default function PinyinTypingMode({ words, hskLevel: _hskLevel, onBack }:
                 onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
                 placeholder="Type pinyin (e.g., ni hao)"
-                className="w-full px-6 py-4 text-2xl border-2 border-gray-300 dark:border-gray-600 rounded-lg text-center bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-primary-500 dark:focus:border-primary-400 focus:outline-none transition-colors"
+                className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-indigo-500 focus:outline-none transition-colors"
                 disabled={showFeedback}
                 autoComplete="off"
               />
             </div>
-            <Button onClick={handleSubmit} size="lg" className="w-full">
+            <button
+              onClick={handleSubmit}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-3 font-semibold cursor-pointer transition-colors w-full text-lg"
+            >
               Check Answer
-            </Button>
-            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">
+            </button>
+            <p className="text-xs text-gray-600 mt-2 text-center">
               Press Enter to submit
             </p>
           </div>
@@ -155,38 +161,41 @@ export default function PinyinTypingMode({ words, hskLevel: _hskLevel, onBack }:
           >
             <div className={`p-6 rounded-lg ${
               isCorrect
-                ? 'bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-700'
-                : 'bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-700'
+                ? 'bg-green-50 border-2 border-green-200'
+                : 'bg-red-50 border-2 border-red-200'
             }`}>
               <div className="flex items-center justify-center gap-3 mb-4">
                 {isCorrect ? (
                   <>
-                    <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
-                    <span className="text-2xl font-semibold text-green-900 dark:text-green-100">Correct!</span>
+                    <CheckCircle className="w-8 h-8 text-green-600" />
+                    <span className="text-2xl font-semibold text-green-900">Correct!</span>
                   </>
                 ) : (
                   <>
-                    <XCircle className="w-8 h-8 text-red-600 dark:text-red-400" />
-                    <span className="text-2xl font-semibold text-red-900 dark:text-red-100">Incorrect</span>
+                    <XCircle className="w-8 h-8 text-red-600" />
+                    <span className="text-2xl font-semibold text-red-900">Incorrect</span>
                   </>
                 )}
               </div>
               <div className="text-center space-y-2">
                 <p className="text-lg">
-                  <span className="font-semibold dark:text-gray-200">You typed:</span>{' '}
-                  <span className={isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}>
+                  <span className="font-semibold">You typed:</span>{' '}
+                  <span className={isCorrect ? 'text-green-700' : 'text-red-700'}>
                     {inputValue}
                   </span>
                 </p>
                 {!isCorrect && (
                   <p className="text-lg">
-                    <span className="font-semibold dark:text-gray-200">Correct pinyin:</span>{' '}
-                    <span className="text-green-700 dark:text-green-300">{currentWord.pinyin}</span>
+                    <span className="font-semibold">Correct pinyin:</span>{' '}
+                    <span className="text-green-700">{currentWord.pinyin}</span>
                   </p>
                 )}
               </div>
             </div>
-            <Button onClick={handleNext} size="lg" className="w-full mt-4">
+            <button
+              onClick={handleNext}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-3 font-semibold cursor-pointer transition-colors w-full mt-4 flex items-center justify-center text-lg"
+            >
               {currentIndex < words.length - 1 ? (
                 <>
                   Next Word <ArrowRight className="w-5 h-5 ml-2" />
@@ -194,27 +203,27 @@ export default function PinyinTypingMode({ words, hskLevel: _hskLevel, onBack }:
               ) : (
                 'Finish Session'
               )}
-            </Button>
-            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">
+            </button>
+            <p className="text-xs text-gray-600 mt-2 text-center">
               Press Enter to continue
             </p>
           </motion.div>
         )}
-      </Card>
+      </div>
 
       {/* Progress bar */}
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium dark:text-gray-300">Session Progress</span>
-          <span className="text-sm text-gray-600 dark:text-gray-400">
+          <span className="text-sm font-medium">Session Progress</span>
+          <span className="text-sm text-gray-600">
             {sessionResults.length > 0
               ? `${Math.round((sessionResults.filter(r => r).length / sessionResults.length) * 100)}% accuracy`
               : 'No attempts yet'}
           </span>
         </div>
-        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+        <div className="w-full bg-gray-200 rounded-full h-2">
           <div
-            className="bg-primary-600 dark:bg-primary-400 h-2 rounded-full transition-all duration-300"
+            className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${((currentIndex + (showFeedback ? 1 : 0)) / words.length) * 100}%` }}
           />
         </div>

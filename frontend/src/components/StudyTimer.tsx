@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Card } from './ui/Card'
 import { Play, Pause, RotateCcw, Clock } from 'lucide-react'
 
 const POMODORO_TIME = 25 * 60 // 25 minutes in seconds
@@ -142,11 +141,11 @@ export default function StudyTimer() {
   const getSessionColor = () => {
     switch (sessionType) {
       case 'focus':
-        return 'from-primary-500 to-primary-600'
+        return 'from-indigo-500 to-violet-600'
       case 'short-break':
-        return 'from-green-500 to-green-600'
+        return 'from-emerald-500 to-green-600'
       case 'long-break':
-        return 'from-blue-500 to-blue-600'
+        return 'from-blue-500 to-cyan-600'
     }
   }
 
@@ -162,21 +161,21 @@ export default function StudyTimer() {
   }
 
   return (
-    <Card className="relative overflow-hidden p-3 sm:p-4">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 relative overflow-hidden">
       {/* Background gradient */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${getSessionColor()} opacity-5 dark:opacity-10`} />
+      <div className={`absolute inset-0 bg-gradient-to-br ${getSessionColor()} opacity-5`} />
 
       {/* Content */}
       <div className="relative">
         {/* Header */}
         <div className="flex items-center justify-between mb-2 sm:mb-3">
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-300" />
-            <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
+            <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
+            <h3 className="text-base sm:text-lg font-bold text-gray-900">
               Study Timer
             </h3>
           </div>
-          <div className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400">
+          <div className="text-[10px] sm:text-xs text-gray-500">
             {sessionsCompleted} sessions
           </div>
         </div>
@@ -190,7 +189,7 @@ export default function StudyTimer() {
 
         {/* Timer Display */}
         <div className="text-center mb-3 sm:mb-4">
-          <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 dark:text-gray-100 mb-2 sm:mb-4">
+          <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-2 sm:mb-4">
             {formatTime(timeLeft)}
           </div>
 
@@ -202,7 +201,7 @@ export default function StudyTimer() {
                 cx="96"
                 cy="96"
                 r="88"
-                className="stroke-gray-200 dark:stroke-gray-700"
+                className="stroke-gray-200"
                 strokeWidth="6"
                 fill="none"
               />
@@ -211,7 +210,7 @@ export default function StudyTimer() {
                 cx="96"
                 cy="96"
                 r="88"
-                className={`stroke-current ${sessionType === 'focus' ? 'text-primary-600' : sessionType === 'short-break' ? 'text-green-500' : 'text-blue-500'}`}
+                className={`stroke-current ${sessionType === 'focus' ? 'text-indigo-600' : sessionType === 'short-break' ? 'text-emerald-500' : 'text-blue-500'}`}
                 strokeWidth="6"
                 fill="none"
                 strokeLinecap="round"
@@ -232,19 +231,17 @@ export default function StudyTimer() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={toggleTimer}
-            className={`flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-lg text-sm sm:text-base font-medium text-white bg-gradient-to-r ${getSessionColor()} shadow-lg`}
+            className={`flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-xl text-sm sm:text-base font-medium text-white bg-gradient-to-r ${getSessionColor()} shadow-lg`}
           >
             {isRunning ? (
               <>
                 <Pause className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="hidden sm:inline">Pause</span>
-                <span className="sm:hidden">⏸</span>
               </>
             ) : (
               <>
                 <Play className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="hidden sm:inline">Start</span>
-                <span className="sm:hidden">▶</span>
               </>
             )}
           </motion.button>
@@ -253,23 +250,23 @@ export default function StudyTimer() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={resetTimer}
-            className="p-2 sm:p-3 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="p-2 sm:p-3 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
             title="Reset"
           >
-            <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-300" />
+            <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
           </motion.button>
         </div>
 
         {/* Total Study Time Today */}
-        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+        <div className="mt-3 pt-3 border-t border-gray-100">
           <div className="flex items-center justify-between text-xs sm:text-sm">
-            <span className="text-gray-600 dark:text-gray-400">Total today:</span>
-            <span className="font-bold text-primary-600 dark:text-primary-400">
+            <span className="text-gray-500">Total today:</span>
+            <span className="font-bold text-indigo-600">
               {formatStudyTime(totalStudyTime)}
             </span>
           </div>
         </div>
       </div>
-    </Card>
+    </div>
   )
 }

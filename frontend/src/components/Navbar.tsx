@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { forwardRef } from 'react'
 import { useAuthStore } from '@/store/authStore'
 import { useThemeStore } from '@/store/themeStore'
-import { Button } from './ui/Button'
 import {
   BookOpen, BookMarked, User, LogOut, PenTool, GraduationCap, Brain,
   BarChart3, Type, ChevronDown, Library, Menu, X, Moon, Sun,
@@ -124,7 +123,7 @@ export default function Navbar() {
   return (
     <>
     <motion.nav
-      className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-sm sticky top-0 z-40 border-b border-gray-200/60 dark:border-gray-700/60 transition-colors"
+      className="bg-white/90 backdrop-blur-lg shadow-sm sticky top-0 z-40 border-b border-gray-200/60 transition-colors"
       initial={{ y: -64 }}
       animate={{ y: 0 }}
       transition={{ type: 'spring', stiffness: 120, damping: 20 }}
@@ -135,7 +134,7 @@ export default function Navbar() {
           {/* ── Logo ── */}
           <Link to="/" className="flex-shrink-0">
             <motion.div
-              className="flex items-center gap-1.5 sm:gap-2 text-primary-600 dark:text-primary-400 font-bold"
+              className="flex items-center gap-1.5 sm:gap-2 text-indigo-600 font-bold"
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
             >
@@ -146,7 +145,7 @@ export default function Navbar() {
               >
                 汉字
               </motion.span>
-              <span className="hidden sm:inline text-base sm:text-lg text-gray-800 dark:text-gray-200 font-bold">
+              <span className="hidden sm:inline text-base sm:text-lg text-gray-800 font-bold">
                 HanziNarrative
               </span>
             </motion.div>
@@ -186,8 +185,12 @@ export default function Navbar() {
               />
             ) : (
               <motion.div className="flex items-center gap-2 ml-2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-                <Link to="/login"><Button variant="secondary" size="sm">Login</Button></Link>
-                <Link to="/register"><Button variant="primary" size="sm">Register</Button></Link>
+                <Link to="/login">
+                  <span className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors inline-block">Login</span>
+                </Link>
+                <Link to="/register">
+                  <span className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors inline-block">Register</span>
+                </Link>
               </motion.div>
             )}
           </div>
@@ -198,12 +201,12 @@ export default function Navbar() {
 
             {isAuthenticated && (
               <div className="relative">
-                <Link to="/profile" className="flex items-center justify-center w-8 h-8 rounded-full ring-2 ring-transparent hover:ring-primary-300 dark:hover:ring-primary-700 transition-all">
+                <Link to="/profile" className="flex items-center justify-center w-8 h-8 rounded-full ring-2 ring-transparent hover:ring-indigo-300 transition-all">
                   {user?.profile_picture ? (
                     <img src={user.profile_picture} alt={user.username} className="w-8 h-8 rounded-full object-cover" />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
-                      <span className="text-xs font-bold text-primary-600 dark:text-primary-400">
+                    <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                      <span className="text-xs font-bold text-indigo-600">
                         {user?.username?.charAt(0).toUpperCase()}
                       </span>
                     </div>
@@ -219,12 +222,12 @@ export default function Navbar() {
 
             <motion.button
               onClick={() => setMobileMenuOpen(true)}
-              className="flex items-center justify-center w-9 h-9 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="flex items-center justify-center w-9 h-9 rounded-xl hover:bg-gray-100 transition-colors"
               whileTap={{ scale: 0.9 }}
               aria-label="Open menu"
             >
               <motion.div animate={mobileMenuOpen ? { rotate: 90 } : { rotate: 0 }} transition={{ duration: 0.2 }}>
-                <Menu className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                <Menu className="w-5 h-5 text-gray-700" />
               </motion.div>
             </motion.button>
           </div>
@@ -254,37 +257,37 @@ export default function Navbar() {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed top-0 right-0 h-full w-[min(320px,88vw)] sm:w-[min(360px,88vw)] bg-white dark:bg-gray-900 shadow-2xl z-60 flex flex-col"
+            className="fixed top-0 right-0 h-full w-[min(320px,88vw)] sm:w-[min(360px,88vw)] bg-white shadow-2xl z-60 flex flex-col"
           >
               {/* Drawer header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
                 {isAuthenticated ? (
                   <div className="flex items-center gap-3">
                     {user?.profile_picture ? (
                       <img src={user.profile_picture} alt={user.username} className="w-9 h-9 rounded-full object-cover" />
                     ) : (
-                      <div className="w-9 h-9 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
-                        <span className="text-sm font-bold text-primary-600 dark:text-primary-400">
+                      <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center">
+                        <span className="text-sm font-bold text-indigo-600">
                           {user?.username?.charAt(0).toUpperCase()}
                         </span>
                       </div>
                     )}
                     <div className="leading-tight">
-                      <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{user?.full_name || user?.username}</p>
-                      <p className="text-[11px] text-gray-500 dark:text-gray-400">@{user?.username}</p>
+                      <p className="text-sm font-semibold text-gray-800">{user?.full_name || user?.username}</p>
+                      <p className="text-[11px] text-gray-500">@{user?.username}</p>
                     </div>
                   </div>
                 ) : (
-                  <span className="text-sm font-bold text-primary-600 dark:text-primary-400 font-chinese">汉字 HanziNarrative</span>
+                  <span className="text-sm font-bold text-indigo-600 font-chinese">汉字 HanziNarrative</span>
                 )}
 
                 <motion.button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
                   whileTap={{ scale: 0.9 }}
                   aria-label="Close menu"
                 >
-                  <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <X className="w-5 h-5 text-gray-600" />
                 </motion.button>
               </div>
 
@@ -299,8 +302,8 @@ export default function Navbar() {
                     <motion.div key={link.to} custom={i} variants={itemVariants} initial="hidden" animate="visible">
                       <Link to={link.to} onClick={() => setMobileMenuOpen(false)}>
                         <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
-                          active ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400'
-                                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                          active ? 'bg-indigo-50 text-indigo-600'
+                                 : 'text-gray-700 hover:bg-gray-100'
                         }`}>
                           <Icon className="w-4 h-4 flex-shrink-0" />
                           <span className="text-sm font-medium">{link.label}</span>
@@ -328,8 +331,8 @@ export default function Navbar() {
                         onClick={() => toggleSection(menu.label)}
                         className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition-colors ${
                           hasActiveChild
-                            ? 'text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20'
-                            : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200'
+                            ? 'text-indigo-600 hover:bg-indigo-50'
+                            : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
                         }`}
                       >
                         <div className="flex items-center gap-2">
@@ -338,7 +341,7 @@ export default function Navbar() {
                             {menu.label}
                           </span>
                           {hasActiveChild && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-primary-500 dark:bg-primary-400" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
                           )}
                         </div>
                         <motion.div
@@ -369,8 +372,8 @@ export default function Navbar() {
                                   <Link key={item.to} to={item.to} onClick={() => setMobileMenuOpen(false)}>
                                     <div className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-colors ${
                                       itemActive
-                                        ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400'
-                                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                                        ? 'bg-indigo-50 text-indigo-600'
+                                        : 'text-gray-700 hover:bg-gray-100'
                                     }`}>
                                       <div className="flex items-center gap-3">
                                         <ItemIcon className="w-4 h-4 flex-shrink-0" />
@@ -397,18 +400,18 @@ export default function Navbar() {
               </div>
 
               {/* Drawer footer: profile + logout or login/register */}
-              <div className="border-t border-gray-200 dark:border-gray-700 p-3 space-y-1.5">
+              <div className="border-t border-gray-200 p-3 space-y-1.5">
                 {isAuthenticated ? (
                   <>
                     <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
-                      <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                      <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-700 hover:bg-gray-100 transition-colors">
                         <User className="w-4 h-4" />
                         <span className="text-sm font-medium">Profile</span>
                       </div>
                     </Link>
                     <button
                       onClick={() => { handleLogout(); setMobileMenuOpen(false) }}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-600 hover:bg-red-50 transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
                       <span className="text-sm font-medium">Logout</span>
@@ -416,11 +419,11 @@ export default function Navbar() {
                   </>
                 ) : (
                   <div className="flex flex-col gap-2 px-1">
-                    <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                      <Button variant="secondary" size="md" className="w-full">Login</Button>
+                    <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="block">
+                      <span className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors w-full block text-center text-sm">Login</span>
                     </Link>
-                    <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
-                      <Button variant="primary" size="md" className="w-full">Register</Button>
+                    <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="block">
+                      <span className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors w-full block text-center text-sm">Register</span>
                     </Link>
                   </div>
                 )}
@@ -438,7 +441,7 @@ function DarkModeButton({ isDarkMode, toggle }: { isDarkMode: boolean; toggle: (
   return (
     <motion.button
       onClick={toggle}
-      className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors overflow-hidden"
+      className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors overflow-hidden"
       whileHover={{ scale: 1.08 }}
       whileTap={{ scale: 0.92 }}
       title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
@@ -450,7 +453,7 @@ function DarkModeButton({ isDarkMode, toggle }: { isDarkMode: boolean; toggle: (
           </motion.div>
         ) : (
           <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
-            <Moon className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+            <Moon className="w-4 h-4 text-gray-600" />
           </motion.div>
         )}
       </AnimatePresence>
@@ -466,8 +469,8 @@ function DesktopNavLink({ link, active }: { link: MenuItem; active: boolean }) {
       <motion.div
         className={`relative flex items-center gap-1.5 px-2 lg:px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
           active
-            ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30'
-            : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+            ? 'text-indigo-600 bg-indigo-50'
+            : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
         }`}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
@@ -476,7 +479,7 @@ function DesktopNavLink({ link, active }: { link: MenuItem; active: boolean }) {
         <span className="hidden lg:inline">{link.label}</span>
         {active && (
           <motion.div
-            className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary-600 rounded-full"
+            className="absolute bottom-0 left-2 right-2 h-0.5 bg-indigo-600 rounded-full"
             layoutId="nav-underline"
           />
         )}
@@ -496,8 +499,8 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
       <motion.div
         className={`flex items-center gap-1 px-2 lg:px-3 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
           active || isOpen
-            ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30'
-            : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+            ? 'text-indigo-600 bg-indigo-50'
+            : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
         }`}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
@@ -510,7 +513,7 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
         </motion.div>
         {active && (
           <motion.div
-            className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary-600 rounded-full"
+            className="absolute bottom-0 left-2 right-2 h-0.5 bg-indigo-600 rounded-full"
             layoutId="nav-underline"
           />
         )}
@@ -523,7 +526,7 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.96 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute left-0 top-full mt-1.5 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200/80 dark:border-gray-700/80 overflow-hidden z-50"
+            className="absolute left-0 top-full mt-1.5 w-48 bg-white rounded-xl shadow-xl border border-gray-200/80 overflow-hidden z-50"
           >
             {menu.items.map((item, i) => {
               const ItemIcon = item.icon
@@ -537,8 +540,8 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
                   transition={{ delay: i * 0.04 }}
                 >
                   <Link to={item.to} onClick={onClose}>
-                    <div className={`flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700/70 transition-colors ${
-                      itemActive ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' : 'text-gray-700 dark:text-gray-300'
+                    <div className={`flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 transition-colors ${
+                      itemActive ? 'bg-indigo-50 text-indigo-600' : 'text-gray-700'
                     }`}>
                       <div className="flex items-center gap-2.5">
                         <ItemIcon className="w-3.5 h-3.5" />
@@ -568,7 +571,7 @@ const UserMenu = forwardRef<HTMLDivElement, {
   return (
     <div ref={ref} className="relative ml-1">
       <motion.div
-        className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+        className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.97 }}
         onClick={onToggle}
@@ -576,13 +579,13 @@ const UserMenu = forwardRef<HTMLDivElement, {
         {user?.profile_picture ? (
           <img src={user.profile_picture} alt={user.username} className="w-7 h-7 rounded-full object-cover" />
         ) : (
-          <div className="w-7 h-7 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
-            <span className="text-xs font-bold text-primary-600 dark:text-primary-400">
+          <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center">
+            <span className="text-xs font-bold text-indigo-600">
               {user?.username?.charAt(0).toUpperCase()}
             </span>
           </div>
         )}
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{user?.full_name || user?.username}</span>
+        <span className="text-sm font-medium text-gray-700">{user?.full_name || user?.username}</span>
         <motion.div animate={{ rotate: showMenu ? 180 : 0 }} transition={{ duration: 0.2 }}>
           <ChevronDown className="w-3.5 h-3.5 text-gray-500" />
         </motion.div>
@@ -595,18 +598,18 @@ const UserMenu = forwardRef<HTMLDivElement, {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.96 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 top-full mt-1.5 w-44 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200/80 dark:border-gray-700/80 overflow-hidden z-50"
+            className="absolute right-0 top-full mt-1.5 w-44 bg-white rounded-xl shadow-xl border border-gray-200/80 overflow-hidden z-50"
           >
             <Link to="/profile" onClick={onClose}>
-              <div className="flex items-center gap-2.5 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700/70 transition-colors text-gray-700 dark:text-gray-300">
+              <div className="flex items-center gap-2.5 px-4 py-2.5 hover:bg-gray-50 transition-colors text-gray-700">
                 <User className="w-4 h-4" />
                 <span className="text-sm">Profile</span>
               </div>
             </Link>
-            <div className="border-t border-gray-200 dark:border-gray-700 my-0.5" />
+            <div className="border-t border-gray-200 my-0.5" />
             <button
               onClick={onLogout}
-              className="w-full flex items-center gap-2.5 px-4 py-2.5 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-red-600 dark:text-red-400"
+              className="w-full flex items-center gap-2.5 px-4 py-2.5 hover:bg-red-50 transition-colors text-red-600"
             >
               <LogOut className="w-4 h-4" />
               <span className="text-sm">Logout</span>

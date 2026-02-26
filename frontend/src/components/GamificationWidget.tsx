@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Card } from './ui/Card'
+
 import { Trophy, Zap, Flame, Star, Award } from 'lucide-react'
 import { gamificationApi } from '@/services/api'
 
@@ -53,7 +53,7 @@ export default function GamificationWidget() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-3 sm:mb-4"
       >
-        <Card className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-3 sm:p-4">
+        <div className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-2xl p-3 sm:p-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
@@ -89,26 +89,26 @@ export default function GamificationWidget() {
               />
             </div>
           </div>
-        </Card>
+        </div>
       </motion.div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-3 sm:mb-4 items-start">
-        <Card className="p-3 sm:p-4 text-center flex flex-col items-center justify-center aspect-square">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center flex flex-col items-center justify-center aspect-square">
           <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500 mb-1 sm:mb-2 flex-shrink-0" />
           <div className="text-sm sm:text-xl font-bold">{stats.total_words_reviewed}</div>
-          <div className="text-[10px] sm:text-sm text-gray-600 dark:text-gray-400 leading-tight">Words</div>
-        </Card>
-        <Card className="p-3 sm:p-4 text-center flex flex-col items-center justify-center aspect-square">
-          <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 mb-1 sm:mb-2 flex-shrink-0" />
+          <div className="text-[10px] sm:text-sm text-gray-500 leading-tight">Words</div>
+        </div>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center flex flex-col items-center justify-center aspect-square">
+          <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-500 mb-1 sm:mb-2 flex-shrink-0" />
           <div className="text-sm sm:text-xl font-bold">{stats.accuracy_rate.toFixed(0)}%</div>
-          <div className="text-[10px] sm:text-sm text-gray-600 dark:text-gray-400 leading-tight">Accuracy</div>
-        </Card>
-        <Card className="p-3 sm:p-4 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 flex flex-col items-center justify-center aspect-square" onClick={() => setShowAchievements(!showAchievements)}>
-          <Award className="w-5 h-5 sm:w-6 sm:h-6 text-purple-500 mb-1 sm:mb-2 flex-shrink-0" />
+          <div className="text-[10px] sm:text-sm text-gray-500 leading-tight">Accuracy</div>
+        </div>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center cursor-pointer hover:bg-gray-50 flex flex-col items-center justify-center aspect-square" onClick={() => setShowAchievements(!showAchievements)}>
+          <Award className="w-5 h-5 sm:w-6 sm:h-6 text-violet-500 mb-1 sm:mb-2 flex-shrink-0" />
           <div className="text-sm sm:text-xl font-bold">{stats.achievements.length}</div>
-          <div className="text-[10px] sm:text-sm text-gray-600 dark:text-gray-400 leading-tight">Badges</div>
-        </Card>
+          <div className="text-[10px] sm:text-sm text-gray-500 leading-tight">Badges</div>
+        </div>
       </div>
 
       {/* Achievements Modal */}

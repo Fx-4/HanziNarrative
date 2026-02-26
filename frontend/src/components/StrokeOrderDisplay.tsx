@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import HanziWriter from 'hanzi-writer'
-import { Button } from './ui/Button'
 import { Play, RotateCcw, Pencil, Eye } from 'lucide-react'
 
 interface StrokeOrderDisplayProps {
@@ -9,10 +8,10 @@ interface StrokeOrderDisplayProps {
   showControls?: boolean
 }
 
-export default function StrokeOrderDisplay({ 
-  character, 
+export default function StrokeOrderDisplay({
+  character,
   size = 200,
-  showControls = true 
+  showControls = true
 }: StrokeOrderDisplayProps) {
   const writerRef = useRef<HanziWriter | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -75,7 +74,7 @@ export default function StrokeOrderDisplay({
 
   const handleAnimate = () => {
     if (!writerRef.current || isAnimating) return
-    
+
     setIsAnimating(true)
     writerRef.current.animateCharacter({
       onComplete: () => setIsAnimating(false)
@@ -84,11 +83,11 @@ export default function StrokeOrderDisplay({
 
   const handleReset = () => {
     if (!writerRef.current) return
-    
+
     setIsAnimating(false)
     setQuizComplete(false)
     setIsPracticeMode(false)
-    
+
     // Recreate writer to reset state with proper CDN configuration
     if (containerRef.current) {
       containerRef.current.innerHTML = ''
@@ -157,7 +156,7 @@ export default function StrokeOrderDisplay({
   return (
     <div className="flex flex-col items-center space-y-3">
       {/* Canvas Container */}
-      <div 
+      <div
         ref={containerRef}
         className="border-2 border-gray-200 rounded-lg bg-white shadow-sm"
         style={{ width: size, height: size }}
@@ -179,50 +178,42 @@ export default function StrokeOrderDisplay({
       {/* Control Buttons */}
       {showControls && (
         <div className="flex flex-wrap gap-2 justify-center">
-          <Button
-            size="sm"
-            variant="secondary"
+          <button
             onClick={handleAnimate}
             disabled={isAnimating || isPracticeMode}
-            className="flex items-center gap-1.5"
+            className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Play className="w-3.5 h-3.5" />
             Animate
-          </Button>
+          </button>
 
-          <Button
-            size="sm"
-            variant="secondary"
+          <button
             onClick={handlePracticeMode}
             disabled={isAnimating || isPracticeMode}
-            className="flex items-center gap-1.5"
+            className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Pencil className="w-3.5 h-3.5" />
             Practice
-          </Button>
+          </button>
 
           {isPracticeMode && (
-            <Button
-              size="sm"
-              variant="secondary"
+            <button
               onClick={handleShowCharacter}
-              className="flex items-center gap-1.5"
+              className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors"
             >
               <Eye className="w-3.5 h-3.5" />
               Show
-            </Button>
+            </button>
           )}
 
-          <Button
-            size="sm"
-            variant="secondary"
+          <button
             onClick={handleReset}
             disabled={isAnimating}
-            className="flex items-center gap-1.5"
+            className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Reset
-          </Button>
+          </button>
         </div>
       )}
     </div>

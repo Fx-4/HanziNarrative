@@ -2,9 +2,6 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { learningApi } from '@/services/api'
 import { HanziWord } from '@/types'
-import { Card } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import AudioButton from '@/components/AudioButton'
 import StrokeOrderDisplay from '@/components/StrokeOrderDisplay'
@@ -802,16 +799,16 @@ export default function Practice() {
   }
 
   const renderModeSelection = () => (
-    <div className="max-w-6xl mx-auto px-2 sm:px-4">
+    <div className="max-w-6xl mx-auto px-3 sm:px-4">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-8 sm:mb-12"
       >
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-50 mb-3 sm:mb-4">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3 sm:mb-4">
           Practice & Learn
         </h1>
-        <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400">
+        <p className="text-base sm:text-lg text-gray-600">
           Choose your learning mode and HSK level
         </p>
       </motion.div>
@@ -821,23 +818,26 @@ export default function Practice() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="mb-6 sm:mb-8"
+        className="mb-6"
       >
-        <Card>
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
           <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Select HSK Level</h3>
           <div className="flex flex-wrap gap-2 sm:gap-3">
             {[1, 2, 3, 4, 5, 6].map((level) => (
-              <Button
+              <button
                 key={level}
-                size="sm"
-                variant={hskLevel === level ? 'primary' : 'secondary'}
                 onClick={() => setHskLevel(level)}
+                className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all cursor-pointer ${
+                  hskLevel === level
+                    ? 'bg-indigo-600 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
               >
                 HSK {level}
-              </Button>
+              </button>
             ))}
           </div>
-        </Card>
+        </div>
       </motion.div>
 
       {/* Mode Selection */}
@@ -847,22 +847,23 @@ export default function Practice() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           onClick={() => handleModeSelect('learn')}
-          className="cursor-pointer"
+          className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-8 text-center cursor-pointer hover:shadow-2xl hover:border-indigo-200 transition-all group overflow-hidden"
         >
-          <Card hover className="h-full text-center group">
-            <div className="mb-4 sm:mb-6">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                <BookOpen className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
-              </div>
+          <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600 -mx-6 sm:-mx-8 -mt-6 sm:-mt-8 mb-6 sm:mb-8" />
+          <div className="mb-4 sm:mb-6">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-indigo-500 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <BookOpen className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
-              Learn Mode
-            </h3>
-            <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
-              Study new words with flashcards. See the character, pinyin, and meaning.
-            </p>
-            <Badge variant="default">Beginner Friendly</Badge>
-          </Card>
+          </div>
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
+            Learn Mode
+          </h3>
+          <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
+            Study new words with flashcards. See the character, pinyin, and meaning.
+          </p>
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700">
+            Beginner Friendly
+          </span>
         </motion.div>
 
         <motion.div
@@ -870,22 +871,23 @@ export default function Practice() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           onClick={() => handleModeSelect('review')}
-          className="cursor-pointer"
+          className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-8 text-center cursor-pointer hover:shadow-2xl hover:border-indigo-200 transition-all group overflow-hidden"
         >
-          <Card hover className="h-full text-center group">
-            <div className="mb-4 sm:mb-6">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                <RefreshCw className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
-              </div>
+          <div className="h-1.5 bg-gradient-to-r from-violet-500 via-purple-500 to-violet-600 -mx-6 sm:-mx-8 -mt-6 sm:-mt-8 mb-6 sm:mb-8" />
+          <div className="mb-4 sm:mb-6">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <RefreshCw className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
-              Review Mode
-            </h3>
-            <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
-              Test yourself without seeing the answer first. Hide the meaning until you're ready!
-            </p>
-            <Badge variant="default">Active Recall</Badge>
-          </Card>
+          </div>
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
+            Review Mode
+          </h3>
+          <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
+            Test yourself without seeing the answer first. Hide the meaning until you're ready!
+          </p>
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700">
+            Active Recall
+          </span>
         </motion.div>
 
         <motion.div
@@ -893,22 +895,23 @@ export default function Practice() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
           onClick={() => handleModeSelect('test')}
-          className="cursor-pointer"
+          className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-8 text-center cursor-pointer hover:shadow-2xl hover:border-indigo-200 transition-all group overflow-hidden"
         >
-          <Card hover className="h-full text-center group">
-            <div className="mb-6">
-              <div className="w-20 h-20 mx-auto bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Target className="w-10 h-10 text-white" />
-              </div>
+          <div className="h-1.5 bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-600 -mx-6 sm:-mx-8 -mt-6 sm:-mt-8 mb-6 sm:mb-8" />
+          <div className="mb-4 sm:mb-6">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Target className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">
-              Test Mode
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Quiz yourself with multiple choice questions. Track your score!
-            </p>
-            <Badge variant="default">Challenge</Badge>
-          </Card>
+          </div>
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
+            Test Mode
+          </h3>
+          <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
+            Quiz yourself with multiple choice questions. Track your score!
+          </p>
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700">
+            Challenge
+          </span>
         </motion.div>
       </div>
     </div>
@@ -925,13 +928,18 @@ export default function Practice() {
 
     if (words.length === 0) {
       return (
-        <div className="max-w-2xl mx-auto text-center py-20">
+        <div className="max-w-2xl mx-auto text-center py-20 px-3 sm:px-4">
           <h2 className="text-2xl font-bold mb-4">No Words Available</h2>
           <p className="text-gray-600 mb-6">
             {mode === 'learn' && 'All words for this level have been started. Try a different HSK level!'}
             {mode === 'review' && 'No words due for review right now. Great job staying on top of your reviews!'}
           </p>
-          <Button onClick={() => setMode(null)}>Back to Menu</Button>
+          <button
+            onClick={() => setMode(null)}
+            className="bg-indigo-600 text-white rounded-2xl px-6 py-3.5 font-semibold hover:bg-indigo-700 transition-all flex items-center gap-2 cursor-pointer mx-auto"
+          >
+            Back to Menu
+          </button>
         </div>
       )
     }
@@ -941,27 +949,30 @@ export default function Practice() {
     const isReviewMode = mode === 'review'
 
     return (
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto px-3 sm:px-4">
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <Button variant="ghost" onClick={() => setMode(null)}>
+            <button
+              onClick={() => setMode(null)}
+              className="flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors cursor-pointer"
+            >
               ← Back
-            </Button>
+            </button>
             <div className="flex items-center gap-4">
-              <Badge variant="default">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
                 {isReviewMode ? 'Review Mode' : 'Learn Mode'}
-              </Badge>
+              </span>
               <span className="text-sm text-gray-600">
                 {currentWordIndex + 1} / {words.length}
               </span>
             </div>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-gray-100 rounded-full h-2">
             <div
               className={`h-2 rounded-full transition-all duration-300 ${
                 isReviewMode
-                  ? 'bg-gradient-to-r from-green-500 to-green-600'
-                  : 'bg-gradient-to-r from-blue-500 to-blue-600'
+                  ? 'bg-gradient-to-r from-emerald-500 to-emerald-600'
+                  : 'bg-gradient-to-r from-indigo-500 to-indigo-600'
               }`}
               style={{ width: `${progress}%` }}
             />
@@ -976,7 +987,7 @@ export default function Practice() {
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.3 }}
           >
-            <Card className="p-4 sm:p-5 lg:p-6">
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
               {/* Compact Responsive Layout */}
               <div className="flex flex-col gap-3">
                 
@@ -984,7 +995,7 @@ export default function Practice() {
                 <div className="flex flex-col sm:flex-row gap-3 items-center sm:items-start">
                   {/* Character Display */}
                   <div className="flex-shrink-0 text-center">
-                    <div className="text-6xl sm:text-7xl md:text-8xl font-chinese text-gray-900 dark:text-gray-100">
+                    <div className="text-6xl sm:text-7xl md:text-8xl font-bold text-gray-900">
                       {currentWord.simplified}
                     </div>
                   </div>
@@ -1013,7 +1024,7 @@ export default function Practice() {
                     >
                       {/* Pinyin and Audio */}
                       <div className="flex items-center justify-center sm:justify-start gap-2">
-                        <div className="text-lg sm:text-xl text-primary-600 font-semibold">
+                        <div className="text-lg sm:text-xl text-indigo-600 font-semibold">
                           {currentWord.pinyin}
                         </div>
                         <AudioButton
@@ -1033,9 +1044,9 @@ export default function Practice() {
                       {/* Category Badge */}
                       {currentWord.category && (
                         <div className="flex justify-center sm:justify-start">
-                          <Badge variant="default" className="text-xs">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
                             {currentWord.category}
-                          </Badge>
+                          </span>
                         </div>
                       )}
 
@@ -1098,28 +1109,28 @@ export default function Practice() {
                         )}
 
                         {/* 4. Blue: Example */}
-                        <div className="bg-info-50 dark:bg-info-900/20 border border-info-200 dark:border-info-700 rounded-lg p-2">
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-2">
                           <div className="flex items-center gap-1 mb-1">
-                            <BookOpen className="w-3 h-3 text-info-600 dark:text-info-400 flex-shrink-0" />
-                            <h3 className="text-[10px] font-bold text-info-900 dark:text-info-200">Example</h3>
+                            <BookOpen className="w-3 h-3 text-blue-600 flex-shrink-0" />
+                            <h3 className="text-[10px] font-bold text-blue-900">Example</h3>
                           </div>
                           <div className="space-y-0.5">
-                            <div className="text-xs text-gray-900 dark:text-gray-100 font-chinese">
+                            <div className="text-xs text-gray-900 font-chinese">
                               {getExampleSentence(currentWord).chinese}
                             </div>
-                            <div className="text-[10px] text-info-600 dark:text-info-400">
+                            <div className="text-[10px] text-blue-600">
                               {getExampleSentence(currentWord).pinyin}
                             </div>
                           </div>
                         </div>
 
                         {/* 5. Amber: Tip */}
-                        <div className="bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-700 rounded-lg p-2">
+                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-2">
                           <div className="flex items-center gap-1 mb-1">
-                            <Trophy className="w-3 h-3 text-accent-600 dark:text-accent-400 flex-shrink-0" />
-                            <h3 className="text-[10px] font-bold text-accent-900 dark:text-accent-200">Tip</h3>
+                            <Trophy className="w-3 h-3 text-amber-600 flex-shrink-0" />
+                            <h3 className="text-[10px] font-bold text-amber-900">Tip</h3>
                           </div>
-                          <div className="text-accent-900 dark:text-accent-200 text-[10px] line-clamp-3">
+                          <div className="text-amber-900 text-[10px] line-clamp-3">
                             {getLearningTip(currentWord)}
                           </div>
                         </div>
@@ -1129,11 +1140,11 @@ export default function Practice() {
                       <div className="space-y-2 mt-3">
                         {/* Full Stroke Order with Animation */}
                         {getStrokeOrderInfo(currentWord) && (
-                          <details className="bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800 rounded-lg">
-                            <summary className="p-2 cursor-pointer text-xs font-semibold text-pink-900 dark:text-pink-300 hover:bg-pink-100 dark:hover:bg-pink-900/30 flex items-center gap-1.5">
+                          <details className="bg-pink-50 border border-pink-200 rounded-lg">
+                            <summary className="p-2 cursor-pointer text-xs font-semibold text-pink-900 hover:bg-pink-100 flex items-center gap-1.5">
                               <PenLine className="w-3 h-3 flex-shrink-0" /> Interactive Stroke Practice
                             </summary>
-                            <div className="p-3 border-t border-pink-200 dark:border-pink-800">
+                            <div className="p-3 border-t border-pink-200">
                               <div className="flex justify-center">
                                 <StrokeOrderDisplay
                                   character={currentWord.simplified}
@@ -1141,7 +1152,7 @@ export default function Practice() {
                                   showControls={true}
                                 />
                               </div>
-                              <p className="text-[10px] text-pink-700 dark:text-pink-400 text-center mt-2">
+                              <p className="text-[10px] text-pink-700 text-center mt-2">
                                 Click "Animate" to see stroke order, or "Practice" to draw!
                               </p>
                             </div>
@@ -1149,12 +1160,12 @@ export default function Practice() {
                         )}
 
                         {/* Character Etymology */}
-                        <details className="bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-lg">
-                          <summary className="p-2 cursor-pointer text-xs font-semibold text-accent-900 dark:text-accent-300 hover:bg-accent-100 dark:hover:bg-accent-900/30 flex items-center gap-1.5">
+                        <details className="bg-amber-50 border border-amber-200 rounded-lg">
+                          <summary className="p-2 cursor-pointer text-xs font-semibold text-amber-900 hover:bg-amber-100 flex items-center gap-1.5">
                             <History className="w-3 h-3 flex-shrink-0" /> Character Evolution History
                           </summary>
-                          <div className="p-3 border-t border-accent-200 dark:border-accent-800">
-                            <CharacterEtymology 
+                          <div className="p-3 border-t border-amber-200">
+                            <CharacterEtymology
                               character={currentWord.simplified}
                               word={currentWord}
                               className=""
@@ -1174,7 +1185,7 @@ export default function Practice() {
                     >
                       {/* Pinyin and Audio */}
                       <div className="flex items-center justify-center sm:justify-start gap-2">
-                        <div className="text-lg sm:text-xl text-primary-600 font-semibold">
+                        <div className="text-lg sm:text-xl text-indigo-600 font-semibold">
                           {currentWord.pinyin}
                         </div>
                         <AudioButton
@@ -1194,9 +1205,9 @@ export default function Practice() {
                       {/* Category Badge */}
                       {currentWord.category && (
                         <div className="flex justify-center sm:justify-start">
-                          <Badge variant="default" className="text-xs">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
                             {currentWord.category}
-                          </Badge>
+                          </span>
                         </div>
                       )}
 
@@ -1380,35 +1391,47 @@ export default function Practice() {
               </div>
 
               {/* Action Buttons - Always at Bottom */}
-              <div className="flex gap-3 justify-center mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center mt-4 pt-4 border-t border-gray-200">
                 {mode === 'learn' ? (
-                  <Button onClick={() => handleNextWord()} size="lg" variant="primary">
-                    <ArrowRight className="w-5 h-5 mr-2" />
+                  <button
+                    onClick={() => handleNextWord()}
+                    className="bg-indigo-600 text-white rounded-2xl px-6 py-3.5 font-semibold hover:bg-indigo-700 transition-all flex items-center gap-2 cursor-pointer w-full sm:w-auto justify-center"
+                  >
+                    <ArrowRight className="w-5 h-5" />
                     Next Word
-                  </Button>
+                  </button>
                 ) : (
                   <>
                     {!showAnswer ? (
-                      <Button onClick={() => setShowAnswer(true)} size="lg">
-                        <BookOpen className="w-5 h-5 mr-2" />
+                      <button
+                        onClick={() => setShowAnswer(true)}
+                        className="bg-indigo-600 text-white rounded-2xl px-6 py-3.5 font-semibold hover:bg-indigo-700 transition-all flex items-center gap-2 cursor-pointer w-full sm:w-auto justify-center"
+                      >
+                        <BookOpen className="w-5 h-5" />
                         Show Answer
-                      </Button>
+                      </button>
                     ) : (
                       <>
-                        <Button onClick={() => handleNextWord(true)} size="lg" variant="primary">
-                          <CheckCircle className="w-5 h-5 mr-2" />
+                        <button
+                          onClick={() => handleNextWord(true)}
+                          className="bg-indigo-600 text-white rounded-2xl px-6 py-3.5 font-semibold hover:bg-indigo-700 transition-all flex items-center gap-2 cursor-pointer w-full sm:w-auto justify-center"
+                        >
+                          <CheckCircle className="w-5 h-5" />
                           I Knew It!
-                        </Button>
-                        <Button onClick={() => handleNextWord(false)} size="lg" variant="secondary">
-                          <XCircle className="w-5 h-5 mr-2" />
+                        </button>
+                        <button
+                          onClick={() => handleNextWord(false)}
+                          className="border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3.5 font-semibold hover:border-indigo-300 hover:bg-indigo-50 transition-all flex items-center gap-2 cursor-pointer w-full sm:w-auto justify-center"
+                        >
+                          <XCircle className="w-5 h-5" />
                           Missed It
-                        </Button>
+                        </button>
                       </>
                     )}
                   </>
                 )}
               </div>
-            </Card>
+            </div>
           </motion.div>
         </AnimatePresence>
 
@@ -1420,12 +1443,12 @@ export default function Practice() {
             transition={{ delay: 0.3 }}
             className="mt-6"
           >
-            <Card className="p-4 bg-info-50 dark:bg-info-900/20 border-info-200 dark:border-info-800">
-              <p className="text-sm text-info-900 dark:text-info-200">
+            <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4">
+              <p className="text-sm text-blue-900">
                 <strong>Learn Mode:</strong> Take your time to study each character.
                 All information is shown to help you learn.
               </p>
-            </Card>
+            </div>
           </motion.div>
         )}
 
@@ -1436,12 +1459,12 @@ export default function Practice() {
             transition={{ delay: 0.3 }}
             className="mt-6"
           >
-            <Card className="p-4 bg-success-50 dark:bg-success-900/20 border-success-200 dark:border-success-800">
-              <p className="text-sm text-success-900 dark:text-success-200">
+            <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4">
+              <p className="text-sm text-emerald-900">
                 <strong>Review Mode:</strong> Try to recall the meaning before revealing the answer.
                 Active recall strengthens memory!
               </p>
-            </Card>
+            </div>
           </motion.div>
         )}
       </div>
@@ -1454,8 +1477,8 @@ export default function Practice() {
     const questionsRemaining = questions.length - questionsCompleted
 
     return (
-      <div className="max-w-2xl mx-auto">
-        <Card className="p-12 text-center overflow-hidden relative">
+      <div className="max-w-2xl mx-auto px-3 sm:px-4">
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-12 text-center overflow-hidden relative">
           {/* Animated gradient background */}
           <div className={`absolute inset-0 bg-gradient-to-br ${randomMessage.color} opacity-10`} />
 
@@ -1469,28 +1492,28 @@ export default function Practice() {
               <randomMessage.Icon className={`w-20 h-20 ${randomMessage.iconClass}`} />
             </div>
 
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-50 mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               {randomMessage.title}
             </h2>
 
-            <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
+            <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-md mx-auto">
               {randomMessage.message}
             </p>
 
-            <div className="flex gap-6 justify-center items-center mb-8">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-8">
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary-600">{questionsCompleted}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Completed</div>
+                <div className="text-3xl font-bold text-indigo-600">{questionsCompleted}</div>
+                <div className="text-sm text-gray-600">Completed</div>
               </div>
-              <div className="text-2xl text-gray-300 dark:text-gray-600">•</div>
+              <div className="text-2xl text-gray-300">•</div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{score}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Correct</div>
+                <div className="text-3xl font-bold text-purple-600">{score}</div>
+                <div className="text-sm text-gray-600">Correct</div>
               </div>
-              <div className="text-2xl text-gray-300 dark:text-gray-600">•</div>
+              <div className="text-2xl text-gray-300">•</div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-warning-600 dark:text-warning-400">{questionsRemaining}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">To go</div>
+                <div className="text-3xl font-bold text-orange-600">{questionsRemaining}</div>
+                <div className="text-sm text-gray-600">To go</div>
               </div>
             </div>
 
@@ -1499,20 +1522,19 @@ export default function Practice() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
-              <Button
+              <button
                 onClick={() => {
                   setShowMotivationalBreak(false)
                   setCurrentQuestionIndex(currentQuestionIndex + 1)
                   setSelectedAnswer(null)
                 }}
-                size="lg"
-                className="px-8"
+                className="bg-indigo-600 text-white rounded-2xl px-8 py-3.5 font-semibold hover:bg-indigo-700 transition-all flex items-center gap-2 cursor-pointer mx-auto"
               >
-                Let's Keep Going! <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
+                Let's Keep Going! <ArrowRight className="w-5 h-5" />
+              </button>
             </motion.div>
           </motion.div>
-        </Card>
+        </div>
       </div>
     )
   }
@@ -1535,8 +1557,8 @@ export default function Practice() {
       const passed = percentage >= 70
 
       return (
-        <div className="max-w-2xl mx-auto">
-          <Card className="p-12 text-center">
+        <div className="max-w-2xl mx-auto px-3 sm:px-4">
+          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-12 text-center">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -1550,28 +1572,34 @@ export default function Practice() {
                 )}
               </div>
 
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
                 {passed ? 'Congratulations!' : 'Good Effort!'}
               </h2>
 
-              <div className="text-6xl font-bold text-primary-600 mb-6">
+              <div className="text-5xl font-extrabold text-indigo-600 mb-6">
                 {percentage}%
               </div>
 
-              <p className="text-xl text-gray-600 mb-8">
+              <p className="text-lg sm:text-xl text-gray-600 mb-8">
                 You got {score} out of {questions.length} correct
               </p>
 
-              <div className="flex gap-4 justify-center">
-                <Button onClick={() => setMode(null)} size="lg" variant="secondary">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button
+                  onClick={() => setMode(null)}
+                  className="border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3.5 font-semibold hover:border-indigo-300 hover:bg-indigo-50 transition-all flex items-center gap-2 cursor-pointer w-full sm:w-auto justify-center"
+                >
                   Back to Menu
-                </Button>
-                <Button onClick={() => handleModeSelect('test')} size="lg">
+                </button>
+                <button
+                  onClick={() => handleModeSelect('test')}
+                  className="bg-indigo-600 text-white rounded-2xl px-6 py-3.5 font-semibold hover:bg-indigo-700 transition-all flex items-center gap-2 cursor-pointer w-full sm:w-auto justify-center"
+                >
                   Try Again
-                </Button>
+                </button>
               </div>
             </motion.div>
-          </Card>
+          </div>
         </div>
       )
     }
@@ -1580,22 +1608,25 @@ export default function Practice() {
     const progress = ((currentQuestionIndex + 1) / questions.length) * 100
 
     return (
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto px-3 sm:px-4">
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <Button variant="ghost" onClick={() => setMode(null)}>
+            <button
+              onClick={() => setMode(null)}
+              className="flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors cursor-pointer"
+            >
               ← Back
-            </Button>
+            </button>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-600">
                 Question {currentQuestionIndex + 1} / {questions.length}
               </span>
-              <span className="text-sm font-semibold text-primary-600">
+              <span className="text-sm font-semibold text-indigo-600">
                 Score: {score}
               </span>
             </div>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-gray-100 rounded-full h-2">
             <div
               className="bg-gradient-to-r from-purple-500 to-purple-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
@@ -1610,13 +1641,13 @@ export default function Practice() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
           >
-            <Card className="p-8">
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-8">
               <div className="mb-8">
-                <Badge variant="default" className="mb-4">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 mb-4">
                   {question.type === 'recognition' && 'Character Recognition'}
                   {question.type === 'meaning' && 'Meaning'}
                   {question.type === 'pinyin' && 'Pinyin'}
-                </Badge>
+                </span>
 
                 <h3 className="text-2xl font-semibold text-gray-900 mb-2">
                   {question.type === 'recognition' && `What character is "${question.word.pinyin}" (${question.word.english})?`}
@@ -1661,7 +1692,7 @@ export default function Practice() {
                   )
                 })}
               </div>
-            </Card>
+            </div>
           </motion.div>
         </AnimatePresence>
       </div>

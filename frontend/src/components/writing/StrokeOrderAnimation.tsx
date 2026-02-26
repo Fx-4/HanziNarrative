@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import HanziWriter from 'hanzi-writer'
-import { Button } from '@/components/ui/Button'
 import { Play, Pause, RotateCcw } from 'lucide-react'
 
 interface StrokeOrderAnimationProps {
@@ -130,46 +129,42 @@ export default function StrokeOrderAnimation({
 
       <div className="flex gap-2">
         {!isPlaying && !isPaused && (
-          <Button
+          <button
             onClick={playAnimation}
-            size="sm"
-            variant="primary"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center"
           >
             <Play className="w-4 h-4 mr-1" />
             Play
-          </Button>
+          </button>
         )}
 
         {isPlaying && (
-          <Button
+          <button
             onClick={pauseAnimation}
-            size="sm"
-            variant="secondary"
+            className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center"
           >
             <Pause className="w-4 h-4 mr-1" />
             Pause
-          </Button>
+          </button>
         )}
 
         {isPaused && (
-          <Button
+          <button
             onClick={resumeAnimation}
-            size="sm"
-            variant="primary"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center"
           >
             <Play className="w-4 h-4 mr-1" />
             Resume
-          </Button>
+          </button>
         )}
 
-        <Button
+        <button
           onClick={resetAnimation}
-          size="sm"
-          variant="ghost"
+          className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center"
         >
           <RotateCcw className="w-4 h-4 mr-1" />
           Reset
-        </Button>
+        </button>
       </div>
     </div>
   )
