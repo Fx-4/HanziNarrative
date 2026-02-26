@@ -76,11 +76,11 @@ api.interceptors.response.use(
 
 export const authApi = {
   login: async (credentials: LoginCredentials): Promise<AuthTokens> => {
-    const formData = new FormData()
+    const formData = new URLSearchParams()
     formData.append('username', credentials.username)
     formData.append('password', credentials.password)
     const response = await api.post('/auth/login', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     })
     return response.data
   },
