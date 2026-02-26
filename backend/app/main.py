@@ -14,10 +14,16 @@ try:
 except Exception as e:
     logger.warning(f"Could not create tables on startup (will retry on first request): {e}")
 
+IS_PRODUCTION = os.getenv("ENVIRONMENT", "development") == "production"
+
 app = FastAPI(
     title="HanziNarrative API",
     description="API for interactive HSK learning through stories",
-    version="1.0.0"
+    version="1.0.0",
+    # Disable interactive docs in production
+    docs_url=None if IS_PRODUCTION else "/docs",
+    redoc_url=None if IS_PRODUCTION else "/redoc",
+    openapi_url=None if IS_PRODUCTION else "/openapi.json",
 )
 
 # Get CORS origins from environment variable or use defaults
@@ -50,16 +56,8 @@ app.include_router(onboarding.router)
 def root():
     return {
         "message": "Welcome to HanziNarrative API",
-        "docs": "/docs",
-        "redoc": "/redoc"
     }
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
-
-
-@app.get("/debug/routes")
-def debug_routes():
-    """Debug endpoint to list all registered routes"""
-    return {"routes": [{"path": route.path, "name": route.name} for route in app.routes]}
