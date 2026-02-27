@@ -18,70 +18,70 @@ XP_REWARDS = {
 # Achievements
 ACHIEVEMENTS = {
     # Onboarding & First Steps
-    'onboarding_complete': {'id': 'onboarding_complete', 'name': 'Journey Begins! 🎓', 'description': 'Complete the onboarding process', 'xp': 100},
-    'first_review': {'id': 'first_review', 'name': 'First Steps 👣', 'description': 'Complete your first word review', 'xp': 50},
-    'first_story': {'id': 'first_story', 'name': 'Story Explorer 📖', 'description': 'Read your first story', 'xp': 50},
+    'onboarding_complete': {'id': 'onboarding_complete', 'name': 'Journey Begins', 'description': 'Complete the onboarding process', 'xp': 100},
+    'first_review': {'id': 'first_review', 'name': 'First Steps', 'description': 'Complete your first word review', 'xp': 50},
+    'first_story': {'id': 'first_story', 'name': 'Story Explorer', 'description': 'Read your first story', 'xp': 50},
     
     # Streak Achievements
-    'streak_3': {'id': 'streak_3', 'name': '3-Day Streak 🔥', 'description': 'Maintain a 3-day learning streak', 'xp': 100},
-    'streak_7': {'id': 'streak_7', 'name': 'Week Warrior ⚔️', 'description': 'Maintain a 7-day streak', 'xp': 200},
-    'streak_14': {'id': 'streak_14', 'name': 'Fortnight Fighter 💪', 'description': 'Maintain a 14-day streak', 'xp': 300},
-    'streak_30': {'id': 'streak_30', 'name': 'Month Master 👑', 'description': 'Maintain a 30-day streak', 'xp': 500},
-    'streak_50': {'id': 'streak_50', 'name': 'Unstoppable 🚀', 'description': 'Maintain a 50-day streak', 'xp': 800},
-    'streak_100': {'id': 'streak_100', 'name': 'Legendary 🌟', 'description': 'Maintain a 100-day streak', 'xp': 1500},
+    'streak_3': {'id': 'streak_3', 'name': '3-Day Streak', 'description': 'Maintain a 3-day learning streak', 'xp': 100},
+    'streak_7': {'id': 'streak_7', 'name': 'Week Warrior', 'description': 'Maintain a 7-day streak', 'xp': 200},
+    'streak_14': {'id': 'streak_14', 'name': 'Fortnight Fighter', 'description': 'Maintain a 14-day streak', 'xp': 300},
+    'streak_30': {'id': 'streak_30', 'name': 'Month Master', 'description': 'Maintain a 30-day streak', 'xp': 500},
+    'streak_50': {'id': 'streak_50', 'name': 'Unstoppable', 'description': 'Maintain a 50-day streak', 'xp': 800},
+    'streak_100': {'id': 'streak_100', 'name': 'Legendary', 'description': 'Maintain a 100-day streak', 'xp': 1500},
     
     # Word Review Milestones
-    'words_10': {'id': 'words_10', 'name': 'Getting Started 📚', 'description': 'Review 10 words', 'xp': 50},
-    'words_50': {'id': 'words_50', 'name': 'Vocabulary Builder 📝', 'description': 'Review 50 words', 'xp': 150},
-    'words_100': {'id': 'words_100', 'name': 'Century Scholar 🎓', 'description': 'Review 100 words', 'xp': 300},
-    'words_250': {'id': 'words_250', 'name': 'Word Enthusiast ✨', 'description': 'Review 250 words', 'xp': 500},
-    'words_500': {'id': 'words_500', 'name': 'Word Wizard 🧙', 'description': 'Review 500 words', 'xp': 1000},
-    'words_1000': {'id': 'words_1000', 'name': 'Vocabulary Master 👨‍🎓', 'description': 'Review 1000 words', 'xp': 2000},
-    'words_2000': {'id': 'words_2000', 'name': 'Character Expert 🏆', 'description': 'Review 2000 words', 'xp': 3500},
+    'words_10': {'id': 'words_10', 'name': 'Getting Started', 'description': 'Review 10 words', 'xp': 50},
+    'words_50': {'id': 'words_50', 'name': 'Vocabulary Builder', 'description': 'Review 50 words', 'xp': 150},
+    'words_100': {'id': 'words_100', 'name': 'Century Scholar', 'description': 'Review 100 words', 'xp': 300},
+    'words_250': {'id': 'words_250', 'name': 'Word Enthusiast', 'description': 'Review 250 words', 'xp': 500},
+    'words_500': {'id': 'words_500', 'name': 'Word Wizard', 'description': 'Review 500 words', 'xp': 1000},
+    'words_1000': {'id': 'words_1000', 'name': 'Vocabulary Master', 'description': 'Review 1000 words', 'xp': 2000},
+    'words_2000': {'id': 'words_2000', 'name': 'Character Expert', 'description': 'Review 2000 words', 'xp': 3500},
     
     # Level Achievements
-    'level_5': {'id': 'level_5', 'name': 'Novice 🌱', 'description': 'Reach level 5', 'xp': 100},
-    'level_10': {'id': 'level_10', 'name': 'Apprentice 🎯', 'description': 'Reach level 10', 'xp': 250},
-    'level_15': {'id': 'level_15', 'name': 'Intermediate 📈', 'description': 'Reach level 15', 'xp': 400},
-    'level_20': {'id': 'level_20', 'name': 'Advanced 🎖️', 'description': 'Reach level 20', 'xp': 600},
-    'level_25': {'id': 'level_25', 'name': 'Expert 💎', 'description': 'Reach level 25', 'xp': 900},
-    'level_30': {'id': 'level_30', 'name': 'Master 🏅', 'description': 'Reach level 30', 'xp': 1200},
+    'level_5': {'id': 'level_5', 'name': 'Novice', 'description': 'Reach level 5', 'xp': 100},
+    'level_10': {'id': 'level_10', 'name': 'Apprentice', 'description': 'Reach level 10', 'xp': 250},
+    'level_15': {'id': 'level_15', 'name': 'Intermediate', 'description': 'Reach level 15', 'xp': 400},
+    'level_20': {'id': 'level_20', 'name': 'Advanced', 'description': 'Reach level 20', 'xp': 600},
+    'level_25': {'id': 'level_25', 'name': 'Expert', 'description': 'Reach level 25', 'xp': 900},
+    'level_30': {'id': 'level_30', 'name': 'Master', 'description': 'Reach level 30', 'xp': 1200},
     
     # Accuracy & Performance
-    'perfect_10': {'id': 'perfect_10', 'name': 'Perfectionist ⭐', 'description': '10 perfect answers in a row', 'xp': 150},
-    'perfect_25': {'id': 'perfect_25', 'name': 'Flawless 💯', 'description': '25 perfect answers in a row', 'xp': 400},
-    'accuracy_80': {'id': 'accuracy_80', 'name': 'Sharp Mind 🧠', 'description': 'Maintain 80% accuracy over 100 reviews', 'xp': 300},
-    'accuracy_90': {'id': 'accuracy_90', 'name': 'Near Perfect 🎯', 'description': 'Maintain 90% accuracy over 100 reviews', 'xp': 500},
-    'accuracy_95': {'id': 'accuracy_95', 'name': 'Excellence 👑', 'description': 'Maintain 95% accuracy over 100 reviews', 'xp': 800},
+    'perfect_10': {'id': 'perfect_10', 'name': 'Perfectionist', 'description': '10 perfect answers in a row', 'xp': 150},
+    'perfect_25': {'id': 'perfect_25', 'name': 'Flawless', 'description': '25 perfect answers in a row', 'xp': 400},
+    'accuracy_80': {'id': 'accuracy_80', 'name': 'Sharp Mind', 'description': 'Maintain 80% accuracy over 100 reviews', 'xp': 300},
+    'accuracy_90': {'id': 'accuracy_90', 'name': 'Near Perfect', 'description': 'Maintain 90% accuracy over 100 reviews', 'xp': 500},
+    'accuracy_95': {'id': 'accuracy_95', 'name': 'Excellence', 'description': 'Maintain 95% accuracy over 100 reviews', 'xp': 800},
     
     # Story Reading
-    'stories_5': {'id': 'stories_5', 'name': 'Bookworm 🐛', 'description': 'Complete 5 stories', 'xp': 100},
-    'stories_10': {'id': 'stories_10', 'name': 'Avid Reader 📚', 'description': 'Complete 10 stories', 'xp': 200},
-    'stories_25': {'id': 'stories_25', 'name': 'Story Collector 📖', 'description': 'Complete 25 stories', 'xp': 400},
-    'stories_50': {'id': 'stories_50', 'name': 'Literary Scholar 🎭', 'description': 'Complete 50 stories', 'xp': 800},
+    'stories_5': {'id': 'stories_5', 'name': 'Bookworm', 'description': 'Complete 5 stories', 'xp': 100},
+    'stories_10': {'id': 'stories_10', 'name': 'Avid Reader', 'description': 'Complete 10 stories', 'xp': 200},
+    'stories_25': {'id': 'stories_25', 'name': 'Story Collector', 'description': 'Complete 25 stories', 'xp': 400},
+    'stories_50': {'id': 'stories_50', 'name': 'Literary Scholar', 'description': 'Complete 50 stories', 'xp': 800},
     
     # HSK Progression
-    'hsk_1_complete': {'id': 'hsk_1_complete', 'name': 'HSK 1 Graduate 🎓', 'description': 'Master all HSK 1 words', 'xp': 300},
-    'hsk_2_complete': {'id': 'hsk_2_complete', 'name': 'HSK 2 Graduate 📜', 'description': 'Master all HSK 2 words', 'xp': 500},
-    'hsk_3_complete': {'id': 'hsk_3_complete', 'name': 'HSK 3 Graduate 🏆', 'description': 'Master all HSK 3 words', 'xp': 800},
-    'hsk_4_complete': {'id': 'hsk_4_complete', 'name': 'HSK 4 Graduate 👑', 'description': 'Master all HSK 4 words', 'xp': 1200},
+    'hsk_1_complete': {'id': 'hsk_1_complete', 'name': 'HSK 1 Graduate', 'description': 'Master all HSK 1 words', 'xp': 300},
+    'hsk_2_complete': {'id': 'hsk_2_complete', 'name': 'HSK 2 Graduate', 'description': 'Master all HSK 2 words', 'xp': 500},
+    'hsk_3_complete': {'id': 'hsk_3_complete', 'name': 'HSK 3 Graduate', 'description': 'Master all HSK 3 words', 'xp': 800},
+    'hsk_4_complete': {'id': 'hsk_4_complete', 'name': 'HSK 4 Graduate', 'description': 'Master all HSK 4 words', 'xp': 1200},
     
     # Special Achievements
-    'early_bird': {'id': 'early_bird', 'name': 'Early Bird 🌅', 'description': 'Study before 8 AM for 7 days', 'xp': 200},
-    'night_owl': {'id': 'night_owl', 'name': 'Night Owl 🦉', 'description': 'Study after 10 PM for 7 days', 'xp': 200},
-    'speed_demon': {'id': 'speed_demon', 'name': 'Speed Demon ⚡', 'description': 'Complete 50 reviews in one session', 'xp': 250},
-    'marathon': {'id': 'marathon', 'name': 'Marathon Learner 🏃', 'description': 'Study for 2+ hours in one day', 'xp': 300},
-    'comeback': {'id': 'comeback', 'name': 'Comeback Kid 🔄', 'description': 'Return after 30+ day break', 'xp': 150},
+    'early_bird': {'id': 'early_bird', 'name': 'Early Bird', 'description': 'Study before 8 AM for 7 days', 'xp': 200},
+    'night_owl': {'id': 'night_owl', 'name': 'Night Owl', 'description': 'Study after 10 PM for 7 days', 'xp': 200},
+    'speed_demon': {'id': 'speed_demon', 'name': 'Speed Demon', 'description': 'Complete 50 reviews in one session', 'xp': 250},
+    'marathon': {'id': 'marathon', 'name': 'Marathon Learner', 'description': 'Study for 2+ hours in one day', 'xp': 300},
+    'comeback': {'id': 'comeback', 'name': 'Comeback Kid', 'description': 'Return after 30+ day break', 'xp': 150},
 
     # Typing Practice Achievements
-    'typing_first': {'id': 'typing_first', 'name': 'First Type ⌨️', 'description': 'Complete your first typing practice', 'xp': 50},
-    'typing_speed_30': {'id': 'typing_speed_30', 'name': 'Speed Typer ⚡', 'description': 'Achieve 30 WPM in speed mode', 'xp': 100},
-    'typing_speed_50': {'id': 'typing_speed_50', 'name': 'Lightning Fingers ⚡⚡', 'description': 'Achieve 50 WPM in speed mode', 'xp': 200},
-    'typing_speed_70': {'id': 'typing_speed_70', 'name': 'Typing Master 🚀', 'description': 'Achieve 70 WPM in speed mode', 'xp': 400},
-    'typing_perfect_pinyin': {'id': 'typing_perfect_pinyin', 'name': 'Tone Master 🎵', 'description': '20 perfect pinyin attempts with correct tones', 'xp': 150},
-    'typing_ime_master': {'id': 'typing_ime_master', 'name': 'IME Expert 🎯', 'description': 'Select correct character on first try 30 times', 'xp': 150},
-    'typing_100_words': {'id': 'typing_100_words', 'name': 'Typing Enthusiast 📝', 'description': 'Practice typing 100 words', 'xp': 200},
-    'typing_500_words': {'id': 'typing_500_words', 'name': 'Typing Pro 💻', 'description': 'Practice typing 500 words', 'xp': 500},
+    'typing_first': {'id': 'typing_first', 'name': 'First Type', 'description': 'Complete your first typing practice', 'xp': 50},
+    'typing_speed_30': {'id': 'typing_speed_30', 'name': 'Speed Typer', 'description': 'Achieve 30 WPM in speed mode', 'xp': 100},
+    'typing_speed_50': {'id': 'typing_speed_50', 'name': 'Lightning Fingers', 'description': 'Achieve 50 WPM in speed mode', 'xp': 200},
+    'typing_speed_70': {'id': 'typing_speed_70', 'name': 'Typing Master', 'description': 'Achieve 70 WPM in speed mode', 'xp': 400},
+    'typing_perfect_pinyin': {'id': 'typing_perfect_pinyin', 'name': 'Tone Master', 'description': '20 perfect pinyin attempts with correct tones', 'xp': 150},
+    'typing_ime_master': {'id': 'typing_ime_master', 'name': 'IME Expert', 'description': 'Select correct character on first try 30 times', 'xp': 150},
+    'typing_100_words': {'id': 'typing_100_words', 'name': 'Typing Enthusiast', 'description': 'Practice typing 100 words', 'xp': 200},
+    'typing_500_words': {'id': 'typing_500_words', 'name': 'Typing Pro', 'description': 'Practice typing 500 words', 'xp': 500},
 }
 
 

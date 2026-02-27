@@ -2,7 +2,7 @@ import os
 import hashlib
 import logging
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import Response
+from fastapi.responses import Response, RedirectResponse
 from pydantic import BaseModel
 from google.cloud import texttospeech
 from google.oauth2 import service_account
@@ -57,6 +57,15 @@ class TTSRequest(BaseModel):
     speaking_rate: float = 1.0
 
 
+# Fallback voice chain: try preferred first, then standard
+FALLBACK_VOICES = [
+    ("cmn-CN", "cmn-CN-Standard-A"),
+    ("cmn-CN", "cmn-CN-Standard-B"),
+    ("cmn-CN", "cmn-CN-Standard-C"),
+    ("cmn-CN", "cmn-CN-Standard-D"),
+]
+
+
 @router.post("/synthesize")
 async def synthesize(
     request: TTSRequest,
@@ -70,50 +79,78 @@ async def synthesize(
 
     language, voice_name = normalize_language(request.language, request.voice_name)
     cache_path = get_cache_path(request.text, language, voice_name, request.speaking_rate)
+    cache_filename = os.path.basename(cache_path)
 
-    # Return from cache if available
+    # Return redirect to static file if already cached (bypasses Python I/O entirely)
     if os.path.exists(cache_path):
-        with open(cache_path, "rb") as f:
-            audio_bytes = f.read()
         logger.info(f"TTS cache hit for: {request.text[:20]}")
-        return Response(
-            content=audio_bytes,
-            media_type="audio/mpeg",
-            headers={"Cache-Control": "public, max-age=2592000", "X-Cache": "HIT"},
+        return RedirectResponse(
+            url=f"/tts/audio/{cache_filename}",
+            status_code=302,
+            headers={"X-Cache": "HIT"},
         )
 
     try:
         client = get_tts_client()
 
         synthesis_input = texttospeech.SynthesisInput(text=request.text)
-        voice = texttospeech.VoiceSelectionParams(
-            language_code=language,
-            name=voice_name,
-        )
         audio_config = texttospeech.AudioConfig(
             audio_encoding=texttospeech.AudioEncoding.MP3,
             speaking_rate=request.speaking_rate,
         )
 
-        response = client.synthesize_speech(
-            input=synthesis_input,
-            voice=voice,
-            audio_config=audio_config,
-        )
+        # Try the requested voice first; if it fails fall back through the chain
+        voices_to_try = [(language, voice_name)] + [
+            (l, v) for l, v in FALLBACK_VOICES if v != voice_name
+        ]
 
-        # Save to cache
+        audio_content = None
+        used_voice = voice_name
+        last_error = None
+
+        for try_lang, try_voice in voices_to_try:
+            try:
+                voice_params = texttospeech.VoiceSelectionParams(
+                    language_code=try_lang,
+                    name=try_voice,
+                )
+                response = client.synthesize_speech(
+                    input=synthesis_input,
+                    voice=voice_params,
+                    audio_config=audio_config,
+                )
+                audio_content = response.audio_content
+                used_voice = try_voice
+                break
+            except Exception as e:
+                last_error = e
+                logger.warning(f"TTS voice '{try_voice}' failed: {e} — trying next voice")
+
+        if audio_content is None:
+            logger.error(f"All TTS voices failed. Last error: {last_error}")
+            raise HTTPException(status_code=500, detail="Failed to synthesize speech — all voices unavailable")
+
+        if used_voice != voice_name:
+            logger.info(f"TTS used fallback voice '{used_voice}' for: {request.text[:20]}")
+        else:
+            logger.info(f"TTS generated with '{used_voice}': {request.text[:20]}")
+
+        # Save to cache (store under the original requested voice key for consistency)
         with open(cache_path, "wb") as f:
-            f.write(response.audio_content)
+            f.write(audio_content)
 
-        logger.info(f"TTS generated and cached: {request.text[:20]}")
         return Response(
-            content=response.audio_content,
+            content=audio_content,
             media_type="audio/mpeg",
-            headers={"Cache-Control": "public, max-age=2592000", "X-Cache": "MISS"},
+            headers={
+                "Cache-Control": "public, max-age=2592000",
+                "X-Cache": "MISS",
+                "X-Voice-Used": used_voice,
+            },
         )
 
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"TTS synthesis failed: {e}")
+        logger.error(f"TTS synthesis failed unexpectedly: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to synthesize speech")

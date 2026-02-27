@@ -130,6 +130,15 @@ class TokenData(BaseModel):
     username: Optional[str] = None
 
 
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str
+
+
 # Writing Practice Schemas
 class WritingAttemptCreate(BaseModel):
     word_id: int

@@ -2,7 +2,8 @@ import os
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import auth, stories, vocabulary, progress, vocabulary_sets, exercises, learning, writing, quiz, gamification, onboarding, typing, tts
+from fastapi.staticfiles import StaticFiles
+from .routers import auth, stories, vocabulary, progress, vocabulary_sets, exercises, learning, writing, quiz, gamification, onboarding, typing, tts, dictation, adventure, stt, scramble
 from .database import engine, Base
 
 logging.basicConfig(level=logging.INFO)
@@ -51,6 +52,15 @@ app.include_router(quiz.router)
 app.include_router(gamification.router)
 app.include_router(onboarding.router)
 app.include_router(tts.router)
+app.include_router(dictation.router)
+app.include_router(adventure.router)
+app.include_router(stt.router)
+app.include_router(scramble.router)
+
+# Serve pre-generated TTS audio files directly (bypasses Python for cached audio)
+_tts_cache_dir = os.path.join(os.path.dirname(__file__), "..", "tts_cache")
+os.makedirs(_tts_cache_dir, exist_ok=True)
+app.mount("/tts/audio", StaticFiles(directory=_tts_cache_dir), name="tts-audio")
 
 
 @app.get("/")

@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react'
 import { toast } from 'react-hot-toast'
 import axios from 'axios'
+import { buildCacheKey, getAudio, saveAudio } from '@/utils/ttsCache'
 
 interface UseTTSOptions {
   language?: string
@@ -38,6 +39,21 @@ export function useTTS(options: UseTTSOptions = {}): UseTTSReturn {
     setIsSpeaking(false)
   }, [])
 
+  const playBlob = useCallback((blob: Blob) => {
+    const audioUrl = URL.createObjectURL(blob)
+    const audio = new Audio(audioUrl)
+    audioRef.current = audio
+    audio.onended = () => {
+      setIsSpeaking(false)
+      URL.revokeObjectURL(audioUrl)
+    }
+    audio.onerror = () => {
+      setIsSpeaking(false)
+      URL.revokeObjectURL(audioUrl)
+    }
+    return audio.play()
+  }, [])
+
   const speakFallback = useCallback((text: string) => {
     if (!('speechSynthesis' in window)) return
     window.speechSynthesis.cancel()
@@ -48,11 +64,10 @@ export function useTTS(options: UseTTSOptions = {}): UseTTSReturn {
     utterance.onend = () => setIsSpeaking(false)
     utterance.onerror = () => setIsSpeaking(false)
     window.speechSynthesis.speak(utterance)
-  }, [language, rate])
+  }, [rate])
 
   const speak = useCallback(async (text: string) => {
     if (!text || !text.trim()) return
-
     stop()
 
     const token = localStorage.getItem('access_token')
@@ -63,6 +78,19 @@ export function useTTS(options: UseTTSOptions = {}): UseTTSReturn {
 
     setIsSpeaking(true)
 
+    // Layer 1: IndexedDB — zero network if heard before
+    const cacheKey = buildCacheKey(text, language, voiceName, rate)
+    const cached = await getAudio(cacheKey)
+    if (cached) {
+      try {
+        await playBlob(cached)
+        return
+      } catch {
+        // cached blob may be corrupt, fall through to network
+      }
+    }
+
+    // Layer 2: Backend (file cache → static redirect, or Google TTS on miss)
     try {
       const response = await axios.post(
         `${API_URL}/tts/synthesize`,
@@ -74,28 +102,18 @@ export function useTTS(options: UseTTSOptions = {}): UseTTSReturn {
       )
 
       const audioBlob = new Blob([response.data], { type: 'audio/mpeg' })
-      const audioUrl = URL.createObjectURL(audioBlob)
 
-      const audio = new Audio(audioUrl)
-      audioRef.current = audio
+      // Save to IndexedDB for future plays (fire-and-forget)
+      saveAudio(cacheKey, audioBlob)
 
-      audio.onended = () => {
-        setIsSpeaking(false)
-        URL.revokeObjectURL(audioUrl)
-      }
-      audio.onerror = () => {
-        setIsSpeaking(false)
-        URL.revokeObjectURL(audioUrl)
-      }
-
-      await audio.play()
+      await playBlob(audioBlob)
     } catch (error) {
       console.error('Google TTS failed, falling back to browser TTS:', error)
       setIsSpeaking(false)
       speakFallback(text)
       toast.error('Google TTS unavailable, using browser voice')
     }
-  }, [language, rate, voiceName, stop, speakFallback])
+  }, [language, rate, voiceName, stop, speakFallback, playBlob])
 
   return { speak, stop, isSpeaking, isSupported }
 }

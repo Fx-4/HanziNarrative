@@ -4,12 +4,15 @@ from sqlalchemy import func
 from fastapi import HTTPException, status
 from .models import AIUsage, User
 
-# Rate limit configuration
+# Rate limit configuration — strict limits to stay within Gemini free tier
+# Assuming <100 users, ~1500 req/day free limit
 RATE_LIMITS = {
-    'story_generation': {'daily': 5, 'hourly': 2},
-    'sentence_validation': {'daily': 15, 'hourly': 5},
-    'translation': {'daily': 20, 'hourly': 10},
-    'badge_generation': {'daily': 10, 'hourly': 3},
+    'story_generation': {'daily': 2, 'hourly': 1},
+    'sentence_validation': {'daily': 5, 'hourly': 2},
+    'translation': {'daily': 8, 'hourly': 3},
+    'badge_generation': {'daily': 3, 'hourly': 1},
+    'adventure_start': {'daily': 2, 'hourly': 1},
+    'adventure_continue': {'daily': 8, 'hourly': 5},
 }
 
 def check_rate_limit(db: Session, user: User, feature: str) -> bool:

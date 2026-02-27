@@ -298,20 +298,34 @@ async def generate_story_quiz(story_title: str, story_content: str, hsk_level: i
     """
     Generate comprehension quiz questions based on a specific story
     """
-    prompt = f"""Generate 3 comprehension questions about this Chinese story for HSK Level {hsk_level} learners.
+    prompt = f"""Generate exactly 5 quiz questions about this Chinese story for HSK Level {hsk_level} learners.
 
 Story Title: {story_title}
 Story Content:
 {story_content}
 
-Create questions that test:
-1. Main idea / theme understanding
-2. Character actions / plot details
-3. Vocabulary or grammar usage from the story
+You MUST generate ALL 5 questions in this exact order:
 
-For EACH question provide:
-- A clear question in English
-- 4 multiple choice options (in English)
+QUESTIONS 1-3: Comprehension questions that test:
+  1. Main idea / theme understanding
+  2. Character actions / plot details
+  3. Vocabulary or grammar usage from the story
+
+QUESTION 4: Vocabulary meaning question
+  - Pick ONE Chinese word/character that appears in the story (preferably 1-2 characters)
+  - Ask: "What does '[hanzi]' mean?"
+  - Provide 4 English meaning options where only one is correct
+  - The question text must include the hanzi character(s)
+
+QUESTION 5: Pinyin question
+  - Pick a DIFFERENT Chinese word/character from the story (preferably 1-2 characters)
+  - Ask: "What is the correct pinyin for '[hanzi]'?"
+  - Provide 4 pinyin options (with tone marks, e.g. nǐ hǎo) where only one is correct
+  - The question text must include the hanzi character(s)
+
+For EACH of the 5 questions provide:
+- A clear question in English (include hanzi characters in questions 4 and 5)
+- 4 multiple choice options
 - The correct answer index (0-3)
 - A brief explanation
 
@@ -324,11 +338,11 @@ Return as JSON:
       "correctAnswer": 0,
       "explanation": "Why this is correct"
     }},
-    ...
+    ...5 questions total...
   ]
 }}
 
-Make questions specific to THIS story, not generic!"""
+Make ALL questions specific to THIS story. Questions 4 and 5 must use real words from the story content."""
 
     try:
         response = model.generate_content(prompt)
@@ -426,3 +440,126 @@ async def test_gemini_connection() -> bool:
     except Exception as e:
         print(f"Gemini connection test failed: {e}")
         return False
+
+
+async def generate_adventure_start(
+    hsk_level: int,
+    topic: str = "daily life"
+) -> Dict:
+    """
+    Generate the opening of an interactive adventure story with 3 choices.
+    """
+    prompt = f"""You are a creative Chinese language teacher. Create the opening paragraph of an interactive adventure story for HSK Level {hsk_level} students.
+
+Topic: {topic}
+
+Requirements:
+- Use ONLY HSK Level {hsk_level} vocabulary (and levels below)
+- Opening paragraph: 2-4 sentences in Chinese
+- Present 3 choices for what happens next
+- Each choice should lead to a different direction
+
+Return as JSON:
+{{
+  "paragraph": "Opening paragraph in simplified Chinese (2-4 sentences)",
+  "paragraph_pinyin": "Pinyin for the paragraph with tone marks",
+  "paragraph_english": "English translation",
+  "choices": [
+    {{
+      "id": 1,
+      "text": "Choice text in Chinese",
+      "text_pinyin": "Pinyin for the choice",
+      "text_english": "English translation of the choice"
+    }},
+    {{
+      "id": 2,
+      "text": "Choice text in Chinese",
+      "text_pinyin": "Pinyin",
+      "text_english": "English"
+    }},
+    {{
+      "id": 3,
+      "text": "Choice text in Chinese",
+      "text_pinyin": "Pinyin",
+      "text_english": "English"
+    }}
+  ],
+  "setting": "Brief English description of the setting"
+}}
+
+Make it fun and engaging! Keep sentences simple for HSK {hsk_level}."""
+
+    try:
+        response = model.generate_content(prompt)
+        response_text = response.text
+        import json
+        if "```json" in response_text:
+            response_text = response_text.split("```json")[1].split("```")[0].strip()
+        elif "```" in response_text:
+            response_text = response_text.split("```")[1].split("```")[0].strip()
+        return json.loads(response_text)
+    except Exception as e:
+        print(f"Gemini API Error generating adventure start: {e}")
+        raise Exception(f"Failed to generate adventure: {str(e)}")
+
+
+async def generate_adventure_continue(
+    story_so_far: str,
+    chosen_option: str,
+    hsk_level: int,
+    step_number: int = 2
+) -> Dict:
+    """
+    Continue an adventure story based on the user's choice.
+    """
+    is_ending = step_number >= 5
+
+    ending_instruction = ""
+    if is_ending:
+        ending_instruction = """
+IMPORTANT: This is the FINAL paragraph. Wrap up the story with a satisfying conclusion.
+Do NOT provide choices. Instead, provide a "moral" field with the lesson learned.
+Set "is_ending" to true."""
+    else:
+        ending_instruction = """Provide 3 new choices for what happens next. Set "is_ending" to false."""
+
+    prompt = f"""Continue this interactive Chinese adventure story for HSK Level {hsk_level} students.
+
+Story so far:
+{story_so_far}
+
+The reader chose: {chosen_option}
+
+Requirements:
+- Continue with 2-4 new sentences based on their choice
+- Use ONLY HSK Level {hsk_level} vocabulary
+- Keep it engaging and fun
+{ending_instruction}
+
+Return as JSON:
+{{
+  "paragraph": "Next paragraph in simplified Chinese",
+  "paragraph_pinyin": "Pinyin with tone marks",
+  "paragraph_english": "English translation",
+  "is_ending": {'true' if is_ending else 'false'},
+  {"\"moral\": \"Lesson learned in English\"," if is_ending else ""}
+  "choices": [
+    {{"id": 1, "text": "Chinese", "text_pinyin": "Pinyin", "text_english": "English"}},
+    {{"id": 2, "text": "Chinese", "text_pinyin": "Pinyin", "text_english": "English"}},
+    {{"id": 3, "text": "Chinese", "text_pinyin": "Pinyin", "text_english": "English"}}
+  ]
+}}"""
+
+    try:
+        response = model.generate_content(prompt)
+        response_text = response.text
+        import json
+        if "```json" in response_text:
+            response_text = response_text.split("```json")[1].split("```")[0].strip()
+        elif "```" in response_text:
+            response_text = response_text.split("```")[1].split("```")[0].strip()
+        return json.loads(response_text)
+    except Exception as e:
+        print(f"Gemini API Error continuing adventure: {e}")
+        raise Exception(f"Failed to continue adventure: {str(e)}")
+

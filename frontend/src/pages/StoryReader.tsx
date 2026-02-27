@@ -1,4 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import axios from 'axios'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { pinyin } from 'pinyin-pro'
@@ -52,6 +55,10 @@ export default function StoryReader() {
   const [wordPosition, setWordPosition] = useState<{ x: number; y: number } | null>(null)
   const [showWordDetails, setShowWordDetails] = useState(false)
 
+  // Refs for story audio playback (Google TTS, sequential)
+  const isReadingRef = useRef(false)
+  const storyAudioRef = useRef<HTMLAudioElement | null>(null)
+
   useEffect(() => {
     if (id) {
       loadStory(parseInt(id))
@@ -71,28 +78,105 @@ export default function StoryReader() {
     }
   }
 
-  const handleReadAloud = () => {
+  // Stop any ongoing story playback
+  const stopReading = useCallback(() => {
+    isReadingRef.current = false
+    window.speechSynthesis.cancel()
+    if (storyAudioRef.current) {
+      storyAudioRef.current.pause()
+      storyAudioRef.current = null
+    }
+    setIsReading(false)
+  }, [])
+
+  // Play a single audio blob URL and wait until done
+  const playAudioUrl = (url: string): Promise<void> =>
+    new Promise((resolve) => {
+      const audio = new Audio(url)
+      storyAudioRef.current = audio
+      audio.onended = () => resolve()
+      audio.onerror = () => resolve()
+      audio.play().catch(() => resolve())
+    })
+
+  // Browser TTS fallback for a single chunk
+  const speakFallback = (text: string): Promise<void> =>
+    new Promise((resolve) => {
+      const utterance = new SpeechSynthesisUtterance(text)
+      utterance.lang = 'zh-CN'
+      utterance.rate = 0.8
+      utterance.onend = () => resolve()
+      utterance.onerror = () => resolve()
+      window.speechSynthesis.speak(utterance)
+    })
+
+  // Split story content into chunks ≤ 900 chars at sentence boundaries
+  const chunkContent = (content: string): string[] => {
+    const paragraphs = content.split('\n').filter(p => p.trim())
+    const chunks: string[] = []
+    for (const para of paragraphs) {
+      if (para.length <= 900) {
+        chunks.push(para)
+      } else {
+        // split at sentence-ending punctuation
+        const parts = para.split(/(?<=[。！？])/).filter(Boolean)
+        let current = ''
+        for (const part of parts) {
+          if (current.length + part.length > 900) {
+            if (current) chunks.push(current)
+            current = part
+          } else {
+            current += part
+          }
+        }
+        if (current) chunks.push(current)
+      }
+    }
+    return chunks.filter(c => c.trim())
+  }
+
+  const handleReadAloud = async () => {
     if (!story) return
 
     if (isReading) {
-      window.speechSynthesis.cancel()
-      setIsReading(false)
+      stopReading()
       return
     }
 
-    const utterance = new SpeechSynthesisUtterance(story.content)
-    utterance.lang = 'zh-CN'
-    utterance.rate = 0.8
+    const chunks = chunkContent(story.content)
+    if (!chunks.length) return
 
-    utterance.onend = () => setIsReading(false)
-    utterance.onerror = () => {
-      setIsReading(false)
-      toast.error('Speech synthesis not available')
+    setIsReading(true)
+    isReadingRef.current = true
+    toast.success('Reading story aloud...')
+
+    const token = localStorage.getItem('access_token')
+
+    for (const chunk of chunks) {
+      if (!isReadingRef.current) break
+
+      if (token) {
+        try {
+          const response = await axios.post(
+            `${API_URL}/tts/synthesize`,
+            { text: chunk, language: 'cmn-CN', voice_name: 'cmn-CN-Chirp3-HD-Aoede', speaking_rate: 0.85 },
+            { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' }
+          )
+          if (!isReadingRef.current) break
+          const url = URL.createObjectURL(new Blob([response.data], { type: 'audio/mpeg' }))
+          await playAudioUrl(url)
+          URL.revokeObjectURL(url)
+        } catch {
+          // Fallback to browser TTS for this chunk
+          if (isReadingRef.current) await speakFallback(chunk)
+        }
+      } else {
+        await speakFallback(chunk)
+      }
     }
 
-    window.speechSynthesis.speak(utterance)
-    setIsReading(true)
-    toast.success('Reading story aloud...')
+    isReadingRef.current = false
+    setIsReading(false)
   }
 
   const handleDeleteStory = async () => {

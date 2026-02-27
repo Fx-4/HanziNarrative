@@ -6,6 +6,14 @@ import Stories from './pages/Stories'
 import StoryReader from './pages/StoryReader'
 import Vocabulary from './pages/Vocabulary'
 import SentenceBuilder from './pages/SentenceBuilder'
+import Dictation from './pages/Dictation'
+import Adventure from './pages/Adventure'
+import SpeakingPractice from './pages/SpeakingPractice'
+import StoryChallenge from './pages/StoryChallenge'
+import MockTest from './pages/MockTest'
+import SentenceScramble from './pages/SentenceScramble' // Now HanziExplorer
+import MatchingGame from './pages/MatchingGame'
+import ToneTrainer from './pages/ToneTrainer'
 import Practice from './pages/Practice'
 import Review from './pages/Review'
 import Writing from './pages/Writing'
@@ -130,6 +138,14 @@ function App() {
           <Route path="stories/:id" element={<ErrorBoundary name="StoryReader"><StoryReader /></ErrorBoundary>} />
           <Route path="vocabulary" element={<ErrorBoundary name="Vocabulary"><Vocabulary /></ErrorBoundary>} />
           <Route path="sentence-builder" element={<ErrorBoundary name="SentenceBuilder"><SentenceBuilder /></ErrorBoundary>} />
+          <Route path="dictation" element={<ErrorBoundary name="Dictation"><Dictation /></ErrorBoundary>} />
+          <Route path="adventure" element={<ErrorBoundary name="Adventure"><Adventure /></ErrorBoundary>} />
+          <Route path="speaking" element={<ErrorBoundary name="SpeakingPractice"><SpeakingPractice /></ErrorBoundary>} />
+          <Route path="story-challenge" element={<ErrorBoundary name="StoryChallenge"><StoryChallenge /></ErrorBoundary>} />
+          <Route path="mock-test" element={<ErrorBoundary name="MockTest"><MockTest /></ErrorBoundary>} />
+          <Route path="explorer" element={<ErrorBoundary name="HanziExplorer"><SentenceScramble /></ErrorBoundary>} />
+          <Route path="matching" element={<ErrorBoundary name="MatchingGame"><MatchingGame /></ErrorBoundary>} />
+          <Route path="tones" element={<ErrorBoundary name="ToneTrainer"><ToneTrainer /></ErrorBoundary>} />
           <Route path="profile" element={<ErrorBoundary name="Profile"><Profile /></ErrorBoundary>} />
           <Route path="leaderboard" element={<ErrorBoundary name="Leaderboard"><Leaderboard /></ErrorBoundary>} />
         </Route>

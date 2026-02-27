@@ -99,6 +99,14 @@ export const authApi = {
     const response = await api.put('/auth/me', data)
     return response.data
   },
+
+  forgotPassword: async (email: string): Promise<void> => {
+    await api.post('/auth/forgot-password', { email })
+  },
+
+  resetPassword: async (token: string, newPassword: string): Promise<void> => {
+    await api.post('/auth/reset-password', { token, new_password: newPassword })
+  },
 }
 
 export const storiesApi = {
@@ -446,6 +454,67 @@ export const gamificationApi = {
     })
     return response.data
   }
+}
+
+// Dictation (听写) API — zero AI cost
+export const dictationApi = {
+  getSentences: async (hskLevel: number, limit: number = 10) => {
+    const response = await api.get('/dictation/sentences', {
+      params: { hsk_level: hskLevel, limit }
+    })
+    return response.data
+  },
+}
+
+// Adventure Stories API — AI-powered branching stories
+export const adventureApi = {
+  start: async (hskLevel: number, topic: string = 'daily life') => {
+    const response = await api.post('/adventure/start', {
+      hsk_level: hskLevel,
+      topic,
+    })
+    return response.data
+  },
+
+  continue: async (storySoFar: string, chosenOption: string, hskLevel: number, stepNumber: number) => {
+    const response = await api.post('/adventure/continue', {
+      story_so_far: storySoFar,
+      chosen_option: chosenOption,
+      hsk_level: hskLevel,
+      step_number: stepNumber,
+    })
+    return response.data
+  },
+
+  getUsageStats: async () => {
+    const response = await api.get('/adventure/usage-stats')
+    return response.data
+  },
+}
+
+// Sentence Scramble API — zero AI cost
+export const scrambleApi = {
+  getSentences: async (hskLevel: number, count: number = 5) => {
+    const response = await api.get(`/scramble/sentences?hsk_level=${hskLevel}&count=${count}`)
+    return response.data
+  },
+}
+
+// Speech-to-Text (STT) API — pronunciation practice
+export const sttApi = {
+  recognize: async (audioBase64: string, expectedText: string = '') => {
+    const response = await api.post('/stt/recognize', {
+      audio_base64: audioBase64,
+      language: 'cmn-Hans-CN',
+      expected_text: expectedText,
+    })
+    return response.data
+  },
+
+  getStatus: async () => {
+    const response = await api.get('/stt/status')
+    return response.data
+  },
 }
 
 export default api

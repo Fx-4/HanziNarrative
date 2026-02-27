@@ -6,7 +6,8 @@ import { useThemeStore } from '@/store/themeStore'
 import {
   BookOpen, BookMarked, User, LogOut, PenTool, GraduationCap, Brain,
   BarChart3, Type, ChevronDown, Library, Menu, X, Moon, Sun,
-  Layers, Keyboard, Trophy, ChevronRight
+  Layers, Keyboard, Trophy, ChevronRight, Headphones, Map, Mic, Lock,
+  Target, Grid3X3, Music
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useState, useEffect, useRef } from 'react'
@@ -19,17 +20,17 @@ type DropdownMenu = { label: string; icon: any; items: MenuItem[] }
 const drawerVariants = {
   hidden: { x: '100%', opacity: 0 },
   visible: { x: 0, opacity: 1, transition: { type: 'spring', stiffness: 280, damping: 30 } },
-  exit:   { x: '100%', opacity: 0, transition: { duration: 0.22, ease: 'easeIn' } },
+  exit: { x: '100%', opacity: 0, transition: { duration: 0.22, ease: 'easeIn' } },
 }
 
 const backdropVariants = {
-  hidden:  { opacity: 0 },
+  hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 0.2 } },
-  exit:    { opacity: 0, transition: { duration: 0.2 } },
+  exit: { opacity: 0, transition: { duration: 0.2 } },
 }
 
 const itemVariants = {
-  hidden:  { opacity: 0, x: 24 },
+  hidden: { opacity: 0, x: 24 },
   visible: (i: number) => ({
     opacity: 1, x: 0,
     transition: { delay: i * 0.05, duration: 0.22, ease: 'easeOut' },
@@ -40,16 +41,16 @@ export default function Navbar() {
   const { isAuthenticated, user, logout } = useAuthStore()
   const { isDarkMode, toggleDarkMode } = useThemeStore()
   const location = useLocation()
-  const [reviewCount, setReviewCount]       = useState<number>(0)
-  const [showUserMenu, setShowUserMenu]     = useState(false)
+  const [reviewCount, setReviewCount] = useState<number>(0)
+  const [showUserMenu, setShowUserMenu] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [openSections, setOpenSections]     = useState<Record<string, boolean>>({ Learn: true, Library: true })
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({ Learn: true, Library: true })
 
   const toggleSection = (label: string) =>
     setOpenSections(prev => ({ ...prev, [label]: !prev[label] }))
 
-  const userMenuRef  = useRef<HTMLDivElement>(null)
+  const userMenuRef = useRef<HTMLDivElement>(null)
   const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
 
   // Close mobile menu on route change
@@ -91,8 +92,8 @@ export default function Navbar() {
   const handleLogout = () => { logout(); setShowUserMenu(false); toast.success('Logged out successfully') }
 
   const singleNavLinks: MenuItem[] = [
-    { to: '/practice',    label: 'Practice',    icon: GraduationCap },
-    { to: '/dashboard',   label: 'Dashboard',   icon: BarChart3 },
+    { to: '/practice', label: 'Practice', icon: GraduationCap },
+    { to: '/dashboard', label: 'Dashboard', icon: BarChart3 },
     { to: '/leaderboard', label: 'Leaderboard', icon: Trophy },
   ]
 
@@ -100,165 +101,173 @@ export default function Navbar() {
     {
       label: 'Learn', icon: Brain,
       items: [
-        { to: '/review',    label: 'Review',    icon: Brain,        badge: true },
-        { to: '/flashcards',label: 'Flashcards',icon: Layers },
-        { to: '/writing',   label: 'Writing',   icon: PenTool },
-        { to: '/typing',    label: 'Typing',    icon: Keyboard },
-        { to: '/quiz',      label: 'Quiz',      icon: GraduationCap },
+        { to: '/review', label: 'Review', icon: Brain, badge: true },
+        { to: '/flashcards', label: 'Flashcards', icon: Layers },
+        { to: '/writing', label: 'Writing', icon: PenTool },
+        { to: '/typing', label: 'Typing', icon: Keyboard },
+        { to: '/quiz', label: 'Quiz', icon: GraduationCap },
+        { to: '/speaking', label: 'Speaking', icon: Mic },
+        { to: '/mock-test', label: 'Mock Test', icon: Target },
+        { to: '/tones', label: 'Tones', icon: Music },
       ]
     },
     {
       label: 'Library', icon: Library,
       items: [
-        { to: '/stories',          label: 'Stories',    icon: BookOpen },
-        { to: '/vocabulary',       label: 'Vocabulary', icon: BookMarked },
-        { to: '/sentence-builder', label: 'Builder',    icon: Type },
+        { to: '/stories', label: 'Stories', icon: BookOpen },
+        { to: '/vocabulary', label: 'Vocabulary', icon: BookMarked },
+        { to: '/sentence-builder', label: 'Builder', icon: Type },
+        { to: '/dictation', label: 'Dictation', icon: Headphones },
+        { to: '/adventure', label: 'Adventure', icon: Map },
+        { to: '/story-challenge', label: 'Unlock', icon: Lock },
+        { to: '/explorer', label: 'Explorer', icon: Target },
+        { to: '/matching', label: 'Match', icon: Grid3X3 },
       ]
     }
   ]
 
-  const isActive            = (path: string) => location.pathname === path
-  const isDropdownActive    = (items: MenuItem[]) => items.some(i => isActive(i.to))
+  const isActive = (path: string) => location.pathname === path
+  const isDropdownActive = (items: MenuItem[]) => items.some(i => isActive(i.to))
 
   return (
     <>
-    <motion.nav
-      className="bg-white/90 backdrop-blur-lg shadow-sm sticky top-0 z-40 border-b border-gray-200/60 transition-colors"
-      initial={{ y: -64 }}
-      animate={{ y: 0 }}
-      transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-    >
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-14 sm:h-16">
+      <motion.nav
+        className="bg-white/90 backdrop-blur-lg shadow-sm sticky top-0 z-40 border-b border-gray-200/60 transition-colors"
+        initial={{ y: -64 }}
+        animate={{ y: 0 }}
+        transition={{ type: 'spring', stiffness: 120, damping: 20 }}
+      >
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center h-14 sm:h-16">
 
-          {/* ── Logo ── */}
-          <Link to="/" className="flex-shrink-0">
-            <motion.div
-              className="flex items-center gap-1.5 sm:gap-2 text-indigo-600 font-bold"
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-            >
-              <motion.span
-                className="text-lg sm:text-xl font-chinese"
-                animate={{ rotate: [0, 8, -8, 0] }}
-                transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 4 }}
+            {/* ── Logo ── */}
+            <Link to="/" className="flex-shrink-0">
+              <motion.div
+                className="flex items-center gap-1.5 sm:gap-2 text-indigo-600 font-bold"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
               >
-                汉字
-              </motion.span>
-              <span className="hidden sm:inline text-base sm:text-lg text-gray-800 font-bold">
-                HanziNarrative
-              </span>
-            </motion.div>
-          </Link>
-
-          {/* ── Desktop nav (md+ / tablet & above) ── */}
-          <div className="hidden md:flex items-center gap-0.5 lg:gap-1">
-            {/* Dark mode toggle */}
-            <DarkModeButton isDarkMode={isDarkMode} toggle={toggleDarkMode} />
-
-            {singleNavLinks.map(link => (
-              <DesktopNavLink key={link.to} link={link} active={isActive(link.to)} />
-            ))}
-
-            {dropdownMenus.map(menu => (
-              <DesktopDropdown
-                key={menu.label}
-                menu={menu}
-                active={isDropdownActive(menu.items)}
-                isOpen={activeDropdown === menu.label}
-                reviewCount={reviewCount}
-                isActive={isActive}
-                onToggle={() => setActiveDropdown(activeDropdown === menu.label ? null : menu.label)}
-                onClose={() => setActiveDropdown(null)}
-                ref={(el: HTMLDivElement | null) => { dropdownRefs.current[menu.label] = el }}
-              />
-            ))}
-
-            {isAuthenticated ? (
-              <UserMenu
-                user={user}
-                showMenu={showUserMenu}
-                onToggle={() => setShowUserMenu(!showUserMenu)}
-                onClose={() => setShowUserMenu(false)}
-                onLogout={handleLogout}
-                ref={userMenuRef}
-              />
-            ) : (
-              <motion.div className="flex items-center gap-2 ml-2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-                <Link to="/login">
-                  <span className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors inline-block">Login</span>
-                </Link>
-                <Link to="/register">
-                  <span className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors inline-block">Register</span>
-                </Link>
+                <motion.span
+                  className="text-lg sm:text-xl font-chinese"
+                  animate={{ rotate: [0, 8, -8, 0] }}
+                  transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 4 }}
+                >
+                  汉字
+                </motion.span>
+                <span className="hidden sm:inline text-base sm:text-lg text-gray-800 font-bold">
+                  HanziNarrative
+                </span>
               </motion.div>
-            )}
-          </div>
+            </Link>
 
-          {/* ── Mobile right side: dark toggle + user avatar + hamburger ── */}
-          <div className="md:hidden flex items-center gap-2">
-            <DarkModeButton isDarkMode={isDarkMode} toggle={toggleDarkMode} />
+            {/* ── Desktop nav (md+ / tablet & above) ── */}
+            <div className="hidden md:flex items-center gap-0.5 lg:gap-1">
+              {/* Dark mode toggle */}
+              <DarkModeButton isDarkMode={isDarkMode} toggle={toggleDarkMode} />
 
-            {isAuthenticated && (
-              <div className="relative">
-                <Link to="/profile" className="flex items-center justify-center w-8 h-8 rounded-full ring-2 ring-transparent hover:ring-indigo-300 transition-all">
-                  {user?.profile_picture ? (
-                    <img src={user.profile_picture} alt={user.username} className="w-8 h-8 rounded-full object-cover" />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                      <span className="text-xs font-bold text-indigo-600">
-                        {user?.username?.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
+              {singleNavLinks.map(link => (
+                <DesktopNavLink key={link.to} link={link} active={isActive(link.to)} />
+              ))}
+
+              {dropdownMenus.map(menu => (
+                <DesktopDropdown
+                  key={menu.label}
+                  menu={menu}
+                  active={isDropdownActive(menu.items)}
+                  isOpen={activeDropdown === menu.label}
+                  reviewCount={reviewCount}
+                  isActive={isActive}
+                  onToggle={() => setActiveDropdown(activeDropdown === menu.label ? null : menu.label)}
+                  onClose={() => setActiveDropdown(null)}
+                  ref={(el: HTMLDivElement | null) => { dropdownRefs.current[menu.label] = el }}
+                />
+              ))}
+
+              {isAuthenticated ? (
+                <UserMenu
+                  user={user}
+                  showMenu={showUserMenu}
+                  onToggle={() => setShowUserMenu(!showUserMenu)}
+                  onClose={() => setShowUserMenu(false)}
+                  onLogout={handleLogout}
+                  ref={userMenuRef}
+                />
+              ) : (
+                <motion.div className="flex items-center gap-2 ml-2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                  <Link to="/login">
+                    <span className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors inline-block">Login</span>
+                  </Link>
+                  <Link to="/register">
+                    <span className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors inline-block">Register</span>
+                  </Link>
+                </motion.div>
+              )}
+            </div>
+
+            {/* ── Mobile right side: dark toggle + user avatar + hamburger ── */}
+            <div className="md:hidden flex items-center gap-2">
+              <DarkModeButton isDarkMode={isDarkMode} toggle={toggleDarkMode} />
+
+              {isAuthenticated && (
+                <div className="relative">
+                  <Link to="/profile" className="flex items-center justify-center w-8 h-8 rounded-full ring-2 ring-transparent hover:ring-indigo-300 transition-all">
+                    {user?.profile_picture ? (
+                      <img src={user.profile_picture} alt={user.username} className="w-8 h-8 rounded-full object-cover" />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                        <span className="text-xs font-bold text-indigo-600">
+                          {user?.username?.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                  </Link>
+                  {reviewCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[16px] h-4 bg-red-500 text-white text-[9px] font-bold rounded-full px-0.5 pointer-events-none">
+                      {reviewCount > 99 ? '99+' : reviewCount}
+                    </span>
                   )}
-                </Link>
-                {reviewCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[16px] h-4 bg-red-500 text-white text-[9px] font-bold rounded-full px-0.5 pointer-events-none">
-                    {reviewCount > 99 ? '99+' : reviewCount}
-                  </span>
-                )}
-              </div>
-            )}
+                </div>
+              )}
 
-            <motion.button
-              onClick={() => setMobileMenuOpen(true)}
-              className="flex items-center justify-center w-9 h-9 rounded-xl hover:bg-gray-100 transition-colors"
-              whileTap={{ scale: 0.9 }}
-              aria-label="Open menu"
-            >
-              <motion.div animate={mobileMenuOpen ? { rotate: 90 } : { rotate: 0 }} transition={{ duration: 0.2 }}>
-                <Menu className="w-5 h-5 text-gray-700" />
-              </motion.div>
-            </motion.button>
+              <motion.button
+                onClick={() => setMobileMenuOpen(true)}
+                className="flex items-center justify-center w-9 h-9 rounded-xl hover:bg-gray-100 transition-colors"
+                whileTap={{ scale: 0.9 }}
+                aria-label="Open menu"
+              >
+                <motion.div animate={mobileMenuOpen ? { rotate: 90 } : { rotate: 0 }} transition={{ duration: 0.2 }}>
+                  <Menu className="w-5 h-5 text-gray-700" />
+                </motion.div>
+              </motion.button>
+            </div>
           </div>
         </div>
-      </div>
-    </motion.nav>
+      </motion.nav>
 
-    {/* ── Mobile Drawer ── */}
-    <AnimatePresence>
-      {mobileMenuOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            key="backdrop"
-            variants={backdropVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
-            onClick={() => setMobileMenuOpen(false)}
-          />
+      {/* ── Mobile Drawer ── */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              key="backdrop"
+              variants={backdropVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+              onClick={() => setMobileMenuOpen(false)}
+            />
 
-          {/* Drawer panel */}
-          <motion.div
-            key="drawer"
-            variants={drawerVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="fixed top-0 right-0 h-full w-[min(320px,88vw)] sm:w-[min(360px,88vw)] bg-white shadow-2xl z-60 flex flex-col"
-          >
+            {/* Drawer panel */}
+            <motion.div
+              key="drawer"
+              variants={drawerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="fixed top-0 right-0 h-full w-[min(320px,88vw)] sm:w-[min(360px,88vw)] bg-white shadow-2xl z-60 flex flex-col"
+            >
               {/* Drawer header */}
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
                 {isAuthenticated ? (
@@ -301,10 +310,9 @@ export default function Navbar() {
                   return (
                     <motion.div key={link.to} custom={i} variants={itemVariants} initial="hidden" animate="visible">
                       <Link to={link.to} onClick={() => setMobileMenuOpen(false)}>
-                        <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
-                          active ? 'bg-indigo-50 text-indigo-600'
-                                 : 'text-gray-700 hover:bg-gray-100'
-                        }`}>
+                        <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${active ? 'bg-indigo-50 text-indigo-600'
+                          : 'text-gray-700 hover:bg-gray-100'
+                          }`}>
                           <Icon className="w-4 h-4 flex-shrink-0" />
                           <span className="text-sm font-medium">{link.label}</span>
                           {active && <ChevronRight className="w-3.5 h-3.5 ml-auto opacity-60" />}
@@ -329,11 +337,10 @@ export default function Navbar() {
                         initial="hidden"
                         animate="visible"
                         onClick={() => toggleSection(menu.label)}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition-colors ${
-                          hasActiveChild
-                            ? 'text-indigo-600 hover:bg-indigo-50'
-                            : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
-                        }`}
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition-colors ${hasActiveChild
+                          ? 'text-indigo-600 hover:bg-indigo-50'
+                          : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                          }`}
                       >
                         <div className="flex items-center gap-2">
                           <Icon className="w-3.5 h-3.5" />
@@ -370,11 +377,10 @@ export default function Navbar() {
 
                                 return (
                                   <Link key={item.to} to={item.to} onClick={() => setMobileMenuOpen(false)}>
-                                    <div className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-colors ${
-                                      itemActive
-                                        ? 'bg-indigo-50 text-indigo-600'
-                                        : 'text-gray-700 hover:bg-gray-100'
-                                    }`}>
+                                    <div className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-colors ${itemActive
+                                      ? 'bg-indigo-50 text-indigo-600'
+                                      : 'text-gray-700 hover:bg-gray-100'
+                                      }`}>
                                       <div className="flex items-center gap-3">
                                         <ItemIcon className="w-4 h-4 flex-shrink-0" />
                                         <span className="text-sm font-medium">{item.label}</span>
@@ -467,11 +473,10 @@ function DesktopNavLink({ link, active }: { link: MenuItem; active: boolean }) {
   return (
     <Link to={link.to}>
       <motion.div
-        className={`relative flex items-center gap-1.5 px-2 lg:px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-          active
-            ? 'text-indigo-600 bg-indigo-50'
-            : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
-        }`}
+        className={`relative flex items-center gap-1.5 px-2 lg:px-3 py-2 rounded-lg text-sm font-medium transition-colors ${active
+          ? 'text-indigo-600 bg-indigo-50'
+          : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
+          }`}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
       >
@@ -497,11 +502,10 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
   return (
     <div ref={ref} className="relative">
       <motion.div
-        className={`flex items-center gap-1 px-2 lg:px-3 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
-          active || isOpen
-            ? 'text-indigo-600 bg-indigo-50'
-            : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
-        }`}
+        className={`flex items-center gap-1 px-2 lg:px-3 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${active || isOpen
+          ? 'text-indigo-600 bg-indigo-50'
+          : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
+          }`}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
         onClick={onToggle}
@@ -540,9 +544,8 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
                   transition={{ delay: i * 0.04 }}
                 >
                   <Link to={item.to} onClick={onClose}>
-                    <div className={`flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 transition-colors ${
-                      itemActive ? 'bg-indigo-50 text-indigo-600' : 'text-gray-700'
-                    }`}>
+                    <div className={`flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 transition-colors ${itemActive ? 'bg-indigo-50 text-indigo-600' : 'text-gray-700'
+                      }`}>
                       <div className="flex items-center gap-2.5">
                         <ItemIcon className="w-3.5 h-3.5" />
                         <span className="text-sm">{item.label}</span>

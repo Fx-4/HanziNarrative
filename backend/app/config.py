@@ -16,6 +16,16 @@ class Settings(BaseSettings):
     # Pixabay — free image API fallback (register at https://pixabay.com/api/docs/)
     PIXABAY_API_KEY: str = ""
 
+    # Frontend URL (for OAuth callbacks and reset links)
+    FRONTEND_URL: str = "http://localhost:5173"
+
+    # Google OAuth 2.0
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
+
+    # Email via Resend (optional — leave empty to print reset links to terminal)
+    RESEND_API_KEY: str = ""
+
     class Config:
         env_file = ".env"
 
