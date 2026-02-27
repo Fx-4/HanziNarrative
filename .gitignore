@@ -81,6 +81,8 @@ Thumbs.db
 google-credentials.json
 *-credentials.json
 *.json.key
+hanzinarrative-*.json
+*-service-account.json
 
 # TTS audio cache
 tts_cache/

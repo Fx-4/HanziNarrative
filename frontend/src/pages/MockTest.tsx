@@ -171,20 +171,20 @@ export default function MockTest() {
                     <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8 sm:mb-12">
                         <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                             <Target className="w-8 h-8 sm:w-10 sm:h-10 text-indigo-600" />
-                            <BlurText as="h1" className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900" wordDelay={0.08}>
+                            <BlurText as="h1" className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100" wordDelay={0.08}>
                                 HSK Mock Test
                             </BlurText>
                         </div>
-                        <p className="text-base sm:text-lg text-gray-600">Timed vocabulary test — no AI, instant results</p>
+                        <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">Timed vocabulary test — no AI, instant results</p>
                     </motion.div>
 
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="mb-6">
-                        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Select HSK Level</h3>
+                        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Select HSK Level</h3>
                             <div className="flex flex-wrap gap-2">
                                 {[1, 2, 3, 4, 5, 6].map(level => (
                                     <button key={level} onClick={() => setHskLevel(level)}
-                                        className={`rounded-2xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${hskLevel === level ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}>
+                                        className={`rounded-2xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${hskLevel === level ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
                                         HSK {level}
                                     </button>
                                 ))}
@@ -193,20 +193,20 @@ export default function MockTest() {
                     </motion.div>
 
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="mb-6">
-                        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
-                            <h4 className="font-semibold text-gray-900 mb-3">Test Format</h4>
+                        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
+                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Test Format</h4>
                             <div className="grid sm:grid-cols-3 gap-4">
                                 <div className="flex items-start gap-3">
                                     <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0"><BookOpen className="w-4 h-4 text-indigo-600" /></div>
-                                    <div><p className="font-medium text-gray-900">20 Questions</p><p className="text-sm text-gray-600">Meaning, pinyin, character</p></div>
+                                    <div><p className="font-medium text-gray-900 dark:text-gray-100">20 Questions</p><p className="text-sm text-gray-600 dark:text-gray-400">Meaning, pinyin, character</p></div>
                                 </div>
                                 <div className="flex items-start gap-3">
                                     <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0"><Clock className="w-4 h-4 text-purple-600" /></div>
-                                    <div><p className="font-medium text-gray-900">Timed</p><p className="text-sm text-gray-600">15 sec per question</p></div>
+                                    <div><p className="font-medium text-gray-900">Timed</p><p className="text-sm text-gray-600 dark:text-gray-400">15 sec per question</p></div>
                                 </div>
                                 <div className="flex items-start gap-3">
                                     <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0"><BarChart3 className="w-4 h-4 text-green-600" /></div>
-                                    <div><p className="font-medium text-gray-900">Instant Results</p><p className="text-sm text-gray-600">Grade + wrong answer review</p></div>
+                                    <div><p className="font-medium text-gray-900">Instant Results</p><p className="text-sm text-gray-600 dark:text-gray-400">Grade + wrong answer review</p></div>
                                 </div>
                             </div>
                         </div>
@@ -271,7 +271,7 @@ export default function MockTest() {
 
                     {wrongQs.length > 0 && (
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-                            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
+                            <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
                                 <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
                                     <XCircle className="w-5 h-5 text-red-500" /> Review Wrong Answers
                                 </h3>
@@ -301,9 +301,9 @@ export default function MockTest() {
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                         <Target className="w-5 h-5 text-indigo-600" />
-                        <span className="font-bold text-gray-900">Q{currentQ + 1}/{questions.length}</span>
+                        <span className="font-bold text-gray-900 dark:text-gray-100">Q{currentQ + 1}/{questions.length}</span>
                     </div>
-                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-mono font-bold ${timeLeft < 30 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'}`}>
+                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-mono font-bold ${timeLeft < 30 ? 'bg-red-100 text-red-700' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'}`}>
                         <Clock className="w-4 h-4" />
                         {formatTime(timeLeft)}
                     </div>
@@ -312,18 +312,18 @@ export default function MockTest() {
                 <div className="flex gap-1 mb-6">
                     {questions.map((_, i) => (
                         <div key={i} className={`h-1.5 flex-1 rounded-full transition-colors ${i < currentQ ? (answers[i] === questions[i].correctIndex ? 'bg-green-400' : 'bg-red-400')
-                                : i === currentQ ? 'bg-indigo-500' : 'bg-gray-200'
+                            : i === currentQ ? 'bg-indigo-500' : 'bg-gray-200'
                             }`} />
                     ))}
                 </div>
 
                 <AnimatePresence mode="wait">
                     <motion.div key={currentQ} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
-                        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-8 mb-6">
+                        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-6 sm:p-8 mb-6">
                             <div className="flex justify-between items-start mb-4">
                                 <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${q.type === 'meaning' ? 'bg-blue-100 text-blue-700'
-                                        : q.type === 'pinyin' ? 'bg-purple-100 text-purple-700'
-                                            : 'bg-emerald-100 text-emerald-700'
+                                    : q.type === 'pinyin' ? 'bg-purple-100 text-purple-700'
+                                        : 'bg-emerald-100 text-emerald-700'
                                     }`}>
                                     {q.type === 'meaning' ? 'Meaning' : q.type === 'pinyin' ? 'Pinyin' : 'Character'}
                                 </span>
@@ -331,13 +331,13 @@ export default function MockTest() {
                             </div>
 
                             <div className="text-center mb-6">
-                                <p className={`${q.type === 'character' ? 'text-xl' : 'text-5xl font-chinese'} text-gray-900 mb-2`}>{q.prompt}</p>
+                                <p className={`${q.type === 'character' ? 'text-xl' : 'text-5xl font-chinese'} text-gray-900 dark:text-gray-100 mb-2`}>{q.prompt}</p>
                                 <p className="text-sm text-gray-500">{q.promptSub}</p>
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
                                 {q.options.map((opt, i) => {
-                                    let btnClass = 'bg-gray-50 hover:bg-indigo-50 border-2 border-gray-100 hover:border-indigo-300 text-gray-800'
+                                    let btnClass = 'bg-gray-50 dark:bg-gray-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 border-2 border-gray-100 dark:border-gray-700 hover:border-indigo-300 text-gray-800 dark:text-gray-200'
                                     if (isAnswered) {
                                         if (i === q.correctIndex) btnClass = 'bg-green-50 border-2 border-green-400 text-green-800'
                                         else if (i === selectedAnswer) btnClass = 'bg-red-50 border-2 border-red-400 text-red-800'
