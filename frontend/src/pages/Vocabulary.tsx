@@ -101,7 +101,7 @@ export default function Vocabulary() {
         >
           HSK Vocabulary
         </BlurText>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           Browse, search, and study Chinese vocabulary from HSK levels 1–6.
         </p>
       </div>
@@ -117,7 +117,7 @@ export default function Vocabulary() {
             className={`flex-shrink-0 px-4 py-2 rounded-xl font-semibold text-sm transition-all cursor-pointer
               ${selectedLevel === level
                 ? `${activeBg} text-white shadow-lg`
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
           >
             HSK {level}
@@ -170,10 +170,10 @@ export default function Vocabulary() {
               }}
               onKeyDown={e => e.key === 'Enter' && handleSearch()}
               placeholder="Search character, pinyin, or English…"
-              className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-gray-200
-                bg-white text-gray-900
+              className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700
+                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
                 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
-                placeholder:text-gray-400"
+                placeholder:text-gray-400 dark:placeholder:text-gray-500"
             />
             {searchQuery && (
               <button
@@ -190,8 +190,8 @@ export default function Vocabulary() {
             onClick={() => setShowFilters(v => !v)}
             className={`px-3 py-2.5 rounded-xl border text-sm font-medium flex items-center gap-1.5 transition-colors cursor-pointer
               ${showFilters || selectedCategory
-                ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400'
+                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
           >
             <SlidersHorizontal className="w-4 h-4" />
@@ -200,16 +200,16 @@ export default function Vocabulary() {
           </button>
 
           {/* View toggle */}
-          <div className="flex rounded-xl border border-gray-200 overflow-hidden">
+          <div className="flex rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             <button
               onClick={() => setViewMode('grid')}
-              className={`px-3 py-2.5 transition-colors cursor-pointer ${viewMode === 'grid' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+              className={`px-3 py-2.5 transition-colors cursor-pointer ${viewMode === 'grid' ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
             >
               <LayoutGrid className="w-4 h-4" />
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`px-3 py-2.5 transition-colors cursor-pointer ${viewMode === 'list' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+              className={`px-3 py-2.5 transition-colors cursor-pointer ${viewMode === 'list' ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
             >
               <List className="w-4 h-4" />
             </button>
@@ -231,7 +231,7 @@ export default function Vocabulary() {
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer
                     ${!selectedCategory
                       ? 'bg-indigo-600 text-white border-indigo-600'
-                      : 'border-gray-200 text-gray-600 hover:border-indigo-400 hover:text-indigo-600'
+                      : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-indigo-400 dark:hover:border-indigo-600 hover:text-indigo-600 dark:hover:text-indigo-400'
                     }`}
                 >
                   All
@@ -243,7 +243,7 @@ export default function Vocabulary() {
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all capitalize cursor-pointer
                       ${selectedCategory === cat.value
                         ? 'bg-indigo-600 text-white border-indigo-600'
-                        : 'border-gray-200 text-gray-600 hover:border-indigo-400 hover:text-indigo-600'
+                        : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-indigo-400 dark:hover:border-indigo-600 hover:text-indigo-600 dark:hover:text-indigo-400'
                       }`}
                   >
                     {cat.label}
@@ -259,7 +259,7 @@ export default function Vocabulary() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex items-center justify-between text-sm text-gray-600"
+            className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400"
           >
             <span>
               {isSearchMode ? `Results for "${searchQuery}"` : selectedCategory ? `HSK ${selectedLevel} · ${selectedCategory}` : ''}
@@ -294,7 +294,7 @@ export default function Vocabulary() {
               className={`w-12 h-12 rounded-full border-4 border-gray-200`}
               style={{ borderTopColor: 'transparent' }}
             />
-            <p className="text-gray-600 text-sm">Loading vocabulary…</p>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">Loading vocabulary…</p>
           </motion.div>
 
         ) : words.length === 0 ? (
@@ -307,8 +307,8 @@ export default function Vocabulary() {
             className="flex flex-col items-center justify-center py-20 text-center gap-3"
           >
             <div className="text-5xl">📚</div>
-            <p className="text-lg font-semibold text-gray-700">No words found</p>
-            <p className="text-sm text-gray-600 max-w-sm">
+            <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">No words found</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 max-w-sm">
               {isSearchMode
                 ? `No results for "${searchQuery}". Try a different keyword.`
                 : `No vocabulary in${selectedCategory ? ` "${selectedCategory}"` : ''} HSK Level ${selectedLevel}.`}
@@ -355,10 +355,10 @@ export default function Vocabulary() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="rounded-xl border border-gray-100 overflow-hidden bg-white"
+            className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden bg-white dark:bg-gray-900"
           >
             {/* Column headers */}
-            <div className="grid grid-cols-12 gap-3 px-4 py-3 bg-gray-50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+            <div className="grid grid-cols-12 gap-3 px-4 py-3 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
               <div className="col-span-2 sm:col-span-1">Char</div>
               <div className="col-span-3 sm:col-span-2">Pinyin</div>
               <div className="col-span-7 sm:col-span-5">English</div>
@@ -373,13 +373,13 @@ export default function Vocabulary() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: Math.min(index * 0.015, 0.4) }}
                 className="grid grid-cols-12 gap-3 px-4 py-3.5 items-center
-                  border-b border-gray-50 last:border-0
-                  hover:bg-gray-50 transition-colors group"
+                  border-b border-gray-50 dark:border-gray-800 last:border-0
+                  hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
               >
                 {/* Character */}
                 <div className="col-span-2 sm:col-span-1">
                   <span
-                    className="text-2xl font-bold text-gray-900"
+                    className="text-2xl font-bold text-gray-900 dark:text-gray-100"
                     style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
                   >
                     {word.simplified}
@@ -397,7 +397,7 @@ export default function Vocabulary() {
                 </div>
 
                 {/* English */}
-                <div className="col-span-7 sm:col-span-5 text-sm text-gray-700 line-clamp-1">
+                <div className="col-span-7 sm:col-span-5 text-sm text-gray-700 dark:text-gray-300 line-clamp-1">
                   {word.english}
                 </div>
 

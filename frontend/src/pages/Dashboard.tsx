@@ -40,9 +40,9 @@ function SectionCard({ title, icon: Icon, children }: {
   children: React.ReactNode
 }) {
   return (
-    <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
-      <h2 className="font-extrabold text-gray-900 text-lg mb-4 flex items-center gap-2">
-        <Icon className="w-5 h-5 text-indigo-500" />
+    <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-6">
+      <h2 className="font-extrabold text-gray-900 dark:text-gray-100 text-lg mb-4 flex items-center gap-2">
+        <Icon className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
         {title}
       </h2>
       {children}
@@ -94,13 +94,13 @@ export default function Dashboard() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl shadow-xl border border-gray-100 p-10 text-center max-w-sm w-full"
+          className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-10 text-center max-w-sm w-full"
         >
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mx-auto mb-5 shadow-lg shadow-indigo-500/20">
             <LogIn className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-xl font-extrabold text-gray-900 mb-2">Login Required</h2>
-          <p className="text-sm text-gray-500 mb-6">Please login to view your learning dashboard</p>
+          <h2 className="text-xl font-extrabold text-gray-900 dark:text-gray-100 mb-2">Login Required</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Please login to view your learning dashboard</p>
           <Link
             to="/login"
             className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/20 transition-colors text-sm"
@@ -116,8 +116,8 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-        <p className="text-sm text-gray-400">Loading your dashboard…</p>
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-500 dark:text-indigo-400" />
+        <p className="text-sm text-gray-400 dark:text-gray-500">Loading your dashboard…</p>
       </div>
     )
   }
@@ -129,13 +129,13 @@ export default function Dashboard() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl shadow-xl border border-gray-100 p-10 text-center max-w-sm w-full"
+          className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-10 text-center max-w-sm w-full"
         >
-          <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-5">
-            <AlertTriangle className="w-8 h-8 text-red-500" />
+          <div className="w-16 h-16 rounded-2xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center mx-auto mb-5">
+            <AlertTriangle className="w-8 h-8 text-red-500 dark:text-red-400" />
           </div>
-          <h2 className="text-xl font-extrabold text-gray-900 mb-2">Failed to Load</h2>
-          <p className="text-sm text-gray-500 mb-6">{error}</p>
+          <h2 className="text-xl font-extrabold text-gray-900 dark:text-gray-100 mb-2">Failed to Load</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{error}</p>
           <button
             onClick={fetchDashboardData}
             className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors text-sm"
@@ -176,7 +176,7 @@ export default function Dashboard() {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden"
+        className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden"
       >
         <div className="h-2 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
         <div className="px-6 py-5 flex items-center gap-4">
@@ -184,8 +184,8 @@ export default function Dashboard() {
             <span className="text-white text-xl font-bold font-chinese">学</span>
           </div>
           <div>
-            <h1 className="text-xl font-extrabold text-gray-900">Learning Dashboard</h1>
-            <p className="text-sm text-gray-500">Track your progress and achievements</p>
+            <h1 className="text-xl font-extrabold text-gray-900 dark:text-gray-100">Learning Dashboard</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Track your progress and achievements</p>
           </div>
         </div>
       </motion.div>
@@ -233,10 +233,17 @@ export default function Dashboard() {
           <SectionCard title="Progress by HSK Level" icon={TrendingUp}>
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={hskProgressData} barSize={14}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
-                <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
+                <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#6b7280' }} />
+                <YAxis tick={{ fontSize: 11, fill: '#6b7280' }} />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: 12,
+                    border: 'none',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                    backgroundColor: '#fff'
+                  }}
+                />
                 <Legend />
                 <Bar dataKey="learning" fill="#4f46e5" name="Learning" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="mastered" fill="#10b981" name="Mastered" radius={[4, 4, 0, 0]} />
@@ -261,7 +268,14 @@ export default function Dashboard() {
                     <Cell key={`cell-${i}`} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }} />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: 12,
+                    border: 'none',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                    backgroundColor: '#fff'
+                  }}
+                />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
@@ -274,12 +288,17 @@ export default function Dashboard() {
         <SectionCard title="Accuracy by HSK Level" icon={Award}>
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={hskProgressData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-              <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
+              <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#6b7280' }} />
+              <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: '#6b7280' }} />
               <Tooltip
                 formatter={(val: number) => [`${val.toFixed(1)}%`, 'Accuracy']}
-                contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
+                contentStyle={{
+                  borderRadius: 12,
+                  border: 'none',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                  backgroundColor: '#fff'
+                }}
               />
               <Line
                 type="monotone" dataKey="accuracy" stroke="#8b5cf6"
@@ -302,11 +321,11 @@ export default function Dashboard() {
               { label: 'Mastery Rate', value: masteryRate, decimals: 1, suffix: '%', color: 'text-violet-600', bg: 'bg-violet-50' },
               { label: 'Active Levels', value: activeLevels, color: 'text-orange-600', bg: 'bg-orange-50' },
             ].map(({ label, value, decimals, suffix, color, bg }) => (
-              <div key={label} className={`${bg} rounded-2xl p-4 text-center`}>
-                <p className={`text-2xl font-extrabold ${color}`}>
+              <div key={label} className={`${bg} dark:bg-gray-800 rounded-2xl p-4 text-center`}>
+                <p className={`text-2xl font-extrabold ${color} dark:text-gray-100`}>
                   <CountUp to={value} duration={1.2} decimals={decimals} suffix={suffix} />
                 </p>
-                <p className="text-xs text-gray-500 mt-1">{label}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{label}</p>
               </div>
             ))}
           </div>

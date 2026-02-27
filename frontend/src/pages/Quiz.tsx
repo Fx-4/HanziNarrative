@@ -176,27 +176,27 @@ export default function Quiz() {
         return (
           <div
             key={idx}
-            className={`bg-white rounded-3xl shadow-xl border overflow-hidden p-4 sm:p-6 ${
+            className={`bg-white dark:bg-gray-900 rounded-3xl shadow-xl border overflow-hidden p-4 sm:p-6 ${
               showResults
                 ? isCorrect
-                  ? 'border-emerald-400'
+                  ? 'border-emerald-400 dark:border-emerald-700'
                   : isWrong
-                  ? 'border-red-400'
-                  : 'border-gray-100'
-                : 'border-gray-100'
+                  ? 'border-red-400 dark:border-red-700'
+                  : 'border-gray-100 dark:border-gray-800'
+                : 'border-gray-100 dark:border-gray-800'
             }`}
           >
             <div className="flex justify-between items-start mb-4">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-800">Question {idx + 1}</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200">Question {idx + 1}</h3>
               {showResults && (
                 isCorrect
-                  ? <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                  ? <CheckCircle className="w-5 h-5 text-emerald-500 dark:text-emerald-400 flex-shrink-0" />
                   : isWrong
-                  ? <XCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                  ? <XCircle className="w-5 h-5 text-red-500 dark:text-red-400 flex-shrink-0" />
                   : null
               )}
             </div>
-            <p className="text-gray-900 mb-4 text-base sm:text-lg">{question.question}</p>
+            <p className="text-gray-900 dark:text-gray-100 mb-4 text-base sm:text-lg">{question.question}</p>
             <div className="space-y-2">
               {question.options.map((option: string, oIdx: number) => {
                 const isSelected = userAnswer === oIdx
@@ -210,12 +210,12 @@ export default function Quiz() {
                     disabled={showResults}
                     className={`w-full text-left p-3 rounded-xl border-2 transition-all text-sm sm:text-base ${
                       isCorrectOption
-                        ? 'border-emerald-500 bg-emerald-50 text-emerald-800'
+                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-400'
                         : isWrongOption
-                        ? 'border-red-500 bg-red-50 text-red-800'
+                        ? 'border-red-500 bg-red-50 dark:bg-red-950/30 text-red-800 dark:text-red-400'
                         : isSelected
-                        ? 'border-indigo-500 bg-indigo-50 text-indigo-800'
-                        : 'border-gray-200 hover:border-indigo-300 text-gray-700'
+                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-800 dark:text-indigo-400'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-600 text-gray-700 dark:text-gray-300'
                     } disabled:cursor-default`}
                   >
                     {option}
@@ -224,8 +224,8 @@ export default function Quiz() {
               })}
             </div>
             {showResults && (
-              <div className="mt-4 p-3 bg-blue-50 rounded-xl">
-                <p className="text-sm text-gray-800">
+              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-xl">
+                <p className="text-sm text-gray-800 dark:text-gray-200">
                   <strong>Answer:</strong> {question.chinese} ({question.pinyin}) - {question.english}
                 </p>
               </div>
@@ -246,23 +246,23 @@ export default function Quiz() {
         return (
           <div
             key={idx}
-            className={`bg-white rounded-3xl shadow-xl border overflow-hidden p-4 sm:p-6 ${
+            className={`bg-white dark:bg-gray-900 rounded-3xl shadow-xl border overflow-hidden p-4 sm:p-6 ${
               showResults
                 ? isCorrect
-                  ? 'border-emerald-400'
-                  : 'border-red-400'
-                : 'border-gray-100'
+                  ? 'border-emerald-400 dark:border-emerald-700'
+                  : 'border-red-400 dark:border-red-700'
+                : 'border-gray-100 dark:border-gray-800'
             }`}
           >
             <div className="flex justify-between items-start mb-4">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-800">Question {idx + 1}</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200">Question {idx + 1}</h3>
               {showResults && (
                 isCorrect
-                  ? <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                  : <XCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                  ? <CheckCircle className="w-5 h-5 text-emerald-500 dark:text-emerald-400 flex-shrink-0" />
+                  : <XCircle className="w-5 h-5 text-red-500 dark:text-red-400 flex-shrink-0" />
               )}
             </div>
-            <p className="text-gray-700 mb-2 text-sm sm:text-base">
+            <p className="text-gray-700 dark:text-gray-300 mb-2 text-sm sm:text-base">
               <strong>Meaning:</strong> {question.english}
             </p>
             <div className="flex items-center gap-2 mb-4">
@@ -272,12 +272,12 @@ export default function Quiz() {
                 onChange={(e) => setAnswers({ ...answers, [idx]: e.target.value })}
                 disabled={showResults}
                 placeholder="Type the Chinese character"
-                className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-xl text-xl sm:text-2xl font-chinese bg-white text-gray-900 focus:outline-none focus:border-indigo-400 disabled:bg-gray-50 disabled:text-gray-500"
+                className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-700 rounded-xl text-xl sm:text-2xl font-chinese bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-indigo-400 disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:text-gray-500 dark:disabled:text-gray-500"
               />
             </div>
             {showResults && (
-              <div className="mt-4 p-3 bg-blue-50 rounded-xl">
-                <p className="text-sm text-gray-800">
+              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-xl">
+                <p className="text-sm text-gray-800 dark:text-gray-200">
                   <strong>Correct Answer:</strong> {question.blank_word} ({question.pinyin})
                 </p>
               </div>
@@ -339,7 +339,7 @@ export default function Quiz() {
       <div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <div>
-            <h3 className="font-semibold mb-4 text-sm sm:text-base text-gray-700">Chinese Characters</h3>
+            <h3 className="font-semibold mb-4 text-sm sm:text-base text-gray-700 dark:text-gray-300">Chinese Characters</h3>
             <div className="space-y-2">
               {leftItems.map((q) => {
                 const matchedEnglish = getMatchedEnglish(q.id)
@@ -351,20 +351,20 @@ export default function Quiz() {
                     className={`w-full p-3 sm:p-4 border-2 rounded-xl text-xl sm:text-2xl font-chinese transition-all text-center ${
                       matches[q.id]
                         ? isCorrect && showResults
-                          ? 'border-emerald-500 bg-emerald-50 text-emerald-800'
+                          ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-400'
                           : showResults
-                          ? 'border-red-500 bg-red-50 text-red-800'
-                          : 'border-blue-500 bg-blue-50 text-blue-800'
+                          ? 'border-red-500 bg-red-50 dark:bg-red-950/30 text-red-800 dark:text-red-400'
+                          : 'border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-800 dark:text-blue-400'
                         : selectedLeft === q.id
-                        ? 'border-indigo-500 bg-indigo-50 text-indigo-800'
-                        : 'border-gray-300 hover:border-indigo-400 text-gray-800'
+                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-800 dark:text-indigo-400'
+                        : 'border-gray-300 dark:border-gray-700 hover:border-indigo-400 dark:hover:border-indigo-600 text-gray-800 dark:text-gray-200'
                     } disabled:cursor-default`}
                     disabled={!!matches[q.id] || showResults}
                   >
                     <div className="flex flex-col items-center">
                       <span>{q.chinese}</span>
                       {matches[q.id] && (
-                        <span className="text-xs sm:text-sm mt-1 text-gray-600 font-sans">
+                        <span className="text-xs sm:text-sm mt-1 text-gray-600 dark:text-gray-400 font-sans">
                           {showResults && (isCorrect ? '✓' : '✗')} → {matchedEnglish} {showResults && !isCorrect && `(Correct: ${q.english})`}
                         </span>
                       )}
@@ -375,7 +375,7 @@ export default function Quiz() {
             </div>
           </div>
           <div>
-            <h3 className="font-semibold mb-4 text-sm sm:text-base text-gray-700">English Meanings</h3>
+            <h3 className="font-semibold mb-4 text-sm sm:text-base text-gray-700 dark:text-gray-300">English Meanings</h3>
             <div className="space-y-2">
               {rightItems.map((q) => {
                 const isMatched = Object.values(matches).includes(q.id)
@@ -389,17 +389,17 @@ export default function Quiz() {
                     onClick={() => handleRightClick(q.id)}
                     className={`w-full p-3 sm:p-4 border-2 rounded-xl text-sm sm:text-base transition-all text-center ${
                       isMatched
-                        ? 'border-blue-500 bg-blue-50 text-blue-800'
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-800 dark:text-blue-400'
                         : selectedRight === q.id
-                        ? 'border-indigo-500 bg-indigo-50 text-indigo-800'
-                        : 'border-gray-300 hover:border-indigo-400 text-gray-800'
+                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-800 dark:text-indigo-400'
+                        : 'border-gray-300 dark:border-gray-700 hover:border-indigo-400 dark:hover:border-indigo-600 text-gray-800 dark:text-gray-200'
                     } disabled:cursor-default`}
                     disabled={isMatched || showResults}
                   >
                     <div className="flex flex-col items-center">
                       <span>{q.english}</span>
                       {isMatched && matchedChinese && (
-                        <span className="text-xs sm:text-sm mt-1 text-gray-600 font-chinese">
+                        <span className="text-xs sm:text-sm mt-1 text-gray-600 dark:text-gray-400 font-chinese">
                           ← {matchedChinese}
                         </span>
                       )}
@@ -411,7 +411,7 @@ export default function Quiz() {
           </div>
         </div>
         {!showResults && (
-          <div className="mt-4 text-center text-gray-500 text-xs sm:text-sm">
+          <div className="mt-4 text-center text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
             Click a character, then click its matching meaning to pair them
           </div>
         )}
@@ -422,21 +422,21 @@ export default function Quiz() {
   return (
     <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 flex items-center gap-2 sm:gap-3 text-gray-900">
-          <Brain className="w-7 h-7 sm:w-9 sm:h-9 text-indigo-600 flex-shrink-0" />
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 flex items-center gap-2 sm:gap-3 text-gray-900 dark:text-gray-100">
+          <Brain className="w-7 h-7 sm:w-9 sm:h-9 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
           HSK Quiz Practice
         </h1>
       </motion.div>
 
       {!quiz ? (
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
           <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
           <div className="p-4 sm:p-6 md:p-8">
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900">Create Your Quiz</h2>
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900 dark:text-gray-100">Create Your Quiz</h2>
 
             <div className="space-y-5 sm:space-y-6">
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700">HSK Level</label>
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">HSK Level</label>
                 <div className="flex flex-wrap gap-2">
                   {[1, 2, 3, 4, 5, 6].map(level => (
                     <button
@@ -445,7 +445,7 @@ export default function Quiz() {
                       className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${
                         hskLevel === level
                           ? 'bg-indigo-600 text-white shadow-md'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                       }`}
                     >
                       HSK {level}
@@ -455,7 +455,7 @@ export default function Quiz() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700">Quiz Type</label>
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Quiz Type</label>
                 <div className="flex flex-wrap gap-2">
                   {quizTypes.map(type => (
                     <button
@@ -464,7 +464,7 @@ export default function Quiz() {
                       className={`flex items-center gap-1.5 px-4 py-2 rounded-2xl text-xs sm:text-sm font-semibold transition-all ${
                         quizType === type.value
                           ? 'bg-indigo-600 text-white shadow-md'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                       }`}
                     >
                       <type.Icon className="w-4 h-4 flex-shrink-0" />
@@ -475,11 +475,11 @@ export default function Quiz() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700">Number of Questions</label>
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Number of Questions</label>
                 <select
                   value={numQuestions}
                   onChange={(e) => setNumQuestions(Number(e.target.value))}
-                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl bg-white text-gray-900 text-sm sm:text-base focus:outline-none focus:border-indigo-400"
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm sm:text-base focus:outline-none focus:border-indigo-400"
                 >
                   {[5, 10, 15, 20].map(num => (
                     <option key={num} value={num}>{num} questions</option>
@@ -501,23 +501,23 @@ export default function Quiz() {
       ) : (
         <div className="space-y-5 sm:space-y-6">
           {/* Quiz info bar */}
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
             <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
             <div className="p-4 sm:p-5">
               <div className="flex flex-wrap justify-between items-center gap-3">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="bg-indigo-100 text-indigo-700 rounded-full px-3 py-1 text-sm font-semibold">
+                  <span className="bg-indigo-100 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 rounded-full px-3 py-1 text-sm font-semibold">
                     HSK {hskLevel}
                   </span>
-                  <span className="text-gray-400">•</span>
-                  <span className="text-sm sm:text-base font-semibold text-gray-700">
+                  <span className="text-gray-400 dark:text-gray-500">•</span>
+                  <span className="text-sm sm:text-base font-semibold text-gray-700 dark:text-gray-300">
                     {quizTypes.find(t => t.value === quizType)?.label}
                   </span>
                 </div>
                 {showResults && (
                   <div className="flex items-center gap-2">
                     <Trophy className="w-5 h-5 text-yellow-500" />
-                    <span className="text-lg sm:text-xl font-bold text-gray-900">
+                    <span className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
                       {score}/{quiz.questions.length}
                     </span>
                   </div>
@@ -536,16 +536,16 @@ export default function Quiz() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="bg-white rounded-3xl shadow-xl border-2 border-indigo-200 overflow-hidden relative">
+                <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border-2 border-indigo-200 dark:border-indigo-800 overflow-hidden relative">
                   <div className={`absolute inset-0 bg-gradient-to-br ${motivation.color} opacity-10`} />
                   <div className="relative z-10 text-center py-6 px-4 sm:px-8">
                     <div className="flex justify-center mb-3">
                       <motivation.Icon className={`w-12 h-12 sm:w-16 sm:h-16 ${motivation.iconClass}`} />
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                       {motivation.title}
                     </h3>
-                    <p className="text-gray-600 mb-6 text-sm sm:text-base">
+                    <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm sm:text-base">
                       {motivation.message}
                     </p>
                     <div className="flex justify-center gap-4 sm:gap-8 items-center">
