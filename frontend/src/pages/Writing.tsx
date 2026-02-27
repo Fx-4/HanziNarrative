@@ -235,7 +235,7 @@ export default function Writing() {
   const renderStatsCard = () => {
     if (statsLoading) {
       return (
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6">
+        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden p-4 sm:p-6">
           <div className="flex items-center justify-center">
             <LoadingSpinner size="sm" />
           </div>
@@ -254,10 +254,10 @@ export default function Writing() {
       >
         {/* Accent bar */}
         <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600 rounded-t-3xl" />
-        <div className="bg-white rounded-b-3xl shadow-xl border border-gray-100 border-t-0 overflow-hidden p-4 sm:p-6">
+        <div className="bg-white dark:bg-gray-900 rounded-b-3xl shadow-xl border border-gray-100 dark:border-gray-800 border-t-0 overflow-hidden p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
-            <BarChart3 className="w-5 h-5 text-indigo-600" />
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900">Your Progress (HSK {hskLevel})</h3>
+            <BarChart3 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">Your Progress (HSK {hskLevel})</h3>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
@@ -334,16 +334,16 @@ export default function Writing() {
         className="text-center mb-8 sm:mb-12"
       >
         <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-          <Pencil className="w-8 h-8 sm:w-10 sm:h-10 text-indigo-600" />
+          <Pencil className="w-8 h-8 sm:w-10 sm:h-10 text-indigo-600 dark:text-indigo-400" />
           <BlurText
             as="h1"
-            className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100"
             wordDelay={0.08}
           >
             Writing Practice
           </BlurText>
         </div>
-        <p className="text-base sm:text-lg md:text-xl text-gray-600">
+        <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400">
           Master Chinese characters through practice
         </p>
       </motion.div>
@@ -355,16 +355,16 @@ export default function Writing() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-3xl shadow-xl border border-orange-200 overflow-hidden p-4 sm:p-6">
+          <div className="bg-gradient-to-r from-orange-50 dark:from-orange-950/30 to-yellow-50 dark:to-yellow-950/30 rounded-3xl shadow-xl border border-orange-200 dark:border-orange-800 overflow-hidden p-4 sm:p-6">
             <div className="flex items-start gap-4">
-              <div className="p-3 bg-orange-100 rounded-full flex-shrink-0">
-                <AlertCircle className="w-6 h-6 text-orange-600" />
+              <div className="p-3 bg-orange-100 dark:bg-orange-900/50 rounded-full flex-shrink-0">
+                <AlertCircle className="w-6 h-6 text-orange-600 dark:text-orange-400" />
               </div>
               <div className="flex-1">
-                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                   Login to Track Your Progress
                 </h3>
-                <p className="text-sm sm:text-base text-gray-700 mb-4">
+                <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 mb-4">
                   You can practice writing without logging in, but your progress won't be saved.
                   Login or register to track your learning journey, save your scores, and see detailed statistics!
                 </p>
@@ -396,8 +396,8 @@ export default function Writing() {
         transition={{ delay: 0.1 }}
         className="mb-6 sm:mb-8"
       >
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Select HSK Level</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4">Select HSK Level</h3>
           <div className="flex flex-wrap gap-2">
             {[1, 2, 3, 4, 5, 6].map((level) => (
               <button
@@ -406,7 +406,7 @@ export default function Writing() {
                 className={`rounded-2xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${
                   hskLevel === level
                     ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                    : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                 }`}
               >
                 HSK {level}
@@ -430,7 +430,7 @@ export default function Writing() {
         >
           <TiltCard maxTilt={8} scale={1.03}>
             <SpotlightCard spotlightColor="rgba(59,130,246,0.15)">
-              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden h-full text-center p-4 sm:p-6 group">
+              <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden h-full text-center p-4 sm:p-6 group">
                 {/* Accent bar */}
                 <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600 -mx-4 sm:-mx-6 -mt-4 sm:-mt-6 mb-6" />
                 <div className="mb-6">
@@ -438,13 +438,13 @@ export default function Writing() {
                     <Pencil className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                   </div>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
                   Free Practice
                 </h3>
-                <p className="text-sm sm:text-base text-gray-600 mb-4">
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4">
                   Practice writing characters at your own pace. Learn stroke order and improve muscle memory.
                 </p>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-indigo-100 text-indigo-700">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-indigo-100 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400">
                   Recommended for beginners
                 </span>
               </div>
@@ -461,7 +461,7 @@ export default function Writing() {
         >
           <TiltCard maxTilt={8} scale={1.03}>
             <SpotlightCard spotlightColor="rgba(245,158,11,0.15)">
-              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden h-full text-center p-4 sm:p-6 group">
+              <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden h-full text-center p-4 sm:p-6 group">
                 {/* Accent bar */}
                 <div className="h-1.5 bg-gradient-to-r from-orange-400 via-amber-500 to-orange-500 -mx-4 sm:-mx-6 -mt-4 sm:-mt-6 mb-6" />
                 <div className="mb-6">
@@ -469,13 +469,13 @@ export default function Writing() {
                     <Clock className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                   </div>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
                   Timed Challenge
                 </h3>
-                <p className="text-sm sm:text-base text-gray-600 mb-4">
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4">
                   Race against the clock! Complete as many characters as you can within the time limit.
                 </p>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-orange-100 text-orange-700">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-orange-100 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400">
                   Build speed &amp; confidence
                 </span>
               </div>
@@ -492,7 +492,7 @@ export default function Writing() {
         >
           <TiltCard maxTilt={8} scale={1.03}>
             <SpotlightCard spotlightColor="rgba(139,92,246,0.15)">
-              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden h-full text-center p-4 sm:p-6 group">
+              <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden h-full text-center p-4 sm:p-6 group">
                 {/* Accent bar */}
                 <div className="h-1.5 bg-gradient-to-r from-violet-500 via-purple-500 to-violet-600 -mx-4 sm:-mx-6 -mt-4 sm:-mt-6 mb-6" />
                 <div className="mb-6">
@@ -500,13 +500,13 @@ export default function Writing() {
                     <Target className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                   </div>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
                   Mastery Mode
                 </h3>
-                <p className="text-sm sm:text-base text-gray-600 mb-4">
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4">
                   Focus on characters you haven't mastered yet. Adaptive difficulty based on your performance.
                 </p>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-violet-100 text-violet-700">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-violet-100 dark:bg-violet-950/30 text-violet-700 dark:text-violet-400">
                   Advanced practice
                 </span>
               </div>
@@ -522,14 +522,14 @@ export default function Writing() {
         transition={{ delay: 0.5 }}
         className="mt-6 sm:mt-8"
       >
-        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6">
+        <div className="bg-gradient-to-r from-indigo-50 dark:from-indigo-950/30 to-blue-50 dark:to-blue-950/30 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden p-4 sm:p-6">
           <div className="flex items-start gap-4">
-            <div className="p-3 bg-white rounded-xl flex-shrink-0 shadow-sm">
-              <BookOpen className="w-6 h-6 text-indigo-600" />
+            <div className="p-3 bg-white dark:bg-gray-800 rounded-xl flex-shrink-0 shadow-sm">
+              <BookOpen className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
             </div>
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Writing Tips</h4>
-              <ul className="text-sm text-gray-700 space-y-1">
+              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Writing Tips</h4>
+              <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
                 <li>• Follow the stroke order animation carefully</li>
                 <li>• Practice each character multiple times for better retention</li>
                 <li>• Focus on accuracy first, speed will come naturally</li>
@@ -557,14 +557,14 @@ export default function Writing() {
           <div className="mb-6">
             <button
               onClick={() => setMode(null)}
-              className="text-gray-600 hover:text-gray-900 font-medium cursor-pointer flex items-center gap-1 transition-colors"
+              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 font-medium cursor-pointer flex items-center gap-1 transition-colors"
             >
               ← Back to Modes
             </button>
           </div>
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-6 sm:p-8 text-center">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">No characters available</h2>
-            <p className="text-gray-600 mb-4">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden p-6 sm:p-8 text-center">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">No characters available</h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
               Please try selecting a different HSK level or mode
             </p>
           </div>
@@ -585,37 +585,37 @@ export default function Writing() {
           <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
             <button
               onClick={() => setMode(null)}
-              className="text-gray-600 hover:text-gray-900 font-medium cursor-pointer flex items-center gap-1 transition-colors"
+              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 font-medium cursor-pointer flex items-center gap-1 transition-colors"
             >
               ← Back to Modes
             </button>
 
             <div className="flex flex-wrap items-center gap-2 sm:gap-4">
               {mode === 'timed' && (
-                <div className="bg-white rounded-2xl shadow border border-gray-100 overflow-hidden px-3 py-2 sm:px-4">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-100 dark:border-gray-700 overflow-hidden px-3 py-2 sm:px-4">
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
-                    <span className={`text-base sm:text-lg font-bold ${timeRemaining < 60 ? 'text-red-600' : 'text-gray-900'}`}>
+                    <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 dark:text-orange-400" />
+                    <span className={`text-base sm:text-lg font-bold ${timeRemaining < 60 ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-gray-100'}`}>
                       {formatTime(timeRemaining)}
                     </span>
                   </div>
                 </div>
               )}
 
-              <div className="bg-white rounded-2xl shadow border border-gray-100 overflow-hidden px-3 py-2 sm:px-4">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-100 dark:border-gray-700 overflow-hidden px-3 py-2 sm:px-4">
                 <div className="flex items-center gap-2">
-                  <Target className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
-                  <span className="text-base sm:text-lg font-bold text-gray-900">
+                  <Target className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 dark:text-indigo-400" />
+                  <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
                     {currentCharacterIndex + 1} / {characters.length}
                   </span>
                 </div>
               </div>
 
               {sessionResults.length > 0 && (
-                <div className="bg-white rounded-2xl shadow border border-gray-100 overflow-hidden px-3 py-2 sm:px-4">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-100 dark:border-gray-700 overflow-hidden px-3 py-2 sm:px-4">
                   <div className="flex items-center gap-2">
-                    <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
-                    <span className="text-base sm:text-lg font-bold text-gray-900">
+                    <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 dark:text-amber-400" />
+                    <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
                       Avg: {Math.round(sessionResults.reduce((acc, r) => acc + r.accuracy, 0) / sessionResults.length)}%
                     </span>
                   </div>
@@ -625,7 +625,7 @@ export default function Writing() {
           </div>
 
           {/* Progress bar */}
-          <div className="w-full bg-gray-200 rounded-full h-3">
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
             <motion.div
               className="bg-gradient-to-r from-indigo-500 to-indigo-600 h-3 rounded-full"
               initial={{ width: 0 }}
@@ -660,10 +660,10 @@ export default function Writing() {
           {/* Left Column: Character Grid (for practice mode only on desktop) */}
           {mode === 'practice' && (
             <div className="hidden lg:block lg:col-span-1">
-              <div className="bg-white rounded-2xl border border-gray-200 shadow-sm sticky top-4 overflow-hidden">
-                <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200">
-                  <h3 className="text-sm font-semibold text-gray-800">Characters</h3>
-                  <span className="text-xs text-gray-400">{characters.length}</span>
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm sticky top-4 overflow-hidden">
+                <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 dark:border-gray-700">
+                  <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Characters</h3>
+                  <span className="text-xs text-gray-400 dark:text-gray-500">{characters.length}</span>
                 </div>
                 <div className="p-2.5 max-h-[calc(100vh-12rem)] overflow-y-auto scrollbar-thin">
                   <CharacterGrid
@@ -714,8 +714,8 @@ export default function Writing() {
                         />
 
                         {/* Stroke Order Reference */}
-                        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6">
-                          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Stroke Order Reference</h3>
+                        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden p-4 sm:p-6">
+                          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Stroke Order Reference</h3>
                           <div className="flex justify-center">
                             <StrokeOrderAnimation
                               character={currentCharacter.simplified}
