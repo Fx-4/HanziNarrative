@@ -4,6 +4,7 @@ Uses Google Cloud Speech-to-Text API with separate credentials.
 """
 
 import os
+import json
 import logging
 import base64
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
@@ -25,14 +26,28 @@ _stt_client = None
 def get_stt_client():
     global _stt_client
     if _stt_client is None:
-        creds_path = os.path.abspath(STT_CREDENTIALS_PATH)
-        if not os.path.exists(creds_path):
-            logger.error(f"STT credentials not found at {creds_path}")
-            raise HTTPException(status_code=503, detail="STT service not configured")
-        credentials = service_account.Credentials.from_service_account_file(
-            creds_path,
-            scopes=["https://www.googleapis.com/auth/cloud-platform"],
-        )
+        # Prefer env var (for cloud deployments like Koyeb where files are ephemeral)
+        creds_json = os.getenv("GOOGLE_STT_CREDENTIALS_JSON")
+        if creds_json:
+            try:
+                creds_info = json.loads(creds_json)
+                credentials = service_account.Credentials.from_service_account_info(
+                    creds_info,
+                    scopes=["https://www.googleapis.com/auth/cloud-platform"],
+                )
+                logger.info("STT client initialized from GOOGLE_STT_CREDENTIALS_JSON env var")
+            except Exception as e:
+                logger.error(f"Failed to parse GOOGLE_STT_CREDENTIALS_JSON: {e}")
+                raise HTTPException(status_code=503, detail="STT service misconfigured")
+        else:
+            creds_path = os.path.abspath(STT_CREDENTIALS_PATH)
+            if not os.path.exists(creds_path):
+                logger.error(f"STT credentials not found at {creds_path}")
+                raise HTTPException(status_code=503, detail="STT service not configured")
+            credentials = service_account.Credentials.from_service_account_file(
+                creds_path,
+                scopes=["https://www.googleapis.com/auth/cloud-platform"],
+            )
         _stt_client = speech.SpeechClient(credentials=credentials)
         logger.info("Google Cloud STT client initialized")
     return _stt_client

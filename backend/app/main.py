@@ -1,5 +1,6 @@
 import os
 import logging
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -17,7 +18,57 @@ except Exception as e:
 
 IS_PRODUCTION = os.getenv("ENVIRONMENT", "development") == "production"
 
+
+def _auto_seed_stories():
+    """Seed default stories if the table is empty and at least one user exists."""
+    try:
+        from .database import SessionLocal
+        from .models import Story, User as UserModel
+        from .seed_stories import STORIES
+
+        db = SessionLocal()
+        try:
+            story_count = db.query(Story).count()
+            if story_count > 0:
+                logger.info(f"Stories already seeded ({story_count} found), skipping.")
+                return
+
+            user = db.query(UserModel).first()
+            if not user:
+                logger.info("No users found yet — skipping story seed (will seed after first registration).")
+                return
+
+            added = 0
+            for s in STORIES:
+                story = Story(
+                    title=s["title"],
+                    title_english=s["title_english"],
+                    content=s["content"],
+                    content_pinyin=s["content_pinyin"],
+                    english_translation=s["english_translation"],
+                    hsk_level=s["hsk_level"],
+                    author_id=user.id,
+                    is_published=True,
+                )
+                db.add(story)
+                added += 1
+
+            db.commit()
+            logger.info(f"Auto-seeded {added} default stories successfully.")
+        finally:
+            db.close()
+    except Exception as e:
+        logger.warning(f"Auto-seed stories failed (non-fatal): {e}")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    _auto_seed_stories()
+    yield
+
+
 app = FastAPI(
+    lifespan=lifespan,
     title="HanziNarrative API",
     description="API for interactive HSK learning through stories",
     version="1.0.0",
