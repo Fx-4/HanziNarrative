@@ -1,4 +1,5 @@
 import os
+import json
 import hashlib
 import logging
 from fastapi import APIRouter, Depends, HTTPException
@@ -22,6 +23,22 @@ _tts_client = None
 def get_tts_client():
     global _tts_client
     if _tts_client is None:
+        # Option 1: credentials JSON from environment variable (production/Render)
+        creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+        if creds_json:
+            try:
+                creds_info = json.loads(creds_json)
+                credentials = service_account.Credentials.from_service_account_info(
+                    creds_info,
+                    scopes=["https://www.googleapis.com/auth/cloud-platform"],
+                )
+                _tts_client = texttospeech.TextToSpeechClient(credentials=credentials)
+                return _tts_client
+            except Exception as e:
+                logger.error(f"Failed to load TTS credentials from env var: {e}")
+                raise HTTPException(status_code=503, detail="TTS service misconfigured")
+
+        # Option 2: credentials file (local development)
         creds_path = os.path.abspath(CREDENTIALS_PATH)
         if not os.path.exists(creds_path):
             raise HTTPException(status_code=503, detail="TTS service not configured")

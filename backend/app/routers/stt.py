@@ -4,6 +4,7 @@ Uses Google Cloud Speech-to-Text API with separate credentials.
 """
 
 import os
+import json
 import logging
 import base64
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
@@ -25,6 +26,23 @@ _stt_client = None
 def get_stt_client():
     global _stt_client
     if _stt_client is None:
+        # Option 1: credentials JSON from environment variable (production/Render)
+        creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+        if creds_json:
+            try:
+                creds_info = json.loads(creds_json)
+                credentials = service_account.Credentials.from_service_account_info(
+                    creds_info,
+                    scopes=["https://www.googleapis.com/auth/cloud-platform"],
+                )
+                _stt_client = speech.SpeechClient(credentials=credentials)
+                logger.info("Google Cloud STT client initialized from env var")
+                return _stt_client
+            except Exception as e:
+                logger.error(f"Failed to load STT credentials from env var: {e}")
+                raise HTTPException(status_code=503, detail="STT service misconfigured")
+
+        # Option 2: credentials file (local development)
         creds_path = os.path.abspath(STT_CREDENTIALS_PATH)
         if not os.path.exists(creds_path):
             logger.error(f"STT credentials not found at {creds_path}")
