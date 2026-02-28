@@ -41,6 +41,28 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
 
+    # Seed default stories if this is the first user and no stories exist yet
+    try:
+        from ..seed_stories import STORIES
+        story_count = db.query(models.Story).count()
+        if story_count == 0:
+            for s in STORIES:
+                story = models.Story(
+                    title=s["title"],
+                    title_english=s["title_english"],
+                    content=s["content"],
+                    content_pinyin=s["content_pinyin"],
+                    english_translation=s["english_translation"],
+                    hsk_level=s["hsk_level"],
+                    author_id=db_user.id,
+                    is_published=True,
+                )
+                db.add(story)
+            db.commit()
+            logger.info(f"Seeded {len(STORIES)} default stories after first user registration.")
+    except Exception as e:
+        logger.warning(f"Story seed after registration failed (non-fatal): {e}")
+
     # Auto-login: create access token for the new user
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = auth.create_access_token(

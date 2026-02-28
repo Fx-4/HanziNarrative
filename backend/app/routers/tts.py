@@ -1,4 +1,5 @@
 import os
+import json
 import hashlib
 import logging
 from fastapi import APIRouter, Depends, HTTPException
@@ -22,13 +23,28 @@ _tts_client = None
 def get_tts_client():
     global _tts_client
     if _tts_client is None:
-        creds_path = os.path.abspath(CREDENTIALS_PATH)
-        if not os.path.exists(creds_path):
-            raise HTTPException(status_code=503, detail="TTS service not configured")
-        credentials = service_account.Credentials.from_service_account_file(
-            creds_path,
-            scopes=["https://www.googleapis.com/auth/cloud-platform"],
-        )
+        # Prefer env var (for cloud deployments like Koyeb where files are ephemeral)
+        creds_json = os.getenv("GOOGLE_TTS_CREDENTIALS_JSON")
+        if creds_json:
+            try:
+                creds_info = json.loads(creds_json)
+                credentials = service_account.Credentials.from_service_account_info(
+                    creds_info,
+                    scopes=["https://www.googleapis.com/auth/cloud-platform"],
+                )
+                logger.info("TTS client initialized from GOOGLE_TTS_CREDENTIALS_JSON env var")
+            except Exception as e:
+                logger.error(f"Failed to parse GOOGLE_TTS_CREDENTIALS_JSON: {e}")
+                raise HTTPException(status_code=503, detail="TTS service misconfigured")
+        else:
+            creds_path = os.path.abspath(CREDENTIALS_PATH)
+            if not os.path.exists(creds_path):
+                raise HTTPException(status_code=503, detail="TTS service not configured")
+            credentials = service_account.Credentials.from_service_account_file(
+                creds_path,
+                scopes=["https://www.googleapis.com/auth/cloud-platform"],
+            )
+            logger.info("TTS client initialized from credentials file")
         _tts_client = texttospeech.TextToSpeechClient(credentials=credentials)
     return _tts_client
 
