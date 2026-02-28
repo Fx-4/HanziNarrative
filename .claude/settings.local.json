@@ -72,7 +72,8 @@
       "Bash(python -m app.database:*)",
       "Bash(where python python3 py)",
       "Bash(node:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(sort:*)"
     ],
     "deny": [],
     "ask": []

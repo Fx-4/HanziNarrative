@@ -1,6 +1,6 @@
 """
 Adventure Stories router — AI-powered branching stories.
-Rate-limited to conserve Gemini free tier.
+Uses Claude claude-opus-4-6 when ANTHROPIC_API_KEY is set, falls back to Gemini.
 """
 
 import logging
@@ -12,7 +12,21 @@ from ..database import get_db
 from ..auth import get_current_user
 from ..models import User
 from ..rate_limit import check_rate_limit, record_ai_usage, get_usage_stats
-from ..services.gemini_service import generate_adventure_start, generate_adventure_continue
+from ..services import gemini_service, claude_story_service
+from app.config import settings
+
+def _use_claude() -> bool:
+    return bool(settings.ANTHROPIC_API_KEY)
+
+async def _adventure_start(*args, **kwargs):
+    if _use_claude():
+        return await claude_story_service.generate_adventure_start(*args, **kwargs)
+    return await gemini_service.generate_adventure_start(*args, **kwargs)
+
+async def _adventure_continue(*args, **kwargs):
+    if _use_claude():
+        return await claude_story_service.generate_adventure_continue(*args, **kwargs)
+    return await gemini_service.generate_adventure_continue(*args, **kwargs)
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +58,7 @@ async def start_adventure(
     check_rate_limit(db, current_user, 'adventure_start')
 
     try:
-        result = await generate_adventure_start(
+        result = await _adventure_start(
             hsk_level=request.hsk_level,
             topic=request.topic,
         )
@@ -92,7 +106,7 @@ async def continue_adventure(
     check_rate_limit(db, current_user, 'adventure_continue')
 
     try:
-        result = await generate_adventure_continue(
+        result = await _adventure_continue(
             story_so_far=request.story_so_far,
             chosen_option=request.chosen_option,
             hsk_level=request.hsk_level,

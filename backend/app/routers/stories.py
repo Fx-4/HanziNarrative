@@ -1,12 +1,29 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, Table, MetaData
 from pydantic import BaseModel
 from .. import models, schemas, auth
 from ..database import get_db
 from ..rate_limit import check_rate_limit, record_ai_usage, get_usage_stats
-from ..services.gemini_service import generate_story, generate_story_quiz
+from ..services import gemini_service
+from ..services import claude_story_service
+from app.config import settings
+
+# Route AI calls: use Claude when ANTHROPIC_API_KEY is set, else fall back to Gemini
+def _use_claude() -> bool:
+    return bool(settings.ANTHROPIC_API_KEY)
+
+async def _generate_story(*args, **kwargs):
+    if _use_claude():
+        return await claude_story_service.generate_story(*args, **kwargs)
+    return await gemini_service.generate_story(*args, **kwargs)
+
+async def _generate_story_quiz(*args, **kwargs):
+    if _use_claude():
+        return await claude_story_service.generate_story_quiz(*args, **kwargs)
+    return await gemini_service.generate_story_quiz(*args, **kwargs)
 
 router = APIRouter(prefix="/stories", tags=["stories"])
 
@@ -134,8 +151,8 @@ async def generate_ai_story(
     check_rate_limit(db, current_user, 'story_generation')
 
     try:
-        # Generate story using Gemini
-        story_data = await generate_story(
+        # Generate story (Claude if ANTHROPIC_API_KEY set, else Gemini fallback)
+        story_data = await _generate_story(
             hsk_level=request.hsk_level,
             topic=request.topic,
             character_names=request.character_names,
@@ -216,6 +233,41 @@ async def generate_ai_story(
         )
 
 
+@router.post("/generate-stream")
+async def generate_ai_story_stream(
+    request: StoryGenerateRequest,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Stream a Claude-generated story token-by-token via Server-Sent Events.
+    The client receives JSON chunks as they arrive, giving a live "typing" feel.
+    Requires ANTHROPIC_API_KEY to be configured (falls back to 404 otherwise).
+    """
+    if not _use_claude():
+        raise HTTPException(
+            status_code=404,
+            detail="Streaming requires ANTHROPIC_API_KEY to be configured."
+        )
+
+    # Check rate limit (same quota as non-streaming)
+    check_rate_limit(db, current_user, 'story_generation')
+
+    return StreamingResponse(
+        claude_story_service.stream_story_chunks(
+            hsk_level=request.hsk_level,
+            topic=request.topic,
+            character_names=request.character_names,
+            length=request.length,
+        ),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
+
 @router.get("/{story_id}/quiz")
 async def generate_quiz_for_story(
     story_id: int,
@@ -230,7 +282,7 @@ async def generate_quiz_for_story(
         raise HTTPException(status_code=404, detail="Story not found")
 
     try:
-        quiz_data = await generate_story_quiz(
+        quiz_data = await _generate_story_quiz(
             story_title=story.title,
             story_content=story.content,
             hsk_level=story.hsk_level
