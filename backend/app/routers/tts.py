@@ -23,8 +23,8 @@ _tts_client = None
 def get_tts_client():
     global _tts_client
     if _tts_client is None:
-        # Prefer env var (for cloud deployments like Koyeb where files are ephemeral)
-        creds_json = os.getenv("GOOGLE_TTS_CREDENTIALS_JSON")
+        # Prefer env var (for cloud deployments where files are ephemeral)
+        creds_json = os.getenv("GOOGLE_TTS_CREDENTIALS_JSON") or os.getenv("GOOGLE_CREDENTIALS_JSON")
         if creds_json:
             try:
                 creds_info = json.loads(creds_json)
@@ -32,9 +32,9 @@ def get_tts_client():
                     creds_info,
                     scopes=["https://www.googleapis.com/auth/cloud-platform"],
                 )
-                logger.info("TTS client initialized from GOOGLE_TTS_CREDENTIALS_JSON env var")
+                logger.info("TTS client initialized from env var")
             except Exception as e:
-                logger.error(f"Failed to parse GOOGLE_TTS_CREDENTIALS_JSON: {e}")
+                logger.error(f"Failed to parse TTS credentials env var: {e}")
                 raise HTTPException(status_code=503, detail="TTS service misconfigured")
         else:
             creds_path = os.path.abspath(CREDENTIALS_PATH)

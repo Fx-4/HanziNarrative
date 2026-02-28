@@ -26,8 +26,8 @@ _stt_client = None
 def get_stt_client():
     global _stt_client
     if _stt_client is None:
-        # Prefer env var (for cloud deployments like Koyeb where files are ephemeral)
-        creds_json = os.getenv("GOOGLE_STT_CREDENTIALS_JSON")
+        # Prefer env var (for cloud deployments where files are ephemeral)
+        creds_json = os.getenv("GOOGLE_STT_CREDENTIALS_JSON") or os.getenv("GOOGLE_CREDENTIALS_JSON")
         if creds_json:
             try:
                 creds_info = json.loads(creds_json)
@@ -35,9 +35,9 @@ def get_stt_client():
                     creds_info,
                     scopes=["https://www.googleapis.com/auth/cloud-platform"],
                 )
-                logger.info("STT client initialized from GOOGLE_STT_CREDENTIALS_JSON env var")
+                logger.info("STT client initialized from env var")
             except Exception as e:
-                logger.error(f"Failed to parse GOOGLE_STT_CREDENTIALS_JSON: {e}")
+                logger.error(f"Failed to parse STT credentials env var: {e}")
                 raise HTTPException(status_code=503, detail="STT service misconfigured")
         else:
             creds_path = os.path.abspath(STT_CREDENTIALS_PATH)
