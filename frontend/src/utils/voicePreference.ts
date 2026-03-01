@@ -31,6 +31,9 @@ export const VOICE_PRESETS: Record<VoiceGender, VoicePreset> = {
 }
 
 const STORAGE_KEY = 'tts_voice_gender'
+const SPEED_KEY = 'tts_speaking_rate'
+
+// ── Voice gender ──────────────────────────────────────────────────
 
 export function getVoiceGender(): VoiceGender {
   const stored = localStorage.getItem(STORAGE_KEY)
@@ -47,4 +50,29 @@ export function setVoiceGender(gender: VoiceGender): void {
 export function getVoiceName(): string {
   const gender = getVoiceGender()
   return VOICE_PRESETS[gender].googleVoice
+}
+
+// ── Speaking rate ─────────────────────────────────────────────────
+
+export type SpeedPreset = 'slow' | 'normal' | 'fast'
+
+export const SPEED_VALUES: Record<SpeedPreset, { rate: number; label: string; icon: string }> = {
+  slow:   { rate: 0.7, label: 'Slow',   icon: '🐢' },
+  normal: { rate: 1.0, label: 'Normal', icon: '▶️' },
+  fast:   { rate: 1.3, label: 'Fast',   icon: '⚡' },
+}
+
+export function getSpeakingSpeed(): SpeedPreset {
+  const stored = localStorage.getItem(SPEED_KEY)
+  if (stored === 'slow' || stored === 'normal' || stored === 'fast') return stored
+  return 'normal'
+}
+
+export function setSpeakingSpeed(speed: SpeedPreset): void {
+  localStorage.setItem(SPEED_KEY, speed)
+  window.dispatchEvent(new CustomEvent('voicePreferenceChanged', { detail: speed }))
+}
+
+export function getSpeakingRate(): number {
+  return SPEED_VALUES[getSpeakingSpeed()].rate
 }

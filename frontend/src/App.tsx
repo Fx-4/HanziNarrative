@@ -1,38 +1,63 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import Layout from './components/Layout'
-import Home from './pages/Home'
-import Stories from './pages/Stories'
-import StoryReader from './pages/StoryReader'
-import Vocabulary from './pages/Vocabulary'
-import SentenceBuilder from './pages/SentenceBuilder'
-import Dictation from './pages/Dictation'
-import Adventure from './pages/Adventure'
-import SpeakingPractice from './pages/SpeakingPractice'
-import StoryChallenge from './pages/StoryChallenge'
-import MockTest from './pages/MockTest'
-import SentenceScramble from './pages/SentenceScramble' // Now HanziExplorer
-import MatchingGame from './pages/MatchingGame'
-import ToneTrainer from './pages/ToneTrainer'
-import Practice from './pages/Practice'
-import Review from './pages/Review'
-import Writing from './pages/Writing'
-import Typing from './pages/Typing'
-import Dashboard from './pages/Dashboard'
-import Quiz from './pages/Quiz'
-import Flashcards from './pages/Flashcards'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import Profile from './pages/Profile'
-import Leaderboard from './pages/Leaderboard'
-import Onboarding from './pages/Onboarding'
-import Landing from './pages/Landing'
-import MyBookmarks from './pages/MyBookmarks'
-import Conversation from './pages/Conversation'
 import { Toaster } from './components/ui/Toast'
 import ErrorBoundary from './components/ErrorBoundary'
 import { useAuthStore } from './store/authStore'
 import { appLogger } from './utils/debugLogger'
+
+// ── Lazy-loaded pages (code-split per route) ──────────────────────
+const Home = lazy(() => import('./pages/Home'))
+const Stories = lazy(() => import('./pages/Stories'))
+const StoryReader = lazy(() => import('./pages/StoryReader'))
+const Vocabulary = lazy(() => import('./pages/Vocabulary'))
+const SentenceBuilder = lazy(() => import('./pages/SentenceBuilder'))
+const Dictation = lazy(() => import('./pages/Dictation'))
+const Adventure = lazy(() => import('./pages/Adventure'))
+const SpeakingPractice = lazy(() => import('./pages/SpeakingPractice'))
+const StoryChallenge = lazy(() => import('./pages/StoryChallenge'))
+const MockTest = lazy(() => import('./pages/MockTest'))
+const SentenceScramble = lazy(() => import('./pages/SentenceScramble'))
+const MatchingGame = lazy(() => import('./pages/MatchingGame'))
+const ToneTrainer = lazy(() => import('./pages/ToneTrainer'))
+const Practice = lazy(() => import('./pages/Practice'))
+const Review = lazy(() => import('./pages/Review'))
+const Writing = lazy(() => import('./pages/Writing'))
+const Typing = lazy(() => import('./pages/Typing'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Quiz = lazy(() => import('./pages/Quiz'))
+const Flashcards = lazy(() => import('./pages/Flashcards'))
+const Login = lazy(() => import('./pages/Login'))
+const Register = lazy(() => import('./pages/Register'))
+const Profile = lazy(() => import('./pages/Profile'))
+const Leaderboard = lazy(() => import('./pages/Leaderboard'))
+const Onboarding = lazy(() => import('./pages/Onboarding'))
+const Landing = lazy(() => import('./pages/Landing'))
+const MyBookmarks = lazy(() => import('./pages/MyBookmarks'))
+const Conversation = lazy(() => import('./pages/Conversation'))
+
+// ── Minimal loading fallback ──────────────────────────────────────
+function PageLoader() {
+  return (
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-3 border-indigo-200 dark:border-indigo-800 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin" />
+        <span className="text-sm text-gray-400 dark:text-gray-500">Loading...</span>
+      </div>
+    </div>
+  )
+}
+
+// Wrap a lazy component with Suspense + ErrorBoundary
+function LazyPage({ name, children }: { name: string; children: React.ReactNode }) {
+  return (
+    <ErrorBoundary name={name}>
+      <Suspense fallback={<PageLoader />}>
+        {children}
+      </Suspense>
+    </ErrorBoundary>
+  )
+}
 
 // Onboarding Guard - Redirect to onboarding if authenticated but not completed
 function OnboardingGuard({ children }: { children: React.ReactElement }) {
@@ -89,30 +114,16 @@ function App() {
       <Toaster />
       <Routes>
         {/* Public routes */}
-        <Route path="/landing" element={
-          <ErrorBoundary name="Landing">
-            <Landing />
-          </ErrorBoundary>
-        } />
-        <Route path="/login" element={
-          <ErrorBoundary name="Login">
-            <Login />
-          </ErrorBoundary>
-        } />
-        <Route path="/register" element={
-          <ErrorBoundary name="Register">
-            <Register />
-          </ErrorBoundary>
-        } />
+        <Route path="/landing" element={<LazyPage name="Landing"><Landing /></LazyPage>} />
+        <Route path="/login" element={<LazyPage name="Login"><Login /></LazyPage>} />
+        <Route path="/register" element={<LazyPage name="Register"><Register /></LazyPage>} />
 
         {/* Onboarding route - requires auth */}
         <Route
           path="/onboarding"
           element={
             <AuthGuard>
-              <ErrorBoundary name="Onboarding">
-                <Onboarding />
-              </ErrorBoundary>
+              <LazyPage name="Onboarding"><Onboarding /></LazyPage>
             </AuthGuard>
           }
         />
@@ -128,30 +139,30 @@ function App() {
             </AuthGuard>
           }
         >
-          <Route index element={<ErrorBoundary name="Home"><Home /></ErrorBoundary>} />
-          <Route path="practice" element={<ErrorBoundary name="Practice"><Practice /></ErrorBoundary>} />
-          <Route path="review" element={<ErrorBoundary name="Review"><Review /></ErrorBoundary>} />
-          <Route path="flashcards" element={<ErrorBoundary name="Flashcards"><Flashcards /></ErrorBoundary>} />
-          <Route path="dashboard" element={<ErrorBoundary name="Dashboard"><Dashboard /></ErrorBoundary>} />
-          <Route path="writing" element={<ErrorBoundary name="Writing"><Writing /></ErrorBoundary>} />
-          <Route path="typing" element={<ErrorBoundary name="Typing"><Typing /></ErrorBoundary>} />
-          <Route path="quiz" element={<ErrorBoundary name="Quiz"><Quiz /></ErrorBoundary>} />
-          <Route path="stories" element={<ErrorBoundary name="Stories"><Stories /></ErrorBoundary>} />
-          <Route path="stories/:id" element={<ErrorBoundary name="StoryReader"><StoryReader /></ErrorBoundary>} />
-          <Route path="bookmarks" element={<ErrorBoundary name="MyBookmarks"><MyBookmarks /></ErrorBoundary>} />
-          <Route path="vocabulary" element={<ErrorBoundary name="Vocabulary"><Vocabulary /></ErrorBoundary>} />
-          <Route path="sentence-builder" element={<ErrorBoundary name="SentenceBuilder"><SentenceBuilder /></ErrorBoundary>} />
-          <Route path="dictation" element={<ErrorBoundary name="Dictation"><Dictation /></ErrorBoundary>} />
-          <Route path="adventure" element={<ErrorBoundary name="Adventure"><Adventure /></ErrorBoundary>} />
-          <Route path="speaking" element={<ErrorBoundary name="SpeakingPractice"><SpeakingPractice /></ErrorBoundary>} />
-          <Route path="story-challenge" element={<ErrorBoundary name="StoryChallenge"><StoryChallenge /></ErrorBoundary>} />
-          <Route path="mock-test" element={<ErrorBoundary name="MockTest"><MockTest /></ErrorBoundary>} />
-          <Route path="explorer" element={<ErrorBoundary name="HanziExplorer"><SentenceScramble /></ErrorBoundary>} />
-          <Route path="matching" element={<ErrorBoundary name="MatchingGame"><MatchingGame /></ErrorBoundary>} />
-          <Route path="tones" element={<ErrorBoundary name="ToneTrainer"><ToneTrainer /></ErrorBoundary>} />
-          <Route path="profile" element={<ErrorBoundary name="Profile"><Profile /></ErrorBoundary>} />
-          <Route path="leaderboard" element={<ErrorBoundary name="Leaderboard"><Leaderboard /></ErrorBoundary>} />
-          <Route path="conversation" element={<ErrorBoundary name="Conversation"><Conversation /></ErrorBoundary>} />
+          <Route index element={<LazyPage name="Home"><Home /></LazyPage>} />
+          <Route path="practice" element={<LazyPage name="Practice"><Practice /></LazyPage>} />
+          <Route path="review" element={<LazyPage name="Review"><Review /></LazyPage>} />
+          <Route path="flashcards" element={<LazyPage name="Flashcards"><Flashcards /></LazyPage>} />
+          <Route path="dashboard" element={<LazyPage name="Dashboard"><Dashboard /></LazyPage>} />
+          <Route path="writing" element={<LazyPage name="Writing"><Writing /></LazyPage>} />
+          <Route path="typing" element={<LazyPage name="Typing"><Typing /></LazyPage>} />
+          <Route path="quiz" element={<LazyPage name="Quiz"><Quiz /></LazyPage>} />
+          <Route path="stories" element={<LazyPage name="Stories"><Stories /></LazyPage>} />
+          <Route path="stories/:id" element={<LazyPage name="StoryReader"><StoryReader /></LazyPage>} />
+          <Route path="bookmarks" element={<LazyPage name="MyBookmarks"><MyBookmarks /></LazyPage>} />
+          <Route path="vocabulary" element={<LazyPage name="Vocabulary"><Vocabulary /></LazyPage>} />
+          <Route path="sentence-builder" element={<LazyPage name="SentenceBuilder"><SentenceBuilder /></LazyPage>} />
+          <Route path="dictation" element={<LazyPage name="Dictation"><Dictation /></LazyPage>} />
+          <Route path="adventure" element={<LazyPage name="Adventure"><Adventure /></LazyPage>} />
+          <Route path="speaking" element={<LazyPage name="SpeakingPractice"><SpeakingPractice /></LazyPage>} />
+          <Route path="story-challenge" element={<LazyPage name="StoryChallenge"><StoryChallenge /></LazyPage>} />
+          <Route path="mock-test" element={<LazyPage name="MockTest"><MockTest /></LazyPage>} />
+          <Route path="explorer" element={<LazyPage name="HanziExplorer"><SentenceScramble /></LazyPage>} />
+          <Route path="matching" element={<LazyPage name="MatchingGame"><MatchingGame /></LazyPage>} />
+          <Route path="tones" element={<LazyPage name="ToneTrainer"><ToneTrainer /></LazyPage>} />
+          <Route path="profile" element={<LazyPage name="Profile"><Profile /></LazyPage>} />
+          <Route path="leaderboard" element={<LazyPage name="Leaderboard"><Leaderboard /></LazyPage>} />
+          <Route path="conversation" element={<LazyPage name="Conversation"><Conversation /></LazyPage>} />
         </Route>
       </Routes>
     </>

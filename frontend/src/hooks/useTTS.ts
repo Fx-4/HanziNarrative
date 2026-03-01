@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import { toast } from 'react-hot-toast'
 import axios from 'axios'
 import { buildCacheKey, getAudio, saveAudio } from '@/utils/ttsCache'
-import { getVoiceName } from '@/utils/voicePreference'
+import { getVoiceName, getSpeakingRate } from '@/utils/voicePreference'
 
 interface UseTTSOptions {
   language?: string
@@ -24,17 +24,22 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 export function useTTS(options: UseTTSOptions = {}): UseTTSReturn {
   const {
     language = 'cmn-CN',
-    rate = 1.0,
+    rate: explicitRate,
     voiceName: explicitVoice,
   } = options
 
-  // Use explicit voice if provided, otherwise read from localStorage preference
+  // Use explicit voice/rate if provided, otherwise read from localStorage preference
   const [preferredVoice, setPreferredVoice] = useState(() => getVoiceName())
+  const [preferredRate, setPreferredRate] = useState(() => getSpeakingRate())
   const voiceName = explicitVoice || preferredVoice
+  const rate = explicitRate ?? preferredRate
 
-  // Listen for voice preference changes
+  // Listen for voice preference changes (gender or speed)
   useEffect(() => {
-    const handler = () => setPreferredVoice(getVoiceName())
+    const handler = () => {
+      setPreferredVoice(getVoiceName())
+      setPreferredRate(getSpeakingRate())
+    }
     window.addEventListener('voicePreferenceChanged', handler)
     return () => window.removeEventListener('voicePreferenceChanged', handler)
   }, [])

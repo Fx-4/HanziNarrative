@@ -7,7 +7,7 @@
  */
 
 import axios from 'axios'
-import { getVoiceName } from '@/utils/voicePreference'
+import { getVoiceName, getSpeakingRate } from '@/utils/voicePreference'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -27,7 +27,7 @@ interface TTSPlayOptions {
 export async function playTTS(options: TTSPlayOptions): Promise<HTMLAudioElement> {
   const {
     text,
-    speakingRate = 1.0,
+    speakingRate,
     language = 'cmn-CN',
     voiceName,
   } = options
@@ -36,10 +36,11 @@ export async function playTTS(options: TTSPlayOptions): Promise<HTMLAudioElement
   if (!token) throw new Error('No auth token')
 
   const voice = voiceName || getVoiceName()
+  const rate = speakingRate ?? getSpeakingRate()
 
   const response = await axios.post(
     `${API_URL}/tts/synthesize`,
-    { text, language, voice_name: voice, speaking_rate: speakingRate },
+    { text, language, voice_name: voice, speaking_rate: rate },
     { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' }
   )
 
