@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import axios from 'axios'
+import { getVoiceName } from '@/utils/voicePreference'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -187,7 +188,7 @@ export default function StoryReader() {
         try {
           const response = await axios.post(
             `${API_URL}/tts/synthesize`,
-            { text: chunk, language: 'cmn-CN', voice_name: 'cmn-CN-Chirp3-HD-Aoede', speaking_rate: 0.85 },
+            { text: chunk, language: 'cmn-CN', voice_name: getVoiceName(), speaking_rate: 0.85 },
             { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' }
           )
           if (!isReadingRef.current) break

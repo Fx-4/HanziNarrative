@@ -4,6 +4,7 @@ import { vocabularyApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { HanziWord } from '@/types'
 import axios from 'axios'
+import { getVoiceName } from '@/utils/voicePreference'
 import {
     Music,
     CheckCircle,
@@ -133,7 +134,7 @@ export default function ToneTrainer() {
             try {
                 const response = await axios.post(
                     `${API_URL}/tts/synthesize`,
-                    { text, language: 'cmn-CN', voice_name: 'cmn-CN-Chirp3-HD-Aoede', speaking_rate: 0.75 },
+                    { text, language: 'cmn-CN', voice_name: getVoiceName(), speaking_rate: 0.75 },
                     { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' }
                 )
                 const url = URL.createObjectURL(new Blob([response.data], { type: 'audio/mpeg' }))

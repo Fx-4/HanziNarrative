@@ -12,6 +12,7 @@ import {
 import toast from 'react-hot-toast'
 import { useState, useEffect, useRef } from 'react'
 import { learningApi } from '@/services/api'
+import VoiceSelector from '@/components/VoiceSelector'
 
 type MenuItem = { to: string; label: string; icon: any; badge?: boolean }
 type DropdownMenu = { label: string; icon: any; items: MenuItem[] }
@@ -164,8 +165,9 @@ export default function Navbar() {
 
             {/* ── Desktop nav (md+ / tablet & above) ── */}
             <div className="hidden md:flex items-center gap-0.5 lg:gap-1">
-              {/* Dark mode toggle */}
+              {/* Dark mode toggle + Voice selector */}
               <DarkModeButton isDarkMode={isDarkMode} toggle={toggleDarkMode} />
+              <VoiceSelector compact />
 
               {singleNavLinks.map(link => (
                 <DesktopNavLink key={link.to} link={link} active={isActive(link.to)} />
@@ -407,8 +409,13 @@ export default function Navbar() {
                 })}
               </div>
 
-              {/* Drawer footer: profile + logout or login/register */}
+              {/* Drawer footer: voice selector + profile + logout or login/register */}
               <div className="border-t border-gray-200 dark:border-gray-800 p-3 space-y-1.5">
+                {/* Voice selector (full toggle) */}
+                <div className="px-3 py-2">
+                  <VoiceSelector />
+                </div>
+
                 {isAuthenticated ? (
                   <>
                     <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>

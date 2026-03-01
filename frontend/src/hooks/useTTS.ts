@@ -1,7 +1,8 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { toast } from 'react-hot-toast'
 import axios from 'axios'
 import { buildCacheKey, getAudio, saveAudio } from '@/utils/ttsCache'
+import { getVoiceName } from '@/utils/voicePreference'
 
 interface UseTTSOptions {
   language?: string
@@ -24,8 +25,19 @@ export function useTTS(options: UseTTSOptions = {}): UseTTSReturn {
   const {
     language = 'cmn-CN',
     rate = 1.0,
-    voiceName = 'cmn-CN-Chirp3-HD-Aoede',
+    voiceName: explicitVoice,
   } = options
+
+  // Use explicit voice if provided, otherwise read from localStorage preference
+  const [preferredVoice, setPreferredVoice] = useState(() => getVoiceName())
+  const voiceName = explicitVoice || preferredVoice
+
+  // Listen for voice preference changes
+  useEffect(() => {
+    const handler = () => setPreferredVoice(getVoiceName())
+    window.addEventListener('voicePreferenceChanged', handler)
+    return () => window.removeEventListener('voicePreferenceChanged', handler)
+  }, [])
 
   const [isSpeaking, setIsSpeaking] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -90,7 +102,7 @@ export function useTTS(options: UseTTSOptions = {}): UseTTSReturn {
       }
     }
 
-    // Layer 2: Backend (file cache → static redirect, or Google TTS on miss)
+    // Layer 2: Backend (file cache → multi-provider TTS on miss)
     try {
       const response = await axios.post(
         `${API_URL}/tts/synthesize`,
@@ -108,10 +120,10 @@ export function useTTS(options: UseTTSOptions = {}): UseTTSReturn {
 
       await playBlob(audioBlob)
     } catch (error) {
-      console.error('Google TTS failed, falling back to browser TTS:', error)
+      console.error('TTS failed, falling back to browser TTS:', error)
       setIsSpeaking(false)
       speakFallback(text)
-      toast.error('Google TTS unavailable, using browser voice')
+      toast.error('TTS unavailable, using browser voice')
     }
   }, [language, rate, voiceName, stop, speakFallback, playBlob])
 

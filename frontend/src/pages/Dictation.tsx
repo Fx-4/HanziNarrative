@@ -18,6 +18,7 @@ import {
 import { toast } from 'react-hot-toast'
 import axios from 'axios'
 import BlurText from '@/components/animations/BlurText'
+import { getVoiceName } from '@/utils/voicePreference'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -80,7 +81,7 @@ export default function Dictation() {
             try {
                 const response = await axios.post(
                     `${API_URL}/tts/synthesize`,
-                    { text: currentSentence.text, language: 'cmn-CN', voice_name: 'cmn-CN-Chirp3-HD-Aoede', speaking_rate: 0.75 },
+                    { text: currentSentence.text, language: 'cmn-CN', voice_name: getVoiceName(), speaking_rate: 0.75 },
                     { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' }
                 )
                 const url = URL.createObjectURL(new Blob([response.data], { type: 'audio/mpeg' }))

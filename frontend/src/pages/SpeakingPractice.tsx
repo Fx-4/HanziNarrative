@@ -17,6 +17,7 @@ import {
 import { toast } from 'react-hot-toast'
 import axios from 'axios'
 import BlurText from '@/components/animations/BlurText'
+import { getVoiceName } from '@/utils/voicePreference'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -76,7 +77,7 @@ export default function SpeakingPractice() {
             try {
                 const response = await axios.post(
                     `${API_URL}/tts/synthesize`,
-                    { text: currentWord.simplified, language: 'cmn-CN', speaking_rate: 0.7 },
+                    { text: currentWord.simplified, language: 'cmn-CN', voice_name: getVoiceName(), speaking_rate: 0.7 },
                     { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' }
                 )
                 const url = URL.createObjectURL(new Blob([response.data], { type: 'audio/mpeg' }))
