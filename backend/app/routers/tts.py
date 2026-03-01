@@ -1,52 +1,18 @@
 import os
-import json
 import hashlib
 import logging
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response, RedirectResponse
 from pydantic import BaseModel
-from google.cloud import texttospeech
-from google.oauth2 import service_account
 from ..auth import get_current_user
 from ..models import User
+from ..services.tts_provider import synthesize_speech, test_all_tts_providers
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/tts", tags=["tts"])
 
-CREDENTIALS_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "google-credentials.json")
 CACHE_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "tts_cache")
-
-_tts_client = None
-
-
-def get_tts_client():
-    global _tts_client
-    if _tts_client is None:
-        # Prefer env var (for cloud deployments where files are ephemeral)
-        creds_json = os.getenv("GOOGLE_TTS_CREDENTIALS_JSON") or os.getenv("GOOGLE_CREDENTIALS_JSON")
-        if creds_json:
-            try:
-                creds_info = json.loads(creds_json)
-                credentials = service_account.Credentials.from_service_account_info(
-                    creds_info,
-                    scopes=["https://www.googleapis.com/auth/cloud-platform"],
-                )
-                logger.info("TTS client initialized from env var")
-            except Exception as e:
-                logger.error(f"Failed to parse TTS credentials env var: {e}")
-                raise HTTPException(status_code=503, detail="TTS service misconfigured")
-        else:
-            creds_path = os.path.abspath(CREDENTIALS_PATH)
-            if not os.path.exists(creds_path):
-                raise HTTPException(status_code=503, detail="TTS service not configured")
-            credentials = service_account.Credentials.from_service_account_file(
-                creds_path,
-                scopes=["https://www.googleapis.com/auth/cloud-platform"],
-            )
-            logger.info("TTS client initialized from credentials file")
-        _tts_client = texttospeech.TextToSpeechClient(credentials=credentials)
-    return _tts_client
 
 
 def normalize_language(language: str, voice_name: str) -> tuple[str, str]:
@@ -73,15 +39,6 @@ class TTSRequest(BaseModel):
     speaking_rate: float = 1.0
 
 
-# Fallback voice chain: try preferred first, then standard
-FALLBACK_VOICES = [
-    ("cmn-CN", "cmn-CN-Standard-A"),
-    ("cmn-CN", "cmn-CN-Standard-B"),
-    ("cmn-CN", "cmn-CN-Standard-C"),
-    ("cmn-CN", "cmn-CN-Standard-D"),
-]
-
-
 @router.post("/synthesize")
 async def synthesize(
     request: TTSRequest,
@@ -97,7 +54,7 @@ async def synthesize(
     cache_path = get_cache_path(request.text, language, voice_name, request.speaking_rate)
     cache_filename = os.path.basename(cache_path)
 
-    # Return redirect to static file if already cached (bypasses Python I/O entirely)
+    # Return redirect to static file if already cached
     if os.path.exists(cache_path):
         logger.info(f"TTS cache hit for: {request.text[:20]}")
         return RedirectResponse(
@@ -106,67 +63,55 @@ async def synthesize(
             headers={"X-Cache": "HIT"},
         )
 
+    # Delegate to multi-provider TTS service
     try:
-        client = get_tts_client()
-
-        synthesis_input = texttospeech.SynthesisInput(text=request.text)
-        audio_config = texttospeech.AudioConfig(
-            audio_encoding=texttospeech.AudioEncoding.MP3,
-            speaking_rate=request.speaking_rate,
+        audio_content, provider_used = await synthesize_speech(
+            request.text, language, voice_name, request.speaking_rate
+        )
+    except RuntimeError as e:
+        logger.error(f"All TTS providers failed: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to synthesize speech — all providers unavailable",
         )
 
-        # Try the requested voice first; if it fails fall back through the chain
-        voices_to_try = [(language, voice_name)] + [
-            (l, v) for l, v in FALLBACK_VOICES if v != voice_name
-        ]
-
-        audio_content = None
-        used_voice = voice_name
-        last_error = None
-
-        for try_lang, try_voice in voices_to_try:
-            try:
-                voice_params = texttospeech.VoiceSelectionParams(
-                    language_code=try_lang,
-                    name=try_voice,
-                )
-                response = client.synthesize_speech(
-                    input=synthesis_input,
-                    voice=voice_params,
-                    audio_config=audio_config,
-                )
-                audio_content = response.audio_content
-                used_voice = try_voice
-                break
-            except Exception as e:
-                last_error = e
-                logger.warning(f"TTS voice '{try_voice}' failed: {e} — trying next voice")
-
-        if audio_content is None:
-            logger.error(f"All TTS voices failed. Last error: {last_error}")
-            raise HTTPException(status_code=500, detail="Failed to synthesize speech — all voices unavailable")
-
-        if used_voice != voice_name:
-            logger.info(f"TTS used fallback voice '{used_voice}' for: {request.text[:20]}")
-        else:
-            logger.info(f"TTS generated with '{used_voice}': {request.text[:20]}")
-
-        # Save to cache (store under the original requested voice key for consistency)
+    # Save to cache
+    try:
         with open(cache_path, "wb") as f:
             f.write(audio_content)
-
-        return Response(
-            content=audio_content,
-            media_type="audio/mpeg",
-            headers={
-                "Cache-Control": "public, max-age=2592000",
-                "X-Cache": "MISS",
-                "X-Voice-Used": used_voice,
-            },
-        )
-
-    except HTTPException:
-        raise
     except Exception as e:
-        logger.error(f"TTS synthesis failed unexpectedly: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail="Failed to synthesize speech")
+        logger.warning(f"Failed to write TTS cache: {e}")
+
+    logger.info(f"TTS synthesized via {provider_used}: {request.text[:20]}")
+
+    return Response(
+        content=audio_content,
+        media_type="audio/mpeg",
+        headers={
+            "Cache-Control": "public, max-age=2592000",
+            "X-Cache": "MISS",
+            "X-TTS-Provider": provider_used,
+        },
+    )
+
+
+@router.get("/audio/{filename}")
+async def serve_audio(filename: str):
+    """Serve cached audio files."""
+    filepath = os.path.join(CACHE_DIR, filename)
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="Audio not found")
+    with open(filepath, "rb") as f:
+        content = f.read()
+    return Response(
+        content=content,
+        media_type="audio/mpeg",
+        headers={"Cache-Control": "public, max-age=2592000"},
+    )
+
+
+@router.get("/providers/test")
+async def test_providers(current_user: User = Depends(get_current_user)):
+    """Test which TTS providers are available and working."""
+    results = await test_all_tts_providers()
+    return {"providers": results}
