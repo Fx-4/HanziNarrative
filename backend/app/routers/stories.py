@@ -37,6 +37,7 @@ class StoryGenerateRequest(BaseModel):
     topic: Optional[str] = None
     character_names: Optional[List[str]] = None
     length: str = "short"  # short, medium, long
+    mode: str = "quick"    # quick (free cascade) or advanced (Claude premium)
 
 
 @router.get("/", response_model=List[schemas.Story])
@@ -61,6 +62,7 @@ def get_ai_usage(
     """Get AI usage statistics for current user"""
     return {
         "story_generation": get_usage_stats(db, current_user, 'story_generation'),
+        "story_generation_simple": get_usage_stats(db, current_user, 'story_generation_simple'),
         "sentence_validation": get_usage_stats(db, current_user, 'sentence_validation'),
     }
 
@@ -144,20 +146,35 @@ async def generate_ai_story(
     db: Session = Depends(get_db)
 ):
     """
-    Generate a new story using AI and save it to database
-    Rate limited to 5 requests per day per user
+    Generate a new story using AI and save it to database.
+    Modes:
+      - quick: Uses free AI cascade (Gemini→Groq→OpenRouter). 10/day limit.
+      - advanced: Uses Claude for premium quality stories. 5/day limit.
     """
+    # Determine rate-limit feature based on mode
+    is_advanced = request.mode == "advanced"
+    rate_feature = 'story_generation' if is_advanced else 'story_generation_simple'
+
     # Check rate limit
-    check_rate_limit(db, current_user, 'story_generation')
+    check_rate_limit(db, current_user, rate_feature)
 
     try:
-        # Generate story (Claude if ANTHROPIC_API_KEY set, else Gemini fallback)
-        story_data = await _generate_story(
-            hsk_level=request.hsk_level,
-            topic=request.topic,
-            character_names=request.character_names,
-            length=request.length
-        )
+        # Route to appropriate provider
+        if is_advanced and _use_claude():
+            story_data = await claude_story_service.generate_story(
+                hsk_level=request.hsk_level,
+                topic=request.topic,
+                character_names=request.character_names,
+                length=request.length
+            )
+        else:
+            # Quick mode always uses free cascade, advanced falls back here if no Claude key
+            story_data = await gemini_service.generate_story(
+                hsk_level=request.hsk_level,
+                topic=request.topic,
+                character_names=request.character_names,
+                length=request.length
+            )
 
         # Save generated story to database
         db_story = models.Story(
@@ -178,11 +195,12 @@ async def generate_ai_story(
         record_ai_usage(
             db=db,
             user=current_user,
-            feature='story_generation',
+            feature=rate_feature,
             request_data={
                 'hsk_level': request.hsk_level,
                 'topic': request.topic,
                 'length': request.length,
+                'mode': request.mode,
                 'story_id': db_story.id
             }
         )
@@ -209,16 +227,15 @@ async def generate_ai_story(
                 db.commit()
                 db.refresh(db_story)
 
-        # Get updated usage stats after recording this generation
-        # This returns how many times user has used AI story generation today
-        # and remaining quota (limit is 5 per day per user)
-        usage_stats = get_usage_stats(db, current_user, 'story_generation')
+        # Get updated usage stats for the mode that was used
+        usage_stats = get_usage_stats(db, current_user, rate_feature)
 
         return {
             "story": story_data,
             "story_id": db_story.id,
             "word_count": len(db_story.words),
-            "usage_stats": usage_stats  # Info for frontend to show remaining quota
+            "mode": request.mode,
+            "usage_stats": usage_stats
         }
 
     except HTTPException:

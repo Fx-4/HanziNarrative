@@ -4,17 +4,18 @@ from sqlalchemy import func
 from fastapi import HTTPException, status
 from .models import AIUsage, User
 
-# Rate limit configuration — strict limits to stay within Gemini free tier
-# Assuming <100 users, ~1500 req/day free limit
+# Rate limit configuration — multi-provider cascade (Gemini → Groq → OpenRouter → Claude)
+# Combined free capacity: ~1,690 req/day. Budgeted for ~1,000 active users.
 RATE_LIMITS = {
-    'story_generation': {'daily': 2, 'hourly': 1},
-    'sentence_validation': {'daily': 5, 'hourly': 2},
-    'translation': {'daily': 8, 'hourly': 3},
-    'badge_generation': {'daily': 3, 'hourly': 1},
-    'adventure_start': {'daily': 2, 'hourly': 1},
-    'adventure_continue': {'daily': 8, 'hourly': 5},
-    'conversation_start': {'daily': 3, 'hourly': 2},
-    'conversation_reply': {'daily': 20, 'hourly': 8},
+    'story_generation': {'daily': 5, 'hourly': 2},
+    'story_generation_simple': {'daily': 10, 'hourly': 4},  # Simple mode uses free providers
+    'sentence_validation': {'daily': 10, 'hourly': 4},
+    'translation': {'daily': 15, 'hourly': 5},
+    'badge_generation': {'daily': 5, 'hourly': 2},
+    'adventure_start': {'daily': 3, 'hourly': 2},
+    'adventure_continue': {'daily': 15, 'hourly': 8},
+    'conversation_start': {'daily': 5, 'hourly': 3},
+    'conversation_reply': {'daily': 30, 'hourly': 12},
 }
 
 def check_rate_limit(db: Session, user: User, feature: str) -> bool:

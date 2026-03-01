@@ -136,6 +136,7 @@ export const storiesApi = {
     topic?: string
     character_names?: string[]
     length?: 'short' | 'medium' | 'long'
+    mode?: 'quick' | 'advanced'
   }) => {
     const response = await api.post('/stories/generate', request)
     return response.data
