@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from .routers import auth, stories, vocabulary, progress, vocabulary_sets, exercises, learning, writing, quiz, gamification, onboarding, typing, tts, dictation, adventure, stt, scramble
+from .routers import auth, stories, vocabulary, progress, vocabulary_sets, exercises, learning, writing, quiz, gamification, onboarding, typing, tts, dictation, adventure, stt, scramble, daily_challenge, conversation
 from .database import engine, Base
 
 logging.basicConfig(level=logging.INFO)
@@ -20,7 +20,7 @@ IS_PRODUCTION = os.getenv("ENVIRONMENT", "development") == "production"
 
 
 def _auto_seed_stories():
-    """Seed default stories if the table is empty and at least one user exists."""
+    """Seed default stories incrementally — skips stories that already exist by title."""
     try:
         from .database import SessionLocal
         from .models import Story, User as UserModel
@@ -28,18 +28,20 @@ def _auto_seed_stories():
 
         db = SessionLocal()
         try:
-            story_count = db.query(Story).count()
-            if story_count > 0:
-                logger.info(f"Stories already seeded ({story_count} found), skipping.")
-                return
-
             user = db.query(UserModel).first()
             if not user:
                 logger.info("No users found yet — skipping story seed (will seed after first registration).")
                 return
 
+            # Get existing story titles for duplicate check
+            existing_titles = set(
+                t[0] for t in db.query(Story.title).all()
+            )
+
             added = 0
             for s in STORIES:
+                if s["title"] in existing_titles:
+                    continue
                 story = Story(
                     title=s["title"],
                     title_english=s["title_english"],
@@ -53,8 +55,11 @@ def _auto_seed_stories():
                 db.add(story)
                 added += 1
 
-            db.commit()
-            logger.info(f"Auto-seeded {added} default stories successfully.")
+            if added > 0:
+                db.commit()
+                logger.info(f"Auto-seeded {added} new stories (total in DB: {len(existing_titles) + added}).")
+            else:
+                logger.info(f"All {len(existing_titles)} stories already present, nothing to seed.")
         finally:
             db.close()
     except Exception as e:
@@ -107,6 +112,8 @@ app.include_router(dictation.router)
 app.include_router(adventure.router)
 app.include_router(stt.router)
 app.include_router(scramble.router)
+app.include_router(daily_challenge.router)
+app.include_router(conversation.router)
 
 # Serve pre-generated TTS audio files directly (bypasses Python for cached audio)
 _tts_cache_dir = os.path.join(os.path.dirname(__file__), "..", "tts_cache")

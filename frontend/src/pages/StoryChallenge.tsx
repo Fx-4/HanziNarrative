@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { storiesApi } from '@/services/api'
+import { storiesApi, dailyChallengeApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import WritingCanvas from '@/components/writing/WritingCanvas'
 import { HanziWord, AttemptResult } from '@/types'
@@ -33,6 +34,7 @@ interface Story {
 }
 
 export default function StoryChallenge() {
+    const [searchParams] = useSearchParams()
     const [hskLevel, setHskLevel] = useState(1)
     const [stories, setStories] = useState<any[]>([])
     const [selectedStory, setSelectedStory] = useState<Story | null>(null)
@@ -43,9 +45,17 @@ export default function StoryChallenge() {
     const [writingWord, setWritingWord] = useState('')
     const [writingCharIndex, setWritingCharIndex] = useState(0)
     const [isPlaying, setIsPlaying] = useState(false)
+    const [isDailyChallenge, setIsDailyChallenge] = useState(false)
+    const [dailyChallengeCompleted, setDailyChallengeCompleted] = useState(false)
 
     useEffect(() => {
-        loadStories()
+        const dailyStoryId = searchParams.get('daily')
+        if (dailyStoryId) {
+            setIsDailyChallenge(true)
+            selectStory(parseInt(dailyStoryId, 10))
+        } else {
+            loadStories()
+        }
     }, [hskLevel])
 
     const loadStories = async () => {
@@ -238,6 +248,20 @@ export default function StoryChallenge() {
     }
 
     const allUnlocked = hiddenWords.size > 0 && hiddenWords.size === unlockedWords.size
+
+    // Complete daily challenge when all words unlocked
+    useEffect(() => {
+        if (allUnlocked && isDailyChallenge && !dailyChallengeCompleted) {
+            dailyChallengeApi.complete()
+                .then(() => {
+                    setDailyChallengeCompleted(true)
+                    toast.success('Daily Challenge completed! +30 XP')
+                })
+                .catch(() => {
+                    // Already completed or error — ignore
+                })
+        }
+    }, [allUnlocked, isDailyChallenge, dailyChallengeCompleted])
 
     // Landing screen
     if (!selectedStory) {

@@ -272,6 +272,24 @@ class UserOnboarding(Base):
     user = relationship("User", backref="onboarding")
 
 
+class DailyChallengeCompletion(Base):
+    __tablename__ = "daily_challenge_completions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    story_id = Column(Integer, ForeignKey("stories.id"), nullable=False)
+    completed_date = Column(String, nullable=False)  # 'YYYY-MM-DD'
+    xp_earned = Column(Integer, default=30)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    __table_args__ = (
+        UniqueConstraint('user_id', 'completed_date', name='unique_user_daily_challenge'),
+    )
+
+    user = relationship("User")
+    story = relationship("Story")
+
+
 class PasswordResetToken(Base):
     __tablename__ = "password_reset_tokens"
 

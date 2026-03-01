@@ -5,6 +5,7 @@ import {
   ArrowRight, Sparkles, GraduationCap, Zap,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
+import DailyChallengeCard from '@/components/DailyChallengeCard'
 
 // Feature data
 const FEATURES = [
@@ -144,6 +145,13 @@ export default function Home() {
           )}
         </motion.div>
       </section>
+
+      {/* ── Daily Challenge ──────────────────────────────────────────────── */}
+      {isAuthenticated && (
+        <section className="mb-8">
+          <DailyChallengeCard />
+        </section>
+      )}
 
       {/* ── Feature Cards ───────────────────────────────────────────────── */}
       <section className="mb-16">

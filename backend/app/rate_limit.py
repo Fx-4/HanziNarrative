@@ -13,6 +13,8 @@ RATE_LIMITS = {
     'badge_generation': {'daily': 3, 'hourly': 1},
     'adventure_start': {'daily': 2, 'hourly': 1},
     'adventure_continue': {'daily': 8, 'hourly': 5},
+    'conversation_start': {'daily': 3, 'hourly': 2},
+    'conversation_reply': {'daily': 20, 'hourly': 8},
 }
 
 def check_rate_limit(db: Session, user: User, feature: str) -> bool:

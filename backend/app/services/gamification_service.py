@@ -82,6 +82,12 @@ ACHIEVEMENTS = {
     'typing_ime_master': {'id': 'typing_ime_master', 'name': 'IME Expert', 'description': 'Select correct character on first try 30 times', 'xp': 150},
     'typing_100_words': {'id': 'typing_100_words', 'name': 'Typing Enthusiast', 'description': 'Practice typing 100 words', 'xp': 200},
     'typing_500_words': {'id': 'typing_500_words', 'name': 'Typing Pro', 'description': 'Practice typing 500 words', 'xp': 500},
+
+    # Daily Challenge Achievements
+    'daily_first': {'id': 'daily_first', 'name': 'First Challenge', 'description': 'Complete your first daily challenge', 'xp': 50},
+    'daily_7': {'id': 'daily_7', 'name': 'Weekly Challenger', 'description': 'Complete 7 daily challenges', 'xp': 150},
+    'daily_30': {'id': 'daily_30', 'name': 'Monthly Challenger', 'description': 'Complete 30 daily challenges', 'xp': 400},
+    'daily_100': {'id': 'daily_100', 'name': 'Challenge Master', 'description': 'Complete 100 daily challenges', 'xp': 1000},
 }
 
 

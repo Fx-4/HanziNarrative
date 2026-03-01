@@ -27,6 +27,8 @@ import Profile from './pages/Profile'
 import Leaderboard from './pages/Leaderboard'
 import Onboarding from './pages/Onboarding'
 import Landing from './pages/Landing'
+import MyBookmarks from './pages/MyBookmarks'
+import Conversation from './pages/Conversation'
 import { Toaster } from './components/ui/Toast'
 import ErrorBoundary from './components/ErrorBoundary'
 import { useAuthStore } from './store/authStore'
@@ -136,6 +138,7 @@ function App() {
           <Route path="quiz" element={<ErrorBoundary name="Quiz"><Quiz /></ErrorBoundary>} />
           <Route path="stories" element={<ErrorBoundary name="Stories"><Stories /></ErrorBoundary>} />
           <Route path="stories/:id" element={<ErrorBoundary name="StoryReader"><StoryReader /></ErrorBoundary>} />
+          <Route path="bookmarks" element={<ErrorBoundary name="MyBookmarks"><MyBookmarks /></ErrorBoundary>} />
           <Route path="vocabulary" element={<ErrorBoundary name="Vocabulary"><Vocabulary /></ErrorBoundary>} />
           <Route path="sentence-builder" element={<ErrorBoundary name="SentenceBuilder"><SentenceBuilder /></ErrorBoundary>} />
           <Route path="dictation" element={<ErrorBoundary name="Dictation"><Dictation /></ErrorBoundary>} />
@@ -148,6 +151,7 @@ function App() {
           <Route path="tones" element={<ErrorBoundary name="ToneTrainer"><ToneTrainer /></ErrorBoundary>} />
           <Route path="profile" element={<ErrorBoundary name="Profile"><Profile /></ErrorBoundary>} />
           <Route path="leaderboard" element={<ErrorBoundary name="Leaderboard"><Leaderboard /></ErrorBoundary>} />
+          <Route path="conversation" element={<ErrorBoundary name="Conversation"><Conversation /></ErrorBoundary>} />
         </Route>
       </Routes>
     </>

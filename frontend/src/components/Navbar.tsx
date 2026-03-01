@@ -7,7 +7,7 @@ import {
   BookOpen, BookMarked, User, LogOut, PenTool, GraduationCap, Brain,
   BarChart3, Type, ChevronDown, Library, Menu, X, Moon, Sun,
   Layers, Keyboard, Trophy, ChevronRight, Headphones, Map, Mic, Lock,
-  Target, Grid3X3, Music
+  Target, Grid3X3, Music, Heart, MessageCircle
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useState, useEffect, useRef } from 'react'
@@ -115,6 +115,7 @@ export default function Navbar() {
       label: 'Library', icon: Library,
       items: [
         { to: '/stories', label: 'Stories', icon: BookOpen },
+        { to: '/bookmarks', label: 'Bookmarks', icon: Heart },
         { to: '/vocabulary', label: 'Vocabulary', icon: BookMarked },
         { to: '/sentence-builder', label: 'Builder', icon: Type },
         { to: '/dictation', label: 'Dictation', icon: Headphones },
@@ -122,6 +123,7 @@ export default function Navbar() {
         { to: '/story-challenge', label: 'Unlock', icon: Lock },
         { to: '/explorer', label: 'Explorer', icon: Target },
         { to: '/matching', label: 'Match', icon: Grid3X3 },
+        { to: '/conversation', label: 'AI Chat', icon: MessageCircle },
       ]
     }
   ]

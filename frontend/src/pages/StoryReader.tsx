@@ -23,7 +23,8 @@ import {
   BookMarked,
   Lightbulb,
   Type,
-  Trash2
+  Trash2,
+  Heart
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
@@ -54,6 +55,8 @@ export default function StoryReader() {
   const [selectedWord, setSelectedWord] = useState<any | null>(null)
   const [wordPosition, setWordPosition] = useState<{ x: number; y: number } | null>(null)
   const [showWordDetails, setShowWordDetails] = useState(false)
+  const [isBookmarked, setIsBookmarked] = useState(false)
+  const [bookmarkLoading, setBookmarkLoading] = useState(false)
 
   // Refs for story audio playback (Google TTS, sequential)
   const isReadingRef = useRef(false)
@@ -70,11 +73,36 @@ export default function StoryReader() {
     try {
       const storyData = await storiesApi.getById(storyId)
       setStory(storyData)
+      // Check bookmark status
+      try {
+        const bm = await storiesApi.isBookmarked(storyId)
+        setIsBookmarked(bm.is_bookmarked)
+      } catch { /* ignore - user might not be logged in */ }
     } catch (error) {
       console.error('Failed to load story:', error)
       toast.error('Failed to load story')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const toggleBookmark = async () => {
+    if (!story || bookmarkLoading) return
+    setBookmarkLoading(true)
+    try {
+      if (isBookmarked) {
+        await storiesApi.unbookmarkStory(story.id)
+        setIsBookmarked(false)
+        toast.success('Bookmark removed')
+      } else {
+        await storiesApi.bookmarkStory(story.id)
+        setIsBookmarked(true)
+        toast.success('Story bookmarked!')
+      }
+    } catch {
+      toast.error('Failed to update bookmark')
+    } finally {
+      setBookmarkLoading(false)
     }
   }
 
@@ -825,6 +853,19 @@ export default function StoryReader() {
             >
               <HelpCircle className="w-4 h-4 shrink-0" />
               <span>{loadingQuiz ? 'Loading Quiz...' : showQuiz ? 'Hide Quiz' : 'Take Quiz'}</span>
+            </button>
+
+            <button
+              onClick={toggleBookmark}
+              disabled={bookmarkLoading}
+              className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm disabled:opacity-60 disabled:cursor-not-allowed ${
+                isBookmarked
+                  ? 'bg-rose-500 hover:bg-rose-600 text-white'
+                  : 'bg-white hover:bg-rose-50 text-gray-700 hover:text-rose-600 border border-gray-200'
+              }`}
+            >
+              <Heart className={`w-4 h-4 shrink-0 ${isBookmarked ? 'fill-current' : ''}`} />
+              <span>{isBookmarked ? 'Saved' : 'Save'}</span>
             </button>
           </div>
         </div>

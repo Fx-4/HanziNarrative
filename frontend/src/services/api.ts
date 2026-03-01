@@ -517,4 +517,47 @@ export const sttApi = {
   },
 }
 
+// Daily Challenge API — zero AI cost
+export const dailyChallengeApi = {
+  getToday: async () => {
+    const response = await api.get('/daily-challenge/today')
+    return response.data
+  },
+
+  complete: async () => {
+    const response = await api.post('/daily-challenge/complete')
+    return response.data
+  },
+
+  getStats: async () => {
+    const response = await api.get('/daily-challenge/stats')
+    return response.data
+  },
+}
+
+// AI Conversation API — Gemini free tier
+export const conversationApi = {
+  getTopics: async () => {
+    const response = await api.get('/conversation/topics')
+    return response.data
+  },
+
+  start: async (hskLevel: number, topic: string) => {
+    const response = await api.post('/conversation/start', {
+      hsk_level: hskLevel,
+      topic,
+    })
+    return response.data
+  },
+
+  reply: async (message: string, hskLevel: number, history: { role: string; content: string }[]) => {
+    const response = await api.post('/conversation/reply', {
+      message,
+      hsk_level: hskLevel,
+      history,
+    })
+    return response.data
+  },
+}
+
 export default api
