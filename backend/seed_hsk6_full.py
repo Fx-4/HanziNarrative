@@ -755,4 +755,185 @@ hsk6_words = [
     {"simplified": "大张旗鼓", "traditional": "大張旗鼓", "pinyin": "dà zhāng qí gǔ", "english": "with great fanfare", "category": "idiom"},
     {"simplified": "自相矛盾", "traditional": "自相矛盾", "pinyin": "zì xiāng máo dùn", "english": "self-contradictory", "category": "idiom"},
     {"simplified": "心旷神怡", "traditional": "心曠神怡", "pinyin": "xīn kuàng shén yí", "english": "carefree and happy", "category": "idiom"},
+    {"simplified": "得天独厚", "traditional": "得天獨厚", "pinyin": "dé tiān dú hòu", "english": "uniquely blessed by nature", "category": "idiom"},
+    {"simplified": "翻天覆地", "traditional": "翻天覆地", "pinyin": "fān tiān fù dì", "english": "earth-shattering", "category": "idiom"},
+    {"simplified": "丰功伟绩", "traditional": "豐功偉績", "pinyin": "fēng gōng wěi jì", "english": "great achievements", "category": "idiom"},
+    {"simplified": "高瞻远瞩", "traditional": "高瞻遠矚", "pinyin": "gāo zhān yuǎn zhǔ", "english": "to be far-sighted", "category": "idiom"},
+    {"simplified": "功亏一篑", "traditional": "功虧一簣", "pinyin": "gōng kuī yī kuì", "english": "to fall at the last hurdle", "category": "idiom"},
+    {"simplified": "毫不犹豫", "traditional": "毫不猶豫", "pinyin": "háo bù yóu yù", "english": "without any hesitation", "category": "idiom"},
+    {"simplified": "居安思危", "traditional": "居安思危", "pinyin": "jū ān sī wēi", "english": "to think of danger in times of peace", "category": "idiom"},
+    {"simplified": "举世闻名", "traditional": "舉世聞名", "pinyin": "jǔ shì wén míng", "english": "world-famous", "category": "idiom"},
+    {"simplified": "举足轻重", "traditional": "舉足輕重", "pinyin": "jǔ zú qīng zhòng", "english": "to play a decisive role", "category": "idiom"},
+    {"simplified": "刻不容缓", "traditional": "刻不容緩", "pinyin": "kè bù róng huǎn", "english": "to brook no delay", "category": "idiom"},
+    {"simplified": "苦尽甘来", "traditional": "苦盡甘來", "pinyin": "kǔ jìn gān lái", "english": "after hardship comes happiness", "category": "idiom"},
+    {"simplified": "名副其实", "traditional": "名副其實", "pinyin": "míng fù qí shí", "english": "worthy of the name", "category": "idiom"},
+    {"simplified": "名列前茅", "traditional": "名列前茅", "pinyin": "míng liè qián máo", "english": "to rank among the best", "category": "idiom"},
+    {"simplified": "前所未有", "traditional": "前所未有", "pinyin": "qián suǒ wèi yǒu", "english": "unprecedented", "category": "idiom"},
+    {"simplified": "任重道远", "traditional": "任重道遠", "pinyin": "rèn zhòng dào yuǎn", "english": "heavy responsibility and long road", "category": "idiom"},
+    {"simplified": "日积月累", "traditional": "日積月累", "pinyin": "rì jī yuè lěi", "english": "accumulated over time", "category": "idiom"},
+    {"simplified": "深思熟虑", "traditional": "深思熟慮", "pinyin": "shēn sī shú lǜ", "english": "to deliberate carefully", "category": "idiom"},
+    {"simplified": "水到渠成", "traditional": "水到渠成", "pinyin": "shuǐ dào qú chéng", "english": "when conditions are right, success follows naturally", "category": "idiom"},
+    {"simplified": "脱颖而出", "traditional": "脫穎而出", "pinyin": "tuō yǐng ér chū", "english": "to stand out", "category": "idiom"},
+    {"simplified": "微不足道", "traditional": "微不足道", "pinyin": "wēi bù zú dào", "english": "insignificant", "category": "idiom"},
+    {"simplified": "无动于衷", "traditional": "無動於衷", "pinyin": "wú dòng yú zhōng", "english": "indifferent; unmoved", "category": "idiom"},
+    {"simplified": "无微不至", "traditional": "無微不至", "pinyin": "wú wēi bù zhì", "english": "meticulously attentive", "category": "idiom"},
+    {"simplified": "喜出望外", "traditional": "喜出望外", "pinyin": "xǐ chū wàng wài", "english": "pleasantly surprised", "category": "idiom"},
+    {"simplified": "栩栩如生", "traditional": "栩栩如生", "pinyin": "xǔ xǔ rú shēng", "english": "lifelike; vivid", "category": "idiom"},
+    {"simplified": "一帆风顺", "traditional": "一帆風順", "pinyin": "yī fān fēng shùn", "english": "smooth sailing", "category": "idiom"},
+    {"simplified": "一举两得", "traditional": "一舉兩得", "pinyin": "yī jǔ liǎng dé", "english": "to kill two birds with one stone", "category": "idiom"},
+    {"simplified": "一目了然", "traditional": "一目了然", "pinyin": "yī mù liǎo rán", "english": "clear at a glance", "category": "idiom"},
+    {"simplified": "一丝不苟", "traditional": "一絲不苟", "pinyin": "yī sī bù gǒu", "english": "meticulous; scrupulous", "category": "idiom"},
+    {"simplified": "异口同声", "traditional": "異口同聲", "pinyin": "yì kǒu tóng shēng", "english": "to speak in one voice", "category": "idiom"},
+    {"simplified": "源远流长", "traditional": "源遠流長", "pinyin": "yuán yuǎn liú cháng", "english": "long-standing; time-honored", "category": "idiom"},
 
+    # Additional HSK 6 verbs
+    {"simplified": "颁布", "traditional": "頒布", "pinyin": "bān bù", "english": "to promulgate; to issue", "category": "verb"},
+    {"simplified": "颁发", "traditional": "頒發", "pinyin": "bān fā", "english": "to award; to confer", "category": "verb"},
+    {"simplified": "阐述", "traditional": "闡述", "pinyin": "chǎn shù", "english": "to elaborate; to expound", "category": "verb"},
+    {"simplified": "倡导", "traditional": "倡導", "pinyin": "chàng dǎo", "english": "to advocate; to champion", "category": "verb"},
+    {"simplified": "惩罚", "traditional": "懲罰", "pinyin": "chéng fá", "english": "to punish", "category": "verb"},
+    {"simplified": "筹备", "traditional": "籌備", "pinyin": "chóu bèi", "english": "to prepare; to plan", "category": "verb"},
+    {"simplified": "触犯", "traditional": "觸犯", "pinyin": "chù fàn", "english": "to violate; to offend", "category": "verb"},
+    {"simplified": "催促", "traditional": "催促", "pinyin": "cuī cù", "english": "to urge; to press", "category": "verb"},
+    {"simplified": "答复", "traditional": "答覆", "pinyin": "dá fù", "english": "to reply; to respond", "category": "verb"},
+    {"simplified": "抵御", "traditional": "抵禦", "pinyin": "dǐ yù", "english": "to resist; to defend against", "category": "verb"},
+    {"simplified": "颠覆", "traditional": "顛覆", "pinyin": "diān fù", "english": "to overthrow; to subvert", "category": "verb"},
+    {"simplified": "调解", "traditional": "調解", "pinyin": "tiáo jiě", "english": "to mediate", "category": "verb"},
+    {"simplified": "杜绝", "traditional": "杜絕", "pinyin": "dù jué", "english": "to put an end to", "category": "verb"},
+    {"simplified": "遏制", "traditional": "遏制", "pinyin": "è zhì", "english": "to contain; to restrain", "category": "verb"},
+    {"simplified": "奉献", "traditional": "奉獻", "pinyin": "fèng xiàn", "english": "to dedicate; to contribute", "category": "verb"},
+    {"simplified": "赋予", "traditional": "賦予", "pinyin": "fù yǔ", "english": "to endow; to bestow", "category": "verb"},
+    {"simplified": "干预", "traditional": "干預", "pinyin": "gān yù", "english": "to intervene", "category": "verb"},
+    {"simplified": "贯彻", "traditional": "貫徹", "pinyin": "guàn chè", "english": "to implement thoroughly", "category": "verb"},
+    {"simplified": "呼吁", "traditional": "呼籲", "pinyin": "hū yù", "english": "to appeal; to call on", "category": "verb"},
+    {"simplified": "缓解", "traditional": "緩解", "pinyin": "huǎn jiě", "english": "to alleviate; to ease", "category": "verb"},
+    {"simplified": "毁灭", "traditional": "毀滅", "pinyin": "huǐ miè", "english": "to destroy; to annihilate", "category": "verb"},
+    {"simplified": "兼顾", "traditional": "兼顧", "pinyin": "jiān gù", "english": "to give consideration to both", "category": "verb"},
+    {"simplified": "鉴别", "traditional": "鑑別", "pinyin": "jiàn bié", "english": "to distinguish; to identify", "category": "verb"},
+    {"simplified": "揭露", "traditional": "揭露", "pinyin": "jiē lù", "english": "to expose; to reveal", "category": "verb"},
+    {"simplified": "纠正", "traditional": "糾正", "pinyin": "jiū zhèng", "english": "to correct; to rectify", "category": "verb"},
+    {"simplified": "抗衡", "traditional": "抗衡", "pinyin": "kàng héng", "english": "to contend; to compete with", "category": "verb"},
+    {"simplified": "开辟", "traditional": "開闢", "pinyin": "kāi pì", "english": "to open up; to pioneer", "category": "verb"},
+    {"simplified": "滥用", "traditional": "濫用", "pinyin": "làn yòng", "english": "to abuse; to misuse", "category": "verb"},
+    {"simplified": "强制", "traditional": "強制", "pinyin": "qiáng zhì", "english": "to force; to compel", "category": "verb"},
+    {"simplified": "驱逐", "traditional": "驅逐", "pinyin": "qū zhú", "english": "to expel; to deport", "category": "verb"},
+    {"simplified": "让步", "traditional": "讓步", "pinyin": "ràng bù", "english": "to concede; to yield", "category": "verb"},
+    {"simplified": "审查", "traditional": "審查", "pinyin": "shěn chá", "english": "to examine; to review", "category": "verb"},
+    {"simplified": "渗透", "traditional": "滲透", "pinyin": "shèn tòu", "english": "to permeate; to infiltrate", "category": "verb"},
+    {"simplified": "授予", "traditional": "授予", "pinyin": "shòu yǔ", "english": "to confer; to grant", "category": "verb"},
+    {"simplified": "束缚", "traditional": "束縛", "pinyin": "shù fù", "english": "to bind; to restrict", "category": "verb"},
+    {"simplified": "探讨", "traditional": "探討", "pinyin": "tàn tǎo", "english": "to explore; to investigate", "category": "verb"},
+    {"simplified": "妥协", "traditional": "妥協", "pinyin": "tuǒ xié", "english": "to compromise", "category": "verb"},
+    {"simplified": "违背", "traditional": "違背", "pinyin": "wéi bèi", "english": "to violate; to go against", "category": "verb"},
+    {"simplified": "瓦解", "traditional": "瓦解", "pinyin": "wǎ jiě", "english": "to disintegrate; to collapse", "category": "verb"},
+    {"simplified": "挽回", "traditional": "挽回", "pinyin": "wǎn huí", "english": "to retrieve; to salvage", "category": "verb"},
+    {"simplified": "削弱", "traditional": "削弱", "pinyin": "xuē ruò", "english": "to weaken; to undermine", "category": "verb"},
+    {"simplified": "宣誓", "traditional": "宣誓", "pinyin": "xuān shì", "english": "to take an oath", "category": "verb"},
+    {"simplified": "涌现", "traditional": "湧現", "pinyin": "yǒng xiàn", "english": "to emerge in large numbers", "category": "verb"},
+    {"simplified": "制裁", "traditional": "制裁", "pinyin": "zhì cái", "english": "to sanction", "category": "verb"},
+    {"simplified": "追究", "traditional": "追究", "pinyin": "zhuī jiū", "english": "to investigate; to hold accountable", "category": "verb"},
+    {"simplified": "遵循", "traditional": "遵循", "pinyin": "zūn xún", "english": "to follow; to abide by", "category": "verb"},
+
+    # Additional HSK 6 adjectives
+    {"simplified": "昂贵", "traditional": "昂貴", "pinyin": "áng guì", "english": "expensive; costly", "category": "adjective"},
+    {"simplified": "悲惨", "traditional": "悲慘", "pinyin": "bēi cǎn", "english": "tragic; miserable", "category": "adjective"},
+    {"simplified": "纯粹", "traditional": "純粹", "pinyin": "chún cuì", "english": "pure; sheer", "category": "adjective"},
+    {"simplified": "恶劣", "traditional": "惡劣", "pinyin": "è liè", "english": "terrible; vile", "category": "adjective"},
+    {"simplified": "繁琐", "traditional": "繁瑣", "pinyin": "fán suǒ", "english": "tedious; cumbersome", "category": "adjective"},
+    {"simplified": "高尚", "traditional": "高尚", "pinyin": "gāo shàng", "english": "noble; lofty", "category": "adjective"},
+    {"simplified": "荒谬", "traditional": "荒謬", "pinyin": "huāng miù", "english": "absurd; ridiculous", "category": "adjective"},
+    {"simplified": "简陋", "traditional": "簡陋", "pinyin": "jiǎn lòu", "english": "crude; shabby", "category": "adjective"},
+    {"simplified": "精密", "traditional": "精密", "pinyin": "jīng mì", "english": "precise; meticulous", "category": "adjective"},
+    {"simplified": "冷漠", "traditional": "冷漠", "pinyin": "lěng mò", "english": "indifferent; cold", "category": "adjective"},
+    {"simplified": "朴素", "traditional": "樸素", "pinyin": "pǔ sù", "english": "simple; plain", "category": "adjective"},
+    {"simplified": "坦率", "traditional": "坦率", "pinyin": "tǎn shuài", "english": "frank; candid", "category": "adjective"},
+    {"simplified": "虚伪", "traditional": "虛偽", "pinyin": "xū wěi", "english": "hypocritical; false", "category": "adjective"},
+    {"simplified": "庄严", "traditional": "莊嚴", "pinyin": "zhuāng yán", "english": "solemn; dignified", "category": "adjective"},
+    {"simplified": "卓越", "traditional": "卓越", "pinyin": "zhuó yuè", "english": "outstanding; remarkable", "category": "adjective"},
+    {"simplified": "严厉", "traditional": "嚴厲", "pinyin": "yán lì", "english": "stern; severe", "category": "adjective"},
+    {"simplified": "严密", "traditional": "嚴密", "pinyin": "yán mì", "english": "tight; rigorous", "category": "adjective"},
+    {"simplified": "隆重", "traditional": "隆重", "pinyin": "lóng zhòng", "english": "grand; solemn", "category": "adjective"},
+    {"simplified": "深奥", "traditional": "深奧", "pinyin": "shēn ào", "english": "abstruse; profound", "category": "adjective"},
+    {"simplified": "微妙", "traditional": "微妙", "pinyin": "wēi miào", "english": "subtle; delicate", "category": "adjective"},
+
+    # Additional HSK 6 adverbs/connectors
+    {"simplified": "诚然", "traditional": "誠然", "pinyin": "chéng rán", "english": "indeed; admittedly", "category": "adverb"},
+    {"simplified": "格外", "traditional": "格外", "pinyin": "gé wài", "english": "especially; all the more", "category": "adverb"},
+    {"simplified": "竭力", "traditional": "竭力", "pinyin": "jié lì", "english": "to do one's utmost", "category": "adverb"},
+    {"simplified": "陆续", "traditional": "陸續", "pinyin": "lù xù", "english": "one after another", "category": "adverb"},
+    {"simplified": "勉强", "traditional": "勉強", "pinyin": "miǎn qiǎng", "english": "reluctantly; barely", "category": "adverb"},
+    {"simplified": "势必", "traditional": "勢必", "pinyin": "shì bì", "english": "inevitably; is bound to", "category": "adverb"},
+    {"simplified": "索性", "traditional": "索性", "pinyin": "suǒ xìng", "english": "might as well; simply", "category": "adverb"},
+    {"simplified": "至今", "traditional": "至今", "pinyin": "zhì jīn", "english": "until now; so far", "category": "adverb"},
+    {"simplified": "自始至终", "traditional": "自始至終", "pinyin": "zì shǐ zhì zhōng", "english": "from start to finish", "category": "adverb"},
+
+    # Additional nouns
+    {"simplified": "宪法", "traditional": "憲法", "pinyin": "xiàn fǎ", "english": "constitution", "category": "noun"},
+    {"simplified": "法规", "traditional": "法規", "pinyin": "fǎ guī", "english": "laws and regulations", "category": "noun"},
+    {"simplified": "司法", "traditional": "司法", "pinyin": "sī fǎ", "english": "justice; judiciary", "category": "noun"},
+    {"simplified": "股票", "traditional": "股票", "pinyin": "gǔ piào", "english": "stock; share", "category": "noun"},
+    {"simplified": "债券", "traditional": "債券", "pinyin": "zhài quàn", "english": "bond", "category": "noun"},
+    {"simplified": "汇率", "traditional": "匯率", "pinyin": "huì lǜ", "english": "exchange rate", "category": "noun"},
+    {"simplified": "预算", "traditional": "預算", "pinyin": "yù suàn", "english": "budget", "category": "noun"},
+    {"simplified": "税收", "traditional": "稅收", "pinyin": "shuì shōu", "english": "tax revenue", "category": "noun"},
+    {"simplified": "货币", "traditional": "貨幣", "pinyin": "huò bì", "english": "currency", "category": "noun"},
+    {"simplified": "细胞", "traditional": "細胞", "pinyin": "xì bāo", "english": "cell", "category": "noun"},
+    {"simplified": "基因", "traditional": "基因", "pinyin": "jī yīn", "english": "gene", "category": "noun"},
+    {"simplified": "分子", "traditional": "分子", "pinyin": "fēn zǐ", "english": "molecule", "category": "noun"},
+    {"simplified": "原子", "traditional": "原子", "pinyin": "yuán zǐ", "english": "atom", "category": "noun"},
+    {"simplified": "疫苗", "traditional": "疫苗", "pinyin": "yì miáo", "english": "vaccine", "category": "noun"},
+    {"simplified": "器官", "traditional": "器官", "pinyin": "qì guān", "english": "organ", "category": "noun"},
+    {"simplified": "哲学", "traditional": "哲學", "pinyin": "zhé xué", "english": "philosophy", "category": "noun"},
+    {"simplified": "伦理", "traditional": "倫理", "pinyin": "lún lǐ", "english": "ethics", "category": "noun"},
+    {"simplified": "信仰", "traditional": "信仰", "pinyin": "xìn yǎng", "english": "faith; belief", "category": "noun"},
+    {"simplified": "文明", "traditional": "文明", "pinyin": "wén míng", "english": "civilization", "category": "noun"},
+    {"simplified": "遗产", "traditional": "遺產", "pinyin": "yí chǎn", "english": "heritage; legacy", "category": "noun"},
+    {"simplified": "审美", "traditional": "審美", "pinyin": "shěn měi", "english": "aesthetics", "category": "noun"},
+    {"simplified": "灵感", "traditional": "靈感", "pinyin": "líng gǎn", "english": "inspiration", "category": "noun"},
+    {"simplified": "犯罪", "traditional": "犯罪", "pinyin": "fàn zuì", "english": "crime; to commit a crime", "category": "noun"},
+    {"simplified": "审判", "traditional": "審判", "pinyin": "shěn pàn", "english": "trial; to try (a case)", "category": "noun"},
+    {"simplified": "判决", "traditional": "判決", "pinyin": "pàn jué", "english": "judgment; verdict", "category": "noun"},
+    {"simplified": "辩护", "traditional": "辯護", "pinyin": "biàn hù", "english": "to defend; defense", "category": "noun"},
+    {"simplified": "监禁", "traditional": "監禁", "pinyin": "jiān jìn", "english": "imprisonment", "category": "noun"},
+    {"simplified": "军事", "traditional": "軍事", "pinyin": "jūn shì", "english": "military affairs", "category": "noun"},
+    {"simplified": "战略", "traditional": "戰略", "pinyin": "zhàn lüè", "english": "strategy", "category": "noun"},
+    {"simplified": "武器", "traditional": "武器", "pinyin": "wǔ qì", "english": "weapon", "category": "noun"},
+    {"simplified": "导弹", "traditional": "導彈", "pinyin": "dǎo dàn", "english": "missile", "category": "noun"},
+    {"simplified": "资本", "traditional": "資本", "pinyin": "zī běn", "english": "capital", "category": "noun"},
+    {"simplified": "垄断", "traditional": "壟斷", "pinyin": "lǒng duàn", "english": "monopoly", "category": "noun"},
+    {"simplified": "通货膨胀", "traditional": "通貨膨脹", "pinyin": "tōng huò péng zhàng", "english": "inflation", "category": "noun"},
+    {"simplified": "遗传", "traditional": "遺傳", "pinyin": "yí chuán", "english": "heredity; genetics", "category": "noun"},
+    {"simplified": "进化", "traditional": "進化", "pinyin": "jìn huà", "english": "evolution", "category": "noun"},
+]
+
+
+def seed_hsk6():
+    db = SessionLocal()
+    try:
+        existing = db.query(HanziWord).filter(HanziWord.hsk_level == 6).all()
+        existing_simplified = {w.simplified for w in existing}
+
+        added = 0
+        for w in hsk6_words:
+            if w["simplified"] not in existing_simplified:
+                word = HanziWord(
+                    simplified=w["simplified"],
+                    traditional=w["traditional"],
+                    pinyin=w["pinyin"],
+                    english=w["english"],
+                    hsk_level=6,
+                    category=w.get("category")
+                )
+                db.add(word)
+                added += 1
+
+        db.commit()
+        print(f"HSK 6: Added {added} new words (already had {len(existing_simplified)})")
+    except Exception as e:
+        print(f"Error: {e}")
+        db.rollback()
+    finally:
+        db.close()
+
+if __name__ == "__main__":
+    seed_hsk6()
