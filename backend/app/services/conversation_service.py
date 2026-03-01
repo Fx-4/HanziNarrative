@@ -1,17 +1,14 @@
 """
-AI Conversation Partner Service — uses Gemini free tier only.
+AI Conversation Partner Service — uses multi-provider fallback (free tier first).
 Provides Chinese conversation practice with corrections and vocabulary help.
 """
 import json
 import logging
-import google.generativeai as genai
-from typing import List, Dict, Optional
-from app.config import settings
+from typing import List, Dict
+
+from app.services.ai_provider import generate_text, parse_json_response
 
 logger = logging.getLogger(__name__)
-
-genai.configure(api_key=settings.GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-2.5-flash')
 
 # Hardcoded topics — zero cost
 TOPICS = [
@@ -37,6 +34,40 @@ HSK_DESCRIPTIONS = {
     6: "Use all HSK vocabulary (5000+ words). Near-native. Idioms, literary expressions, complex arguments.",
 }
 
+_FALLBACK_GREETING = {
+    "reply": "你好！我们来聊天吧！",
+    "reply_pinyin": "nǐ hǎo! wǒmen lái liáotiān ba!",
+    "reply_english": "Hello! Let's chat!",
+    "corrections": [],
+    "new_vocabulary": [],
+}
+
+_FALLBACK_REPLY = {
+    "reply": "对不起，我没听清楚。你能再说一次吗？",
+    "reply_pinyin": "duìbuqǐ, wǒ méi tīng qīngchǔ. nǐ néng zài shuō yī cì ma?",
+    "reply_english": "Sorry, I didn't catch that. Can you say it again?",
+    "corrections": [],
+    "new_vocabulary": [],
+}
+
+_JSON_FORMAT = """\
+You MUST respond with valid JSON in this exact format:
+{
+  "reply": "你的中文回复",
+  "reply_pinyin": "nǐ de zhōngwén huífù",
+  "reply_english": "Your Chinese reply translation",
+  "corrections": [
+    {"original": "wrong text", "corrected": "correct text", "explanation": "why it was wrong"}
+  ],
+  "new_vocabulary": [
+    {"word": "新词", "pinyin": "xīn cí", "english": "new word"}
+  ]
+}
+
+If the student's message has no errors, set corrections to an empty array [].
+Include 0-2 new vocabulary words relevant to the conversation in new_vocabulary.
+Always respond with ONLY the JSON object, no extra text."""
+
 
 def _build_system_prompt(hsk_level: int, topic: str) -> str:
     topic_info = next((t for t in TOPICS if t["id"] == topic), None)
@@ -53,22 +84,7 @@ RULES:
 - Ask follow-up questions to keep the conversation going
 - Be encouraging and patient
 
-You MUST respond with valid JSON in this exact format:
-{{
-  "reply": "你的中文回复",
-  "reply_pinyin": "nǐ de zhōngwén huífù",
-  "reply_english": "Your Chinese reply translation",
-  "corrections": [
-    {{"original": "wrong text", "corrected": "correct text", "explanation": "why it was wrong"}}
-  ],
-  "new_vocabulary": [
-    {{"word": "新词", "pinyin": "xīn cí", "english": "new word"}}
-  ]
-}}
-
-If the student's message has no errors, set corrections to an empty array [].
-Include 0-2 new vocabulary words relevant to the conversation in new_vocabulary.
-Always respond with ONLY the JSON object, no extra text."""
+{_JSON_FORMAT}"""
 
 
 async def start_conversation(hsk_level: int, topic: str) -> Dict:
@@ -90,26 +106,12 @@ Respond with ONLY valid JSON:
 }}"""
 
     try:
-        response = model.generate_content(prompt)
-        text = response.text.strip()
-        # Strip markdown code fences if present
-        if text.startswith("```"):
-            text = text.split("\n", 1)[1] if "\n" in text else text[3:]
-            if text.endswith("```"):
-                text = text[:-3]
-            text = text.strip()
-            if text.startswith("json"):
-                text = text[4:].strip()
-        return json.loads(text)
+        text, provider = await generate_text(prompt, exclude_paid=True)
+        logger.info(f"Conversation started via {provider}")
+        return parse_json_response(text)
     except json.JSONDecodeError:
-        logger.warning(f"Failed to parse Gemini JSON response: {response.text[:200]}")
-        return {
-            "reply": "你好！我们来聊天吧！",
-            "reply_pinyin": "nǐ hǎo! wǒmen lái liáotiān ba!",
-            "reply_english": "Hello! Let's chat!",
-            "corrections": [],
-            "new_vocabulary": [],
-        }
+        logger.warning("Failed to parse conversation start JSON, using fallback")
+        return _FALLBACK_GREETING
     except Exception as e:
         logger.error(f"Conversation start failed: {e}")
         raise
@@ -135,26 +137,12 @@ async def reply_to_message(
     full_prompt = "\n".join(conversation_parts)
 
     try:
-        response = model.generate_content(full_prompt)
-        text = response.text.strip()
-        # Strip markdown code fences
-        if text.startswith("```"):
-            text = text.split("\n", 1)[1] if "\n" in text else text[3:]
-            if text.endswith("```"):
-                text = text[:-3]
-            text = text.strip()
-            if text.startswith("json"):
-                text = text[4:].strip()
-        return json.loads(text)
+        text, provider = await generate_text(full_prompt, exclude_paid=True)
+        logger.info(f"Conversation reply via {provider}")
+        return parse_json_response(text)
     except json.JSONDecodeError:
-        logger.warning(f"Failed to parse Gemini reply JSON: {response.text[:200]}")
-        return {
-            "reply": "对不起，我没听清楚。你能再说一次吗？",
-            "reply_pinyin": "duìbuqǐ, wǒ méi tīng qīngchǔ. nǐ néng zài shuō yī cì ma?",
-            "reply_english": "Sorry, I didn't catch that. Can you say it again?",
-            "corrections": [],
-            "new_vocabulary": [],
-        }
+        logger.warning("Failed to parse conversation reply JSON, using fallback")
+        return _FALLBACK_REPLY
     except Exception as e:
         logger.error(f"Conversation reply failed: {e}")
         raise

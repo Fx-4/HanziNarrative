@@ -10,8 +10,14 @@ class Settings(BaseSettings):
     # Gemini AI
     GEMINI_API_KEY: str = ""
 
-    # Anthropic Claude AI
+    # Anthropic Claude AI (paid — last resort fallback)
     ANTHROPIC_API_KEY: str = ""
+
+    # Groq AI (free tier — secondary fallback)
+    GROQ_API_KEY: str = ""
+
+    # OpenRouter AI (free models — tertiary fallback)
+    OPENROUTER_API_KEY: str = ""
 
     # Pexels — free image API (register at https://www.pexels.com/api/)
     PEXELS_API_KEY: str = ""

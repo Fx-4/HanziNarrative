@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..models import User
-from ..routers.auth import get_current_user
+from ..auth import get_current_user
 from ..rate_limit import check_rate_limit, record_ai_usage
 from ..services.conversation_service import (
     TOPICS,

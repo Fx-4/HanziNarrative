@@ -10,7 +10,7 @@ from sqlalchemy import func
 
 from ..database import get_db
 from ..models import User, Story, DailyChallengeCompletion
-from ..routers.auth import get_current_user
+from ..auth import get_current_user
 from ..services.gamification_service import add_xp, update_streak
 
 router = APIRouter(prefix="/daily-challenge", tags=["daily-challenge"])

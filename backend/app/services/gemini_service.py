@@ -1,16 +1,15 @@
 """
-Gemini AI Service for sentence validation and feedback
+AI Service for sentence validation, story generation, quizzes, mnemonics, and adventures.
+Uses multi-provider fallback: Gemini → Groq → OpenRouter → Claude (paid, last resort).
 """
 
-import google.generativeai as genai
+import json
+import logging
 from typing import Dict, List, Optional
-from app.config import settings
 
-# Configure Gemini AI
-genai.configure(api_key=settings.GEMINI_API_KEY)
+from app.services.ai_provider import generate_text, generate_json, parse_json_response
 
-# Initialize model - using stable free tier model
-model = genai.GenerativeModel('gemini-2.5-flash')
+logger = logging.getLogger(__name__)
 
 
 class SentenceValidationResult:
@@ -47,19 +46,8 @@ async def validate_chinese_sentence(
     expected_meaning: Optional[str] = None,
     hsk_level: int = 1
 ) -> SentenceValidationResult:
-    """
-    Validate a Chinese sentence using Gemini AI
+    """Validate a Chinese sentence using AI (multi-provider fallback)."""
 
-    Args:
-        sentence: The Chinese sentence to validate
-        expected_meaning: Optional expected English meaning
-        hsk_level: HSK level for vocabulary complexity check
-
-    Returns:
-        SentenceValidationResult with validation details
-    """
-
-    # Build prompt for Gemini
     prompt = f"""You are a Chinese language teacher. Analyze this Chinese sentence:
 
 Sentence: {sentence}
@@ -93,41 +81,26 @@ Example correction format: "我喜欢吃饭 (wǒ xǐhuan chīfàn) - Use this wo
 Be encouraging but honest. Focus on learning."""
 
     try:
-        # Call Gemini API
-        response = model.generate_content(prompt)
-        response_text = response.text
+        data, provider = await generate_json(prompt, exclude_paid=True)
+        logger.info(f"Sentence validation via {provider}")
 
-        # Parse JSON response
-        import json
-        # Remove markdown code blocks if present
-        if "```json" in response_text:
-            response_text = response_text.split("```json")[1].split("```")[0].strip()
-        elif "```" in response_text:
-            response_text = response_text.split("```")[1].split("```")[0].strip()
-
-        result_data = json.loads(response_text)
-
-        # Create result object
-        result = SentenceValidationResult(
-            is_correct=result_data.get("is_correct", False),
-            score=result_data.get("score", 0),
-            feedback=result_data.get("feedback", ""),
-            corrections=result_data.get("corrections", []),
-            grammar_issues=result_data.get("grammar_issues", []),
-            suggestions=result_data.get("suggestions", [])
+        return SentenceValidationResult(
+            is_correct=data.get("is_correct", False),
+            score=data.get("score", 0),
+            feedback=data.get("feedback", ""),
+            corrections=data.get("corrections", []),
+            grammar_issues=data.get("grammar_issues", []),
+            suggestions=data.get("suggestions", [])
         )
 
-        return result
-
     except Exception as e:
-        # Fallback response if API fails
-        print(f"Gemini API Error: {e}")
+        logger.error(f"AI sentence validation failed: {e}")
         return SentenceValidationResult(
             is_correct=False,
             score=0,
             feedback=f"Unable to validate sentence. Error: {str(e)}",
             corrections=[],
-            grammar_issues=["API Error"],
+            grammar_issues=["AI Error"],
             suggestions=["Please try again"]
         )
 
@@ -137,17 +110,7 @@ async def generate_sentence_exercise(
     difficulty: str = "easy",
     hsk_level: int = 1
 ) -> Dict:
-    """
-    Generate a sentence building exercise using given words
-
-    Args:
-        words: List of Chinese words to use
-        difficulty: easy, medium, or hard
-        hsk_level: HSK level
-
-    Returns:
-        Dict with exercise data
-    """
+    """Generate a sentence building exercise using given words."""
 
     words_str = ", ".join(words)
 
@@ -172,21 +135,11 @@ Format as JSON:
 }}"""
 
     try:
-        response = model.generate_content(prompt)
-        response_text = response.text
-
-        # Parse JSON
-        import json
-        if "```json" in response_text:
-            response_text = response_text.split("```json")[1].split("```")[0].strip()
-        elif "```" in response_text:
-            response_text = response_text.split("```")[1].split("```")[0].strip()
-
-        exercise_data = json.loads(response_text)
-        return exercise_data
-
+        data, provider = await generate_json(prompt, exclude_paid=True)
+        logger.info(f"Sentence exercise generated via {provider}")
+        return data
     except Exception as e:
-        print(f"Gemini API Error: {e}")
+        logger.error(f"AI sentence exercise failed: {e}")
         return {
             "prompt": "Create a sentence using the given words",
             "correct_answers": [],
@@ -201,32 +154,18 @@ async def generate_story(
     character_names: Optional[List[str]] = None,
     length: str = "short"
 ) -> Dict:
-    """
-    Generate a Chinese story using Gemini AI
+    """Generate a Chinese story using AI (multi-provider fallback)."""
 
-    Args:
-        hsk_level: HSK level (1-6) for vocabulary complexity
-        topic: Story topic/theme (e.g., "family", "school", "food")
-        character_names: Optional character names to use
-        length: "short" (100-200 chars), "medium" (200-400 chars), or "long" (400-600 chars)
-
-    Returns:
-        Dict with story data including Chinese text, pinyin, English translation
-    """
-
-    # Determine word count based on length
     length_guide = {
         "short": "100-200 Chinese characters",
         "medium": "200-400 Chinese characters",
         "long": "400-600 Chinese characters"
     }
 
-    # Build character names string
     characters_str = ""
     if character_names:
         characters_str = f"\nCharacter names to use: {', '.join(character_names)}"
 
-    # Build topic string
     topic_str = f"Topic: {topic}" if topic else "Topic: Daily life"
 
     prompt = f"""You are a creative Chinese language teacher. Create an engaging story for HSK Level {hsk_level} students.
@@ -245,15 +184,14 @@ CRITICAL PINYIN REQUIREMENTS:
 - NEVER use numbers (1/2/3/4/5/6) to represent tones — use diacritics: ā á ǎ à / ō ó ǒ ò / ē é ě è / ī í ǐ ì / ū ú ǔ ù
 - Neutral tone syllables have NO tone mark at all (e.g., "le", "ma", "ne", "ba", "de", "ge", "men")
 - For multi-pronunciation characters (多音字), use the CORRECT pronunciation based on context:
-  * 了 → "le" (neutral tone, NO mark) when sentence-final particle or post-verb aspect marker (99% of cases)
-       → "liǎo" ONLY when it is a main verb meaning "to finish" or in "了解/了不起" pattern
+  * 了 → "le" (neutral tone, NO mark) when sentence-final particle or post-verb aspect marker
+       → "liǎo" ONLY when it is a main verb meaning "to finish"
   * 还 → "hái" for "still/yet/also", "huán" for "to return (sth)"
-  * 行 → "xíng" for "OK/to go/to walk", "háng" for "row/profession/bank"
-  * 得 → "de" as structural particle (verb+得+complement), "dé" for "to get/obtain", "děi" for "must/have to"
-  * 地 → "de" as adverbial particle (adjective+地+verb), "dì" for "ground/earth/place"
-  * 的 → always "de" (never "dí" or "dì")
+  * 得 → "de" as structural particle, "dé" for "to get", "děi" for "must"
+  * 地 → "de" as adverbial particle, "dì" for "ground/earth"
+  * 的 → always "de"
 - Separate each syllable with a SINGLE SPACE
-- Match the EXACT order and count of characters in "content" — one pinyin syllable per character, NO skipping punctuation in the count
+- Match the EXACT order and count of characters in "content"
 
 Provide the story in JSON format:
 {{
@@ -261,7 +199,7 @@ Provide the story in JSON format:
   "title_pinyin": "Title in pinyin",
   "title_english": "Title in English",
   "content": "Full story text in simplified Chinese",
-  "content_pinyin": "Full story with context-aware pinyin, one syllable per character, space-separated",
+  "content_pinyin": "Full story with context-aware pinyin, space-separated",
   "content_english": "Full English translation",
   "difficulty_level": {hsk_level},
   "word_count": <number of Chinese characters>,
@@ -276,28 +214,17 @@ Provide the story in JSON format:
 Make it interesting and educational!"""
 
     try:
-        response = model.generate_content(prompt)
-        response_text = response.text
-
-        # Parse JSON
-        import json
-        if "```json" in response_text:
-            response_text = response_text.split("```json")[1].split("```")[0].strip()
-        elif "```" in response_text:
-            response_text = response_text.split("```")[1].split("```")[0].strip()
-
-        story_data = json.loads(response_text)
-        return story_data
-
+        data, provider = await generate_json(prompt)
+        logger.info(f"Story generated via {provider}")
+        return data
     except Exception as e:
-        print(f"Gemini API Error: {e}")
+        logger.error(f"AI story generation failed: {e}")
         raise Exception(f"Failed to generate story: {str(e)}")
 
 
 async def generate_story_quiz(story_title: str, story_content: str, hsk_level: int) -> dict:
-    """
-    Generate comprehension quiz questions based on a specific story
-    """
+    """Generate comprehension quiz questions based on a specific story."""
+
     prompt = f"""Generate exactly 5 quiz questions about this Chinese story for HSK Level {hsk_level} learners.
 
 Story Title: {story_title}
@@ -306,25 +233,12 @@ Story Content:
 
 You MUST generate ALL 5 questions in this exact order:
 
-QUESTIONS 1-3: Comprehension questions that test:
-  1. Main idea / theme understanding
-  2. Character actions / plot details
-  3. Vocabulary or grammar usage from the story
-
-QUESTION 4: Vocabulary meaning question
-  - Pick ONE Chinese word/character that appears in the story (preferably 1-2 characters)
-  - Ask: "What does '[hanzi]' mean?"
-  - Provide 4 English meaning options where only one is correct
-  - The question text must include the hanzi character(s)
-
-QUESTION 5: Pinyin question
-  - Pick a DIFFERENT Chinese word/character from the story (preferably 1-2 characters)
-  - Ask: "What is the correct pinyin for '[hanzi]'?"
-  - Provide 4 pinyin options (with tone marks, e.g. nǐ hǎo) where only one is correct
-  - The question text must include the hanzi character(s)
+QUESTIONS 1-3: Comprehension questions
+QUESTION 4: Vocabulary meaning question — ask "What does '[hanzi]' mean?"
+QUESTION 5: Pinyin question — ask "What is the correct pinyin for '[hanzi]'?"
 
 For EACH of the 5 questions provide:
-- A clear question in English (include hanzi characters in questions 4 and 5)
+- A clear question in English (include hanzi in questions 4 and 5)
 - 4 multiple choice options
 - The correct answer index (0-3)
 - A brief explanation
@@ -337,29 +251,18 @@ Return as JSON:
       "options": ["Option A", "Option B", "Option C", "Option D"],
       "correctAnswer": 0,
       "explanation": "Why this is correct"
-    }},
-    ...5 questions total...
+    }}
   ]
 }}
 
-Make ALL questions specific to THIS story. Questions 4 and 5 must use real words from the story content."""
+Make ALL questions specific to THIS story."""
 
     try:
-        response = model.generate_content(prompt)
-        response_text = response.text
-
-        # Parse JSON
-        import json
-        if "```json" in response_text:
-            response_text = response_text.split("```json")[1].split("```")[0].strip()
-        elif "```" in response_text:
-            response_text = response_text.split("```")[1].split("```")[0].strip()
-
-        quiz_data = json.loads(response_text)
-        return quiz_data
-
+        data, provider = await generate_json(prompt, exclude_paid=True)
+        logger.info(f"Story quiz generated via {provider}")
+        return data
     except Exception as e:
-        print(f"Gemini API Error generating quiz: {e}")
+        logger.error(f"AI quiz generation failed: {e}")
         raise Exception(f"Failed to generate quiz: {str(e)}")
 
 
@@ -369,31 +272,14 @@ async def generate_mnemonic(
     english: str,
     hsk_level: int = 1
 ) -> Dict:
-    """
-    Generate a mnemonic story to help remember a Chinese character
+    """Generate a mnemonic story to help remember a Chinese character."""
 
-    Args:
-        hanzi: The Chinese character
-        pinyin: Pinyin pronunciation
-        english: English meaning
-        hsk_level: HSK level for context
-
-    Returns:
-        Dict with mnemonic story and memory tips
-    """
-
-    prompt = f"""You are a creative Chinese language teacher. Create a memorable mnemonic story for this character:
+    prompt = f"""Create a memorable mnemonic story for this Chinese character:
 
 Character: {hanzi}
 Pinyin: {pinyin}
 English: {english}
 HSK Level: {hsk_level}
-
-Create a vivid, memorable story that helps students remember this character. Include:
-1. Visual imagery of the character's shape/radicals
-2. Connection to the meaning
-3. A short, creative mnemonic story (2-3 sentences)
-4. Memory hook (one sentence)
 
 Return as JSON:
 {{
@@ -401,28 +287,17 @@ Return as JSON:
   "visual_description": "Description of how the character looks",
   "mnemonic_story": "Creative 2-3 sentence story connecting visuals to meaning",
   "memory_hook": "One catchy sentence to remember",
-  "radical_breakdown": "Brief breakdown of components if applicable"
+  "radical_breakdown": "Brief breakdown of components"
 }}
 
-Make it fun, memorable, and educational!"""
+Make it fun and memorable!"""
 
     try:
-        response = model.generate_content(prompt)
-        response_text = response.text
-
-        # Parse JSON
-        import json
-        if "```json" in response_text:
-            response_text = response_text.split("```json")[1].split("```")[0].strip()
-        elif "```" in response_text:
-            response_text = response_text.split("```")[1].split("```")[0].strip()
-
-        mnemonic_data = json.loads(response_text)
-        return mnemonic_data
-
+        data, provider = await generate_json(prompt, exclude_paid=True)
+        logger.info(f"Mnemonic generated via {provider}")
+        return data
     except Exception as e:
-        print(f"Gemini API Error generating mnemonic: {e}")
-        # Fallback mnemonic
+        logger.error(f"AI mnemonic generation failed: {e}")
         return {
             "character": hanzi,
             "visual_description": f"The character {hanzi} ({pinyin})",
@@ -433,12 +308,16 @@ Make it fun, memorable, and educational!"""
 
 
 async def test_gemini_connection() -> bool:
-    """Test if Gemini AI is configured correctly"""
+    """Test if any AI provider is available."""
     try:
-        response = model.generate_content("Say hello in Chinese")
-        return len(response.text) > 0
+        text, provider = await generate_text(
+            "Say hello in Chinese. Reply with only the Chinese text.",
+            exclude_paid=True,
+        )
+        logger.info(f"AI connection test passed via {provider}: {text[:50]}")
+        return True
     except Exception as e:
-        print(f"Gemini connection test failed: {e}")
+        logger.error(f"AI connection test failed: {e}")
         return False
 
 
@@ -446,9 +325,8 @@ async def generate_adventure_start(
     hsk_level: int,
     topic: str = "daily life"
 ) -> Dict:
-    """
-    Generate the opening of an interactive adventure story with 3 choices.
-    """
+    """Generate the opening of an interactive adventure story with 3 choices."""
+
     prompt = f"""You are a creative Chinese language teacher. Create the opening paragraph of an interactive adventure story for HSK Level {hsk_level} students.
 
 Topic: {topic}
@@ -457,32 +335,16 @@ Requirements:
 - Use ONLY HSK Level {hsk_level} vocabulary (and levels below)
 - Opening paragraph: 2-4 sentences in Chinese
 - Present 3 choices for what happens next
-- Each choice should lead to a different direction
 
 Return as JSON:
 {{
-  "paragraph": "Opening paragraph in simplified Chinese (2-4 sentences)",
+  "paragraph": "Opening paragraph in simplified Chinese",
   "paragraph_pinyin": "Pinyin for the paragraph with tone marks",
   "paragraph_english": "English translation",
   "choices": [
-    {{
-      "id": 1,
-      "text": "Choice text in Chinese",
-      "text_pinyin": "Pinyin for the choice",
-      "text_english": "English translation of the choice"
-    }},
-    {{
-      "id": 2,
-      "text": "Choice text in Chinese",
-      "text_pinyin": "Pinyin",
-      "text_english": "English"
-    }},
-    {{
-      "id": 3,
-      "text": "Choice text in Chinese",
-      "text_pinyin": "Pinyin",
-      "text_english": "English"
-    }}
+    {{"id": 1, "text": "Choice in Chinese", "text_pinyin": "Pinyin", "text_english": "English"}},
+    {{"id": 2, "text": "Choice in Chinese", "text_pinyin": "Pinyin", "text_english": "English"}},
+    {{"id": 3, "text": "Choice in Chinese", "text_pinyin": "Pinyin", "text_english": "English"}}
   ],
   "setting": "Brief English description of the setting"
 }}
@@ -490,16 +352,11 @@ Return as JSON:
 Make it fun and engaging! Keep sentences simple for HSK {hsk_level}."""
 
     try:
-        response = model.generate_content(prompt)
-        response_text = response.text
-        import json
-        if "```json" in response_text:
-            response_text = response_text.split("```json")[1].split("```")[0].strip()
-        elif "```" in response_text:
-            response_text = response_text.split("```")[1].split("```")[0].strip()
-        return json.loads(response_text)
+        data, provider = await generate_json(prompt, exclude_paid=True)
+        logger.info(f"Adventure start generated via {provider}")
+        return data
     except Exception as e:
-        print(f"Gemini API Error generating adventure start: {e}")
+        logger.error(f"AI adventure start failed: {e}")
         raise Exception(f"Failed to generate adventure: {str(e)}")
 
 
@@ -509,9 +366,8 @@ async def generate_adventure_continue(
     hsk_level: int,
     step_number: int = 2
 ) -> Dict:
-    """
-    Continue an adventure story based on the user's choice.
-    """
+    """Continue an adventure story based on the user's choice."""
+
     is_ending = step_number >= 5
 
     ending_instruction = ""
@@ -551,15 +407,9 @@ Return as JSON:
 }}"""
 
     try:
-        response = model.generate_content(prompt)
-        response_text = response.text
-        import json
-        if "```json" in response_text:
-            response_text = response_text.split("```json")[1].split("```")[0].strip()
-        elif "```" in response_text:
-            response_text = response_text.split("```")[1].split("```")[0].strip()
-        return json.loads(response_text)
+        data, provider = await generate_json(prompt, exclude_paid=True)
+        logger.info(f"Adventure continue generated via {provider}")
+        return data
     except Exception as e:
-        print(f"Gemini API Error continuing adventure: {e}")
+        logger.error(f"AI adventure continue failed: {e}")
         raise Exception(f"Failed to continue adventure: {str(e)}")
-

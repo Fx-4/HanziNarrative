@@ -84,7 +84,7 @@ app = FastAPI(
 )
 
 # Get CORS origins from environment variable or use defaults
-cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:3000,http://localhost:5174,http://localhost:5175")
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://localhost:5174,http://localhost:5175")
 allowed_origins = [origin.strip() for origin in cors_origins.split(",")]
 
 app.add_middleware(
@@ -130,3 +130,13 @@ def root():
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/ai-providers/test")
+async def test_ai_providers():
+    """Test all configured AI providers (dev only)."""
+    if IS_PRODUCTION:
+        return {"detail": "Not available in production"}
+    from .services.ai_provider import test_all_providers
+    results = await test_all_providers()
+    return {"providers": results}

@@ -2,7 +2,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, Table, MetaData
+from sqlalchemy import and_, Table, MetaData, text
 from pydantic import BaseModel
 from .. import models, schemas, auth
 from ..database import get_db
@@ -315,7 +315,7 @@ def bookmark_story(
 
     # Check if already bookmarked
     existing = db.execute(
-        "SELECT 1 FROM story_bookmarks WHERE user_id = :user_id AND story_id = :story_id",
+        text("SELECT 1 FROM story_bookmarks WHERE user_id = :user_id AND story_id = :story_id"),
         {"user_id": current_user.id, "story_id": story_id}
     ).first()
 
@@ -324,7 +324,7 @@ def bookmark_story(
 
     # Add bookmark
     db.execute(
-        "INSERT INTO story_bookmarks (user_id, story_id) VALUES (:user_id, :story_id)",
+        text("INSERT INTO story_bookmarks (user_id, story_id) VALUES (:user_id, :story_id)"),
         {"user_id": current_user.id, "story_id": story_id}
     )
     db.commit()
@@ -340,7 +340,7 @@ def unbookmark_story(
 ):
     """Remove bookmark from a story"""
     result = db.execute(
-        "DELETE FROM story_bookmarks WHERE user_id = :user_id AND story_id = :story_id",
+        text("DELETE FROM story_bookmarks WHERE user_id = :user_id AND story_id = :story_id"),
         {"user_id": current_user.id, "story_id": story_id}
     )
     db.commit()
@@ -358,7 +358,7 @@ def get_my_bookmarks(
 ):
     """Get all bookmarked stories for current user"""
     bookmarked_story_ids = db.execute(
-        "SELECT story_id FROM story_bookmarks WHERE user_id = :user_id ORDER BY created_at DESC",
+        text("SELECT story_id FROM story_bookmarks WHERE user_id = :user_id ORDER BY created_at DESC"),
         {"user_id": current_user.id}
     ).fetchall()
 
@@ -379,7 +379,7 @@ def check_if_bookmarked(
 ):
     """Check if a story is bookmarked by current user"""
     bookmarked = db.execute(
-        "SELECT 1 FROM story_bookmarks WHERE user_id = :user_id AND story_id = :story_id",
+        text("SELECT 1 FROM story_bookmarks WHERE user_id = :user_id AND story_id = :story_id"),
         {"user_id": current_user.id, "story_id": story_id}
     ).first()
 
