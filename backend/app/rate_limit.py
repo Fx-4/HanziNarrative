@@ -7,8 +7,7 @@ from .models import AIUsage, User
 # Rate limit configuration — multi-provider cascade (Gemini → Groq → OpenRouter → Claude)
 # Combined free capacity: ~1,690 req/day. Budgeted for ~1,000 active users.
 RATE_LIMITS = {
-    'story_generation': {'daily': 5, 'hourly': 2},
-    'story_generation_simple': {'daily': 10, 'hourly': 4},  # Simple mode uses free providers
+    'story_generation': {'daily': 8, 'hourly': 3},  # Both quick & advanced share this limit
     'sentence_validation': {'daily': 10, 'hourly': 4},
     'translation': {'daily': 15, 'hourly': 5},
     'badge_generation': {'daily': 5, 'hourly': 2},

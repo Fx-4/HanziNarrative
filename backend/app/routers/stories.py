@@ -37,7 +37,16 @@ class StoryGenerateRequest(BaseModel):
     topic: Optional[str] = None
     character_names: Optional[List[str]] = None
     length: str = "short"  # short, medium, long
-    mode: str = "quick"    # quick (free cascade) or advanced (Claude premium)
+    mode: str = "quick"    # quick (minimal options) or advanced (full customization)
+    # --- Advanced mode customization fields ---
+    genre: Optional[str] = None           # e.g., "adventure", "romance", "mystery", "comedy", "slice-of-life", "fable"
+    tone: Optional[str] = None            # e.g., "humorous", "serious", "heartwarming", "suspenseful"
+    setting: Optional[str] = None         # e.g., "modern city", "ancient China", "countryside", "school"
+    narrative_perspective: Optional[str] = None  # "first-person", "third-person"
+    target_grammar: Optional[List[str]] = None   # specific grammar patterns to include
+    target_vocabulary: Optional[List[str]] = None # specific words to use in the story
+    include_dialogue: Optional[bool] = None       # whether to include dialogue
+    cultural_theme: Optional[str] = None          # e.g., "Spring Festival", "Mid-Autumn", "Tea Culture"
 
 
 @router.get("/", response_model=List[schemas.Story])
@@ -62,7 +71,6 @@ def get_ai_usage(
     """Get AI usage statistics for current user"""
     return {
         "story_generation": get_usage_stats(db, current_user, 'story_generation'),
-        "story_generation_simple": get_usage_stats(db, current_user, 'story_generation_simple'),
         "sentence_validation": get_usage_stats(db, current_user, 'sentence_validation'),
     }
 
@@ -148,33 +156,52 @@ async def generate_ai_story(
     """
     Generate a new story using AI and save it to database.
     Modes:
-      - quick: Uses free AI cascade (Gemini→Groq→OpenRouter). 10/day limit.
-      - advanced: Uses Claude for premium quality stories. 5/day limit.
+      - quick: Minimal options — generates a story quickly with basic settings.
+      - advanced: Full customization — genre, tone, setting, grammar targets, etc.
+    Both modes use the same AI provider (Claude when available, else free cascade).
     """
-    # Determine rate-limit feature based on mode
-    is_advanced = request.mode == "advanced"
-    rate_feature = 'story_generation' if is_advanced else 'story_generation_simple'
-
-    # Check rate limit
+    # Both modes share the same rate limit
+    rate_feature = 'story_generation'
     check_rate_limit(db, current_user, rate_feature)
 
     try:
-        # Route to appropriate provider
-        if is_advanced and _use_claude():
-            story_data = await claude_story_service.generate_story(
-                hsk_level=request.hsk_level,
-                topic=request.topic,
-                character_names=request.character_names,
-                length=request.length
-            )
-        else:
-            # Quick mode always uses free cascade, advanced falls back here if no Claude key
-            story_data = await gemini_service.generate_story(
-                hsk_level=request.hsk_level,
-                topic=request.topic,
-                character_names=request.character_names,
-                length=request.length
-            )
+        # Build the enriched topic string from advanced fields
+        enriched_topic = request.topic or ""
+        advanced_instructions = ""
+
+        if request.mode == "advanced":
+            parts = []
+            if request.genre:
+                parts.append(f"Genre: {request.genre}")
+            if request.tone:
+                parts.append(f"Tone: {request.tone}")
+            if request.setting:
+                parts.append(f"Setting: {request.setting}")
+            if request.narrative_perspective:
+                parts.append(f"Narrative perspective: {request.narrative_perspective}")
+            if request.include_dialogue is not None:
+                parts.append(f"Include dialogue: {'yes, plenty of it' if request.include_dialogue else 'minimal or none'}")
+            if request.cultural_theme:
+                parts.append(f"Cultural theme to weave in: {request.cultural_theme}")
+            if request.target_grammar:
+                parts.append(f"Must use these grammar patterns: {', '.join(request.target_grammar)}")
+            if request.target_vocabulary:
+                parts.append(f"Must incorporate these vocabulary words: {', '.join(request.target_vocabulary)}")
+            if parts:
+                advanced_instructions = "\n".join(parts)
+
+        # Combine topic with advanced instructions for the AI prompt
+        full_topic = enriched_topic
+        if advanced_instructions:
+            full_topic = f"{enriched_topic}\n\nAdditional creative requirements:\n{advanced_instructions}" if enriched_topic else f"Additional creative requirements:\n{advanced_instructions}"
+
+        # Use same AI routing for both modes
+        story_data = await _generate_story(
+            hsk_level=request.hsk_level,
+            topic=full_topic or None,
+            character_names=request.character_names,
+            length=request.length
+        )
 
         # Save generated story to database
         db_story = models.Story(
