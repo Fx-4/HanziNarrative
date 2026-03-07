@@ -3,17 +3,18 @@
   "configurations": [
     {
       "name": "backend",
-      "runtimeExecutable": "cmd",
-      "runtimeArgs": ["/c", "C:\\Users\\Haikal\\Desktop\\start_backend.bat"],
+      "runtimeExecutable": "D:\\uii\\belajar mandiri\\learn-HSK\\.venv\\Scripts\\uvicorn.exe",
+      "runtimeArgs": ["app.main:app", "--reload", "--port", "8000"],
+      "cwd": "D:\\uii\\belajar mandiri\\learn-HSK\\backend",
       "port": 8000,
       "autoPort": false
     },
     {
       "name": "frontend",
       "runtimeExecutable": "cmd",
-      "runtimeArgs": ["/c", "cd frontend && npm run dev"],
-      "port": 5173,
-      "autoPort": false
+      "runtimeArgs": ["/c", "npm", "run", "dev"],
+      "cwd": "D:\\uii\\belajar mandiri\\learn-HSK\\frontend",
+      "port": 5173
     }
   ]
 }

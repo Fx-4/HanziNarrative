@@ -22,6 +22,7 @@ class User(UserBase):
     id: int
     full_name: Optional[str] = None
     profile_picture: Optional[str] = None
+    is_admin: bool = False
     created_at: datetime
 
     class Config:

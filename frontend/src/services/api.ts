@@ -570,4 +570,87 @@ export const conversationApi = {
   },
 }
 
+export const adminApi = {
+  getStats: async () => {
+    const response = await api.get('/admin/stats')
+    return response.data
+  },
+
+  getUsers: async (page = 1, pageSize = 20, search?: string) => {
+    const response = await api.get('/admin/users', {
+      params: { page, page_size: pageSize, search },
+    })
+    return response.data
+  },
+
+  toggleAdmin: async (userId: number) => {
+    const response = await api.put(`/admin/users/${userId}/toggle-admin`)
+    return response.data
+  },
+
+  deleteUser: async (userId: number) => {
+    await api.delete(`/admin/users/${userId}`)
+  },
+
+  getStories: async (page = 1, pageSize = 20, search?: string, hskLevel?: number) => {
+    const response = await api.get('/admin/stories', {
+      params: { page, page_size: pageSize, search, hsk_level: hskLevel || undefined },
+    })
+    return response.data
+  },
+
+  toggleStoryPublish: async (storyId: number) => {
+    const response = await api.put(`/admin/stories/${storyId}/toggle-publish`)
+    return response.data
+  },
+
+  deleteStory: async (storyId: number) => {
+    await api.delete(`/admin/stories/${storyId}`)
+  },
+
+  getAIUsage: async (page = 1, pageSize = 20) => {
+    const response = await api.get('/admin/ai-usage', {
+      params: { page, page_size: pageSize },
+    })
+    return response.data
+  },
+
+  // ── Trash ──────────────────────────────────────────────────────
+  getTrashUsers: async (page = 1, pageSize = 20, search?: string) => {
+    const response = await api.get('/admin/trash/users', {
+      params: { page, page_size: pageSize, search },
+    })
+    return response.data
+  },
+
+  getTrashStories: async (page = 1, pageSize = 20, search?: string, hskLevel?: number) => {
+    const response = await api.get('/admin/trash/stories', {
+      params: { page, page_size: pageSize, search, hsk_level: hskLevel || undefined },
+    })
+    return response.data
+  },
+
+  restoreUser: async (userId: number) => {
+    const response = await api.post(`/admin/trash/users/${userId}/restore`)
+    return response.data
+  },
+
+  restoreStory: async (storyId: number) => {
+    const response = await api.post(`/admin/trash/stories/${storyId}/restore`)
+    return response.data
+  },
+
+  permanentDeleteUser: async (userId: number) => {
+    await api.delete(`/admin/trash/users/${userId}`)
+  },
+
+  permanentDeleteStory: async (storyId: number) => {
+    await api.delete(`/admin/trash/stories/${storyId}`)
+  },
+
+  purgeTrash: async () => {
+    await api.post('/admin/trash/purge')
+  },
+}
+
 export default api

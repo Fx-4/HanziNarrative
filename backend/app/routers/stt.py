@@ -9,8 +9,14 @@ import logging
 import base64
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from pydantic import BaseModel
-from google.cloud import speech
-from google.oauth2 import service_account
+try:
+    from google.cloud import speech
+    from google.oauth2 import service_account
+    SPEECH_AVAILABLE = True
+except ImportError:
+    SPEECH_AVAILABLE = False
+    speech = None
+    service_account = None
 from ..auth import get_current_user
 from ..models import User
 
@@ -25,6 +31,8 @@ _stt_client = None
 
 def get_stt_client():
     global _stt_client
+    if not SPEECH_AVAILABLE:
+        raise HTTPException(status_code=503, detail="STT service not available (google-cloud-speech not installed)")
     if _stt_client is None:
         # Prefer env var (for cloud deployments where files are ephemeral)
         creds_json = os.getenv("GOOGLE_STT_CREDENTIALS_JSON") or os.getenv("GOOGLE_CREDENTIALS_JSON")

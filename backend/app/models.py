@@ -30,7 +30,9 @@ class User(Base):
     full_name = Column(String, nullable=True)
     profile_picture = Column(String, nullable=True)  # URL or base64 data URI
     google_id = Column(String, unique=True, nullable=True, index=True)
+    is_admin = Column(Boolean, default=False, nullable=False, server_default='false')
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    soft_deleted_at = Column(DateTime(timezone=True), nullable=True)
 
     stories = relationship("Story", back_populates="author")
     progress = relationship("UserProgress", back_populates="user")
@@ -71,6 +73,7 @@ class Story(Base):
     is_published = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    soft_deleted_at = Column(DateTime(timezone=True), nullable=True)
 
     author = relationship("User", back_populates="stories")
     words = relationship("HanziWord", secondary=story_words, back_populates="stories")

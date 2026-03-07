@@ -243,6 +243,11 @@ export default function Quiz() {
         const userAnswer = answers[idx]
         const isCorrect = showResults && userAnswer?.toString().trim().toLowerCase() === question.blank_word.toLowerCase()
 
+        // Build sentence parts for inline blank rendering
+        const sentenceParts = question.sentence
+          ? question.sentence.split(question.blank_word)
+          : null
+
         return (
           <div
             key={idx}
@@ -254,7 +259,7 @@ export default function Quiz() {
                 : 'border-gray-100 dark:border-gray-800'
             }`}
           >
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex justify-between items-start mb-3">
               <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200">Question {idx + 1}</h3>
               {showResults && (
                 isCorrect
@@ -262,24 +267,55 @@ export default function Quiz() {
                   : <XCircle className="w-5 h-5 text-red-500 dark:text-red-400 flex-shrink-0" />
               )}
             </div>
-            <p className="text-gray-700 dark:text-gray-300 mb-2 text-sm sm:text-base">
-              <strong>Meaning:</strong> {question.english}
+
+            {/* Sentence context with inline blank */}
+            {sentenceParts && (
+              <div className="mb-3 p-3 sm:p-4 bg-indigo-50 dark:bg-indigo-950/30 rounded-xl border border-indigo-100 dark:border-indigo-800">
+                <p className="text-indigo-900 dark:text-indigo-200 text-xl sm:text-2xl font-chinese leading-relaxed text-center">
+                  {sentenceParts[0]}
+                  <span className="inline-block border-b-2 border-indigo-500 text-indigo-400 dark:text-indigo-400 px-1 mx-0.5 min-w-[2rem] text-center">
+                    ___
+                  </span>
+                  {sentenceParts.slice(1).join(question.blank_word)}
+                </p>
+              </div>
+            )}
+
+            {/* Hint */}
+            {question.hint && (
+              <p className="text-gray-500 dark:text-gray-400 mb-2 text-xs sm:text-sm">
+                <span className="font-semibold">Hint:</span> {question.hint}
+              </p>
+            )}
+
+            {/* English meaning */}
+            <p className="text-gray-700 dark:text-gray-300 mb-3 text-sm sm:text-base">
+              <span className="font-semibold">Meaning:</span> {question.english}
             </p>
-            <div className="flex items-center gap-2 mb-4">
+
+            <div className="flex items-center gap-2 mb-2">
               <input
                 type="text"
                 value={userAnswer || ''}
                 onChange={(e) => setAnswers({ ...answers, [idx]: e.target.value })}
                 disabled={showResults}
-                placeholder="Type the Chinese character"
+                placeholder="Type the Chinese character(s)"
                 className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-700 rounded-xl text-xl sm:text-2xl font-chinese bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-indigo-400 disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:text-gray-500 dark:disabled:text-gray-500"
               />
             </div>
+
             {showResults && (
-              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-xl">
+              <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-xl space-y-1">
                 <p className="text-sm text-gray-800 dark:text-gray-200">
-                  <strong>Correct Answer:</strong> {question.blank_word} ({question.pinyin})
+                  <strong>Correct Answer:</strong>{' '}
+                  <span className="font-chinese text-lg">{question.blank_word}</span>{' '}
+                  ({question.pinyin})
                 </p>
+                {sentenceParts && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 font-chinese">
+                    Full: {question.sentence}
+                  </p>
+                )}
               </div>
             )}
           </div>
@@ -337,10 +373,21 @@ export default function Quiz() {
 
     return (
       <div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        {/* Instruction */}
+        {!showResults && (
+          <div className="mb-3 text-center text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
+            Tap a character, then tap its matching meaning
+          </div>
+        )}
+
+        {/* Two-column match grid — always 2 cols, responsive sizing */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-5">
+          {/* LEFT: Chinese Characters */}
           <div>
-            <h3 className="font-semibold mb-4 text-sm sm:text-base text-gray-700 dark:text-gray-300">Chinese Characters</h3>
-            <div className="space-y-2">
+            <h3 className="font-semibold mb-1.5 sm:mb-3 text-xs sm:text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+              汉字
+            </h3>
+            <div className="space-y-1.5 sm:space-y-2">
               {leftItems.map((q) => {
                 const matchedEnglish = getMatchedEnglish(q.id)
                 const isCorrect = isMatchCorrect(q.id)
@@ -348,7 +395,7 @@ export default function Quiz() {
                   <button
                     key={q.id}
                     onClick={() => handleLeftClick(q.id)}
-                    className={`w-full p-3 sm:p-4 border-2 rounded-xl text-xl sm:text-2xl font-chinese transition-all text-center ${
+                    className={`w-full px-1.5 py-2 sm:p-3 md:p-4 border-2 rounded-xl font-chinese transition-all text-center min-h-[44px] sm:min-h-[52px] ${
                       matches[q.id]
                         ? isCorrect && showResults
                           ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-400'
@@ -356,16 +403,22 @@ export default function Quiz() {
                           ? 'border-red-500 bg-red-50 dark:bg-red-950/30 text-red-800 dark:text-red-400'
                           : 'border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-800 dark:text-blue-400'
                         : selectedLeft === q.id
-                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-800 dark:text-indigo-400'
+                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-800 dark:text-indigo-400 ring-2 ring-indigo-300 dark:ring-indigo-700'
                         : 'border-gray-300 dark:border-gray-700 hover:border-indigo-400 dark:hover:border-indigo-600 text-gray-800 dark:text-gray-200'
                     } disabled:cursor-default`}
                     disabled={!!matches[q.id] || showResults}
                   >
-                    <div className="flex flex-col items-center">
-                      <span>{q.chinese}</span>
-                      {matches[q.id] && (
-                        <span className="text-xs sm:text-sm mt-1 text-gray-600 dark:text-gray-400 font-sans">
-                          {showResults && (isCorrect ? '✓' : '✗')} → {matchedEnglish} {showResults && !isCorrect && `(Correct: ${q.english})`}
+                    <div className="flex flex-col items-center gap-0.5">
+                      <span className="text-lg sm:text-2xl md:text-3xl leading-tight">{q.chinese}</span>
+                      {matches[q.id] ? (
+                        <span className="text-[10px] sm:text-xs leading-tight text-gray-500 dark:text-gray-400 font-sans line-clamp-1">
+                          {showResults ? (isCorrect ? '✓' : '✗ ') : ''}
+                          {matchedEnglish}
+                        </span>
+                      ) : null}
+                      {showResults && matches[q.id] && !isCorrect && (
+                        <span className="text-[9px] sm:text-[10px] text-emerald-600 dark:text-emerald-400 font-sans leading-tight line-clamp-1">
+                          ✓ {q.english}
                         </span>
                       )}
                     </div>
@@ -374,33 +427,38 @@ export default function Quiz() {
               })}
             </div>
           </div>
+
+          {/* RIGHT: English Meanings */}
           <div>
-            <h3 className="font-semibold mb-4 text-sm sm:text-base text-gray-700 dark:text-gray-300">English Meanings</h3>
-            <div className="space-y-2">
+            <h3 className="font-semibold mb-1.5 sm:mb-3 text-xs sm:text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+              Meaning
+            </h3>
+            <div className="space-y-1.5 sm:space-y-2">
               {rightItems.map((q) => {
                 const isMatched = Object.values(matches).includes(q.id)
-                // Find which Chinese character matched this English
                 const matchedChineseId = Object.keys(matches).find(key => matches[Number(key)] === q.id)
-                const matchedChinese = matchedChineseId ? leftItems.find(item => item.id === Number(matchedChineseId))?.chinese : null
+                const matchedChinese = matchedChineseId
+                  ? leftItems.find(item => item.id === Number(matchedChineseId))?.chinese
+                  : null
 
                 return (
                   <button
                     key={q.id}
                     onClick={() => handleRightClick(q.id)}
-                    className={`w-full p-3 sm:p-4 border-2 rounded-xl text-sm sm:text-base transition-all text-center ${
+                    className={`w-full px-1.5 py-2 sm:p-3 md:p-4 border-2 rounded-xl transition-all text-center min-h-[44px] sm:min-h-[52px] ${
                       isMatched
                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-800 dark:text-blue-400'
                         : selectedRight === q.id
-                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-800 dark:text-indigo-400'
+                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-800 dark:text-indigo-400 ring-2 ring-indigo-300 dark:ring-indigo-700'
                         : 'border-gray-300 dark:border-gray-700 hover:border-indigo-400 dark:hover:border-indigo-600 text-gray-800 dark:text-gray-200'
                     } disabled:cursor-default`}
                     disabled={isMatched || showResults}
                   >
-                    <div className="flex flex-col items-center">
-                      <span>{q.english}</span>
+                    <div className="flex flex-col items-center gap-0.5">
+                      <span className="text-[11px] sm:text-sm md:text-base leading-tight line-clamp-2">{q.english}</span>
                       {isMatched && matchedChinese && (
-                        <span className="text-xs sm:text-sm mt-1 text-gray-600 dark:text-gray-400 font-chinese">
-                          ← {matchedChinese}
+                        <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-chinese leading-tight">
+                          {matchedChinese}
                         </span>
                       )}
                     </div>
@@ -410,11 +468,6 @@ export default function Quiz() {
             </div>
           </div>
         </div>
-        {!showResults && (
-          <div className="mt-4 text-center text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
-            Click a character, then click its matching meaning to pair them
-          </div>
-        )}
       </div>
     )
   }

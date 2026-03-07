@@ -35,6 +35,8 @@ const Onboarding = lazy(() => import('./pages/Onboarding'))
 const Landing = lazy(() => import('./pages/Landing'))
 const MyBookmarks = lazy(() => import('./pages/MyBookmarks'))
 const Conversation = lazy(() => import('./pages/Conversation'))
+const Admin = lazy(() => import('./pages/Admin'))
+const Battle = lazy(() => import('./pages/Battle'))
 
 // ── Minimal loading fallback ──────────────────────────────────────
 function PageLoader() {
@@ -83,8 +85,32 @@ function AuthGuard({ children }: { children: React.ReactElement }) {
   return children
 }
 
+// Admin Guard - Redirect non-admins to home
+function AdminGuard({ children }: { children: React.ReactElement }) {
+  const { isAuthenticated, user, authInitialized } = useAuthStore()
+
+  // Wait for auth to finish initializing before deciding
+  if (!authInitialized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
+        <div className="w-8 h-8 border-3 border-indigo-200 dark:border-indigo-800 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/landing" replace />
+  }
+
+  if (!user?.is_admin) {
+    return <Navigate to="/" replace />
+  }
+
+  return children
+}
+
 function App() {
-  const { isAuthenticated, fetchUser, logout } = useAuthStore()
+  const { isAuthenticated, fetchUser, logout, setAuthInitialized } = useAuthStore()
 
   // Initialize auth state on app load
   useEffect(() => {
@@ -102,6 +128,9 @@ function App() {
       } else if (isAuthenticated && !token) {
         appLogger.warn('No token found in localStorage, logging out')
         logout()
+      } else {
+        // Not authenticated — mark init complete so guards don't hang
+        setAuthInitialized(true)
       }
     }
 
@@ -125,6 +154,16 @@ function App() {
             <AuthGuard>
               <LazyPage name="Onboarding"><Onboarding /></LazyPage>
             </AuthGuard>
+          }
+        />
+
+        {/* Admin route - requires auth + is_admin */}
+        <Route
+          path="/admin"
+          element={
+            <AdminGuard>
+              <LazyPage name="Admin"><Admin /></LazyPage>
+            </AdminGuard>
           }
         />
 
@@ -163,6 +202,7 @@ function App() {
           <Route path="profile" element={<LazyPage name="Profile"><Profile /></LazyPage>} />
           <Route path="leaderboard" element={<LazyPage name="Leaderboard"><Leaderboard /></LazyPage>} />
           <Route path="conversation" element={<LazyPage name="Conversation"><Conversation /></LazyPage>} />
+          <Route path="battle" element={<LazyPage name="Battle"><Battle /></LazyPage>} />
         </Route>
       </Routes>
     </>

@@ -7,7 +7,7 @@ import {
   BookOpen, BookMarked, User, LogOut, PenTool, GraduationCap, Brain,
   BarChart3, Type, ChevronDown, Library, Menu, X, Moon, Sun,
   Layers, Keyboard, Trophy, ChevronRight, Headphones, Map, Mic, Lock,
-  Target, Grid3X3, Music, Heart, MessageCircle
+  Target, Grid3X3, Music, Heart, MessageCircle, Shield, Swords,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useState, useEffect, useRef } from 'react'
@@ -94,6 +94,7 @@ export default function Navbar() {
 
   const singleNavLinks: MenuItem[] = [
     { to: '/practice', label: 'Practice', icon: GraduationCap },
+    { to: '/battle', label: 'Battle', icon: Swords },
     { to: '/dashboard', label: 'Dashboard', icon: BarChart3 },
     { to: '/leaderboard', label: 'Leaderboard', icon: Trophy },
   ]
@@ -424,6 +425,14 @@ export default function Navbar() {
                         <span className="text-sm font-medium">Profile</span>
                       </div>
                     </Link>
+                    {user?.is_admin && (
+                      <Link to="/admin" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors">
+                          <Shield className="w-4 h-4" />
+                          <span className="text-sm font-medium">Admin Panel</span>
+                        </div>
+                      </Link>
+                    )}
                     <button
                       onClick={() => { handleLogout(); setMobileMenuOpen(false) }}
                       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
@@ -618,6 +627,14 @@ const UserMenu = forwardRef<HTMLDivElement, {
                 <span className="text-sm">Profile</span>
               </div>
             </Link>
+            {user?.is_admin && (
+              <Link to="/admin" onClick={onClose}>
+                <div className="flex items-center gap-2.5 px-4 py-2.5 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors text-indigo-600 dark:text-indigo-400">
+                  <Shield className="w-4 h-4" />
+                  <span className="text-sm font-medium">Admin Panel</span>
+                </div>
+              </Link>
+            )}
             <div className="border-t border-gray-200 dark:border-gray-700 my-0.5" />
             <button
               onClick={onLogout}

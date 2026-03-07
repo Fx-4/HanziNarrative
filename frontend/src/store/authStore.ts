@@ -1,4 +1,4 @@
-﻿import { create } from 'zustand'
+import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { User } from '@/types'
 import { authApi, onboardingApi } from '@/services/api'
@@ -8,9 +8,11 @@ interface AuthState {
   token: string | null
   isAuthenticated: boolean
   onboardingCompleted: boolean
+  authInitialized: boolean
   login: (username: string, password: string) => Promise<void>
   logout: () => void
   fetchUser: () => Promise<void>
+  setAuthInitialized: (value: boolean) => void
   checkOnboardingStatus: () => Promise<boolean>
 }
 
@@ -21,6 +23,9 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       isAuthenticated: false,
       onboardingCompleted: false,
+      authInitialized: false,
+
+      setAuthInitialized: (value: boolean) => set({ authInitialized: value }),
 
       login: async (username: string, password: string) => {
         const tokens = await authApi.login({ username, password })
@@ -34,16 +39,17 @@ export const useAuthStore = create<AuthState>()(
             user,
             token: tokens.access_token,
             isAuthenticated: true,
-            onboardingCompleted: status.onboarding_completed
+            onboardingCompleted: status.onboarding_completed,
+            authInitialized: true,
           })
         } catch {
-          set({ user, token: tokens.access_token, isAuthenticated: true })
+          set({ user, token: tokens.access_token, isAuthenticated: true, authInitialized: true })
         }
       },
 
       logout: () => {
         localStorage.removeItem('access_token')
-        set({ user: null, token: null, isAuthenticated: false, onboardingCompleted: false })
+        set({ user: null, token: null, isAuthenticated: false, onboardingCompleted: false, authInitialized: true })
       },
 
       fetchUser: async () => {
@@ -58,13 +64,14 @@ export const useAuthStore = create<AuthState>()(
               user,
               token,
               isAuthenticated: true,
-              onboardingCompleted: status.onboarding_completed
+              onboardingCompleted: status.onboarding_completed,
+              authInitialized: true,
             })
           } catch {
-            set({ user, token, isAuthenticated: true })
+            set({ user, token, isAuthenticated: true, authInitialized: true })
           }
         } catch (error) {
-          set({ user: null, token: null, isAuthenticated: false, onboardingCompleted: false })
+          set({ user: null, token: null, isAuthenticated: false, onboardingCompleted: false, authInitialized: true })
           localStorage.removeItem('access_token')
           throw error // Re-throw so App.tsx can catch it
         }
@@ -83,6 +90,13 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
+      // Don't persist authInitialized — always recheck on app load
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+        isAuthenticated: state.isAuthenticated,
+        onboardingCompleted: state.onboardingCompleted,
+      }),
     }
   )
 )
