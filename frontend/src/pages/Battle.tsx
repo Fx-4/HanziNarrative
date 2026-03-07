@@ -689,7 +689,7 @@ function GameOverView({
 export default function Battle() {
   const { user } = useAuthStore()
   const [roomCode, setRoomCode] = useState<string | null>(null)
-  const { isConnected, connectionStatus, gameState, sendMessage, disconnect } = useBattleWebSocket(roomCode)
+  const { connectionStatus, gameState, sendMessage, disconnect } = useBattleWebSocket(roomCode)
 
   // Sync phase from WS state
   const phase = gameState.phase
