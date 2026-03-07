@@ -5,7 +5,8 @@ import { useBattleWebSocket, PlayerInfo } from '@/hooks/useBattleWebSocket'
 import { toast } from 'react-hot-toast'
 import {
   Swords, Users, Copy, Check, Crown, Heart, Trophy,
-  Shield, Zap, LogOut, Play, ArrowRight, Star, X
+  Shield, Zap, LogOut, Play, ArrowRight, Star, X,
+  BookOpen, Timer, Flame
 } from 'lucide-react'
 import axios from 'axios'
 
@@ -161,6 +162,9 @@ function LobbyView({
   const [copied, setCopied] = useState(false)
   const [hskLevel, setHskLevel] = useState(1)
   const [numQ, setNumQ] = useState(10)
+  const [timeLimitSec, setTimeLimitSec] = useState(15)
+  const [startingLives, setStartingLivesLocal] = useState(3)
+  const [qType, setQType] = useState<'mixed' | 'char_to_meaning' | 'meaning_to_char' | 'pinyin'>('mixed')
   const isHost = currentUserId === gameState.hostId
 
   const copyCode = async () => {
@@ -182,7 +186,14 @@ function LobbyView({
   }
 
   const startGame = () => {
-    sendMessage({ type: 'start_game', hsk_level: hskLevel, num_questions: numQ })
+    sendMessage({
+      type: 'start_game',
+      hsk_level: hskLevel,
+      num_questions: numQ,
+      time_limit: timeLimitSec,
+      lives: startingLives,
+      question_type: qType,
+    })
   }
 
   const assignTeam = (userId: number, team: 'A' | 'B') => {
@@ -280,8 +291,12 @@ function LobbyView({
       {/* Game settings (host only) */}
       {isHost && (
         <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-3 sm:p-5 space-y-3 sm:space-y-4">
-          <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-gray-100">Game Settings</h3>
+          <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-gray-100 flex items-center gap-2">
+            <Flame className="w-4 h-4 text-orange-500" /> Game Settings
+          </h3>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            {/* HSK Level */}
             <div>
               <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">HSK Level</label>
               <div className="flex flex-wrap gap-1 sm:gap-1.5">
@@ -293,6 +308,8 @@ function LobbyView({
                 ))}
               </div>
             </div>
+
+            {/* Questions count */}
             <div>
               <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Questions</label>
               <div className="flex flex-wrap gap-1 sm:gap-1.5">
@@ -303,6 +320,65 @@ function LobbyView({
                     }`}>{n}</button>
                 ))}
               </div>
+            </div>
+
+            {/* Time per question */}
+            <div>
+              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 flex items-center gap-1">
+                <Timer className="w-3 h-3" /> Time per Question
+              </label>
+              <div className="flex flex-wrap gap-1 sm:gap-1.5">
+                {[10,15,20,30].map(s => (
+                  <button key={s} onClick={() => setTimeLimitSec(s)}
+                    className={`px-3 h-9 rounded-xl text-sm font-semibold transition-all ${
+                      timeLimitSec === s ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                    }`}>{s}s</button>
+                ))}
+              </div>
+            </div>
+
+            {/* Lives (BR only) */}
+            {gameState.mode === 'battle_royale' && (
+              <div>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 flex items-center gap-1">
+                  <Heart className="w-3 h-3" /> Lives
+                </label>
+                <div className="flex flex-wrap gap-1 sm:gap-1.5">
+                  {[1,2,3].map(n => (
+                    <button key={n} onClick={() => setStartingLivesLocal(n)}
+                      className={`px-3 h-9 rounded-xl text-sm font-semibold transition-all ${
+                        startingLives === n ? 'bg-rose-500 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      }`}>
+                      {'❤️'.repeat(n)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Question type */}
+          <div>
+            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 flex items-center gap-1">
+              <BookOpen className="w-3 h-3" /> Question Type
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+              {([
+                { value: 'mixed',           label: '🔀 Mixed',        desc: 'All types' },
+                { value: 'char_to_meaning', label: '汉 → 🇬🇧',         desc: 'Char to meaning' },
+                { value: 'meaning_to_char', label: '🇬🇧 → 汉',         desc: 'Meaning to char' },
+                { value: 'pinyin',          label: '汉 → pīnyīn',     desc: 'Char to pinyin' },
+              ] as const).map(({ value, label, desc }) => (
+                <button key={value} onClick={() => setQType(value)}
+                  className={`p-2 rounded-xl text-center transition-all border-2 ${
+                    qType === value
+                      ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300'
+                      : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}>
+                  <p className="text-sm font-semibold">{label}</p>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">{desc}</p>
+                </button>
+              ))}
             </div>
           </div>
 
@@ -353,6 +429,7 @@ function QuestionView({
   currentUserId: number
   sendMessage: (m: Record<string, unknown>) => void
 }) {
+  const maxLives = gameState.startingLives
   const q = gameState.currentQuestion
   const [selected, setSelected] = useState<number | null>(null)
   const [timeLeft, setTimeLeft] = useState(q?.time_limit ?? 15)
@@ -421,7 +498,7 @@ function QuestionView({
             <div className="hidden sm:block">
               <p className="text-[10px] font-medium text-gray-700 dark:text-gray-300 leading-none">{p.username}</p>
               {gameState.mode === 'battle_royale' ? (
-                <Hearts lives={p.lives} />
+                <Hearts lives={p.lives} max={maxLives} />
               ) : (
                 <p className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold">{p.score}p</p>
               )}
@@ -439,7 +516,7 @@ function QuestionView({
           <div className="flex items-center gap-2">
             <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-500" />
             {gameState.mode === 'battle_royale' ? (
-              <Hearts lives={me.lives} />
+              <Hearts lives={me.lives} max={maxLives} />
             ) : (
               <TeamBadge team={me.team} />
             )}
@@ -459,6 +536,14 @@ function QuestionView({
             <div className="text-center mb-4 sm:mb-5">
               <p className="text-6xl sm:text-7xl md:text-8xl font-bold font-chinese text-gray-900 dark:text-gray-100 leading-none">{q.chinese}</p>
               <p className="text-indigo-500 text-base sm:text-lg mt-1.5 sm:mt-2">{q.pinyin}</p>
+            </div>
+          </>
+        ) : q.question_type === 'pinyin_match' ? (
+          <>
+            <p className="text-[11px] sm:text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 sm:mb-3 text-center uppercase tracking-wide">Which pronunciation?</p>
+            <div className="text-center mb-4 sm:mb-5">
+              <p className="text-6xl sm:text-7xl md:text-8xl font-bold font-chinese text-gray-900 dark:text-gray-100 leading-none">{q.chinese}</p>
+              <p className="text-gray-400 dark:text-gray-500 text-xs sm:text-sm mt-1.5 italic">{q.english}</p>
             </div>
           </>
         ) : (
@@ -488,7 +573,11 @@ function QuestionView({
                     : isDisabled
                     ? 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
                     : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-600 text-gray-800 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/20'
-                } ${q.question_type === 'multiple_choice' ? 'font-chinese text-xl sm:text-2xl md:text-3xl' : 'text-xs sm:text-sm md:text-base'}`}>
+                } ${
+                  q.question_type === 'multiple_choice' ? 'font-chinese text-xl sm:text-2xl md:text-3xl'
+                  : q.question_type === 'pinyin_match' ? 'text-sm sm:text-base tracking-wide'
+                  : 'text-xs sm:text-sm md:text-base'
+                }`}>
                 {opt}
               </motion.button>
             )
@@ -519,6 +608,7 @@ function RevealView({
 }) {
   const reveal = gameState.revealData
   const q = gameState.currentQuestion
+  const maxLives = gameState.startingLives
   if (!reveal || !q) return null
 
   const me = reveal.players.find(p => p.user_id === currentUserId)
@@ -539,22 +629,40 @@ function RevealView({
               ? 'bg-red-500 text-white'
               : 'bg-gray-500 text-white'
           }`}>
-          {myResult === 'correct' ? '✅ Correct! +10 pts' : myResult === 'wrong' ? '❌ Wrong! -1 life' : '☠️ Eliminated'}
+          {myResult === 'correct' ? '✅ Correct! +10 pts'
+            : myResult === 'wrong' ? `❌ Wrong! ${gameState.mode === 'battle_royale' ? '-1 life' : 'no points'}`
+            : '☠️ Eliminated'}
         </motion.div>
       )}
 
       {/* Correct answer */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-emerald-300 dark:border-emerald-700 p-4 sm:p-5 text-center">
         <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5 sm:mb-2">Correct Answer</p>
+
+        {/* Main answer text */}
         <p className={`font-bold text-emerald-700 dark:text-emerald-400 ${
-          q.question_type === 'multiple_choice' ? 'text-3xl sm:text-4xl font-chinese' : 'text-xl sm:text-2xl'
+          q.question_type === 'multiple_choice' ? 'text-3xl sm:text-4xl font-chinese'
+          : q.question_type === 'pinyin_match' ? 'text-2xl sm:text-3xl tracking-wide'
+          : 'text-xl sm:text-2xl'
         }`}>
           {reveal.correctText}
         </p>
+
+        {/* Supporting info based on question type */}
         {q.question_type === 'character_match' && (
           <p className="text-2xl sm:text-3xl font-chinese text-gray-700 dark:text-gray-300 mt-1">{q.chinese}</p>
         )}
-        <p className="text-indigo-500 mt-1 text-sm sm:text-base">{q.pinyin}</p>
+        {q.question_type === 'pinyin_match' && (
+          <p className="text-3xl sm:text-4xl font-chinese text-gray-700 dark:text-gray-300 mt-1">{q.chinese}</p>
+        )}
+        {q.question_type !== 'pinyin_match' && (
+          <p className="text-indigo-500 mt-1 text-sm sm:text-base">{q.pinyin}</p>
+        )}
+        <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">
+          {q.question_type === 'character_match' ? q.english
+            : q.question_type === 'multiple_choice' ? q.english
+            : `${q.english} · HSK ${q.hsk_level}`}
+        </p>
       </div>
 
       {/* Player results */}
@@ -570,7 +678,7 @@ function RevealView({
               }`}>
               <Avatar player={p} size="sm" />
               <span className="flex-1 font-medium text-xs sm:text-sm text-gray-900 dark:text-gray-100 truncate">{p.username}</span>
-              <Hearts lives={p.lives} />
+              {gameState.mode === 'battle_royale' && <Hearts lives={p.lives} max={maxLives} />}
               <span className="text-xs font-bold text-gray-600 dark:text-gray-400 hidden sm:block">{p.score} pts</span>
               <span className="text-sm sm:text-base">
                 {p.result === 'correct' ? '✅' : p.result === 'wrong' ? '❌' : '☠️'}

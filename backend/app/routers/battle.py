@@ -70,6 +70,9 @@ class RoomState:
     mode: str                          # "battle_royale" | "team_vs_team"
     hsk_level: int = 1
     num_questions: int = 10
+    time_limit: int = 15               # seconds per question
+    starting_lives: int = 3            # lives for battle_royale
+    question_type: str = "mixed"       # mixed|char_to_meaning|meaning_to_char|pinyin
     state: str = "lobby"              # lobby|countdown|question|reveal|game_over
     players: dict = field(default_factory=dict)   # user_id → PlayerState
     questions: list = field(default_factory=list)
@@ -110,13 +113,18 @@ def _gen_room_code() -> str:
 # Question generation (battle-specific: only 4-option questions)
 # ---------------------------------------------------------------------------
 
-def _generate_battle_questions(db: Session, hsk_level: int, num_questions: int) -> list:
+_Q_ROTATION = ["character_match", "multiple_choice", "pinyin_match"]
+
+
+def _generate_battle_questions(
+    db: Session, hsk_level: int, num_questions: int, question_type: str = "mixed"
+) -> list:
     all_words = db.query(models.HanziWord).filter(
         models.HanziWord.hsk_level == hsk_level
     ).all()
 
     if len(all_words) < max(num_questions, 4):
-        # fallback: pull from adjacent level
+        # fallback: pull from all levels up to hsk_level
         all_words = db.query(models.HanziWord).filter(
             models.HanziWord.hsk_level <= hsk_level
         ).all()
@@ -129,12 +137,21 @@ def _generate_battle_questions(db: Session, hsk_level: int, num_questions: int) 
     questions = []
 
     for idx, word in enumerate(selected):
-        pool = [w for w in all_words if w.id != word.id]
-        wrong = random.sample(pool, min(3, len(pool)))
+        # Determine question type for this slot
+        if question_type == "char_to_meaning":
+            q_type = "character_match"
+        elif question_type == "meaning_to_char":
+            q_type = "multiple_choice"
+        elif question_type == "pinyin":
+            q_type = "pinyin_match"
+        else:  # mixed — cycle through all 3 types
+            q_type = _Q_ROTATION[idx % 3]
 
-        # Alternate question types
-        if idx % 2 == 0:
-            # character_match: show Chinese → pick English meaning
+        pool = [w for w in all_words if w.id != word.id]
+
+        if q_type == "character_match":
+            # Show Chinese character → player picks correct English meaning
+            wrong = random.sample(pool, min(3, len(pool)))
             correct = word.english
             options = [w.english for w in wrong] + [correct]
             random.shuffle(options)
@@ -147,9 +164,12 @@ def _generate_battle_questions(db: Session, hsk_level: int, num_questions: int) 
                 "options": options,
                 "correct_answer": options.index(correct),
                 "word_id": word.id,
+                "hsk_level": word.hsk_level,
             })
-        else:
-            # multiple_choice: show English → pick Chinese character
+
+        elif q_type == "multiple_choice":
+            # Show English meaning → player picks correct Chinese character
+            wrong = random.sample(pool, min(3, len(pool)))
             correct = word.simplified
             options = [w.simplified for w in wrong] + [correct]
             random.shuffle(options)
@@ -162,6 +182,45 @@ def _generate_battle_questions(db: Session, hsk_level: int, num_questions: int) 
                 "options": options,
                 "correct_answer": options.index(correct),
                 "word_id": word.id,
+                "hsk_level": word.hsk_level,
+            })
+
+        else:  # pinyin_match
+            # Show Chinese character → player picks correct pinyin
+            # Prefer distractors with different pinyin to avoid confusion
+            distinct_pool = [w for w in pool if w.pinyin != word.pinyin]
+            if len(distinct_pool) >= 3:
+                wrong = random.sample(distinct_pool, 3)
+            else:
+                wrong = random.sample(pool, min(3, len(pool)))
+
+            correct = word.pinyin
+            raw_options = [w.pinyin for w in wrong] + [correct]
+
+            # Deduplicate while preserving correct answer
+            seen: set = set()
+            unique: list = []
+            for opt in raw_options:
+                if opt not in seen:
+                    seen.add(opt)
+                    unique.append(opt)
+            if correct not in unique:
+                unique[-1] = correct  # ensure correct always present
+            while len(unique) < 4:
+                unique.append("—")    # pad to 4 (edge case with tiny vocab)
+
+            options = unique[:4]
+            random.shuffle(options)
+            questions.append({
+                "id": idx,
+                "question_type": "pinyin_match",
+                "chinese": word.simplified,
+                "pinyin": word.pinyin,
+                "english": word.english,
+                "options": options,
+                "correct_answer": options.index(correct),
+                "word_id": word.id,
+                "hsk_level": word.hsk_level,
             })
 
     return questions
@@ -222,14 +281,15 @@ async def _run_game(room: RoomState):
                 "type": "question",
                 "index": q_idx + 1,
                 "total": len(room.questions),
-                "time_limit": QUESTION_TIME_LIMIT,
+                "time_limit": room.time_limit,
+                "starting_lives": room.starting_lives,
                 **question,
                 # Hide correct_answer from payload — clients must not see it
                 "correct_answer": None,
             })
 
             # Wait for time limit (check every 0.25s for early all-answered)
-            deadline = time.time() + QUESTION_TIME_LIMIT
+            deadline = time.time() + room.time_limit
             while time.time() < deadline:
                 active = room.active_players()
                 if all(p.answered for p in active):
@@ -471,18 +531,27 @@ async def battle_websocket(
 
                 hsk_level = int(msg.get("hsk_level", 1))
                 num_q = int(msg.get("num_questions", 10))
+                time_limit = max(5, min(60, int(msg.get("time_limit", 15))))
+                starting_lives = max(1, min(5, int(msg.get("lives", 3))))
+                question_type = msg.get("question_type", "mixed")
+                if question_type not in ("mixed", "char_to_meaning", "meaning_to_char", "pinyin"):
+                    question_type = "mixed"
+
                 room.hsk_level = hsk_level
                 room.num_questions = num_q
+                room.time_limit = time_limit
+                room.starting_lives = starting_lives
+                room.question_type = question_type
 
                 try:
-                    room.questions = _generate_battle_questions(db, hsk_level, num_q)
+                    room.questions = _generate_battle_questions(db, hsk_level, num_q, question_type)
                 except HTTPException as e:
                     await _send(websocket, {"type": "error", "message": e.detail})
                     continue
 
                 # Reset player states
                 for p in room.players.values():
-                    p.lives = STARTING_LIVES
+                    p.lives = starting_lives
                     p.score = 0
                     p.eliminated = False
                     p.answered = False

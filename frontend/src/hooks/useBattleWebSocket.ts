@@ -23,11 +23,13 @@ export interface BattleQuestion {
   index: number
   total: number
   time_limit: number
-  question_type: 'multiple_choice' | 'character_match'
+  starting_lives: number
+  question_type: 'multiple_choice' | 'character_match' | 'pinyin_match'
   chinese: string
   pinyin: string
   english: string
   options: string[]
+  hsk_level: number
   correct_answer: null   // always null while question is live
 }
 
@@ -47,6 +49,7 @@ export interface GameState {
   hostId: number | null
   players: PlayerInfo[]
   currentQuestion: BattleQuestion | null
+  startingLives: number
   revealData: {
     correctAnswer: number
     correctText: string
@@ -71,6 +74,7 @@ const INITIAL_STATE: GameState = {
   hostId: null,
   players: [],
   currentQuestion: null,
+  startingLives: 3,
   revealData: null,
   gameOverData: null,
   countdownSeconds: null,
@@ -159,6 +163,7 @@ export function useBattleWebSocket(roomCode: string | null) {
                 ...prev,
                 phase: 'question',
                 currentQuestion: msg as unknown as BattleQuestion,
+                startingLives: (msg.starting_lives as number) ?? prev.startingLives,
                 revealData: null,
                 countdownSeconds: null,
                 answeredUserIds: [],
