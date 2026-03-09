@@ -1,6 +1,20 @@
 """
 Multiplayer Battle router — Battle Royale & Team vs Team
 Real-time via FastAPI WebSockets, in-memory room state.
+
+Question Types (6 total):
+  character_match  – Show 汉字 → pick English meaning
+  multiple_choice  – Show English meaning → pick 汉字
+  pinyin_match     – Show 汉字 → pick correct pinyin
+  tone_select      – Show bare syllable → pick correct tone marks
+  sentence_blank   – Show sentence with ___ → pick word that fits
+  definition_match – Show a Chinese-language hint/desc → pick the word
+
+Buff/Debuff System:
+  After each question reveal there is a 50% chance a power-up fires.
+  It is randomly a buff or debuff and targets a random living player.
+  Server-side effects are applied immediately; client-side effects are
+  signalled via the `buff_event` message and honoured by the frontend.
 """
 
 import asyncio
@@ -9,8 +23,8 @@ import logging
 import random
 import string
 import time
-from dataclasses import dataclass, field, asdict
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import Optional, Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
@@ -26,12 +40,174 @@ router = APIRouter(prefix="/battle", tags=["battle"])
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
-MAX_PLAYERS_BATTLE = 5
-MAX_PLAYERS_TEAM = 6
-STARTING_LIVES = 3
+MAX_PLAYERS_BATTLE = 20
+MAX_PLAYERS_TEAM   = 20
+STARTING_LIVES     = 3
 QUESTION_TIME_LIMIT = 15   # seconds
-REVEAL_PAUSE = 2.5         # seconds between reveal → next question
-COUNTDOWN_FROM = 3
+REVEAL_PAUSE        = 3.0  # seconds between reveal → next question (longer so buff anim shows)
+COUNTDOWN_FROM      = 3
+BUFF_CHANCE         = 0.50  # 50% chance of a buff/debuff event per question
+
+# Question type rotation (6 types)
+_Q_ROTATION = [
+    "character_match",
+    "multiple_choice",
+    "pinyin_match",
+    "tone_select",
+    "sentence_blank",
+    "definition_match",
+]
+
+# ---------------------------------------------------------------------------
+# Buff / Debuff definitions
+# ---------------------------------------------------------------------------
+# Fields: id, name, emoji, description, is_buff, server_effect, duration_rounds
+# server_effect values:
+#   None               – purely client-side (visual/timing)
+#   "double_points"    – next correct answer = +20
+#   "shield"           – next wrong answer in BR doesn't cost a life
+#   "score_boost_5"    – immediate +5 pts
+#   "score_boost_10"   – immediate +10 pts
+#   "point_leak_3"     – immediate -3 pts
+#   "point_leak_5"     – immediate -5 pts
+#   "extra_life"       – +1 life (BR only)
+#   "steal_points"     – steal 5 pts from the highest scorer
+#   "double_damage"    – next wrong answer loses 2 lives (BR only)
+#   "answer_reveal"    – the correct option is highlighted for 2s before disable (client handles)
+
+BUFFS: List[dict] = [
+    {
+        "id": "double_points",
+        "name": "Double Points",
+        "emoji": "⚡",
+        "description": "Your next correct answer is worth 20 pts!",
+        "server_effect": "double_points",
+        "duration_rounds": 1,
+    },
+    {
+        "id": "shield",
+        "name": "Iron Shield",
+        "emoji": "🛡️",
+        "description": "You're protected — next wrong answer won't cost a life!",
+        "server_effect": "shield",
+        "duration_rounds": 1,
+    },
+    {
+        "id": "score_boost",
+        "name": "Score Surge",
+        "emoji": "🌟",
+        "description": "Instant +10 bonus points!",
+        "server_effect": "score_boost_10",
+        "duration_rounds": 0,
+    },
+    {
+        "id": "extra_life",
+        "name": "Extra Life",
+        "emoji": "💖",
+        "description": "+1 life restored!",
+        "server_effect": "extra_life",
+        "duration_rounds": 0,
+    },
+    {
+        "id": "time_bonus",
+        "name": "Time Warp",
+        "emoji": "⏰",
+        "description": "You get +7 seconds on the next question!",
+        "server_effect": None,
+        "duration_rounds": 1,
+    },
+    {
+        "id": "answer_reveal",
+        "name": "Answer Hint",
+        "emoji": "🔍",
+        "description": "The correct option briefly glows before the timer starts!",
+        "server_effect": None,
+        "duration_rounds": 1,
+    },
+    {
+        "id": "steal_points",
+        "name": "Pickpocket",
+        "emoji": "🦊",
+        "description": "You steal 5 points from the leading player!",
+        "server_effect": "steal_points",
+        "duration_rounds": 0,
+    },
+    {
+        "id": "skip_immunity",
+        "name": "Skip Immunity",
+        "emoji": "🌀",
+        "description": "You're immune to the next debuff thrown at you!",
+        "server_effect": None,
+        "duration_rounds": 2,
+    },
+]
+
+DEBUFFS: List[dict] = [
+    {
+        "id": "blind",
+        "name": "Blindfolded",
+        "emoji": "🙈",
+        "description": "Your answer options are shuffled randomly!",
+        "server_effect": None,
+        "duration_rounds": 1,
+    },
+    {
+        "id": "time_cut",
+        "name": "Time Pressure",
+        "emoji": "⏱️",
+        "description": "You get 7 fewer seconds on the next question!",
+        "server_effect": None,
+        "duration_rounds": 1,
+    },
+    {
+        "id": "freeze",
+        "name": "Frozen",
+        "emoji": "❄️",
+        "description": "You can't answer for the first 4 seconds!",
+        "server_effect": None,
+        "duration_rounds": 1,
+    },
+    {
+        "id": "point_leak",
+        "name": "Score Drain",
+        "emoji": "💸",
+        "description": "Oops! -5 points drained from your score!",
+        "server_effect": "point_leak_5",
+        "duration_rounds": 0,
+    },
+    {
+        "id": "double_damage",
+        "name": "Glass Cannon",
+        "emoji": "💥",
+        "description": "Your next wrong answer costs 2 lives!",
+        "server_effect": "double_damage",
+        "duration_rounds": 1,
+    },
+    {
+        "id": "reverse_controls",
+        "name": "Mirrored",
+        "emoji": "🔀",
+        "description": "Answer options are displayed in reverse order!",
+        "server_effect": None,
+        "duration_rounds": 1,
+    },
+    {
+        "id": "answer_hidden",
+        "name": "Hidden Options",
+        "emoji": "🫣",
+        "description": "One random wrong option is hidden from you!",
+        "server_effect": None,
+        "duration_rounds": 1,
+    },
+    {
+        "id": "score_leech",
+        "name": "Score Leech",
+        "emoji": "🧛",
+        "description": "One of your correct answers gives 0 points this round!",
+        "server_effect": "score_leech",
+        "duration_rounds": 1,
+    },
+]
 
 # ---------------------------------------------------------------------------
 # Data structures
@@ -49,6 +225,10 @@ class PlayerState:
     answer: Optional[int] = None
     answer_time: Optional[float] = None
     eliminated: bool = False
+    # active effects: effect_id → rounds_remaining
+    active_effects: Dict[str, int] = field(default_factory=dict)
+    # inventory: earned items not yet used
+    inventory: List[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -60,7 +240,23 @@ class PlayerState:
             "team": self.team,
             "answered": self.answered,
             "eliminated": self.eliminated,
+            "active_effects": dict(self.active_effects),
+            "inventory": list(self.inventory),
         }
+
+    def has_effect(self, effect_id: str) -> bool:
+        return self.active_effects.get(effect_id, 0) > 0
+
+    def add_effect(self, effect_id: str, duration: int):
+        if duration > 0:
+            self.active_effects[effect_id] = duration
+
+    def tick_effects(self):
+        expired = [k for k, v in self.active_effects.items() if v <= 1]
+        for k in expired:
+            del self.active_effects[k]
+        for k in self.active_effects:
+            self.active_effects[k] -= 1
 
 
 @dataclass
@@ -73,7 +269,7 @@ class RoomState:
     time_limit: int = 15               # seconds per question
     starting_lives: int = 3            # lives for battle_royale
     question_type: str = "mixed"       # mixed|char_to_meaning|meaning_to_char|pinyin
-    state: str = "lobby"              # lobby|countdown|question|reveal|game_over
+    state: str = "lobby"               # lobby|countdown|question|reveal|game_over
     players: dict = field(default_factory=dict)   # user_id → PlayerState
     questions: list = field(default_factory=list)
     current_q_index: int = 0
@@ -110,11 +306,8 @@ def _gen_room_code() -> str:
 
 
 # ---------------------------------------------------------------------------
-# Question generation (battle-specific: only 4-option questions)
+# Question generation — 6 types
 # ---------------------------------------------------------------------------
-
-_Q_ROTATION = ["character_match", "multiple_choice", "pinyin_match"]
-
 
 def _generate_battle_questions(
     db: Session, hsk_level: int, num_questions: int, question_type: str = "mixed"
@@ -124,7 +317,6 @@ def _generate_battle_questions(
     ).all()
 
     if len(all_words) < max(num_questions, 4):
-        # fallback: pull from all levels up to hsk_level
         all_words = db.query(models.HanziWord).filter(
             models.HanziWord.hsk_level <= hsk_level
         ).all()
@@ -144,86 +336,165 @@ def _generate_battle_questions(
             q_type = "multiple_choice"
         elif question_type == "pinyin":
             q_type = "pinyin_match"
-        else:  # mixed — cycle through all 3 types
-            q_type = _Q_ROTATION[idx % 3]
+        elif question_type == "tone_select":
+            q_type = "tone_select"
+        elif question_type == "sentence_blank":
+            q_type = "sentence_blank"
+        elif question_type == "definition_match":
+            q_type = "definition_match"
+        else:  # mixed — cycle through all 6 types
+            q_type = _Q_ROTATION[idx % len(_Q_ROTATION)]
 
         pool = [w for w in all_words if w.id != word.id]
-
-        if q_type == "character_match":
-            # Show Chinese character → player picks correct English meaning
-            wrong = random.sample(pool, min(3, len(pool)))
-            correct = word.english
-            options = [w.english for w in wrong] + [correct]
-            random.shuffle(options)
-            questions.append({
-                "id": idx,
-                "question_type": "character_match",
-                "chinese": word.simplified,
-                "pinyin": word.pinyin,
-                "english": word.english,
-                "options": options,
-                "correct_answer": options.index(correct),
-                "word_id": word.id,
-                "hsk_level": word.hsk_level,
-            })
-
-        elif q_type == "multiple_choice":
-            # Show English meaning → player picks correct Chinese character
-            wrong = random.sample(pool, min(3, len(pool)))
-            correct = word.simplified
-            options = [w.simplified for w in wrong] + [correct]
-            random.shuffle(options)
-            questions.append({
-                "id": idx,
-                "question_type": "multiple_choice",
-                "chinese": word.simplified,
-                "pinyin": word.pinyin,
-                "english": word.english,
-                "options": options,
-                "correct_answer": options.index(correct),
-                "word_id": word.id,
-                "hsk_level": word.hsk_level,
-            })
-
-        else:  # pinyin_match
-            # Show Chinese character → player picks correct pinyin
-            # Prefer distractors with different pinyin to avoid confusion
-            distinct_pool = [w for w in pool if w.pinyin != word.pinyin]
-            if len(distinct_pool) >= 3:
-                wrong = random.sample(distinct_pool, 3)
-            else:
-                wrong = random.sample(pool, min(3, len(pool)))
-
-            correct = word.pinyin
-            raw_options = [w.pinyin for w in wrong] + [correct]
-
-            # Deduplicate while preserving correct answer
-            seen: set = set()
-            unique: list = []
-            for opt in raw_options:
-                if opt not in seen:
-                    seen.add(opt)
-                    unique.append(opt)
-            if correct not in unique:
-                unique[-1] = correct  # ensure correct always present
-            while len(unique) < 4:
-                unique.append("—")    # pad to 4 (edge case with tiny vocab)
-
-            options = unique[:4]
-            random.shuffle(options)
-            questions.append({
-                "id": idx,
-                "question_type": "pinyin_match",
-                "chinese": word.simplified,
-                "pinyin": word.pinyin,
-                "english": word.english,
-                "options": options,
-                "correct_answer": options.index(correct),
-                "word_id": word.id,
-                "hsk_level": word.hsk_level,
-            })
+        q = _build_question(idx, word, pool, q_type)
+        questions.append(q)
 
     return questions
+
+
+def _build_question(idx: int, word, pool: list, q_type: str) -> dict:
+    """Build a single question dict for the given type."""
+
+    base = {
+        "id": idx,
+        "question_type": q_type,
+        "chinese": word.simplified,
+        "pinyin": word.pinyin,
+        "english": word.english,
+        "word_id": word.id,
+        "hsk_level": word.hsk_level,
+    }
+
+    # ── character_match: Show 汉字 → pick English meaning ──────────────────
+    if q_type == "character_match":
+        wrong = random.sample(pool, min(3, len(pool)))
+        correct = word.english
+        options = [w.english for w in wrong] + [correct]
+        random.shuffle(options)
+        return {**base, "options": options, "correct_answer": options.index(correct),
+                "prompt_label": "What is the meaning of this character?"}
+
+    # ── multiple_choice: Show English → pick 汉字 ──────────────────────────
+    elif q_type == "multiple_choice":
+        wrong = random.sample(pool, min(3, len(pool)))
+        correct = word.simplified
+        options = [w.simplified for w in wrong] + [correct]
+        random.shuffle(options)
+        return {**base, "options": options, "correct_answer": options.index(correct),
+                "prompt_label": "Which character means this?"}
+
+    # ── pinyin_match: Show 汉字 → pick correct pinyin ──────────────────────
+    elif q_type == "pinyin_match":
+        distinct_pool = [w for w in pool if w.pinyin != word.pinyin]
+        wrong = random.sample(distinct_pool if len(distinct_pool) >= 3 else pool, min(3, len(pool)))
+        correct = word.pinyin
+        raw_options = [w.pinyin for w in wrong] + [correct]
+        seen: set = set()
+        unique: list = []
+        for opt in raw_options:
+            if opt not in seen:
+                seen.add(opt)
+                unique.append(opt)
+        if correct not in unique:
+            unique[-1] = correct
+        while len(unique) < 4:
+            unique.append("—")
+        options = unique[:4]
+        random.shuffle(options)
+        return {**base, "options": options, "correct_answer": options.index(correct),
+                "prompt_label": "Which pronunciation is correct?"}
+
+    # ── tone_select: Show bare syllable → pick correct toned pinyin ────────
+    elif q_type == "tone_select":
+        # Strip tone marks to create bare syllable prompt
+        import unicodedata
+        def strip_tones(text: str) -> str:
+            normalized = unicodedata.normalize("NFD", text)
+            return "".join(c for c in normalized if unicodedata.category(c) != "Mn").lower()
+
+        correct_pinyin = word.pinyin
+        bare = strip_tones(correct_pinyin)
+
+        # Build distractors: prefer words with same/similar bare syllable but different tones
+        tone_pool = [w for w in pool if strip_tones(w.pinyin) == bare and w.pinyin != correct_pinyin]
+        # Fill the rest with random different-pinyin words
+        fill_pool = [w for w in pool if w.pinyin != correct_pinyin and w not in tone_pool]
+        random.shuffle(tone_pool)
+        random.shuffle(fill_pool)
+        wrong_sources = (tone_pool + fill_pool)[:3]
+        wrong_pinyins = [w.pinyin for w in wrong_sources]
+
+        options = wrong_pinyins + [correct_pinyin]
+        # Deduplicate
+        seen = set()
+        options_dedup = []
+        for o in options:
+            if o not in seen:
+                seen.add(o)
+                options_dedup.append(o)
+        while len(options_dedup) < 4:
+            options_dedup.append("—")
+        options = options_dedup[:4]
+        random.shuffle(options)
+        correct_idx = options.index(correct_pinyin) if correct_pinyin in options else 0
+
+        return {
+            **base,
+            "bare_syllable": bare,   # shown as prompt
+            "options": options,
+            "correct_answer": correct_idx,
+            "prompt_label": "Choose the correct tone for this syllable:",
+        }
+
+    # ── sentence_blank: Show example sentence with blank → pick word ───────
+    elif q_type == "sentence_blank":
+        # Try to use example_sentence attribute; fallback to a constructed sentence
+        ex_sentence = getattr(word, "example_sentence", None) or ""
+
+        if ex_sentence and word.simplified in ex_sentence:
+            display_sentence = ex_sentence.replace(word.simplified, "___", 1)
+        else:
+            # Construct a minimal display: "{pinyin} means ___"
+            display_sentence = f"___ ({word.pinyin})"
+
+        wrong = random.sample(pool, min(3, len(pool)))
+        correct = word.simplified
+        options = [w.simplified for w in wrong] + [correct]
+        random.shuffle(options)
+        return {
+            **base,
+            "display_sentence": display_sentence,
+            "options": options,
+            "correct_answer": options.index(correct),
+            "prompt_label": "Fill in the blank:",
+        }
+
+    # ── definition_match: Show English definition → pick 汉字 ──────────────
+    else:  # definition_match
+        # Build a contextual clue from available fields
+        hints = []
+        if word.pinyin:
+            hints.append(f"Pinyin: {word.pinyin}")
+        if word.hsk_level:
+            hints.append(f"HSK {word.hsk_level}")
+
+        definition_text = word.english if word.english else word.pinyin
+        # Add a visual hint that makes it feel like a definition card
+        clue = f'"{definition_text}"'
+        if hints:
+            clue += f" ({', '.join(hints)})"
+
+        wrong = random.sample(pool, min(3, len(pool)))
+        correct = word.simplified
+        options = [w.simplified for w in wrong] + [correct]
+        random.shuffle(options)
+        return {
+            **base,
+            "definition_clue": clue,
+            "options": options,
+            "correct_answer": options.index(correct),
+            "prompt_label": "Which character matches this definition?",
+        }
 
 
 # ---------------------------------------------------------------------------
@@ -248,6 +519,86 @@ async def _send(ws: WebSocket, message: dict):
         await ws.send_text(json.dumps(message))
     except Exception:
         pass
+
+
+# ---------------------------------------------------------------------------
+# Buff / Debuff application
+# ---------------------------------------------------------------------------
+
+ALL_EFFECTS: List[dict] = BUFFS + DEBUFFS
+EFFECT_MAP: Dict[str, dict] = {e['id']: e for e in ALL_EFFECTS}
+
+
+async def _apply_single_effect(room: RoomState, effect_def: dict, target: PlayerState):
+    """Apply one effect to a specific target and broadcast."""
+    is_buff = effect_def in BUFFS
+    effect = effect_def["server_effect"]
+
+    if effect == "score_boost_5":
+        target.score += 5
+    elif effect == "score_boost_10":
+        target.score += 10
+    elif effect == "point_leak_3":
+        target.score = max(0, target.score - 3)
+    elif effect == "point_leak_5":
+        target.score = max(0, target.score - 5)
+    elif effect == "extra_life":
+        if room.mode == "battle_royale":
+            target.lives = min(target.lives + 1, room.starting_lives + 1)
+    elif effect == "steal_points":
+        active = room.active_players()
+        others = [p for p in active if p.user_id != target.user_id]
+        if others:
+            richest = max(others, key=lambda p: p.score)
+            steal = min(5, richest.score)
+            richest.score -= steal
+            target.score += steal
+
+    duration = effect_def.get("duration_rounds", 0)
+    if duration > 0:
+        target.add_effect(effect_def["id"], duration)
+
+    await _broadcast(room, {
+        "type": "buff_event",
+        "target_user_id": target.user_id,
+        "target_username": target.username,
+        "effect_id": effect_def["id"],
+        "effect_name": effect_def["name"],
+        "effect_emoji": effect_def["emoji"],
+        "is_buff": is_buff,
+        "description": effect_def["description"],
+        "duration_rounds": duration,
+        "players": room.player_list(),
+    })
+
+
+async def _apply_buff_event(room: RoomState):
+    """
+    Randomly pick a buff/debuff, pick a random living player as target,
+    apply any server-side effects immediately, then broadcast the event.
+    (Used for automatic events; manual use goes through use_effect handler.)
+    """
+    event_def = _pick_buff_event()
+    if not event_def:
+        return
+
+    active = room.active_players()
+    if not active:
+        return
+
+    # Check skip_immunity — exclude players immune to debuffs
+    is_debuff = event_def not in BUFFS
+    eligible = active
+    if is_debuff:
+        eligible = [p for p in active if not p.has_effect("skip_immunity")]
+        if not eligible:
+            eligible = active  # immunity blocked everything; apply anyway
+
+    target: PlayerState = random.choice(eligible)
+
+    # ── Apply server-side effects immediately ────────────────────────────
+    # The logic for applying effects is now in _apply_single_effect
+    await _apply_single_effect(room, event_def, target)
 
 
 # ---------------------------------------------------------------------------
@@ -284,7 +635,7 @@ async def _run_game(room: RoomState):
                 "time_limit": room.time_limit,
                 "starting_lives": room.starting_lives,
                 **question,
-                # Hide correct_answer from payload — clients must not see it
+                # Hide correct_answer from payload
                 "correct_answer": None,
             })
 
@@ -296,7 +647,7 @@ async def _run_game(room: RoomState):
                     break
                 await asyncio.sleep(0.25)
 
-            # Reveal phase
+            # ── Reveal phase ──────────────────────────────────────────────
             room.state = "reveal"
             correct_idx = question["correct_answer"]
             results = []
@@ -309,15 +660,28 @@ async def _run_game(room: RoomState):
                 answered_correctly = (p.answered and p.answer == correct_idx)
 
                 if answered_correctly:
-                    p.score += 10
+                    pts = 10
+                    if p.has_effect("double_points"):
+                        pts = 20
+                    elif p.has_effect("score_leech"):
+                        pts = 0
+                    p.score += pts
                     result = "correct"
+                    # Award a random inventory item (70% chance)
+                    if random.random() < 0.70:
+                        earned = random.choice(ALL_EFFECTS)
+                        p.inventory.append(earned["id"])
                 else:
                     if room.mode == "battle_royale":
-                        p.lives = max(0, p.lives - 1)
+                        dmg = 2 if p.has_effect("double_damage") else 1
+                        if p.has_effect("shield"):
+                            dmg = 0
+                        p.lives = max(0, p.lives - dmg)
                         if p.lives == 0:
                             p.eliminated = True
                     result = "wrong"
 
+                p.tick_effects()
                 results.append({**p.to_dict(), "result": result})
 
             await _broadcast(room, {
@@ -327,13 +691,21 @@ async def _run_game(room: RoomState):
                 "players": results,
             })
 
-            # Announce eliminations
-            for p in room.players.values():
-                if p.eliminated and p.lives == 0:
-                    # Only announce freshly eliminated (lives just hit 0 this round)
-                    pass  # included in reveal payload
+            # Update room player list (scores changed)
+            for r in results:
+                uid = r["user_id"]
+                if uid in room.players:
+                    room.players[uid].score = r["score"]
+                    room.players[uid].lives = r["lives"]
+                    room.players[uid].eliminated = r["eliminated"]
+                    room.players[uid].inventory = r["inventory"] # Update inventory from to_dict
 
-            await asyncio.sleep(REVEAL_PAUSE)
+            # Fire buff/debuff event — give players a moment to read reveal first
+            await asyncio.sleep(1.2)
+            await _apply_buff_event(room)
+
+            # Remaining reveal pause
+            await asyncio.sleep(REVEAL_PAUSE - 1.2)
 
             # Early finish: battle royale → 1 survivor
             if room.mode == "battle_royale":
@@ -439,6 +811,18 @@ def get_room(
 
 
 # ---------------------------------------------------------------------------
+# REST: list active buffs/debuffs (for UI display)
+# ---------------------------------------------------------------------------
+
+@router.get("/effects")
+def get_effects(current_user: models.User = Depends(auth.get_current_user)):
+    return {
+        "buffs": BUFFS,
+        "debuffs": DEBUFFS,
+    }
+
+
+# ---------------------------------------------------------------------------
 # WebSocket: /battle/ws/{room_code}?token=<jwt>
 # ---------------------------------------------------------------------------
 
@@ -449,7 +833,6 @@ async def battle_websocket(
     token: str,
     db: Session = Depends(get_db),
 ):
-    # Auth via query-param token (must await — get_current_user is async)
     try:
         current_user = await auth.get_current_user(token=token, db=db)
     except Exception:
@@ -529,19 +912,22 @@ async def battle_websocket(
                     await _send(websocket, {"type": "error", "message": "Need at least 2 players"})
                     continue
 
-                hsk_level = int(msg.get("hsk_level", 1))
-                num_q = int(msg.get("num_questions", 10))
-                time_limit = max(5, min(60, int(msg.get("time_limit", 15))))
+                hsk_level      = int(msg.get("hsk_level", 1))
+                num_q          = int(msg.get("num_questions", 10))
+                time_limit     = max(5, min(60, int(msg.get("time_limit", 15))))
                 starting_lives = max(1, min(5, int(msg.get("lives", 3))))
-                question_type = msg.get("question_type", "mixed")
-                if question_type not in ("mixed", "char_to_meaning", "meaning_to_char", "pinyin"):
+                question_type  = msg.get("question_type", "mixed")
+                if question_type not in (
+                    "mixed", "char_to_meaning", "meaning_to_char", "pinyin",
+                    "tone_select", "sentence_blank", "definition_match"
+                ):
                     question_type = "mixed"
 
-                room.hsk_level = hsk_level
-                room.num_questions = num_q
-                room.time_limit = time_limit
+                room.hsk_level      = hsk_level
+                room.num_questions  = num_q
+                room.time_limit     = time_limit
                 room.starting_lives = starting_lives
-                room.question_type = question_type
+                room.question_type  = question_type
 
                 try:
                     room.questions = _generate_battle_questions(db, hsk_level, num_q, question_type)
@@ -555,8 +941,9 @@ async def battle_websocket(
                     p.score = 0
                     p.eliminated = False
                     p.answered = False
+                    p.active_effects = {}
+                    p.inventory = [] # Reset inventory on game start
 
-                # Kick off game loop as background task
                 if room.game_task and not room.game_task.done():
                     room.game_task.cancel()
                 room.game_task = asyncio.create_task(_run_game(room))
@@ -591,14 +978,46 @@ async def battle_websocket(
                     player.answer = int(msg.get("answer_index", -1))
                     player.answer_time = time.time()
 
-                    # Tell everyone who answered (not what)
                     await _broadcast(room, {
                         "type": "player_answered",
                         "user_id": current_user.id,
                         "username": current_user.username,
                     })
 
-            # ── KICK ───────────────────────────────────────────────────────
+            # ── USE EFFECT (player manually activates an inventory item) ──────────
+            elif mtype == "use_effect":
+                player = room.players.get(current_user.id)
+                effect_id = str(msg.get("effect_id", ""))
+                target_uid = int(msg.get("target_user_id", current_user.id))
+
+                if not player or player.eliminated or room.state != "question":
+                    await _send(websocket, {"type": "error", "message": "Cannot use item now."})
+                    continue
+                if effect_id not in player.inventory:
+                    await _send(websocket, {"type": "error", "message": "Item not in inventory"})
+                    continue
+
+                effect_def = EFFECT_MAP.get(effect_id)
+                if not effect_def:
+                    await _send(websocket, {"type": "error", "message": "Invalid effect ID."})
+                    continue
+
+                target = room.players.get(target_uid)
+                if not target or target.eliminated:
+                    await _send(websocket, {"type": "error", "message": "Invalid target"})
+                    continue
+
+                # Debuffs blocked by skip_immunity
+                is_debuff = effect_def in DEBUFFS # Check if it's a debuff
+                if is_debuff and target.has_effect("skip_immunity"):
+                    await _send(websocket, {"type": "error", "message": f"{target.username} is immune to debuffs!"})
+                    continue
+
+                # Consume item and apply
+                player.inventory.remove(effect_id)
+                await _apply_single_effect(room, effect_def, target)
+
+            # ── KICK ──────────────────────────────────────────────────────────────────
             elif mtype == "kick" and current_user.id == room.host_id:
                 if room.state != "lobby":
                     continue
@@ -624,7 +1043,6 @@ async def battle_websocket(
         room.connections.pop(current_user.id, None)
         logger.info("Player %s disconnected from room %s", current_user.username, room_code)
 
-        # Notify remaining players
         if room.connections:
             await _broadcast(room, {
                 "type": "lobby_update",
@@ -635,7 +1053,6 @@ async def battle_websocket(
                 "state": room.state,
             })
         else:
-            # Empty room — clean up
             if room.game_task and not room.game_task.done():
                 room.game_task.cancel()
             rooms.pop(room_code, None)

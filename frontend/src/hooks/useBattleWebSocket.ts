@@ -16,6 +16,8 @@ export interface PlayerInfo {
   answered: boolean
   eliminated: boolean
   result?: 'correct' | 'wrong' | 'eliminated'
+  active_effects: Record<string, number>
+  inventory: string[]
 }
 
 export interface BattleQuestion {
@@ -24,13 +26,36 @@ export interface BattleQuestion {
   total: number
   time_limit: number
   starting_lives: number
-  question_type: 'multiple_choice' | 'character_match' | 'pinyin_match'
+  // 6 question types
+  question_type:
+  | 'multiple_choice'
+  | 'character_match'
+  | 'pinyin_match'
+  | 'tone_select'
+  | 'sentence_blank'
+  | 'definition_match'
   chinese: string
   pinyin: string
   english: string
   options: string[]
   hsk_level: number
-  correct_answer: null   // always null while question is live
+  correct_answer: null // always null while question is live
+  // Extra fields for specific types
+  prompt_label?: string
+  bare_syllable?: string
+  display_sentence?: string
+  definition_clue?: string
+}
+
+export interface BuffEvent {
+  targetUserId: number
+  targetUsername: string
+  effectId: string
+  effectName: string
+  effectEmoji: string
+  isBuff: boolean
+  description: string
+  durationRounds: number
 }
 
 export type GamePhase =
@@ -64,6 +89,7 @@ export interface GameState {
   } | null
   countdownSeconds: number | null
   answeredUserIds: number[]
+  buffEvent: BuffEvent | null
   error: string | null
 }
 
@@ -79,6 +105,7 @@ const INITIAL_STATE: GameState = {
   gameOverData: null,
   countdownSeconds: null,
   answeredUserIds: [],
+  buffEvent: null,
   error: null,
 }
 
@@ -89,16 +116,15 @@ export function useBattleWebSocket(roomCode: string | null) {
   const [gameState, setGameState] = useState<GameState>(INITIAL_STATE)
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('idle')
   const wsRef = useRef<WebSocket | null>(null)
-  // stoppedRef: true = don't reconnect (unmounted or intentionally left)
   const stoppedRef = useRef(false)
   const retryCountRef = useRef(0)
+  const buffClearRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const connect = useCallback(() => {
     if (!roomCode) return
     const token = localStorage.getItem('access_token')
     if (!token) return
 
-    // Fresh connect: reset stop flag and retry counter
     stoppedRef.current = false
     retryCountRef.current = 0
 
@@ -110,23 +136,18 @@ export function useBattleWebSocket(roomCode: string | null) {
       const ws = new WebSocket(url)
       wsRef.current = ws
 
-      ws.onopen = () => {
-        setConnectionStatus('connected')
-      }
+      ws.onopen = () => { setConnectionStatus('connected') }
 
       ws.onclose = () => {
         setConnectionStatus(stoppedRef.current ? 'idle' : 'failed')
         wsRef.current = null
-        // Retry up to 2 times unless intentionally stopped
         if (!stoppedRef.current && retryCountRef.current < 2) {
           retryCountRef.current++
           setTimeout(openWs, 1500)
         }
       }
 
-      ws.onerror = () => {
-        setConnectionStatus('failed')
-      }
+      ws.onerror = () => { setConnectionStatus('failed') }
 
       ws.onmessage = (event) => {
         let msg: Record<string, unknown>
@@ -167,6 +188,7 @@ export function useBattleWebSocket(roomCode: string | null) {
                 revealData: null,
                 countdownSeconds: null,
                 answeredUserIds: [],
+                buffEvent: null,
                 error: null,
               }
 
@@ -187,6 +209,29 @@ export function useBattleWebSocket(roomCode: string | null) {
                 },
                 players: (msg.players as PlayerInfo[]) ?? prev.players,
               }
+
+            case 'buff_event': {
+              const buffEvt: BuffEvent = {
+                targetUserId: msg.target_user_id as number,
+                targetUsername: msg.target_username as string,
+                effectId: msg.effect_id as string,
+                effectName: msg.effect_name as string,
+                effectEmoji: msg.effect_emoji as string,
+                isBuff: msg.is_buff as boolean,
+                description: msg.description as string,
+                durationRounds: msg.duration_rounds as number,
+              }
+              // Auto-clear after 4s (will be done in component too, but state needs clearing)
+              if (buffClearRef.current) clearTimeout(buffClearRef.current)
+              buffClearRef.current = setTimeout(() => {
+                setGameState(s => ({ ...s, buffEvent: null }))
+              }, 4500)
+              return {
+                ...prev,
+                buffEvent: buffEvt,
+                players: (msg.players as PlayerInfo[]) ?? prev.players,
+              }
+            }
 
             case 'game_over':
               return {
@@ -220,11 +265,10 @@ export function useBattleWebSocket(roomCode: string | null) {
   useEffect(() => {
     if (roomCode) connect()
     return () => {
-      // Mark stopped so onclose won't retry — but don't set retryCountRef here
-      // so that a fresh connect() (new roomCode) can still retry
       stoppedRef.current = true
       wsRef.current?.close()
       wsRef.current = null
+      if (buffClearRef.current) clearTimeout(buffClearRef.current)
     }
   }, [roomCode, connect])
 

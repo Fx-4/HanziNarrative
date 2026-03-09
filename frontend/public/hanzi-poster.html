@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Art of Hanzi Writing — Infographic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:     #1C0F0A;
+    --red:     #9B1C1C;
+    --red-lt:  #B91C1C;
+    --gold:    #B45309;
+    --gold-lt: #D97706;
+    --cream:   #FDF6E3;
+    --warm:    #F9EDD4;
+    --paper:   #F3E8CC;
+    --muted:   #6B4C3B;
+    --border:  #D9C5A8;
+    --seal:    #DC2626;
+  }
+
+  body {
+    background: #2D2418;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ── POSTER ──────────────────────────────────────────────── */
+  .poster {
+    width: 900px;
+    background: var(--cream);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 40px 120px rgba(0,0,0,.6), 0 0 0 1px rgba(0,0,0,.3);
+  }
+
+  /* Paper texture overlay */
+  .poster::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(180,140,80,.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 90%, rgba(150,100,50,.06) 0%, transparent 50%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* Vertical red stripe (traditional scroll feel) */
+  .poster::after {
+    content: '';
+    position: absolute; top: 0; left: 64px; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, transparent, var(--red) 10%, var(--red) 90%, transparent);
+    opacity: .25; pointer-events: none; z-index: 1;
+  }
+
+  /* ── SECTIONS ──────────────────────────────────────────────── */
+  .section { position: relative; z-index: 2; }
+
+  /* ── HERO ──────────────────────────────────────────────────── */
+  .hero {
+    background: linear-gradient(160deg, #1C0F0A 0%, #2D1810 50%, #1A0E0A 100%);
+    padding: 52px 56px 44px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-char {
+    position: absolute;
+    right: -20px; top: -40px;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 320px;
+    font-weight: 900;
+    color: rgba(255,255,255,.03);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(185,28,28,.25);
+    border: 1px solid rgba(185,28,28,.5);
+    color: #FCA5A5;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: #FCA5A5;
+    border-radius: 50%;
+  }
+
+  .hero-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 52px;
+    font-weight: 900;
+    color: #FDF6E3;
+    line-height: 1.1;
+    letter-spacing: -.01em;
+  }
+
+  .hero-title span { color: #FCA5A5; }
+
+  .hero-sub {
+    margin-top: 12px;
+    font-size: 15px;
+    color: rgba(253,246,227,.55);
+    font-weight: 300;
+    letter-spacing: .02em;
+    line-height: 1.6;
+    max-width: 440px;
+  }
+
+  .hero-char-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hero-hanzi {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 96px;
+    font-weight: 900;
+    color: #FDF6E3;
+    line-height: 1;
+    text-shadow: 0 4px 24px rgba(185,28,28,.4);
+  }
+
+  .hero-pinyin {
+    font-size: 18px;
+    color: #FCA5A5;
+    letter-spacing: .12em;
+  }
+
+  .hero-meaning {
+    font-size: 11px;
+    color: rgba(253,246,227,.4);
+    text-transform: uppercase;
+    letter-spacing: .14em;
+  }
+
+  /* ── SECTION HEADER ──────────────────────────────────────── */
+  .sec-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 32px 56px 20px;
+    background: var(--warm);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sec-num {
+    width: 32px; height: 32px;
+    background: var(--red);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  .sec-title-cn {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .sec-title-en {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+  }
+
+  /* ── STROKES SECTION ──────────────────────────────────────── */
+  .strokes-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin: 0;
+  }
+
+  .stroke-card {
+    background: var(--cream);
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: background .2s;
+  }
+
+  .stroke-card:hover { background: var(--warm); }
+
+  .stroke-svg-wrap {
+    width: 64px; height: 64px;
+    background: var(--warm);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+
+  /* Grid dots inside stroke card */
+  .stroke-svg-wrap::before {
+    content: '';
+    position: absolute; inset: 6px;
+    background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+    background-size: 12px 12px;
+    opacity: .6;
+  }
+
+  .stroke-svg-wrap svg { position: relative; z-index: 1; }
+
+  .stroke-name-cn {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .stroke-name-py {
+    font-size: 12px;
+    color: var(--red);
+    font-weight: 600;
+    letter-spacing: .06em;
+  }
+
+  .stroke-name-en {
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: .04em;
+  }
+
+  .stroke-num {
+    position: absolute;
+    top: 4px; left: 6px;
+    font-size: 9px;
+    color: var(--muted);
+    font-weight: 700;
+    opacity: .5;
+  }
+
+  /* ── STROKE ORDER SECTION ──────────────────────────────────── */
+  .rules-wrap {
+    padding: 24px 56px 28px;
+    background: var(--cream);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .rule-card {
+    background: var(--warm);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .rule-icon {
+    width: 36px; height: 36px;
+    background: var(--red);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .rule-icon svg { width: 18px; height: 18px; color: white; }
+
+  .rule-num {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--red), #DC2626);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+    font-family: 'Noto Serif TC', serif;
+  }
+
+  .rule-body-cn {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .rule-body-en {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+
+  .rule-card.wide {
+    grid-column: span 1;
+  }
+
+  /* ── CHARACTER EXAMPLES ──────────────────────────────────── */
+  .rule-example {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+
+  .ex-char {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--red);
+    background: rgba(155,28,28,.07);
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 5px;
+    border: 1px solid rgba(155,28,28,.15);
+  }
+
+  /* ── STRUCTURE SECTION ──────────────────────────────────── */
+  .structure-wrap {
+    padding: 24px 56px 28px;
+    background: var(--warm);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .struct-card {
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .struct-top {
+    background: var(--ink);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .struct-dot {
+    width: 8px; height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+  }
+
+  .struct-top-cn {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 13px;
+    color: #FDF6E3;
+    font-weight: 600;
+  }
+
+  .struct-top-en {
+    font-size: 10px;
+    color: rgba(253,246,227,.4);
+    margin-left: auto;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  .struct-body {
+    padding: 16px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .struct-char {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    position: relative;
+  }
+
+  .struct-diagram {
+    width: 48px; height: 48px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: var(--warm);
+  }
+
+  /* ── EVOLUTION SECTION ──────────────────────────────────── */
+  .evolution-wrap {
+    padding: 24px 56px 32px;
+    background: var(--cream);
+  }
+
+  .evo-row {
+    display: grid;
+    grid-template-columns: 100px repeat(5, 1fr);
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .evo-row:last-child { margin-bottom: 0; }
+
+  .evo-label {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .evo-label-en {
+    font-size: 10px;
+    color: var(--muted);
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+  }
+
+  .evo-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .evo-char-box {
+    width: 60px; height: 60px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--warm);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    position: relative;
+  }
+
+  .evo-stage-label {
+    font-size: 9px;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    max-width: 64px;
+    line-height: 1.3;
+  }
+
+  .evo-arrow {
+    text-align: center;
+    color: var(--border);
+    font-size: 18px;
+    align-self: center;
+    padding: 0 2px;
+  }
+
+  .evo-header-row {
+    display: grid;
+    grid-template-columns: 100px repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .evo-header-cell {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .evo-header-cell.active {
+    color: var(--red);
+    border-bottom-color: var(--red);
+  }
+
+  /* ── RADICALS SECTION ──────────────────────────────────── */
+  .radicals-wrap {
+    padding: 24px 56px 32px;
+    background: var(--warm);
+  }
+
+  .radical-intro {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 700px;
+    margin-bottom: 20px;
+  }
+
+  .radical-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+  }
+
+  .radical-card {
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 10px;
+    text-align: center;
+    transition: border-color .2s, transform .2s;
+    cursor: default;
+  }
+
+  .radical-card:hover {
+    border-color: var(--red);
+    transform: translateY(-2px);
+  }
+
+  .radical-cn {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--red);
+    display: block;
+  }
+
+  .radical-py {
+    font-size: 10px;
+    color: var(--muted);
+    display: block;
+    margin-top: 2px;
+  }
+
+  .radical-en {
+    font-size: 10px;
+    color: var(--muted);
+    display: block;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  .radical-examples {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+
+  .rad-ex {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: rgba(28,15,10,.05);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  /* ── TIPS SECTION ──────────────────────────────────────── */
+  .tips-wrap {
+    padding: 24px 56px 28px;
+    background: var(--cream);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+
+  .tip-card {
+    background: var(--warm);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 14px;
+    text-align: center;
+  }
+
+  .tip-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--red), #DC2626);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 10px;
+  }
+
+  .tip-icon svg { width: 20px; height: 20px; color: white; }
+
+  .tip-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 5px;
+  }
+
+  .tip-desc {
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── FOOTER ──────────────────────────────────────────────── */
+  .poster-footer {
+    background: var(--ink);
+    padding: 20px 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-brand {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #FDF6E3;
+  }
+
+  .footer-brand span { color: #FCA5A5; }
+
+  .footer-text {
+    font-size: 11px;
+    color: rgba(253,246,227,.4);
+    letter-spacing: .08em;
+  }
+
+  .footer-seal {
+    width: 52px; height: 52px;
+    border: 2.5px solid var(--seal);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    transform: rotate(-12deg);
+  }
+
+  .footer-seal-inner {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--seal);
+    line-height: 1;
+    text-align: center;
+  }
+
+  /* ── DIVIDER ──────────────────────────────────────────────── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+    margin: 0 56px;
+  }
+
+  /* ── BADGE ──────────────────────────────────────────────── */
+  .hsk-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(155,28,28,.08);
+    border: 1px solid rgba(155,28,28,.2);
+    color: var(--red);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-top: 8px;
+  }
+
+  /* Structure diagram SVGs */
+  .struct-lr { display: flex; gap: 4px; align-items: stretch; height: 44px; }
+  .struct-lr .half {
+    flex: 1;
+    border: 1.5px solid var(--red);
+    border-radius: 3px;
+    opacity: .5;
+  }
+  .struct-lr .half:first-child { opacity: .9; }
+
+  .struct-tb { display: flex; flex-direction: column; gap: 4px; width: 44px; }
+  .struct-tb .half {
+    flex: 1;
+    border: 1.5px solid var(--red);
+    border-radius: 3px;
+    opacity: .5;
+  }
+  .struct-tb .half:first-child { opacity: .9; }
+
+  .struct-enc {
+    width: 44px; height: 44px;
+    border: 2px solid var(--red);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: .9;
+  }
+  .struct-enc .inner {
+    width: 20px; height: 20px;
+    background: rgba(155,28,28,.25);
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="poster">
+
+  <!-- ══ HERO ══════════════════════════════════════════════════ -->
+  <div class="hero section">
+    <div class="hero-bg-char">書</div>
+    <div>
+      <div class="hero-tag">Infographic Guide</div>
+      <h1 class="hero-title">The Art of<br><span>Hanzi</span> Writing</h1>
+      <p class="hero-sub">A visual guide to Chinese characters — from basic strokes and stroke order to radicals, character structure, and historical evolution.</p>
+      <div class="hsk-badge">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Covers HSK 1–6 Fundamentals
+      </div>
+    </div>
+    <div class="hero-char-display">
+      <div class="hero-hanzi">汉字</div>
+      <div class="hero-pinyin">Hàn Zì</div>
+      <div class="hero-meaning">Chinese Character</div>
+    </div>
+  </div>
+
+  <!-- ══ 1. BASIC STROKES ═══════════════════════════════════════ -->
+  <div class="sec-header section">
+    <div class="sec-num">一</div>
+    <div>
+      <div class="sec-title-cn">基本笔画 — Eight Basic Strokes</div>
+      <div class="sec-title-en">Every Chinese character is built from combinations of these fundamental strokes</div>
+    </div>
+  </div>
+
+  <div class="strokes-grid section">
+    <!-- 横 Héng - Horizontal -->
+    <div class="stroke-card">
+      <div class="stroke-svg-wrap">
+        <span class="stroke-num">01</span>
+        <svg width="44" height="44" viewBox="0 0 44 44">
+          <line x1="6" y1="22" x2="38" y2="22" stroke="#1C0F0A" stroke-width="4" stroke-linecap="round"/>
+          <polygon points="34,18 42,22 34,26" fill="#9B1C1C"/>
+        </svg>
+      </div>
+      <div class="stroke-name-cn">横</div>
+      <div class="stroke-name-py">Héng</div>
+      <div class="stroke-name-en">Horizontal stroke<br>Left → Right</div>
+    </div>
+
+    <!-- 竖 Shù - Vertical -->
+    <div class="stroke-card">
+      <div class="stroke-svg-wrap">
+        <span class="stroke-num">02</span>
+        <svg width="44" height="44" viewBox="0 0 44 44">
+          <line x1="22" y1="5" x2="22" y2="38" stroke="#1C0F0A" stroke-width="4" stroke-linecap="round"/>
+          <polygon points="18,34 22,42 26,34" fill="#9B1C1C"/>
+        </svg>
+      </div>
+      <div class="stroke-name-cn">竖</div>
+      <div class="stroke-name-py">Shù</div>
+      <div class="stroke-name-en">Vertical stroke<br>Top → Bottom</div>
+    </div>
+
+    <!-- 撇 Piě - Left-falling -->
+    <div class="stroke-card">
+      <div class="stroke-svg-wrap">
+        <span class="stroke-num">03</span>
+        <svg width="44" height="44" viewBox="0 0 44 44">
+          <line x1="30" y1="6" x2="8" y2="36" stroke="#1C0F0A" stroke-width="4" stroke-linecap="round"/>
+          <polygon points="10,30 6,38 14,36" fill="#9B1C1C"/>
+        </svg>
+      </div>
+      <div class="stroke-name-cn">撇</div>
+      <div class="stroke-name-py">Piě</div>
+      <div class="stroke-name-en">Left-falling stroke<br>Upper-right → Lower-left</div>
+    </div>
+
+    <!-- 捺 Nà - Right-falling -->
+    <div class="stroke-card">
+      <div class="stroke-svg-wrap">
+        <span class="stroke-num">04</span>
+        <svg width="44" height="44" viewBox="0 0 44 44">
+          <path d="M10,8 Q24,20 36,36" stroke="#1C0F0A" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <polygon points="30,36 38,36 36,28" fill="#9B1C1C"/>
+        </svg>
+      </div>
+      <div class="stroke-name-cn">捺</div>
+      <div class="stroke-name-py">Nà</div>
+      <div class="stroke-name-en">Right-falling stroke<br>Upper-left → Lower-right</div>
+    </div>
+
+    <!-- 点 Diǎn - Dot -->
+    <div class="stroke-card">
+      <div class="stroke-svg-wrap">
+        <span class="stroke-num">05</span>
+        <svg width="44" height="44" viewBox="0 0 44 44">
+          <path d="M20,10 Q26,14 24,22" stroke="#1C0F0A" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <circle cx="23" cy="24" r="3" fill="#9B1C1C"/>
+        </svg>
+      </div>
+      <div class="stroke-name-cn">点</div>
+      <div class="stroke-name-py">Diǎn</div>
+      <div class="stroke-name-en">Dot stroke<br>Short downward press</div>
+    </div>
+
+    <!-- 折 Zhé - Turning -->
+    <div class="stroke-card">
+      <div class="stroke-svg-wrap">
+        <span class="stroke-num">06</span>
+        <svg width="44" height="44" viewBox="0 0 44 44">
+          <polyline points="8,12 30,12 30,36" stroke="#1C0F0A" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <polygon points="26,32 30,40 34,32" fill="#9B1C1C"/>
+        </svg>
+      </div>
+      <div class="stroke-name-cn">折</div>
+      <div class="stroke-name-py">Zhé</div>
+      <div class="stroke-name-en">Turning stroke<br>Changes direction</div>
+    </div>
+
+    <!-- 钩 Gōu - Hook -->
+    <div class="stroke-card">
+      <div class="stroke-svg-wrap">
+        <span class="stroke-num">07</span>
+        <svg width="44" height="44" viewBox="0 0 44 44">
+          <line x1="22" y1="6" x2="22" y2="34" stroke="#1C0F0A" stroke-width="4" stroke-linecap="round"/>
+          <path d="M22,34 Q16,38 12,32" stroke="#9B1C1C" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="stroke-name-cn">钩</div>
+      <div class="stroke-name-py">Gōu</div>
+      <div class="stroke-name-en">Hook stroke<br>Sharp upward turn</div>
+    </div>
+
+    <!-- 提 Tí - Rising -->
+    <div class="stroke-card">
+      <div class="stroke-svg-wrap">
+        <span class="stroke-num">08</span>
+        <svg width="44" height="44" viewBox="0 0 44 44">
+          <line x1="8" y1="34" x2="36" y2="10" stroke="#1C0F0A" stroke-width="4" stroke-linecap="round"/>
+          <polygon points="30,8 38,8 36,16" fill="#9B1C1C"/>
+        </svg>
+      </div>
+      <div class="stroke-name-cn">提</div>
+      <div class="stroke-name-py">Tí</div>
+      <div class="stroke-name-en">Rising stroke<br>Lower-left → Upper-right</div>
+    </div>
+  </div>
+
+  <!-- ══ 2. STROKE ORDER RULES ══════════════════════════════════ -->
+  <div class="sec-header section" style="background: var(--cream)">
+    <div class="sec-num">二</div>
+    <div>
+      <div class="sec-title-cn">笔顺规则 — Stroke Order Rules</div>
+      <div class="sec-title-en">Follow these rules to write characters correctly and naturally</div>
+    </div>
+  </div>
+
+  <div class="rules-wrap section">
+    <div class="rule-card">
+      <div class="rule-num">一</div>
+      <div>
+        <div class="rule-body-cn">先横后竖</div>
+        <div class="rule-body-en">Horizontal before vertical — draw 横 (héng) before 竖 (shù) when they cross</div>
+        <div class="rule-example">
+          <div class="ex-char">十</div>
+          <div class="ex-char">王</div>
+          <div class="ex-char">土</div>
+        </div>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">二</div>
+      <div>
+        <div class="rule-body-cn">先撇后捺</div>
+        <div class="rule-body-en">Left-falling before right-falling — 撇 (piě) before 捺 (nà)</div>
+        <div class="rule-example">
+          <div class="ex-char">人</div>
+          <div class="ex-char">八</div>
+          <div class="ex-char">父</div>
+        </div>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">三</div>
+      <div>
+        <div class="rule-body-cn">从上到下</div>
+        <div class="rule-body-en">Top to bottom — write upper components before lower ones</div>
+        <div class="rule-example">
+          <div class="ex-char">三</div>
+          <div class="ex-char">字</div>
+          <div class="ex-char">意</div>
+        </div>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">四</div>
+      <div>
+        <div class="rule-body-cn">从左到右</div>
+        <div class="rule-body-en">Left to right — write left components before right ones</div>
+        <div class="rule-example">
+          <div class="ex-char">你</div>
+          <div class="ex-char">她</div>
+          <div class="ex-char">好</div>
+        </div>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">五</div>
+      <div>
+        <div class="rule-body-cn">先外后内</div>
+        <div class="rule-body-en">Outside before inside — draw enclosing strokes before inner content</div>
+        <div class="rule-example">
+          <div class="ex-char">月</div>
+          <div class="ex-char">同</div>
+          <div class="ex-char">用</div>
+        </div>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">六</div>
+      <div>
+        <div class="rule-body-cn">先进后关</div>
+        <div class="rule-body-en">Enter before closing — fill the box, then seal the bottom stroke</div>
+        <div class="rule-example">
+          <div class="ex-char">国</div>
+          <div class="ex-char">回</div>
+          <div class="ex-char">四</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 3. CHARACTER STRUCTURE ════════════════════════════════ -->
+  <div class="sec-header section" style="background: var(--warm)">
+    <div class="sec-num">三</div>
+    <div>
+      <div class="sec-title-cn">字的结构 — Character Structure</div>
+      <div class="sec-title-en">Chinese characters follow predictable structural patterns</div>
+    </div>
+  </div>
+
+  <div class="structure-wrap section">
+    <!-- Left-Right -->
+    <div class="struct-card">
+      <div class="struct-top">
+        <div class="struct-dot"></div>
+        <div class="struct-top-cn">左右结构</div>
+        <div class="struct-top-en">Left-Right</div>
+      </div>
+      <div class="struct-body" style="align-items:center; gap:16px">
+        <div class="struct-diagram">
+          <div class="struct-lr" style="width:40px; height:36px; padding:4px;">
+            <div class="half"></div>
+            <div class="half"></div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <div class="struct-char">你</div>
+          <div class="struct-char">她</div>
+          <div class="struct-char">好</div>
+        </div>
+      </div>
+      <div style="padding: 0 16px 12px; font-size:10px; color:var(--muted);">Left component + Right component. ~60% of all characters.</div>
+    </div>
+
+    <!-- Top-Bottom -->
+    <div class="struct-card">
+      <div class="struct-top">
+        <div class="struct-dot" style="background:var(--gold)"></div>
+        <div class="struct-top-cn">上下结构</div>
+        <div class="struct-top-en">Top-Bottom</div>
+      </div>
+      <div class="struct-body" style="align-items:center; gap:16px">
+        <div class="struct-diagram">
+          <div class="struct-tb" style="width:36px; height:40px; padding:4px;">
+            <div class="half" style="border-color:var(--gold)"></div>
+            <div class="half" style="border-color:var(--gold); opacity:.5"></div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <div class="struct-char">字</div>
+          <div class="struct-char">家</div>
+          <div class="struct-char">安</div>
+        </div>
+      </div>
+      <div style="padding: 0 16px 12px; font-size:10px; color:var(--muted);">Top component above Bottom component. ~25% of all characters.</div>
+    </div>
+
+    <!-- Enclosed -->
+    <div class="struct-card">
+      <div class="struct-top">
+        <div class="struct-dot" style="background:#0369A1"></div>
+        <div class="struct-top-cn">全包围结构</div>
+        <div class="struct-top-en">Enclosed</div>
+      </div>
+      <div class="struct-body" style="align-items:center; gap:16px">
+        <div class="struct-diagram">
+          <div class="struct-enc" style="border-color:#0369A1">
+            <div class="inner" style="background:rgba(3,105,161,.2)"></div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <div class="struct-char">国</div>
+          <div class="struct-char">回</div>
+          <div class="struct-char">囚</div>
+        </div>
+      </div>
+      <div style="padding: 0 16px 12px; font-size:10px; color:var(--muted);">Outer frame enclosing inner components. Seal the bottom last.</div>
+    </div>
+  </div>
+
+  <!-- ══ 4. CHARACTER EVOLUTION ════════════════════════════════ -->
+  <div class="sec-header section">
+    <div class="sec-num">四</div>
+    <div>
+      <div class="sec-title-cn">汉字演变 — Historical Evolution</div>
+      <div class="sec-title-en">Chinese characters evolved over 3,500+ years from pictographs to modern script</div>
+    </div>
+  </div>
+
+  <div class="evolution-wrap section">
+    <div class="evo-header-row">
+      <div class="evo-header-cell">Character</div>
+      <div class="evo-header-cell">甲骨文<br><span style="font-weight:400;font-size:9px">Oracle Bone<br>~1200 BCE</span></div>
+      <div class="evo-header-cell">金文<br><span style="font-weight:400;font-size:9px">Bronze Script<br>~1000 BCE</span></div>
+      <div class="evo-header-cell">篆书<br><span style="font-weight:400;font-size:9px">Seal Script<br>~220 BCE</span></div>
+      <div class="evo-header-cell">隶书<br><span style="font-weight:400;font-size:9px">Clerical Script<br>~200 BCE</span></div>
+      <div class="evo-header-cell active">楷书<br><span style="font-weight:400;font-size:9px">Standard Script<br>Modern</span></div>
+    </div>
+
+    <!-- 人 (person) -->
+    <div class="evo-row">
+      <div class="evo-label">人 rén<span class="evo-label-en">person</span></div>
+      <div class="evo-stage">
+        <div class="evo-char-box" style="font-size:22px; color:var(--muted)">𠂉</div>
+      </div>
+      <div class="evo-stage">
+        <div class="evo-char-box" style="font-size:22px; color:var(--muted)">𠂉</div>
+      </div>
+      <div class="evo-stage">
+        <div class="evo-char-box" style="font-size:24px">亻</div>
+      </div>
+      <div class="evo-stage">
+        <div class="evo-char-box" style="font-size:26px">人</div>
+      </div>
+      <div class="evo-stage">
+        <div class="evo-char-box" style="background: linear-gradient(135deg,#FDF6E3,#F3E8CC); border-color:var(--red); border-width:2px; font-size:28px; color:var(--red)">人</div>
+      </div>
+    </div>
+
+    <!-- 山 (mountain) -->
+    <div class="evo-row">
+      <div class="evo-label">山 shān<span class="evo-label-en">mountain</span></div>
+      <div class="evo-stage">
+        <div class="evo-char-box" style="font-size:16px; color:var(--muted)">
+          <svg width="32" height="32" viewBox="0 0 32 32">
+            <polyline points="6,26 16,8 26,26" fill="none" stroke="currentColor" stroke-width="2"/>
+            <line x1="12" y1="18" x2="8" y2="26" stroke="currentColor" stroke-width="2"/>
+            <line x1="20" y1="18" x2="24" y2="26" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+      <div class="evo-stage">
+        <div class="evo-char-box" style="font-size:22px; color:var(--muted)">山</div>
+      </div>
+      <div class="evo-stage">
+        <div class="evo-char-box" style="font-size:24px">山</div>
+      </div>
+      <div class="evo-stage">
+        <div class="evo-char-box" style="font-size:26px">山</div>
+      </div>
+      <div class="evo-stage">
+        <div class="evo-char-box" style="background: linear-gradient(135deg,#FDF6E3,#F3E8CC); border-color:var(--red); border-width:2px; font-size:28px; color:var(--red)">山</div>
+      </div>
+    </div>
+
+    <!-- 日 (sun) -->
+    <div class="evo-row">
+      <div class="evo-label">日 rì<span class="evo-label-en">sun / day</span></div>
+      <div class="evo-stage">
+        <div class="evo-char-box" style="font-size:18px; color:var(--muted)">
+          <svg width="32" height="32" viewBox="0 0 32 32">
+            <circle cx="16" cy="16" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+            <line x1="16" y1="14" x2="16" y2="18" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+      <div class="evo-stage">
+        <div class="evo-char-box" style="font-size:20px; color:var(--muted)">⊙</div>
+      </div>
+      <div class="evo-stage">
+        <div class="evo-char-box" style="font-size:22px">日</div>
+      </div>
+      <div class="evo-stage">
+        <div class="evo-char-box" style="font-size:26px">日</div>
+      </div>
+      <div class="evo-stage">
+        <div class="evo-char-box" style="background: linear-gradient(135deg,#FDF6E3,#F3E8CC); border-color:var(--red); border-width:2px; font-size:28px; color:var(--red)">日</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 5. RADICALS ═══════════════════════════════════════════ -->
+  <div class="sec-header section" style="background:var(--cream)">
+    <div class="sec-num">五</div>
+    <div>
+      <div class="sec-title-cn">偏旁部首 — Common Radicals</div>
+      <div class="sec-title-en">Radicals are the building blocks that hint at meaning or pronunciation</div>
+    </div>
+  </div>
+
+  <div class="radicals-wrap section" style="background:var(--cream)">
+    <p class="radical-intro">A radical (部首 bùshǒu) is a graphical component used to categorize Chinese characters in dictionaries. Knowing ~214 radicals helps you guess the meaning of thousands of unfamiliar characters. The radical often appears on the left side (偏旁 piānpáng) of a character.</p>
+    <div class="radical-grid">
+      <div class="radical-card">
+        <span class="radical-cn">氵</span>
+        <span class="radical-py">shuǐ</span>
+        <span class="radical-en">Water</span>
+        <div class="radical-examples"><span class="rad-ex">海</span><span class="rad-ex">河</span><span class="rad-ex">流</span></div>
+      </div>
+      <div class="radical-card">
+        <span class="radical-cn">木</span>
+        <span class="radical-py">mù</span>
+        <span class="radical-en">Wood/Tree</span>
+        <div class="radical-examples"><span class="rad-ex">树</span><span class="rad-ex">桌</span><span class="rad-ex">森</span></div>
+      </div>
+      <div class="radical-card">
+        <span class="radical-cn">口</span>
+        <span class="radical-py">kǒu</span>
+        <span class="radical-en">Mouth</span>
+        <div class="radical-examples"><span class="rad-ex">吃</span><span class="rad-ex">喝</span><span class="rad-ex">唱</span></div>
+      </div>
+      <div class="radical-card">
+        <span class="radical-cn">人</span>
+        <span class="radical-py">rén</span>
+        <span class="radical-en">Person</span>
+        <div class="radical-examples"><span class="rad-ex">你</span><span class="rad-ex">他</span><span class="rad-ex">做</span></div>
+      </div>
+      <div class="radical-card">
+        <span class="radical-cn">心</span>
+        <span class="radical-py">xīn</span>
+        <span class="radical-en">Heart</span>
+        <div class="radical-examples"><span class="rad-ex">想</span><span class="rad-ex">情</span><span class="rad-ex">感</span></div>
+      </div>
+      <div class="radical-card">
+        <span class="radical-cn">火</span>
+        <span class="radical-py">huǒ</span>
+        <span class="radical-en">Fire</span>
+        <div class="radical-examples"><span class="rad-ex">热</span><span class="rad-ex">烧</span><span class="rad-ex">炎</span></div>
+      </div>
+      <div class="radical-card">
+        <span class="radical-cn">女</span>
+        <span class="radical-py">nǚ</span>
+        <span class="radical-en">Woman</span>
+        <div class="radical-examples"><span class="rad-ex">她</span><span class="rad-ex">好</span><span class="rad-ex">妈</span></div>
+      </div>
+      <div class="radical-card">
+        <span class="radical-cn">土</span>
+        <span class="radical-py">tǔ</span>
+        <span class="radical-en">Earth</span>
+        <div class="radical-examples"><span class="rad-ex">地</span><span class="rad-ex">坐</span><span class="rad-ex">城</span></div>
+      </div>
+      <div class="radical-card">
+        <span class="radical-cn">手</span>
+        <span class="radical-py">shǒu</span>
+        <span class="radical-en">Hand</span>
+        <div class="radical-examples"><span class="rad-ex">打</span><span class="rad-ex">拿</span><span class="rad-ex">掌</span></div>
+      </div>
+      <div class="radical-card">
+        <span class="radical-cn">目</span>
+        <span class="radical-py">mù</span>
+        <span class="radical-en">Eye</span>
+        <div class="radical-examples"><span class="rad-ex">看</span><span class="rad-ex">眼</span><span class="rad-ex">睛</span></div>
+      </div>
+      <div class="radical-card">
+        <span class="radical-cn">言</span>
+        <span class="radical-py">yán</span>
+        <span class="radical-en">Speech</span>
+        <div class="radical-examples"><span class="rad-ex">说</span><span class="rad-ex">话</span><span class="rad-ex">语</span></div>
+      </div>
+      <div class="radical-card">
+        <span class="radical-cn">金</span>
+        <span class="radical-py">jīn</span>
+        <span class="radical-en">Metal</span>
+        <div class="radical-examples"><span class="rad-ex">钱</span><span class="rad-ex">铁</span><span class="rad-ex">银</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 6. WRITING TIPS ═══════════════════════════════════════ -->
+  <div class="sec-header section" style="background:var(--warm)">
+    <div class="sec-num">六</div>
+    <div>
+      <div class="sec-title-cn">书写技巧 — Writing Tips</div>
+      <div class="sec-title-en">Practical advice for mastering Hanzi writing</div>
+    </div>
+  </div>
+
+  <div class="tips-wrap section" style="background:var(--warm)">
+    <div class="tip-card">
+      <div class="tip-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="15" x2="12" y2="15"/>
+        </svg>
+      </div>
+      <div class="tip-title">Use Grid Paper</div>
+      <div class="tip-desc">Practice on 田字格 (tián zì gé) four-square grid paper to maintain proper proportions and balance.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+      </div>
+      <div class="tip-title">Trace First</div>
+      <div class="tip-desc">Use tracing sheets (描红 miáo hóng) to build muscle memory before writing independently.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <div class="tip-title">Daily Practice</div>
+      <div class="tip-desc">Write each character 10× daily. Consistency matters more than long infrequent sessions.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>
+        </svg>
+      </div>
+      <div class="tip-title">Learn by Radicals</div>
+      <div class="tip-desc">Group characters by shared radicals to accelerate vocabulary learning and recall.</div>
+    </div>
+  </div>
+
+  <!-- ══ FOOTER ════════════════════════════════════════════════ -->
+  <div class="poster-footer section">
+    <div>
+      <div class="footer-brand">汉字 <span>learn-HSK</span></div>
+      <div class="footer-text" style="margin-top:4px">Interactive Chinese Learning Platform · learn-hsk.vercel.app</div>
+    </div>
+    <div class="footer-text" style="text-align:center; line-height:1.8">
+      3,579 vocabulary words<br>HSK Levels 1–6
+    </div>
+    <div class="footer-seal">
+      <div class="footer-seal-inner">漢<br>字</div>
+    </div>
+  </div>
+
+</div><!-- /poster -->
+
+</body>
+</html>
