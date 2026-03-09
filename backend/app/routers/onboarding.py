@@ -361,7 +361,10 @@ def complete_onboarding(
     achievements = gamification.achievements or []
     leveled_up = False
 
-    if "onboarding_complete" not in achievements:
+    # Track BEFORE appending so the return value is correct
+    achievement_just_unlocked = "onboarding_complete" not in achievements
+
+    if achievement_just_unlocked:
         achievements.append("onboarding_complete")
         gamification.achievements = achievements
         gamification.total_xp += 100  # Bonus XP for achievement
@@ -373,10 +376,10 @@ def complete_onboarding(
 
     return {
         "message": "Onboarding completed successfully! Your Chinese learning journey begins now!",
-        "xp_earned": xp_result["xp_gained"] + 100,  # Include achievement bonus
+        "xp_earned": xp_result["xp_gained"] + (100 if achievement_just_unlocked else 0),
         "level": xp_result["level"],
         "leveled_up": leveled_up,
         "initial_words_count": len(initial_words),
-        "achievement_unlocked": "onboarding_complete" not in (gamification.achievements or []),
+        "achievement_unlocked": achievement_just_unlocked,
         "redirect_to": "/dashboard"
     }

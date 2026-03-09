@@ -46,8 +46,19 @@ const Onboarding = () => {
       }
 
       // Resume from saved step
+      // Backend step numbers: 2=goals saved, 3=assessment done, 4=assessment skipped
+      // Frontend step numbers: 1=welcome, 2=goals, 3=levelSelector, 4=assessment, 5=preferences, 6=completion
       if (status.current_step > 0) {
-        setCurrentStep(status.current_step)
+        const BACKEND_TO_FRONTEND_STEP: Record<number, number> = {
+          1: 2, // goals screen
+          2: 3, // level selector (goals already saved)
+          3: 5, // preferences (assessment done)
+          4: 5, // preferences (assessment skipped)
+        }
+        const frontendStep = BACKEND_TO_FRONTEND_STEP[status.current_step] ?? 1
+        setCurrentStep(frontendStep)
+        // If assessment was completed (backend step 3), mark tookAssessment
+        if (status.current_step === 3) setTookAssessment(true)
         if (status.goals) setGoals(status.goals)
         if (status.preferences) setPreferences(status.preferences)
         if (status.determined_hsk_level) setDeterminedLevel(status.determined_hsk_level)
