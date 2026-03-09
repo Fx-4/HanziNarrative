@@ -37,6 +37,7 @@ const MyBookmarks = lazy(() => import('./pages/MyBookmarks'))
 const Conversation = lazy(() => import('./pages/Conversation'))
 const Admin = lazy(() => import('./pages/Admin'))
 const Battle = lazy(() => import('./pages/Battle'))
+const AuthCallback = lazy(() => import('./pages/AuthCallback'))
 
 // ── Minimal loading fallback ──────────────────────────────────────
 function PageLoader() {
@@ -146,6 +147,7 @@ function App() {
         <Route path="/landing" element={<LazyPage name="Landing"><Landing /></LazyPage>} />
         <Route path="/login" element={<LazyPage name="Login"><Login /></LazyPage>} />
         <Route path="/register" element={<LazyPage name="Register"><Register /></LazyPage>} />
+        <Route path="/auth/callback" element={<LazyPage name="AuthCallback"><AuthCallback /></LazyPage>} />
 
         {/* Onboarding route - requires auth */}
         <Route
