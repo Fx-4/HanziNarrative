@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { learningApi } from '@/services/api'
@@ -66,15 +66,13 @@ export default function Dashboard() {
     setLoading(true)
     setError(null)
     try {
-      const overall = await learningApi.getStats()
+      // Fetch overall + all 6 HSK levels in parallel (was 7 sequential calls)
+      const [overall, ...levelResults] = await Promise.all([
+        learningApi.getStats(),
+        ...([1, 2, 3, 4, 5, 6].map(level => learningApi.getStats(level))),
+      ])
       setOverallStats(overall.stats)
-
-      const levelData: HSKLevelData[] = []
-      for (let level = 1; level <= 6; level++) {
-        const data = await learningApi.getStats(level)
-        levelData.push({ level, stats: data.stats })
-      }
-      setHSKLevelStats(levelData)
+      setHSKLevelStats(levelResults.map((data, i) => ({ level: i + 1, stats: data.stats })))
     } catch (err) {
       const axiosError = err as { response?: { status?: number; data?: { detail?: string } }; message?: string }
       if (axiosError.response?.status === 401 || axiosError.response?.status === 403) {
@@ -149,25 +147,28 @@ export default function Dashboard() {
 
   if (!overallStats) return null
 
-  // ── Chart data ───────────────────────────────────────────────────────────
-  const hskProgressData = hskLevelStats.map(item => ({
+  // ── Chart data (memoised — only recalculated when data changes) ──────────
+  const hskProgressData = useMemo(() => hskLevelStats.map(item => ({
     name: `HSK ${item.level}`,
     learning: item.stats.total_words_learning,
     mastered: item.stats.mastered_words,
     accuracy: item.stats.accuracy,
-  }))
+  })), [hskLevelStats])
 
-  const masteryDistribution = [
+  const masteryDistribution = useMemo(() => [
     { name: 'Mastered', value: overallStats.mastered_words },
-    { name: 'Learning', value: overallStats.total_words_learning - overallStats.mastered_words },
+    { name: 'Learning', value: Math.max(0, overallStats.total_words_learning - overallStats.mastered_words) },
     { name: 'Due for Review', value: overallStats.due_for_review },
-  ]
+  ].filter(d => d.value > 0), [overallStats]) // filter zeros so Recharts doesn't render empty slices
 
-  const masteryRate = overallStats.total_words_learning > 0
+  const masteryRate = useMemo(() => overallStats.total_words_learning > 0
     ? (overallStats.mastered_words / overallStats.total_words_learning) * 100
-    : 0
+    : 0, [overallStats])
 
-  const activeLevels = hskLevelStats.filter(s => s.stats.total_words_learning > 0).length
+  const activeLevels = useMemo(
+    () => hskLevelStats.filter(s => s.stats.total_words_learning > 0).length,
+    [hskLevelStats]
+  )
 
   return (
     <div className="max-w-4xl mx-auto px-4 pb-16 space-y-6">

@@ -139,7 +139,7 @@ def get_leaderboard(
         metric: Ranking metric - total_xp, current_streak, accuracy_rate, total_words_reviewed
     """
     from app.models import UserGamification
-    from sqlalchemy import desc
+    from sqlalchemy import desc, case
 
     # Limit validation
     if limit > 100:
@@ -147,12 +147,16 @@ def get_leaderboard(
     elif limit < 1:
         limit = 10
 
-    # Determine sort column
+    # Determine sort column — accuracy_rate computed fully in SQL (no Python sort)
     valid_metrics = {
         "total_xp": UserGamification.total_xp,
         "current_streak": UserGamification.current_streak,
         "total_words_reviewed": UserGamification.total_words_reviewed,
-        "accuracy_rate": None,  # Calculated dynamically
+        "accuracy_rate": case(
+            (UserGamification.total_words_reviewed > 0,
+             UserGamification.total_correct_answers * 1.0 / UserGamification.total_words_reviewed),
+            else_=0.0
+        ),
     }
 
     if metric not in valid_metrics:
@@ -161,30 +165,20 @@ def get_leaderboard(
             detail=f"Invalid metric. Choose from: {', '.join(valid_metrics.keys())}"
         )
 
-    sort_column = valid_metrics[metric] if metric != "accuracy_rate" else None
+    sort_expr = valid_metrics[metric]
 
-    # Query leaderboard (get all users to calculate accuracy_rate if needed)
+    # Single DB query — no full-table Python sort
     query = (
         db.query(UserGamification, User)
         .join(User, UserGamification.user_id == User.id)
     )
 
-    # For accuracy_rate sorting, we need to fetch all and sort in Python
-    if metric == "accuracy_rate":
-        all_data = query.all()
-        # Sort by accuracy rate (total_correct_answers / total_words_reviewed)
-        leaderboard_data = sorted(
-            all_data,
-            key=lambda x: (x[0].total_correct_answers / x[0].total_words_reviewed) if x[0].total_words_reviewed > 0 else 0,
-            reverse=True
-        )[:limit]
-    else:
-        leaderboard_data = (
-            query
-            .order_by(desc(sort_column))
-            .limit(limit)
-            .all()
-        )
+    leaderboard_data = (
+        query
+        .order_by(desc(sort_expr))
+        .limit(limit)
+        .all()
+    )
 
     # Format response
     leaderboard = []
@@ -216,30 +210,39 @@ def get_leaderboard(
         if user.id == current_user.id:
             current_user_rank = idx
 
-    # If current user not in top results, get their rank separately
+    # If current user not in top results, approximate their rank via SQL
     if current_user_rank is None:
-        # For metrics that exist as columns, we can query rank directly
-        if metric != "accuracy_rate":
-            current_user_gamif = (
-                db.query(UserGamification)
-                .filter(UserGamification.user_id == current_user.id)
-                .first()
-            )
-
-            if current_user_gamif:
-                user_metric_value = getattr(current_user_gamif, metric)
+        current_user_gamif = (
+            db.query(UserGamification)
+            .filter(UserGamification.user_id == current_user.id)
+            .first()
+        )
+        if current_user_gamif:
+            if metric == "accuracy_rate":
+                user_accuracy = (
+                    current_user_gamif.total_correct_answers / current_user_gamif.total_words_reviewed
+                    if current_user_gamif.total_words_reviewed > 0 else 0.0
+                )
                 higher_ranked = (
                     db.query(UserGamification)
-                    .filter(sort_column > user_metric_value)
+                    .filter(
+                        case(
+                            (UserGamification.total_words_reviewed > 0,
+                             UserGamification.total_correct_answers * 1.0 / UserGamification.total_words_reviewed),
+                            else_=0.0
+                        ) > user_accuracy
+                    )
                     .count()
                 )
-                current_user_rank = higher_ranked + 1
             else:
-                current_user_rank = None
-        else:
-            # For accuracy_rate, we'd need to fetch all users and calculate
-            # For simplicity, just return None if user not in top list
-            current_user_rank = None
+                col = getattr(UserGamification, metric)
+                user_val = getattr(current_user_gamif, metric)
+                higher_ranked = (
+                    db.query(UserGamification)
+                    .filter(col > user_val)
+                    .count()
+                )
+            current_user_rank = higher_ranked + 1
 
     return {
         "metric": metric,

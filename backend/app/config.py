@@ -1,9 +1,15 @@
+import logging
+import os
+from pydantic import model_validator
 from pydantic_settings import BaseSettings
+
+_logger = logging.getLogger(__name__)
+_INSECURE_DEFAULT_KEY = "your-secret-key-change-in-production"
 
 
 class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql://hanzinarrative:hanzinarrative_dev@localhost:5432/hanzinarrative"
-    SECRET_KEY: str = "your-secret-key-change-in-production"
+    SECRET_KEY: str = _INSECURE_DEFAULT_KEY
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
@@ -43,6 +49,28 @@ class Settings(BaseSettings):
 
     # Email via Resend (optional — leave empty to print reset links to terminal)
     RESEND_API_KEY: str = ""
+
+    @model_validator(mode='after')
+    def validate_secret_key(self) -> 'Settings':
+        """Block insecure default SECRET_KEY in production; warn in development.
+
+        Detection: ENVIRONMENT env var (set to "production" on Koyeb/hosting).
+        Locally it defaults to "development" so the insecure key is still allowed.
+        """
+        if self.SECRET_KEY == _INSECURE_DEFAULT_KEY:
+            is_prod = os.getenv("ENVIRONMENT", "development") == "production"
+            if is_prod:
+                raise ValueError(
+                    "SECRET_KEY is set to the insecure default value. "
+                    "Set a strong, random SECRET_KEY in your Koyeb environment variables. "
+                    "Generate one with: python -c \"import secrets; print(secrets.token_hex(32))\""
+                )
+            _logger.warning(
+                "WARNING: SECRET_KEY is the insecure default. "
+                "This is only acceptable for local development. "
+                "Set a strong SECRET_KEY before deploying to production."
+            )
+        return self
 
     class Config:
         env_file = ".env"

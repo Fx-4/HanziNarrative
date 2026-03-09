@@ -1,21 +1,81 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional, List
 from datetime import datetime
+import re
 
 
 class UserBase(BaseModel):
     username: str
     email: EmailStr
 
+    @field_validator('username')
+    @classmethod
+    def username_valid(cls, v: str) -> str:
+        v = v.strip()
+        if len(v) < 3:
+            raise ValueError('Username must be at least 3 characters')
+        if len(v) > 30:
+            raise ValueError('Username must be 30 characters or fewer')
+        if not re.match(r'^[a-zA-Z0-9_.-]+$', v):
+            raise ValueError('Username may only contain letters, numbers, underscores, dots and hyphens')
+        return v
+
 
 class UserCreate(UserBase):
     password: str
     full_name: Optional[str] = None
 
+    @field_validator('password')
+    @classmethod
+    def password_strong(cls, v: str) -> str:
+        if len(v) < 8:
+            raise ValueError('Password must be at least 8 characters')
+        if not re.search(r'[A-Za-z]', v):
+            raise ValueError('Password must contain at least one letter')
+        if not re.search(r'[0-9]', v):
+            raise ValueError('Password must contain at least one number')
+        return v
+
 
 class UserUpdate(BaseModel):
     full_name: Optional[str] = None
     profile_picture: Optional[str] = None
+
+    @field_validator('full_name')
+    @classmethod
+    def full_name_valid(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        v = v.strip()
+        if len(v) > 100:
+            raise ValueError('Full name must be 100 characters or fewer')
+        return v
+
+    @field_validator('profile_picture')
+    @classmethod
+    def profile_picture_valid(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        # Allow plain URLs (http/https)
+        if v.startswith('http://') or v.startswith('https://'):
+            if len(v) > 2048:
+                raise ValueError('Profile picture URL is too long')
+            return v
+        # Allow base64 data URIs — validate prefix and size
+        ALLOWED_PREFIXES = (
+            'data:image/jpeg;base64,',
+            'data:image/jpg;base64,',
+            'data:image/png;base64,',
+            'data:image/webp;base64,',
+            'data:image/gif;base64,',
+        )
+        if not any(v.startswith(p) for p in ALLOWED_PREFIXES):
+            raise ValueError('Profile picture must be a URL or a valid base64 image (JPEG, PNG, WebP, GIF)')
+        # Limit base64 payload to ~2MB (2MB * 4/3 base64 overhead ≈ 2_800_000 chars)
+        MAX_B64_CHARS = 2_800_000
+        if len(v) > MAX_B64_CHARS:
+            raise ValueError('Profile picture must be smaller than 2 MB')
+        return v
 
 
 class User(UserBase):
@@ -138,6 +198,17 @@ class ForgotPasswordRequest(BaseModel):
 class ResetPasswordRequest(BaseModel):
     token: str
     new_password: str
+
+    @field_validator('new_password')
+    @classmethod
+    def password_strong(cls, v: str) -> str:
+        if len(v) < 8:
+            raise ValueError('Password must be at least 8 characters')
+        if not re.search(r'[A-Za-z]', v):
+            raise ValueError('Password must contain at least one letter')
+        if not re.search(r'[0-9]', v):
+            raise ValueError('Password must contain at least one number')
+        return v
 
 
 # Writing Practice Schemas

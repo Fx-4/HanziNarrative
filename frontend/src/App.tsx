@@ -111,31 +111,39 @@ function AdminGuard({ children }: { children: React.ReactElement }) {
 }
 
 function App() {
-  const { isAuthenticated, fetchUser, logout, setAuthInitialized } = useAuthStore()
+  const { fetchUser, logout, setAuthInitialized } = useAuthStore()
 
-  // Initialize auth state on app load
+  // Initialize auth state on app load.
+  // Read token directly from localStorage (not from Zustand closure) to avoid
+  // stale-closure race: persisted store may not have hydrated yet when the
+  // effect fires on the very first render.
   useEffect(() => {
+    let cancelled = false
+
     const initAuth = async () => {
       const token = localStorage.getItem('access_token')
 
-      if (isAuthenticated && token) {
+      if (token) {
         try {
           await fetchUser()
-          appLogger.info('Auth token verified successfully')
+          if (!cancelled) appLogger.info('Auth token verified successfully')
         } catch (error) {
-          appLogger.warn('Token invalid, logging out', error as Record<string, unknown>)
-          logout()
+          if (!cancelled) {
+            appLogger.warn('Token invalid, logging out', error as Record<string, unknown>)
+            logout()
+          }
         }
-      } else if (isAuthenticated && !token) {
-        appLogger.warn('No token found in localStorage, logging out')
-        logout()
       } else {
-        // Not authenticated — mark init complete so guards don't hang
-        setAuthInitialized(true)
+        // No token → not authenticated; mark init complete so guards don't hang
+        if (!cancelled) {
+          appLogger.debug('No token found, skipping auth init')
+          setAuthInitialized(true)
+        }
       }
     }
 
     initAuth()
+    return () => { cancelled = true }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

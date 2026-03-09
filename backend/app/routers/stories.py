@@ -1,4 +1,5 @@
 from typing import List, Optional
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
@@ -56,7 +57,10 @@ def get_stories(
     limit: int = 100,
     db: Session = Depends(get_db)
 ):
-    query = db.query(models.Story).filter(models.Story.is_published == True)
+    query = db.query(models.Story).filter(
+        models.Story.is_published == True,
+        models.Story.soft_deleted_at.is_(None),
+    )
     if hsk_level:
         query = query.filter(models.Story.hsk_level == hsk_level)
     stories = query.offset(skip).limit(limit).all()
@@ -77,7 +81,10 @@ def get_ai_usage(
 
 @router.get("/{story_id}", response_model=schemas.Story)
 def get_story(story_id: int, db: Session = Depends(get_db)):
-    story = db.query(models.Story).filter(models.Story.id == story_id).first()
+    story = db.query(models.Story).filter(
+        models.Story.id == story_id,
+        models.Story.soft_deleted_at.is_(None),
+    ).first()
     if not story:
         raise HTTPException(status_code=404, detail="Story not found")
     return story
@@ -85,7 +92,10 @@ def get_story(story_id: int, db: Session = Depends(get_db)):
 
 @router.get("/{story_id}/words", response_model=List[schemas.HanziWord])
 def get_story_words(story_id: int, db: Session = Depends(get_db)):
-    story = db.query(models.Story).filter(models.Story.id == story_id).first()
+    story = db.query(models.Story).filter(
+        models.Story.id == story_id,
+        models.Story.soft_deleted_at.is_(None),
+    ).first()
     if not story:
         raise HTTPException(status_code=404, detail="Story not found")
     return story.words
@@ -137,12 +147,14 @@ def delete_story(
 ):
     db_story = db.query(models.Story).filter(
         models.Story.id == story_id,
-        models.Story.author_id == current_user.id
+        models.Story.author_id == current_user.id,
+        models.Story.soft_deleted_at.is_(None),
     ).first()
     if not db_story:
         raise HTTPException(status_code=404, detail="Story not found")
 
-    db.delete(db_story)
+    # Soft delete — preserve data, just mark as deleted
+    db_story.soft_deleted_at = datetime.now(timezone.utc)
     db.commit()
     return {"message": "Story deleted successfully"}
 

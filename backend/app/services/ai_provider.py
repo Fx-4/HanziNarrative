@@ -36,7 +36,7 @@ async def _call_gemini(prompt: str, **kwargs) -> str:
 
 async def _call_groq(prompt: str, **kwargs) -> str:
     """Call Groq API (llama-3.3-70b-versatile, free tier) via httpx."""
-    async with httpx.AsyncClient(timeout=60, proxy=None) as client:
+    async with httpx.AsyncClient(timeout=15, proxy=None) as client:
         response = await client.post(
             "https://api.groq.com/openai/v1/chat/completions",
             headers={
@@ -71,7 +71,7 @@ async def _call_openrouter(prompt: str, **kwargs) -> str:
     last_error = None
     for m in models_to_try:
         try:
-            async with httpx.AsyncClient(timeout=60, proxy=None) as client:
+            async with httpx.AsyncClient(timeout=15, proxy=None) as client:
                 response = await client.post(
                     "https://openrouter.ai/api/v1/chat/completions",
                     headers={
@@ -101,7 +101,7 @@ async def _call_openrouter(prompt: str, **kwargs) -> str:
 
 async def _call_mistral(prompt: str, **kwargs) -> str:
     """Call Mistral AI API (free tier — open-mistral-7b / mistral-small-latest)."""
-    async with httpx.AsyncClient(timeout=60, proxy=None) as client:
+    async with httpx.AsyncClient(timeout=15, proxy=None) as client:
         response = await client.post(
             "https://api.mistral.ai/v1/chat/completions",
             headers={
@@ -122,7 +122,7 @@ async def _call_mistral(prompt: str, **kwargs) -> str:
 
 async def _call_cohere(prompt: str, **kwargs) -> str:
     """Call Cohere AI API (trial key — 20 RPM, 1 000 calls/month hard cap)."""
-    async with httpx.AsyncClient(timeout=60, proxy=None) as client:
+    async with httpx.AsyncClient(timeout=15, proxy=None) as client:
         response = await client.post(
             "https://api.cohere.com/v2/chat",
             headers={

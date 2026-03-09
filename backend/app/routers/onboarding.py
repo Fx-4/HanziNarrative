@@ -18,11 +18,11 @@ router = APIRouter(prefix="/onboarding", tags=["onboarding"])
 # ========== SCHEMAS ==========
 
 class GoalsCreate(BaseModel):
-    daily_time_minutes: Optional[int] = None
-    daily_words: Optional[int] = None
-    target_hsk_level: Optional[int] = None
+    daily_time_minutes: Optional[int] = Field(None, ge=1, le=480)   # 1 min – 8 hrs
+    daily_words: Optional[int] = Field(None, ge=1, le=500)          # 1 – 500 words/day
+    target_hsk_level: Optional[int] = Field(None, ge=1, le=6)
     target_date: Optional[date] = None
-    weekly_xp: Optional[int] = None
+    weekly_xp: Optional[int] = Field(None, ge=0, le=100_000)
 
 
 class PreferencesCreate(BaseModel):

@@ -27,6 +27,17 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
   const submittedRef = useRef(false)
   // Store last finalAnswers so submit error can retry
   const pendingAnswersRef = useRef<AssessmentAnswer[]>([])
+  // Track the feedback setTimeout so we can cancel it on unmount
+  const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Cleanup timer on unmount to prevent state updates on unmounted component
+  useEffect(() => {
+    return () => {
+      if (feedbackTimerRef.current) {
+        clearTimeout(feedbackTimerRef.current)
+      }
+    }
+  }, [])
 
   useEffect(() => { loadQuestions() }, [])
 
@@ -97,7 +108,9 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
 
     const shouldFinish = questionIndex >= 29 || hasStableLevel([...answers, answer])
 
-    setTimeout(() => {
+    if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current)
+    feedbackTimerRef.current = setTimeout(() => {
+      feedbackTimerRef.current = null
       setShowFeedback(false)
       setSelectedAnswer(null)
       setQuestionIndex(prev => prev + 1)

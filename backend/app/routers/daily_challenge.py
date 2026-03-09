@@ -20,7 +20,10 @@ DAILY_CHALLENGE_XP = 30
 
 def _get_today_story(user_id: int, db: Session) -> Story | None:
     """Deterministic story selection: hash(user_id + date) % story_count."""
-    stories = db.query(Story).filter(Story.is_published == True).all()
+    stories = db.query(Story).filter(
+        Story.is_published == True,
+        Story.soft_deleted_at.is_(None),
+    ).all()
     if not stories:
         return None
     today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")

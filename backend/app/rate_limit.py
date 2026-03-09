@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from fastapi import HTTPException, status
@@ -27,7 +27,7 @@ def check_rate_limit(db: Session, user: User, feature: str) -> bool:
         return True
 
     limits = RATE_LIMITS[feature]
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     
     # Check hourly limit
     if 'hourly' in limits:
@@ -76,7 +76,7 @@ def record_ai_usage(db: Session, user: User, feature: str, tokens_used: int = 0,
 
 def get_usage_stats(db: Session, user: User, feature: str = None) -> dict:
     """Get usage statistics for a user"""
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     day_ago = now - timedelta(days=1)
     hour_ago = now - timedelta(hours=1)
     

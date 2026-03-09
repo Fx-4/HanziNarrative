@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func, desc
 from typing import List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pydantic import BaseModel
 from .. import models, schemas, auth
 from ..database import get_db
@@ -286,7 +286,7 @@ def delete_story(
     ).first()
     if not story:
         raise HTTPException(status_code=404, detail="Story not found")
-    story.soft_deleted_at = datetime.utcnow()
+    story.soft_deleted_at = datetime.now(timezone.utc)
     db.commit()
 
 

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, ForeignKey, Table, Float, JSON, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, ForeignKey, Table, Float, JSON, UniqueConstraint, Index
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from .database import Base
@@ -97,6 +97,13 @@ class UserProgress(Base):
     interval = Column(Integer, default=1)  # Days until next review
     repetitions = Column(Integer, default=0)  # Consecutive successful reviews
     next_review = Column(DateTime(timezone=True), nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint('user_id', 'word_id', name='uq_user_progress_user_word'),
+        Index('idx_user_progress_user_id', 'user_id'),
+        Index('idx_user_progress_user_word', 'user_id', 'word_id'),
+        Index('idx_user_progress_next_review', 'user_id', 'next_review'),
+    )
 
     user = relationship("User", back_populates="progress")
     word = relationship("HanziWord", back_populates="progress")
@@ -210,6 +217,11 @@ class AIUsage(Base):
     tokens_used = Column(Integer, default=0)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
     request_data = Column(JSON, nullable=True)  # Store request details for debugging
+
+    __table_args__ = (
+        Index('idx_ai_usage_user_feature', 'user_id', 'feature'),
+        Index('idx_ai_usage_user_timestamp', 'user_id', 'timestamp'),
+    )
 
     user = relationship("User")
 
