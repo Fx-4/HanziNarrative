@@ -16,8 +16,14 @@ class Settings(BaseSettings):
     # Groq AI (free tier — secondary fallback)
     GROQ_API_KEY: str = ""
 
-    # OpenRouter AI (free models — tertiary fallback)
+    # Mistral AI (free tier — tertiary fallback, 1 req/s, ~1B tokens/month)
+    MISTRAL_API_KEY: str = ""
+
+    # OpenRouter AI (free models — quaternary fallback)
     OPENROUTER_API_KEY: str = ""
+
+    # Cohere AI (trial — 20 RPM, 1000 calls/month hard cap)
+    COHERE_API_KEY: str = ""
 
     # Pexels — free image API (register at https://www.pexels.com/api/)
     PEXELS_API_KEY: str = ""

@@ -2,10 +2,12 @@
 Multi-Provider AI Service — Cascading fallback chain.
 
 Priority order (free first, paid last):
-  1. Gemini 2.5-flash  (Google, free tier — 15 RPM, 1M TPD)
-  2. Groq              (free tier — 30 RPM, 14.4K req/day on llama/mixtral)
-  3. OpenRouter         (free models: meta-llama, mistral, etc.)
-  4. Claude             (Anthropic, paid — absolute last resort)
+  1. Gemini 2.5-flash  (Google, free tier  — 15 RPM,  1M tokens/day)
+  2. Groq              (free tier           — 30 RPM,  14.4K req/day)
+  3. Mistral           (free tier           —  1 req/s, ~1B tokens/month)
+  4. OpenRouter        (free models         — varies,  meta-llama/mistral/gemma)
+  5. Cohere            (trial key           — 20 RPM,  1 000 calls/month hard cap)
+  6. Claude            (Anthropic, paid     — absolute last resort)
 
 Each provider is tried in order. If one fails, the next is attempted.
 """
@@ -97,6 +99,49 @@ async def _call_openrouter(prompt: str, **kwargs) -> str:
     raise last_error or RuntimeError("All OpenRouter free models failed")
 
 
+async def _call_mistral(prompt: str, **kwargs) -> str:
+    """Call Mistral AI API (free tier — open-mistral-7b / mistral-small-latest)."""
+    async with httpx.AsyncClient(timeout=60, proxy=None) as client:
+        response = await client.post(
+            "https://api.mistral.ai/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {settings.MISTRAL_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": kwargs.get("mistral_model", "mistral-small-latest"),
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": kwargs.get("temperature", 0.7),
+                "max_tokens": kwargs.get("max_tokens", 4096),
+            },
+        )
+        response.raise_for_status()
+        data = response.json()
+        return data["choices"][0]["message"]["content"]
+
+
+async def _call_cohere(prompt: str, **kwargs) -> str:
+    """Call Cohere AI API (trial key — 20 RPM, 1 000 calls/month hard cap)."""
+    async with httpx.AsyncClient(timeout=60, proxy=None) as client:
+        response = await client.post(
+            "https://api.cohere.com/v2/chat",
+            headers={
+                "Authorization": f"Bearer {settings.COHERE_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": kwargs.get("cohere_model", "command-a-03-2025"),
+                "messages": [{"role": "user", "content": prompt}],
+            },
+        )
+        response.raise_for_status()
+        data = response.json()
+        # Cohere v2 response: {"message": {"content": [{"type": "text", "text": "..."}]}}
+        content_blocks = data["message"]["content"]
+        text_blocks = [b["text"] for b in content_blocks if b.get("type") == "text"]
+        return " ".join(text_blocks)
+
+
 async def _call_claude(prompt: str, **kwargs) -> str:
     """Call Anthropic Claude API — paid, last resort."""
     import anthropic
@@ -116,7 +161,9 @@ async def _call_claude(prompt: str, **kwargs) -> str:
 PROVIDERS = [
     {"name": "gemini",      "fn": _call_gemini,      "key_attr": "GEMINI_API_KEY"},
     {"name": "groq",        "fn": _call_groq,        "key_attr": "GROQ_API_KEY"},
+    {"name": "mistral",     "fn": _call_mistral,     "key_attr": "MISTRAL_API_KEY"},
     {"name": "openrouter",  "fn": _call_openrouter,  "key_attr": "OPENROUTER_API_KEY"},
+    {"name": "cohere",      "fn": _call_cohere,      "key_attr": "COHERE_API_KEY"},
     {"name": "claude",      "fn": _call_claude,      "key_attr": "ANTHROPIC_API_KEY"},
 ]
 
