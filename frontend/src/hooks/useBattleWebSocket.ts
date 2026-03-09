@@ -184,6 +184,12 @@ export function useBattleWebSocket(roomCode: string | null) {
                 mode: msg.mode as GameState['mode'],
                 hostId: msg.host_id as number,
                 players: (msg.players as PlayerInfo[]) ?? [],
+                // Reset game data when returning to lobby (play again)
+                gameOverData: null,
+                revealData: null,
+                currentQuestion: null,
+                playAgainVotes: [],
+                buffEvent: null,
                 error: null,
               }
 
