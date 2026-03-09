@@ -63,6 +63,60 @@ function EffectBadges({ effects }: { effects: Record<string, number> }) {
   )
 }
 
+// ── EFFECT REFERENCE PANEL ────────────────────────────────────────────────────
+function EffectReferencePanel() {
+  const [open, setOpen] = useState(false)
+  const buffs = Object.entries(EFFECT_META).filter(([id]) => BUFF_IDS.has(id))
+  const debuffs = Object.entries(EFFECT_META).filter(([id]) => !BUFF_IDS.has(id))
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow border border-gray-100 dark:border-gray-800 overflow-hidden">
+      <button onClick={() => setOpen(o => !o)} className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all">
+        <span className="font-semibold text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+          <span>⚡</span> Power-ups Reference
+        </span>
+        <span className={`text-xs text-gray-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}>▼</span>
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
+            <div className="px-4 pb-4 space-y-3">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-2 flex items-center gap-1">✨ Buffs (positive)</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                  {buffs.map(([id, meta]) => (
+                    <div key={id} className="flex items-start gap-2 p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50">
+                      <span className="text-lg leading-none mt-0.5 flex-shrink-0">{meta.emoji}</span>
+                      <div>
+                        <p className="text-xs font-bold text-emerald-800 dark:text-emerald-300">{meta.name}</p>
+                        <p className="text-[10px] text-emerald-700 dark:text-emerald-400 opacity-80 leading-snug">{meta.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-1">☠️ Debuffs (negative)</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                  {debuffs.map(([id, meta]) => (
+                    <div key={id} className="flex items-start gap-2 p-2 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50">
+                      <span className="text-lg leading-none mt-0.5 flex-shrink-0">{meta.emoji}</span>
+                      <div>
+                        <p className="text-xs font-bold text-rose-800 dark:text-rose-300">{meta.name}</p>
+                        <p className="text-[10px] text-rose-700 dark:text-rose-400 opacity-80 leading-snug">{meta.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <p className="text-[10px] text-gray-400 dark:text-gray-500 text-center">Buffs/debuffs are randomly awarded after each question. Correct answers earn inventory items you can use strategically!</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
 // ── INVENTORY PANEL ───────────────────────────────────────────────────────────
 function InventoryPanel({ inventory, players, currentUserId, sendMessage }: {
   inventory: string[]
@@ -385,6 +439,9 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
           </button>
         </div>
       )}
+      {/* Power-ups Reference Panel */}
+      <EffectReferencePanel />
+
       <button onClick={onLeave} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-red-400 hover:text-red-500 transition-all font-medium text-sm sm:text-base">
         <LogOut className="w-4 h-4" /> Leave Room
       </button>
@@ -422,8 +479,10 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
   const [timeLeft, setTimeLeft] = useState(baseTime)
   const [frozen, setFrozen] = useState(false)
   const [opts, setOpts] = useState<{ text: string; origIdx: number }[]>([])
+  const [hintIdx, setHintIdx] = useState<number | null>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const freezeRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const hintRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     setSelected(null)
@@ -443,6 +502,14 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
       if (freezeRef.current) clearTimeout(freezeRef.current)
       freezeRef.current = setTimeout(() => setFrozen(false), 4000)
     } else setFrozen(false)
+    // answer_reveal hint: briefly show the correct option for 2.5 s
+    if (hintRef.current) clearTimeout(hintRef.current)
+    if (myFx['answer_reveal'] && q.correct_answer !== null) {
+      setHintIdx(q.correct_answer)
+      hintRef.current = setTimeout(() => setHintIdx(null), 2500)
+    } else {
+      setHintIdx(null)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q?.index])
 
@@ -451,7 +518,10 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
     timerRef.current = setInterval(() => setTimeLeft(t => Math.max(0, t - 1)), 1000)
     return () => { if (timerRef.current) clearInterval(timerRef.current) }
   }, [q?.index])
-  useEffect(() => () => { if (freezeRef.current) clearTimeout(freezeRef.current) }, [])
+  useEffect(() => () => {
+    if (freezeRef.current) clearTimeout(freezeRef.current)
+    if (hintRef.current) clearTimeout(hintRef.current)
+  }, [])
 
   // ── TTS helper ────────────────────────────────────────────────────────────
   const speakChinese = useCallback((text: string) => {
@@ -616,17 +686,19 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
           {opts.map(({ text, origIdx }, di) => {
             const isSel = selected === origIdx
             const isDis = selected !== null || me?.eliminated || frozen
+            const isHint = hintIdx !== null && origIdx === hintIdx
             return (
               <motion.button key={`${q.index}-${di}`}
                 whileHover={!isDis ? { scale: 1.02 } : {}} whileTap={!isDis ? { scale: 0.97 } : {}}
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: di * 0.06 }}
                 onClick={() => handleAnswer(origIdx)} disabled={!!isDis}
                 className={`p-2.5 sm:p-3 md:p-4 rounded-xl border-2 font-medium text-center transition-all min-h-[52px] sm:min-h-[60px] ${isSel ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-800 dark:text-indigo-300 ring-2 ring-indigo-300'
-                  : frozen ? 'border-blue-200 dark:border-blue-800 bg-blue-50/40 text-gray-400 cursor-not-allowed'
-                    : isDis ? 'border-gray-200 dark:border-gray-700 text-gray-400 cursor-not-allowed'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-600 text-gray-800 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/20'
+                  : isHint ? 'border-yellow-400 bg-yellow-50 dark:bg-yellow-950/40 text-yellow-800 dark:text-yellow-200 ring-2 ring-yellow-300 animate-pulse'
+                    : frozen ? 'border-blue-200 dark:border-blue-800 bg-blue-50/40 text-gray-400 cursor-not-allowed'
+                      : isDis ? 'border-gray-200 dark:border-gray-700 text-gray-400 cursor-not-allowed'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-600 text-gray-800 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/20'
                   } ${optClass}`}>
-                {text}
+                {isHint && <span className="mr-1 text-yellow-500">🔍</span>}{text}
               </motion.button>
             )
           })}
@@ -651,7 +723,7 @@ function RevealView({ gameState, currentUserId }: { gameState: ReturnType<typeof
       {myResult && (
         <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
           className={`rounded-2xl p-3 sm:p-4 text-center font-bold text-base sm:text-lg ${myResult === 'correct' ? 'bg-emerald-500 text-white' : myResult === 'wrong' ? 'bg-red-500 text-white' : 'bg-gray-500 text-white'}`}>
-          {myResult === 'correct' ? '✅ Correct! +10 pts' : myResult === 'wrong' ? `❌ Wrong! ${gameState.mode === 'battle_royale' ? '-1 life' : 'no points'}` : '☠️ Eliminated'}
+          {myResult === 'correct' ? '✅ Correct!' : myResult === 'wrong' ? '❌ Wrong!' : '☠️ Eliminated'}
         </motion.div>
       )}
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-emerald-300 dark:border-emerald-700 p-4 sm:p-5 text-center">
@@ -765,7 +837,7 @@ function GameOverView({ gameState, currentUserId, onPlayAgain, onNewGame }: {
         )}
         <div className="grid grid-cols-2 gap-2">
           <button onClick={onPlayAgain} disabled={gameState.playAgainVotes.includes(currentUserId)} className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-xl transition-all text-sm">
-            <Swords className="w-4 h-4" />{gameState.playAgainVotes.includes(currentUserId) ? 'Voted ✅' : 'Vote Yes!'}
+            <Swords className="w-4 h-4" />{gameState.playAgainVotes.includes(currentUserId) ? 'Voted ✅' : 'Vote Rematch!'}
           </button>
           <button onClick={onNewGame} className="flex items-center justify-center gap-2 border-2 border-gray-200 dark:border-gray-700 hover:border-gray-400 text-gray-700 dark:text-gray-300 font-semibold py-2.5 rounded-xl transition-all text-sm">
             <LogOut className="w-4 h-4" /> Leave
@@ -814,7 +886,7 @@ export default function Battle() {
         {phase === 'countdown' && <motion.div key="countdown" exit={{ opacity: 0 }}><CountdownView seconds={gameState.countdownSeconds} /></motion.div>}
         {phase === 'question' && <motion.div key={`q-${gameState.currentQuestion?.index}`} exit={{ opacity: 0 }}><QuestionView gameState={gameState} currentUserId={user.id} sendMessage={sendMessage} /></motion.div>}
         {phase === 'reveal' && <motion.div key="reveal" exit={{ opacity: 0 }}><RevealView gameState={gameState} currentUserId={user.id} /></motion.div>}
-        {phase === 'game_over' && <motion.div key="gameover" exit={{ opacity: 0 }}><GameOverView gameState={gameState} currentUserId={user.id} onPlayAgain={() => sendMessage({ type: 'play_again' })} onNewGame={handleLeave} /></motion.div>}
+        {phase === 'game_over' && <motion.div key="gameover" exit={{ opacity: 0 }}><GameOverView gameState={gameState} currentUserId={user.id} onPlayAgain={() => sendMessage({ type: 'vote_play_again' })} onNewGame={handleLeave} /></motion.div>}
       </AnimatePresence>
     </div>
   )

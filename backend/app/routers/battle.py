@@ -640,16 +640,22 @@ async def _run_game(room: RoomState):
                 p.answer = None
                 p.answer_time = None
 
-            await _broadcast(room, {
+            # Send personalized question — players with answer_reveal get the correct_answer as a hint
+            q_base = {
                 "type": "question",
                 "index": q_idx + 1,
                 "total": len(room.questions),
                 "time_limit": room.time_limit,
                 "starting_lives": room.starting_lives,
                 **question,
-                # Hide correct_answer from payload
-                "correct_answer": None,
-            })
+            }
+            for uid, ws in list(room.connections.items()):
+                p_state = room.players.get(uid)
+                hint = question["correct_answer"] if (p_state and p_state.has_effect("answer_reveal")) else None
+                try:
+                    await ws.send_text(json.dumps({**q_base, "correct_answer": hint}))
+                except Exception:
+                    room.connections.pop(uid, None)
 
             # Wait for time limit (check every 0.25s for early all-answered)
             deadline = time.time() + room.time_limit

@@ -39,7 +39,7 @@ export interface BattleQuestion {
   english: string
   options: string[]
   hsk_level: number
-  correct_answer: null // always null while question is live
+  correct_answer: number | null // null for all players; number only when answer_reveal hint is active
   // Extra fields for specific types
   prompt_label?: string
   bare_syllable?: string
