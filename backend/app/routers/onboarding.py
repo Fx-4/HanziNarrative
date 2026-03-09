@@ -3,7 +3,7 @@ Onboarding routes for new user setup and level assessment
 """
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, List, Dict
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -50,7 +50,7 @@ class AssessmentSubmit(BaseModel):
 
 class OnboardingComplete(BaseModel):
     took_assessment: bool
-    determined_hsk_level: int
+    determined_hsk_level: int = Field(..., ge=1, le=6)
     goals: GoalsCreate
     preferences: PreferencesCreate
 

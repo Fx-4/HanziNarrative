@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { onboardingApi } from '@/services/api'
 import type { QuestionData, AssessmentAnswer } from '@/types'
-import { Loader2, Award, Check, X } from 'lucide-react'
+import { Loader2, Award, Check, X, AlertCircle, RefreshCw } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 interface AdaptiveAssessmentProps {
   onComplete: (determinedLevel: number, xpEarned: number) => void
@@ -10,6 +11,7 @@ interface AdaptiveAssessmentProps {
 
 const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [questionsPool, setQuestionsPool] = useState<QuestionData[]>([])
   const [currentLevel, setCurrentLevel] = useState(2)
   const [questionIndex, setQuestionIndex] = useState(0)
@@ -21,26 +23,35 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
   const [startTime] = useState(Date.now())
   const [questionStartTime, setQuestionStartTime] = useState(Date.now())
 
+  // Prevent double submission if race condition between timeout + useEffect
+  const submittedRef = useRef(false)
+  // Store last finalAnswers so submit error can retry
+  const pendingAnswersRef = useRef<AssessmentAnswer[]>([])
+
   useEffect(() => { loadQuestions() }, [])
 
   useEffect(() => {
-    if (questionsPool.length > 0 && !currentQuestion) {
+    if (questionsPool.length > 0 && !currentQuestion && !submittedRef.current) {
       generateNextQuestion()
     }
   }, [questionsPool, currentQuestion, currentLevel])
 
   const loadQuestions = async () => {
+    setLoadError(false)
+    setLoading(true)
     try {
       const data = await onboardingApi.getAssessmentQuestions()
       setQuestionsPool(data.questions_pool)
       setLoading(false)
     } catch (error) {
       console.error('Failed to load questions:', error)
+      setLoadError(true)
       setLoading(false)
     }
   }
 
   const generateNextQuestion = () => {
+    if (submittedRef.current) return
     const usedWordIds = new Set(answers.map(a => a.word_id))
     const available = questionsPool.filter(
       q => q.hsk_level === currentLevel && !usedWordIds.has(q.word_id)
@@ -84,12 +95,14 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
       else if (correct <= 1) setCurrentLevel(prev => Math.max(1, prev - 1))
     }
 
+    const shouldFinish = questionIndex >= 29 || hasStableLevel([...answers, answer])
+
     setTimeout(() => {
       setShowFeedback(false)
       setSelectedAnswer(null)
       setQuestionIndex(prev => prev + 1)
       setCurrentQuestion(null)
-      if (questionIndex >= 29 || hasStableLevel([...answers, answer])) {
+      if (shouldFinish) {
         submitAssessment([...answers, answer])
       }
     }, 1200)
@@ -106,6 +119,10 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
   }
 
   const submitAssessment = async (finalAnswers = answers) => {
+    // Guard against double submission from race condition
+    if (submittedRef.current) return
+    submittedRef.current = true
+    pendingAnswersRef.current = finalAnswers
     try {
       const result = await onboardingApi.submitAssessment({
         answers: finalAnswers,
@@ -114,7 +131,13 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
       onComplete(result.determined_level, result.xp_earned)
     } catch (error) {
       console.error('Failed to submit assessment:', error)
+      submittedRef.current = false // Allow retry
+      toast.error('Failed to save results. Tap "Retry" to try again.')
     }
+  }
+
+  const retrySubmit = () => {
+    submitAssessment(pendingAnswersRef.current)
   }
 
   if (loading) {
@@ -122,6 +145,43 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
         <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
         <p className="text-sm text-gray-500">Loading assessment questions…</p>
+      </div>
+    )
+  }
+
+  if (loadError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+        <AlertCircle className="w-10 h-10 text-red-400" />
+        <p className="text-sm text-gray-600 text-center max-w-xs">
+          Could not load assessment questions. Please check your connection and try again.
+        </p>
+        <button
+          onClick={loadQuestions}
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors"
+        >
+          <RefreshCw className="w-4 h-4" />
+          Try Again
+        </button>
+      </div>
+    )
+  }
+
+  // Submission failed — show retry panel instead of blank/stuck state
+  if (!submittedRef.current && pendingAnswersRef.current.length > 0 && !currentQuestion) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+        <AlertCircle className="w-10 h-10 text-amber-400" />
+        <p className="text-sm text-gray-600 text-center max-w-xs">
+          Your answers couldn't be saved. Tap Retry to submit your results.
+        </p>
+        <button
+          onClick={retrySubmit}
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors"
+        >
+          <RefreshCw className="w-4 h-4" />
+          Retry
+        </button>
       </div>
     )
   }
