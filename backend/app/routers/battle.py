@@ -920,6 +920,11 @@ async def battle_websocket(
 
             mtype = msg.get("type")
 
+            # ── PING (heartbeat keep-alive) ─────────────────────────────────
+            if mtype == "ping":
+                await _send(websocket, {"type": "pong"})
+                continue
+
             # ── START GAME ─────────────────────────────────────────────────
             if mtype == "start_game" and current_user.id == room.host_id:
                 if room.state != "lobby":
@@ -969,6 +974,30 @@ async def battle_websocket(
                 if room.game_task and not room.game_task.done():
                     room.game_task.cancel()
                 room.game_task = asyncio.create_task(_run_game(room))
+
+            # ── PLAY AGAIN (return to lobby after game_over) ────────────────
+            elif mtype == "play_again" and current_user.id == room.host_id:
+                if room.state != "game_over":
+                    continue
+                # Reset room to lobby
+                room.state = "lobby"
+                room.questions = []
+                room.current_q_index = 0
+                for p in room.players.values():
+                    p.lives = room.starting_lives
+                    p.score = 0
+                    p.eliminated = False
+                    p.answered = False
+                    p.active_effects = {}
+                    p.inventory = []
+                await _broadcast(room, {
+                    "type": "lobby_update",
+                    "room_code": room.room_code,
+                    "mode": room.mode,
+                    "host_id": room.host_id,
+                    "players": room.player_list(),
+                    "state": "lobby",
+                })
 
             # ── ASSIGN TEAM ────────────────────────────────────────────────
             elif mtype == "assign_team" and current_user.id == room.host_id:

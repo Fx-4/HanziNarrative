@@ -175,7 +175,7 @@ def google_login():
     """Redirect user to Google OAuth consent screen."""
     if not settings.GOOGLE_CLIENT_ID:
         raise HTTPException(status_code=503, detail="Google OAuth not configured")
-    backend_callback = "http://localhost:8000/auth/google/callback"
+    backend_callback = f"{settings.BACKEND_URL}/auth/google/callback"
     params = (
         f"client_id={settings.GOOGLE_CLIENT_ID}"
         f"&redirect_uri={backend_callback}"
@@ -190,7 +190,7 @@ def google_login():
 @router.get("/google/callback")
 async def google_callback(code: str, db: Session = Depends(get_db)):
     """Exchange Google auth code for user info, create/login user, return JWT."""
-    backend_callback = "http://localhost:8000/auth/google/callback"
+    backend_callback = f"{settings.BACKEND_URL}/auth/google/callback"
 
     # Exchange code for tokens
     async with httpx.AsyncClient() as client:

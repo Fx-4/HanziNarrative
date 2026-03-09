@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     # Frontend URL (for OAuth callbacks and reset links)
     FRONTEND_URL: str = "http://localhost:5173"
 
+    # Backend URL (for OAuth redirect_uri — change in production)
+    BACKEND_URL: str = "http://localhost:8000"
+
     # Google OAuth 2.0
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""

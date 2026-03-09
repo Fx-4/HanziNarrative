@@ -136,14 +136,27 @@ export function useBattleWebSocket(roomCode: string | null) {
       const ws = new WebSocket(url)
       wsRef.current = ws
 
-      ws.onopen = () => { setConnectionStatus('connected') }
+      ws.onopen = () => {
+        setConnectionStatus('connected')
+        // Heartbeat: send ping every 30s to prevent idle disconnect
+        const ping = setInterval(() => {
+          if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'ping' }))
+          else clearInterval(ping)
+        }, 30_000)
+          ; (ws as WebSocket & { _ping?: ReturnType<typeof setInterval> })._ping = ping
+      }
 
       ws.onclose = () => {
-        setConnectionStatus(stoppedRef.current ? 'idle' : 'failed')
+        const pingId = (ws as WebSocket & { _ping?: ReturnType<typeof setInterval> })._ping
+        if (pingId) clearInterval(pingId)
         wsRef.current = null
-        if (!stoppedRef.current && retryCountRef.current < 2) {
+        if (!stoppedRef.current && retryCountRef.current < 5) {
+          // Show reconnecting (not failed) if we're about to retry
+          setConnectionStatus('reconnecting')
           retryCountRef.current++
-          setTimeout(openWs, 1500)
+          setTimeout(openWs, 2000)
+        } else {
+          setConnectionStatus(stoppedRef.current ? 'idle' : 'failed')
         }
       }
 

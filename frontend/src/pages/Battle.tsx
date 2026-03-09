@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '@/store/authStore'
 import { useBattleWebSocket, PlayerInfo, BuffEvent } from '@/hooks/useBattleWebSocket'
 import { toast } from 'react-hot-toast'
-import { Swords, Users, Copy, Check, Crown, Heart, Trophy, Shield, Zap, LogOut, Play, ArrowRight, Star, X, BookOpen, Timer, Flame } from 'lucide-react'
+import { Swords, Users, Copy, Check, Crown, Heart, Trophy, Shield, Zap, LogOut, Play, ArrowRight, Star, X, BookOpen, Timer, Flame, Volume2 } from 'lucide-react'
 import axios from 'axios'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
@@ -367,11 +367,11 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
               ] as const).map(({ value, label, desc, color }) => (
                 <button key={value} onClick={() => setBuffMode(value)}
                   className={`p-2 rounded-xl text-center transition-all border-2 ${buffMode === value
-                      ? color === 'indigo' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300'
-                        : color === 'emerald' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300'
-                          : color === 'rose' ? 'border-rose-500 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300'
-                            : 'border-gray-400 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
-                      : 'border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-500 hover:border-gray-300'
+                    ? color === 'indigo' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300'
+                      : color === 'emerald' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300'
+                        : color === 'rose' ? 'border-rose-500 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300'
+                          : 'border-gray-400 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
+                    : 'border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-500 hover:border-gray-300'
                     }`}>
                   <p className="text-xs sm:text-sm font-semibold">{label}</p>
                   <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">{desc}</p>
@@ -453,6 +453,29 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
   }, [q?.index])
   useEffect(() => () => { if (freezeRef.current) clearTimeout(freezeRef.current) }, [])
 
+  // ── TTS helper ────────────────────────────────────────────────────────────
+  const speakChinese = useCallback((text: string) => {
+    if (!text || !window.speechSynthesis) return
+    window.speechSynthesis.cancel()
+    const utt = new SpeechSynthesisUtterance(text)
+    utt.lang = 'zh-CN'
+    utt.rate = 0.85
+    // Prefer a Chinese voice if available
+    const voices = window.speechSynthesis.getVoices()
+    const zh = voices.find(v => v.lang.startsWith('zh'))
+    if (zh) utt.voice = zh
+    window.speechSynthesis.speak(utt)
+  }, [])
+
+  // Auto-play for tone_select (the whole point is to hear the word)
+  useEffect(() => {
+    if (q?.question_type === 'tone_select' && q.chinese) {
+      const t = setTimeout(() => speakChinese(q.chinese), 400)
+      return () => clearTimeout(t)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q?.index])
+
   const handleAnswer = (origIdx: number) => {
     if (selected !== null || me?.eliminated || frozen) return
     setSelected(origIdx); sendMessage({ type: 'answer', answer_index: origIdx })
@@ -529,29 +552,36 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
         {q.question_type === 'character_match' && (
           <div className="text-center mb-4">
             <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || 'What is the meaning?'}</p>
-            <motion.p initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-6xl sm:text-7xl font-bold font-chinese text-gray-900 dark:text-gray-100">{q.chinese}</motion.p>
+            <div className="flex items-center justify-center gap-3">
+              <motion.p initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-6xl sm:text-7xl font-bold font-chinese text-gray-900 dark:text-gray-100">{q.chinese}</motion.p>
+              <button onClick={() => speakChinese(q.chinese)} className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 text-indigo-500 hover:bg-indigo-100 transition-all" title="Hear pronunciation"><Volume2 className="w-5 h-5" /></button>
+            </div>
             <p className="text-indigo-500 text-lg mt-1.5">{q.pinyin}</p>
           </div>
         )}
         {q.question_type === 'multiple_choice' && (
           <div className="text-center mb-4">
             <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || 'Which character means this?'}</p>
-            <motion.p initial={{ y: 8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">"{q.english}"</motion.p>
+            <motion.p initial={{ y: 8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">&ldquo;{q.english}&rdquo;</motion.p>
           </div>
         )}
         {q.question_type === 'pinyin_match' && (
           <div className="text-center mb-4">
             <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || 'Which pronunciation is correct?'}</p>
-            <motion.p initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-6xl sm:text-7xl font-bold font-chinese text-gray-900 dark:text-gray-100">{q.chinese}</motion.p>
+            <div className="flex items-center justify-center gap-3">
+              <motion.p initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-6xl sm:text-7xl font-bold font-chinese text-gray-900 dark:text-gray-100">{q.chinese}</motion.p>
+              <button onClick={() => speakChinese(q.chinese)} className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 text-indigo-500 hover:bg-indigo-100 transition-all" title="Hear pronunciation"><Volume2 className="w-5 h-5" /></button>
+            </div>
             <p className="text-gray-400 text-sm mt-1.5 italic">{q.english}</p>
           </div>
         )}
         {q.question_type === 'tone_select' && (
           <div className="text-center mb-4">
             <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || 'Choose the correct tone:'}</p>
-            <div className="inline-flex items-center gap-2 bg-amber-50 dark:bg-amber-950/30 border-2 border-amber-300 dark:border-amber-700 rounded-2xl px-5 py-3">
+            <div className="inline-flex items-center gap-3 bg-amber-50 dark:bg-amber-950/30 border-2 border-amber-300 dark:border-amber-700 rounded-2xl px-5 py-3">
               <span className="text-2xl">🎵</span>
               <motion.p initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-3xl sm:text-4xl font-bold text-amber-700 dark:text-amber-400 tracking-wider">{q.bare_syllable || q.pinyin}</motion.p>
+              <button onClick={() => speakChinese(q.chinese)} className="p-1.5 rounded-xl bg-amber-100 dark:bg-amber-900/50 text-amber-700 hover:bg-amber-200 transition-all" title="Hear word"><Volume2 className="w-4 h-4" /></button>
             </div>
             <p className="text-gray-400 text-xs mt-2 italic">{q.english} · {q.chinese}</p>
           </div>
@@ -751,7 +781,7 @@ export default function Battle() {
         {phase === 'countdown' && <motion.div key="countdown" exit={{ opacity: 0 }}><CountdownView seconds={gameState.countdownSeconds} /></motion.div>}
         {phase === 'question' && <motion.div key={`q-${gameState.currentQuestion?.index}`} exit={{ opacity: 0 }}><QuestionView gameState={gameState} currentUserId={user.id} sendMessage={sendMessage} /></motion.div>}
         {phase === 'reveal' && <motion.div key="reveal" exit={{ opacity: 0 }}><RevealView gameState={gameState} currentUserId={user.id} /></motion.div>}
-        {phase === 'game_over' && <motion.div key="gameover" exit={{ opacity: 0 }}><GameOverView gameState={gameState} currentUserId={user.id} onPlayAgain={() => { }} onNewGame={handleLeave} /></motion.div>}
+        {phase === 'game_over' && <motion.div key="gameover" exit={{ opacity: 0 }}><GameOverView gameState={gameState} currentUserId={user.id} onPlayAgain={() => sendMessage({ type: 'play_again' })} onNewGame={handleLeave} /></motion.div>}
       </AnimatePresence>
     </div>
   )
