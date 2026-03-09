@@ -241,6 +241,7 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
   const [timeLimitSec, setTimeLimitSec] = useState(15)
   const [startingLives, setStartingLivesLocal] = useState(3)
   const [qType, setQType] = useState<'mixed' | 'char_to_meaning' | 'meaning_to_char' | 'pinyin' | 'tone_select' | 'sentence_blank' | 'definition_match'>('mixed')
+  const [buffMode, setBuffMode] = useState<'both' | 'buffs_only' | 'debuffs_only' | 'none'>('both')
   const isHost = currentUserId === gameState.hostId
 
   const copyCode = async () => {
@@ -248,7 +249,11 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
     try { await navigator.clipboard.writeText(code) } catch { const el = document.createElement('textarea'); el.value = code; el.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el) }
     setCopied(true); setTimeout(() => setCopied(false), 2000)
   }
-  const startGame = () => sendMessage({ type: 'start_game', hsk_level: hskLevel, num_questions: numQ, time_limit: timeLimitSec, lives: startingLives, question_type: qType })
+  const startGame = () => sendMessage({
+    type: 'start_game', hsk_level: hskLevel, num_questions: numQ,
+    time_limit: timeLimitSec, lives: startingLives, question_type: qType,
+    buff_mode: buffMode,
+  })
   const assignTeam = (uid: number, team: 'A' | 'B') => sendMessage({ type: 'assign_team', user_id: uid, team })
   const kick = (uid: number) => sendMessage({ type: 'kick', user_id: uid })
 
@@ -348,6 +353,33 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
               ))}
             </div>
           </div>
+          {/* Buff / Debuff Mode */}
+          <div>
+            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 flex items-center gap-1">
+              ✨ Power-ups Mode
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+              {([
+                { value: 'both', label: '⚡+☠️ Both', desc: 'Buffs & debuffs', color: 'indigo' },
+                { value: 'buffs_only', label: '✨ Buffs Only', desc: 'Positive only', color: 'emerald' },
+                { value: 'debuffs_only', label: '☠️ Debuffs Only', desc: 'Negative only', color: 'rose' },
+                { value: 'none', label: '🚫 None', desc: 'No power-ups', color: 'gray' },
+              ] as const).map(({ value, label, desc, color }) => (
+                <button key={value} onClick={() => setBuffMode(value)}
+                  className={`p-2 rounded-xl text-center transition-all border-2 ${buffMode === value
+                      ? color === 'indigo' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300'
+                        : color === 'emerald' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300'
+                          : color === 'rose' ? 'border-rose-500 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300'
+                            : 'border-gray-400 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
+                      : 'border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-500 hover:border-gray-300'
+                    }`}>
+                  <p className="text-xs sm:text-sm font-semibold">{label}</p>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">{desc}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <button onClick={startGame} disabled={gameState.players.length < 2} className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all shadow-md shadow-indigo-500/25 text-sm sm:text-base">
             <Swords className="w-4 h-4 sm:w-5 sm:h-5" /> Start Battle {gameState.players.length < 2 && '(need 2+ players)'}
           </button>

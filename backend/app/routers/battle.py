@@ -269,11 +269,12 @@ class RoomState:
     time_limit: int = 15               # seconds per question
     starting_lives: int = 3            # lives for battle_royale
     question_type: str = "mixed"       # mixed|char_to_meaning|meaning_to_char|pinyin
+    buff_mode: str = "both"            # both|buffs_only|debuffs_only|none
     state: str = "lobby"               # lobby|countdown|question|reveal|game_over
-    players: dict = field(default_factory=dict)   # user_id → PlayerState
+    players: dict = field(default_factory=dict)   # user_id -> PlayerState
     questions: list = field(default_factory=list)
     current_q_index: int = 0
-    connections: dict = field(default_factory=dict)  # user_id → WebSocket
+    connections: dict = field(default_factory=dict)  # user_id -> WebSocket
     game_task: Optional[asyncio.Task] = None
 
     def active_players(self) -> list:
@@ -574,13 +575,23 @@ async def _apply_single_effect(room: RoomState, effect_def: dict, target: Player
 
 async def _apply_buff_event(room: RoomState):
     """
-    Randomly pick a buff/debuff, pick a random living player as target,
-    apply any server-side effects immediately, then broadcast the event.
-    (Used for automatic events; manual use goes through use_effect handler.)
+    Randomly pick a buff/debuff (filtered by room.buff_mode),
+    pick a random living player as target, apply, then broadcast.
     """
-    event_def = _pick_buff_event()
-    if not event_def:
+    if room.buff_mode == "none":
         return
+    if random.random() > BUFF_CHANCE:
+        return
+
+    # Build eligible pool based on buff_mode
+    if room.buff_mode == "buffs_only":
+        pool = BUFFS
+    elif room.buff_mode == "debuffs_only":
+        pool = DEBUFFS
+    else:  # "both"
+        pool = BUFFS if random.random() < 0.5 else DEBUFFS
+
+    event_def = random.choice(pool)
 
     active = room.active_players()
     if not active:
@@ -667,9 +678,15 @@ async def _run_game(room: RoomState):
                         pts = 0
                     p.score += pts
                     result = "correct"
-                    # Award a random inventory item (70% chance)
-                    if random.random() < 0.70:
-                        earned = random.choice(ALL_EFFECTS)
+                    # Award a random inventory item (70% chance), filtered by buff_mode
+                    if room.buff_mode != "none" and random.random() < 0.70:
+                        if room.buff_mode == "buffs_only":
+                            item_pool = BUFFS
+                        elif room.buff_mode == "debuffs_only":
+                            item_pool = DEBUFFS
+                        else:
+                            item_pool = ALL_EFFECTS
+                        earned = random.choice(item_pool)
                         p.inventory.append(earned["id"])
                 else:
                     if room.mode == "battle_royale":
@@ -928,6 +945,11 @@ async def battle_websocket(
                 room.time_limit     = time_limit
                 room.starting_lives = starting_lives
                 room.question_type  = question_type
+
+                buff_mode = msg.get("buff_mode", "both")
+                if buff_mode not in ("both", "buffs_only", "debuffs_only", "none"):
+                    buff_mode = "both"
+                room.buff_mode = buff_mode
 
                 try:
                     room.questions = _generate_battle_questions(db, hsk_level, num_q, question_type)
