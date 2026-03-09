@@ -276,6 +276,7 @@ class RoomState:
     current_q_index: int = 0
     connections: dict = field(default_factory=dict)  # user_id -> WebSocket
     game_task: Optional[asyncio.Task] = None
+    play_again_votes: set = field(default_factory=set)  # set of user_ids
 
     def active_players(self) -> list:
         return [p for p in self.players.values() if not p.eliminated]
@@ -975,29 +976,41 @@ async def battle_websocket(
                     room.game_task.cancel()
                 room.game_task = asyncio.create_task(_run_game(room))
 
-            # ── PLAY AGAIN (return to lobby after game_over) ────────────────
-            elif mtype == "play_again" and current_user.id == room.host_id:
+            # ── VOTE PLAY AGAIN ─────────────────────────────────────────────
+            elif mtype == "vote_play_again":
                 if room.state != "game_over":
                     continue
-                # Reset room to lobby
-                room.state = "lobby"
-                room.questions = []
-                room.current_q_index = 0
-                for p in room.players.values():
-                    p.lives = room.starting_lives
-                    p.score = 0
-                    p.eliminated = False
-                    p.answered = False
-                    p.active_effects = {}
-                    p.inventory = []
+                room.play_again_votes.add(current_user.id)
+                total = len(room.connections)  # only connected players count
+                voted = len(room.play_again_votes & set(room.connections.keys()))
+                # Broadcast vote update to all
                 await _broadcast(room, {
-                    "type": "lobby_update",
-                    "room_code": room.room_code,
-                    "mode": room.mode,
-                    "host_id": room.host_id,
-                    "players": room.player_list(),
-                    "state": "lobby",
+                    "type": "play_again_vote_update",
+                    "votes": list(room.play_again_votes),
+                    "total_needed": total,
+                    "voted_count": voted,
                 })
+                # All connected players voted → reset to lobby
+                if voted >= total:
+                    room.state = "lobby"
+                    room.questions = []
+                    room.current_q_index = 0
+                    room.play_again_votes = set()
+                    for p in room.players.values():
+                        p.lives = room.starting_lives
+                        p.score = 0
+                        p.eliminated = False
+                        p.answered = False
+                        p.active_effects = {}
+                        p.inventory = []
+                    await _broadcast(room, {
+                        "type": "lobby_update",
+                        "room_code": room.room_code,
+                        "mode": room.mode,
+                        "host_id": room.host_id,
+                        "players": room.player_list(),
+                        "state": "lobby",
+                    })
 
             # ── ASSIGN TEAM ────────────────────────────────────────────────
             elif mtype == "assign_team" and current_user.id == room.host_id:

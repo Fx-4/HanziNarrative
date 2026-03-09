@@ -91,6 +91,7 @@ export interface GameState {
   answeredUserIds: number[]
   buffEvent: BuffEvent | null
   error: string | null
+  playAgainVotes: number[]
 }
 
 const INITIAL_STATE: GameState = {
@@ -107,6 +108,7 @@ const INITIAL_STATE: GameState = {
   answeredUserIds: [],
   buffEvent: null,
   error: null,
+  playAgainVotes: [],
 }
 
 // ---------------------------------------------------------------------------
@@ -261,6 +263,9 @@ export function useBattleWebSocket(roomCode: string | null) {
 
             case 'kicked':
               return { ...INITIAL_STATE, error: 'You were kicked from the room' }
+
+            case 'play_again_vote_update':
+              return { ...prev, playAgainVotes: (msg.votes as number[]) ?? [] }
 
             case 'error':
               return { ...prev, error: msg.message as string }

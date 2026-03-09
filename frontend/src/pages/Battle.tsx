@@ -735,9 +735,42 @@ function GameOverView({ gameState, currentUserId, onPlayAgain, onNewGame }: {
           ))}
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-2 sm:gap-3">
-        <button onClick={onPlayAgain} className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition-all shadow-md shadow-indigo-500/25 text-sm sm:text-base"><Swords className="w-4 h-4" /> Play Again</button>
-        <button onClick={onNewGame} className="flex items-center justify-center gap-2 border-2 border-gray-200 dark:border-gray-700 hover:border-gray-400 text-gray-700 dark:text-gray-300 font-semibold py-3 rounded-xl transition-all text-sm sm:text-base"><LogOut className="w-4 h-4" /> New Game</button>
+      {/* Play Again Voting Panel */}
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-indigo-100 dark:border-indigo-900 p-4">
+        <p className="text-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+          🔁 Play Again? Vote to rematch!
+        </p>
+        <div className="space-y-2 mb-4">
+          {gameState.players.map(p => {
+            const hasVoted = gameState.playAgainVotes.includes(p.user_id)
+            return (
+              <div key={p.user_id} className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all ${hasVoted ? 'bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800' : 'bg-gray-50 dark:bg-gray-800'}`}>
+                <Avatar player={p} size="sm" />
+                <span className="flex-1 text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{p.username}</span>
+                <span className="text-base">{hasVoted ? '✅' : '⏳'}</span>
+              </div>
+            )
+          })}
+        </div>
+        {gameState.players.length > 0 && (
+          <div className="mb-4">
+            <div className="flex justify-between text-xs text-gray-400 mb-1">
+              <span>{gameState.playAgainVotes.length} / {gameState.players.length} voted</span>
+              <span>{Math.round(gameState.playAgainVotes.length / gameState.players.length * 100)}%</span>
+            </div>
+            <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+              <motion.div className="h-full bg-emerald-500 rounded-full" initial={{ width: 0 }} animate={{ width: `${gameState.playAgainVotes.length / gameState.players.length * 100}%` }} transition={{ duration: 0.3 }} />
+            </div>
+          </div>
+        )}
+        <div className="grid grid-cols-2 gap-2">
+          <button onClick={onPlayAgain} disabled={gameState.playAgainVotes.includes(currentUserId)} className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-xl transition-all text-sm">
+            <Swords className="w-4 h-4" />{gameState.playAgainVotes.includes(currentUserId) ? 'Voted ✅' : 'Vote Yes!'}
+          </button>
+          <button onClick={onNewGame} className="flex items-center justify-center gap-2 border-2 border-gray-200 dark:border-gray-700 hover:border-gray-400 text-gray-700 dark:text-gray-300 font-semibold py-2.5 rounded-xl transition-all text-sm">
+            <LogOut className="w-4 h-4" /> Leave
+          </button>
+        </div>
       </div>
     </motion.div>
   )
