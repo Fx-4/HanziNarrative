@@ -170,6 +170,8 @@ export default function Dashboard() {
   useEffect(() => {
     if (isAuthenticated) fetchDashboardData()
     else setLoading(false)
+    // fetchDashboardData is intentionally stable — only re-run when auth changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated])
 
   // ── Not authenticated ────────────────────────────────────────────────────
