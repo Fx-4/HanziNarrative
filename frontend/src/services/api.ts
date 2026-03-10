@@ -366,6 +366,15 @@ export const learningApi = {
     return response.data
   },
 
+  // Get all stats (overall + all 6 HSK levels) in a single request
+  getAllStats: async () => {
+    const response = await api.get('/learning/stats/all')
+    return response.data as {
+      overall: { total_words_learning: number; mastered_words: number; due_for_review: number; average_mastery: number; total_reviews: number; accuracy: number }
+      levels: Record<number, { total_words_learning: number; mastered_words: number; due_for_review: number; average_mastery: number; total_reviews: number; accuracy: number }>
+    }
+  },
+
   // Get progress for a specific word
   getWordProgress: async (wordId: number) => {
     const response = await api.get(`/learning/progress/${wordId}`)

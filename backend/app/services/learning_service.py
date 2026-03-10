@@ -179,6 +179,51 @@ class LearningService:
         return progress
 
     @staticmethod
+    def get_all_learning_stats(db: Session, user: User) -> Dict:
+        """
+        Single-query version: fetches all UserProgress + HanziWord in one JOIN,
+        then groups by HSK level in Python. Replaces 7 separate get_learning_stats calls.
+        Returns { "overall": {...}, "levels": { 1: {...}, 2: {...}, ... } }
+        """
+        all_progress = (
+            db.query(UserProgress, HanziWord.hsk_level)
+            .join(HanziWord, UserProgress.word_id == HanziWord.id)
+            .filter(UserProgress.user_id == user.id)
+            .all()
+        )
+
+        now = datetime.now(timezone.utc)
+
+        def _compute(rows):
+            if not rows:
+                return {"total_words_learning": 0, "mastered_words": 0, "due_for_review": 0,
+                        "average_mastery": 0, "total_reviews": 0, "accuracy": 0}
+            mastered = sum(1 for p, _ in rows if p.mastery_level >= 8)
+            due = sum(1 for p, _ in rows if p.next_review and p.next_review <= now)
+            correct = sum(p.correct_count for p, _ in rows)
+            incorrect = sum(p.incorrect_count for p, _ in rows)
+            total_reviews = correct + incorrect
+            return {
+                "total_words_learning": len(rows),
+                "mastered_words": mastered,
+                "due_for_review": due,
+                "average_mastery": sum(p.mastery_level for p, _ in rows) / len(rows),
+                "total_reviews": total_reviews,
+                "accuracy": (correct / total_reviews * 100) if total_reviews > 0 else 0,
+            }
+
+        by_level: Dict[int, list] = {lvl: [] for lvl in range(1, 7)}
+        for row in all_progress:
+            lvl = row[1]
+            if lvl in by_level:
+                by_level[lvl].append(row)
+
+        return {
+            "overall": _compute(all_progress),
+            "levels": {lvl: _compute(rows) for lvl, rows in by_level.items()},
+        }
+
+    @staticmethod
     def get_learning_stats(db: Session, user: User, hsk_level: int = None) -> Dict:
         """
         Get learning statistics for a user

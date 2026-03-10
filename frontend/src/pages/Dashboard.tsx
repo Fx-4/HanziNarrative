@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { learningApi } from '@/services/api'
@@ -13,7 +13,7 @@ import {
 } from 'recharts'
 import {
   TrendingUp, BookOpen, Target, Award, Calendar,
-  LogIn, AlertTriangle, Loader2, RotateCcw,
+  LogIn, AlertTriangle, RotateCcw,
 } from 'lucide-react'
 import CountUp from '@/components/animations/CountUp'
 
@@ -32,6 +32,54 @@ interface HSKLevelData {
 }
 
 const CHART_COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
+const CACHE_KEY = 'dashboard_stats_cache'
+const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+
+// ── Cache helpers ──────────────────────────────────────────────────────────
+function readCache(): { overallStats: Stats; hskLevelStats: HSKLevelData[] } | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY)
+    if (!raw) return null
+    const { data, ts } = JSON.parse(raw)
+    if (Date.now() - ts > CACHE_TTL) return null
+    return data
+  } catch { return null }
+}
+
+function writeCache(overallStats: Stats, hskLevelStats: HSKLevelData[]) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ data: { overallStats, hskLevelStats }, ts: Date.now() }))
+  } catch { /* localStorage full — ignore */ }
+}
+
+// ── Skeleton blocks ──────────────────────────────────────────────────────
+function Skeleton({ className = '' }: { className?: string }) {
+  return <div className={`animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700 ${className}`} />
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="max-w-4xl mx-auto px-4 pb-16 space-y-6">
+      {/* Header */}
+      <Skeleton className="h-20 rounded-3xl" />
+      {/* Widgets */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {[0,1,2,3].map(i => <Skeleton key={i} className="h-36 rounded-3xl" />)}
+      </div>
+      {/* Stat cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[0,1,2,3].map(i => <Skeleton key={i} className="h-24 rounded-2xl" />)}
+      </div>
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Skeleton className="h-72 rounded-3xl" />
+        <Skeleton className="h-72 rounded-3xl" />
+      </div>
+      <Skeleton className="h-64 rounded-3xl" />
+      <Skeleton className="h-48 rounded-3xl" />
+    </div>
+  )
+}
 
 // ── Reusable section card ──────────────────────────────────────────────────
 function SectionCard({ title, icon: Icon, children }: {
@@ -52,38 +100,77 @@ function SectionCard({ title, icon: Icon, children }: {
 
 export default function Dashboard() {
   const { isAuthenticated } = useAuthStore()
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [overallStats, setOverallStats] = useState<Stats | null>(null)
-  const [hskLevelStats, setHSKLevelStats] = useState<HSKLevelData[]>([])
 
-  useEffect(() => {
-    if (isAuthenticated) fetchDashboardData()
-    else setLoading(false)
-  }, [isAuthenticated])
+  // Initialise from cache so first paint is instant on repeat visits
+  const cached = useMemo(() => readCache(), [])
+  const [overallStats, setOverallStats] = useState<Stats | null>(cached?.overallStats ?? null)
+  const [hskLevelStats, setHSKLevelStats] = useState<HSKLevelData[]>(cached?.hskLevelStats ?? [])
+  const [loading, setLoading] = useState(!cached)        // no skeleton if cache hit
+  const [error, setError] = useState<string | null>(null)
+  const [stale, setStale] = useState(!!cached)           // true = showing cached data
+  const fetchingRef = useRef(false)
+
+  // ── Chart data — MUST be before any early returns (Rules of Hooks) ──────
+  const hskProgressData = useMemo(() => hskLevelStats.map(item => ({
+    name: `HSK ${item.level}`,
+    learning: item.stats.total_words_learning,
+    mastered: item.stats.mastered_words,
+    accuracy: item.stats.accuracy,
+  })), [hskLevelStats])
+
+  const masteryDistribution = useMemo(() => overallStats ? [
+    { name: 'Mastered', value: overallStats.mastered_words },
+    { name: 'Learning', value: Math.max(0, overallStats.total_words_learning - overallStats.mastered_words) },
+    { name: 'Due for Review', value: overallStats.due_for_review },
+  ].filter(d => d.value > 0) : [], [overallStats])
+
+  const masteryRate = useMemo(() => overallStats && overallStats.total_words_learning > 0
+    ? (overallStats.mastered_words / overallStats.total_words_learning) * 100
+    : 0, [overallStats])
+
+  const activeLevels = useMemo(
+    () => hskLevelStats.filter(s => s.stats.total_words_learning > 0).length,
+    [hskLevelStats]
+  )
 
   const fetchDashboardData = async () => {
-    setLoading(true)
+    if (fetchingRef.current) return
+    fetchingRef.current = true
     setError(null)
+    if (!stale) setLoading(true)   // only show skeleton on true first load
+
     try {
-      // Fetch overall + all 6 HSK levels in parallel (was 7 sequential calls)
-      const [overall, ...levelResults] = await Promise.all([
-        learningApi.getStats(),
-        ...([1, 2, 3, 4, 5, 6].map(level => learningApi.getStats(level))),
-      ])
-      setOverallStats(overall.stats)
-      setHSKLevelStats(levelResults.map((data, i) => ({ level: i + 1, stats: data.stats })))
+      // Single request instead of 7 separate ones
+      const data = await learningApi.getAllStats()
+      const overall = data.overall
+      const levels: HSKLevelData[] = [1,2,3,4,5,6].map(lvl => ({
+        level: lvl,
+        stats: data.levels[lvl] ?? { total_words_learning:0, mastered_words:0, due_for_review:0, average_mastery:0, total_reviews:0, accuracy:0 },
+      }))
+      setOverallStats(overall)
+      setHSKLevelStats(levels)
+      setStale(false)
+      writeCache(overall, levels)
     } catch (err) {
       const axiosError = err as { response?: { status?: number; data?: { detail?: string } }; message?: string }
       if (axiosError.response?.status === 401 || axiosError.response?.status === 403) {
         setError('Please login to view your dashboard')
       } else {
-        setError(axiosError.response?.data?.detail || axiosError.message || 'Failed to load dashboard data')
+        // If we already have cached data, don't show error — just keep stale
+        if (!overallStats) {
+          setError(axiosError.response?.data?.detail || axiosError.message || 'Failed to load dashboard data')
+        }
       }
     } finally {
       setLoading(false)
+      fetchingRef.current = false
     }
   }
+
+  useEffect(() => {
+    if (isAuthenticated) fetchDashboardData()
+    else setLoading(false)
+  }, [isAuthenticated])
 
   // ── Not authenticated ────────────────────────────────────────────────────
   if (!isAuthenticated) {
@@ -110,17 +197,10 @@ export default function Dashboard() {
     )
   }
 
-  // ── Loading ──────────────────────────────────────────────────────────────
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-500 dark:text-indigo-400" />
-        <p className="text-sm text-gray-400 dark:text-gray-500">Loading your dashboard…</p>
-      </div>
-    )
-  }
+  // ── Skeleton (first-ever load, no cache) ─────────────────────────────────
+  if (loading) return <DashboardSkeleton />
 
-  // ── Error ────────────────────────────────────────────────────────────────
+  // ── Error (no cached data to fall back on) ───────────────────────────────
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
@@ -147,29 +227,6 @@ export default function Dashboard() {
 
   if (!overallStats) return null
 
-  // ── Chart data (memoised — only recalculated when data changes) ──────────
-  const hskProgressData = useMemo(() => hskLevelStats.map(item => ({
-    name: `HSK ${item.level}`,
-    learning: item.stats.total_words_learning,
-    mastered: item.stats.mastered_words,
-    accuracy: item.stats.accuracy,
-  })), [hskLevelStats])
-
-  const masteryDistribution = useMemo(() => [
-    { name: 'Mastered', value: overallStats.mastered_words },
-    { name: 'Learning', value: Math.max(0, overallStats.total_words_learning - overallStats.mastered_words) },
-    { name: 'Due for Review', value: overallStats.due_for_review },
-  ].filter(d => d.value > 0), [overallStats]) // filter zeros so Recharts doesn't render empty slices
-
-  const masteryRate = useMemo(() => overallStats.total_words_learning > 0
-    ? (overallStats.mastered_words / overallStats.total_words_learning) * 100
-    : 0, [overallStats])
-
-  const activeLevels = useMemo(
-    () => hskLevelStats.filter(s => s.stats.total_words_learning > 0).length,
-    [hskLevelStats]
-  )
-
   return (
     <div className="max-w-4xl mx-auto px-4 pb-16 space-y-6">
 
@@ -180,14 +237,19 @@ export default function Dashboard() {
         className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden"
       >
         <div className="h-2 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
-        <div className="px-6 py-5 flex items-center gap-4">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 shrink-0">
-            <span className="text-white text-xl font-bold font-chinese">学</span>
+        <div className="px-6 py-5 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 shrink-0">
+              <span className="text-white text-xl font-bold font-chinese">学</span>
+            </div>
+            <div>
+              <h1 className="text-xl font-extrabold text-gray-900 dark:text-gray-100">Learning Dashboard</h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Track your progress and achievements</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-extrabold text-gray-900 dark:text-gray-100">Learning Dashboard</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Track your progress and achievements</p>
-          </div>
+          {stale && (
+            <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">Cached · refreshing…</span>
+          )}
         </div>
       </motion.div>
 
@@ -195,7 +257,7 @@ export default function Dashboard() {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
+        transition={{ delay: 0.05 }}
         className="grid grid-cols-1 md:grid-cols-2 gap-4"
       >
         <GamificationWidget />
@@ -216,7 +278,7 @@ export default function Dashboard() {
             key={label}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 + i * 0.07 }}
+            transition={{ delay: 0.1 + i * 0.05 }}
             className={`${bg} rounded-2xl p-4 text-white shadow-lg ${shadow}`}
           >
             <Icon className="w-5 h-5 mb-2 opacity-80" />
@@ -230,21 +292,14 @@ export default function Dashboard() {
 
       {/* ── Charts: Progress by HSK + Mastery Pie ───────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <SectionCard title="Progress by HSK Level" icon={TrendingUp}>
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={hskProgressData} barSize={14}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
                 <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#6b7280' }} />
                 <YAxis tick={{ fontSize: 11, fill: '#6b7280' }} />
-                <Tooltip
-                  contentStyle={{
-                    borderRadius: 12,
-                    border: 'none',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                    backgroundColor: '#fff'
-                  }}
-                />
+                <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#fff' }} />
                 <Legend />
                 <Bar dataKey="learning" fill="#4f46e5" name="Learning" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="mastered" fill="#10b981" name="Mastered" radius={[4, 4, 0, 0]} />
@@ -253,30 +308,17 @@ export default function Dashboard() {
           </SectionCard>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
           <SectionCard title="Mastery Distribution" icon={Target}>
             <ResponsiveContainer width="100%" height={240}>
               <PieChart>
-                <Pie
-                  data={masteryDistribution}
-                  cx="50%" cy="50%"
-                  outerRadius={90}
-                  dataKey="value"
-                  labelLine={false}
-                  label={({ name, value }) => value > 0 ? `${name}: ${value}` : ''}
-                >
+                <Pie data={masteryDistribution} cx="50%" cy="50%" outerRadius={90} dataKey="value" labelLine={false}
+                  label={({ name, value }) => value > 0 ? `${name}: ${value}` : ''}>
                   {masteryDistribution.map((_entry, i) => (
                     <Cell key={`cell-${i}`} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip
-                  contentStyle={{
-                    borderRadius: 12,
-                    border: 'none',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                    backgroundColor: '#fff'
-                  }}
-                />
+                <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#fff' }} />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
@@ -285,35 +327,24 @@ export default function Dashboard() {
       </div>
 
       {/* ── Accuracy Line Chart ──────────────────────────────────────────── */}
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
         <SectionCard title="Accuracy by HSK Level" icon={Award}>
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={hskProgressData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
               <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#6b7280' }} />
               <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: '#6b7280' }} />
-              <Tooltip
-                formatter={(val: number) => [`${val.toFixed(1)}%`, 'Accuracy']}
-                contentStyle={{
-                  borderRadius: 12,
-                  border: 'none',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                  backgroundColor: '#fff'
-                }}
-              />
-              <Line
-                type="monotone" dataKey="accuracy" stroke="#8b5cf6"
-                strokeWidth={2.5} name="Accuracy %"
-                dot={{ fill: '#8b5cf6', r: 5, strokeWidth: 2, stroke: '#fff' }}
-                activeDot={{ r: 7 }}
-              />
+              <Tooltip formatter={(val: number) => [`${val.toFixed(1)}%`, 'Accuracy']}
+                contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#fff' }} />
+              <Line type="monotone" dataKey="accuracy" stroke="#8b5cf6" strokeWidth={2.5} name="Accuracy %"
+                dot={{ fill: '#8b5cf6', r: 5, strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 7 }} />
             </LineChart>
           </ResponsiveContainer>
         </SectionCard>
       </motion.div>
 
       {/* ── Overall Statistics ───────────────────────────────────────────── */}
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
         <SectionCard title="Overall Statistics" icon={BookOpen}>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[

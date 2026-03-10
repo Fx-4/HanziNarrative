@@ -149,6 +149,15 @@ def record_review(
     )
 
 
+@router.get("/stats/all")
+def get_all_learning_stats(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Single-query endpoint: returns overall + all 6 HSK level stats in one call."""
+    return LearningService.get_all_learning_stats(db=db, user=current_user)
+
+
 @router.get("/stats")
 def get_learning_stats(
     hsk_level: Optional[int] = None,
