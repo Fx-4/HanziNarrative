@@ -214,7 +214,7 @@ Provide the story in JSON format:
 Make it interesting and educational!"""
 
     try:
-        data, provider = await generate_json(prompt)
+        data, provider = await generate_json(prompt, exclude_paid=True)
         logger.info(f"Story generated via {provider}")
         return data
     except Exception as e:

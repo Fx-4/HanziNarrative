@@ -1,5 +1,6 @@
 from typing import List, Optional
 from datetime import datetime, timezone
+import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
@@ -12,19 +13,26 @@ from ..services import gemini_service
 from ..services import claude_story_service
 from app.config import settings
 
-# Route AI calls: use Claude when ANTHROPIC_API_KEY is set, else fall back to Gemini
-def _use_claude() -> bool:
-    return bool(settings.ANTHROPIC_API_KEY)
+logger = logging.getLogger(__name__)
 
+# Route AI calls: free providers (Gemini) first, Claude only as last-resort fallback
 async def _generate_story(*args, **kwargs):
-    if _use_claude():
+    try:
+        return await gemini_service.generate_story(*args, **kwargs)
+    except Exception as e:
+        logger.warning(f"Gemini story generation failed, trying Claude: {e}")
+    if settings.ANTHROPIC_API_KEY:
         return await claude_story_service.generate_story(*args, **kwargs)
-    return await gemini_service.generate_story(*args, **kwargs)
+    raise RuntimeError("All story generation providers failed")
 
 async def _generate_story_quiz(*args, **kwargs):
-    if _use_claude():
+    try:
+        return await gemini_service.generate_story_quiz(*args, **kwargs)
+    except Exception as e:
+        logger.warning(f"Gemini quiz generation failed, trying Claude: {e}")
+    if settings.ANTHROPIC_API_KEY:
         return await claude_story_service.generate_story_quiz(*args, **kwargs)
-    return await gemini_service.generate_story_quiz(*args, **kwargs)
+    raise RuntimeError("All quiz generation providers failed")
 
 router = APIRouter(prefix="/stories", tags=["stories"])
 
