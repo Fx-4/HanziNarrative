@@ -2,7 +2,6 @@ from typing import List, Optional
 from datetime import datetime, timezone
 import logging
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, Table, MetaData, text
 from pydantic import BaseModel
@@ -10,29 +9,15 @@ from .. import models, schemas, auth
 from ..database import get_db
 from ..rate_limit import check_rate_limit, record_ai_usage, get_usage_stats
 from ..services import gemini_service
-from ..services import claude_story_service
-from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-# Route AI calls: free providers (Gemini) first, Claude only as last-resort fallback
+# Route AI calls: free providers only (Gemini → Groq → Mistral → OpenRouter → Cohere)
 async def _generate_story(*args, **kwargs):
-    try:
-        return await gemini_service.generate_story(*args, **kwargs)
-    except Exception as e:
-        logger.warning(f"Gemini story generation failed, trying Claude: {e}")
-    if settings.ANTHROPIC_API_KEY:
-        return await claude_story_service.generate_story(*args, **kwargs)
-    raise RuntimeError("All story generation providers failed")
+    return await gemini_service.generate_story(*args, **kwargs)
 
 async def _generate_story_quiz(*args, **kwargs):
-    try:
-        return await gemini_service.generate_story_quiz(*args, **kwargs)
-    except Exception as e:
-        logger.warning(f"Gemini quiz generation failed, trying Claude: {e}")
-    if settings.ANTHROPIC_API_KEY:
-        return await claude_story_service.generate_story_quiz(*args, **kwargs)
-    raise RuntimeError("All quiz generation providers failed")
+    return await gemini_service.generate_story_quiz(*args, **kwargs)
 
 router = APIRouter(prefix="/stories", tags=["stories"])
 
@@ -303,32 +288,10 @@ async def generate_ai_story_stream(
     current_user: models.User = Depends(auth.get_current_user),
     db: Session = Depends(get_db)
 ):
-    """
-    Stream a Claude-generated story token-by-token via Server-Sent Events.
-    The client receives JSON chunks as they arrive, giving a live "typing" feel.
-    Requires ANTHROPIC_API_KEY to be configured (falls back to 404 otherwise).
-    """
-    if not _use_claude():
-        raise HTTPException(
-            status_code=404,
-            detail="Streaming requires ANTHROPIC_API_KEY to be configured."
-        )
-
-    # Check rate limit (same quota as non-streaming)
-    check_rate_limit(db, current_user, 'story_generation')
-
-    return StreamingResponse(
-        claude_story_service.stream_story_chunks(
-            hsk_level=request.hsk_level,
-            topic=request.topic,
-            character_names=request.character_names,
-            length=request.length,
-        ),
-        media_type="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "X-Accel-Buffering": "no",
-        },
+    """Streaming endpoint disabled — use /stories/generate instead (free providers)."""
+    raise HTTPException(
+        status_code=410,
+        detail="Streaming is no longer supported. Use POST /stories/generate instead."
     )
 
 
