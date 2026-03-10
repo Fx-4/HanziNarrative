@@ -468,9 +468,9 @@ export const gamificationApi = {
     return response.data
   },
 
-  getLeaderboard: async (limit: number = 50, metric: string = 'total_xp') => {
+  getLeaderboard: async (limit: number = 50, metric: string = 'total_xp', period: string = 'all_time') => {
     const response = await api.get('/gamification/leaderboard', {
-      params: { limit, metric }
+      params: { limit, metric, period }
     })
     return response.data
   }

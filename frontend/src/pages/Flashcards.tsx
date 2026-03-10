@@ -102,37 +102,36 @@ export default function Flashcards() {
     loadWords()
   }
 
-  const recordReview = async (quality: DifficultyRating) => {
+  const recordReview = (quality: DifficultyRating) => {
     const currentWord = words[currentIndex]
     if (!currentWord) return
 
+    x.set(0)
     const timeSpent = Math.floor((Date.now() - cardStartTime) / 1000)
+    const isCorrect = quality >= 3
 
-    try {
-      await learningApi.recordReview(currentWord.id, quality)
+    // Update UI immediately (optimistic)
+    setSessionStats(prev => ({
+      total: prev.total + 1,
+      correct: prev.correct + (isCorrect ? 1 : 0),
+      incorrect: prev.incorrect + (isCorrect ? 0 : 1),
+      timeElapsed: prev.timeElapsed + timeSpent,
+      averageTime: Math.floor((prev.timeElapsed + timeSpent) / (prev.total + 1))
+    }))
 
-      // Update session stats
-      const isCorrect = quality >= 3
-      setSessionStats(prev => ({
-        total: prev.total + 1,
-        correct: prev.correct + (isCorrect ? 1 : 0),
-        incorrect: prev.incorrect + (isCorrect ? 0 : 1),
-        timeElapsed: prev.timeElapsed + timeSpent,
-        averageTime: Math.floor((prev.timeElapsed + timeSpent) / (prev.total + 1))
-      }))
-
-      // Move to next card
-      if (currentIndex < words.length - 1) {
-        setCurrentIndex(prev => prev + 1)
-        setIsFlipped(false)
-      } else {
-        // Session complete
-        toast.success(`Session complete! ${sessionStats.correct + (isCorrect ? 1 : 0)}/${sessionStats.total + 1} correct`)
-      }
-    } catch (error) {
-      console.error('Failed to record review:', error)
-      toast.error('Failed to save progress')
+    if (currentIndex < words.length - 1) {
+      setCurrentIndex(prev => prev + 1)
+      setIsFlipped(false)
+    } else {
+      // Session complete — advance index past end to trigger complete screen
+      setCurrentIndex(words.length)
+      setIsFlipped(false)
     }
+
+    // Fire API call in background — don't block UI
+    learningApi.recordReview(currentWord.id, quality).catch(err => {
+      console.error('Failed to record review:', err)
+    })
   }
 
   const handleSwipe = (direction: 'left' | 'right') => {

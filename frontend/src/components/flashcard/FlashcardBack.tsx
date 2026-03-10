@@ -48,7 +48,7 @@ export default function FlashcardBack({ word, isFlipped }: FlashcardBackProps) {
           >
             <AudioButton
               text={word.simplified}
-              language="zh-CN"
+              language="cmn-CN"
               size="sm"
               variant="ghost"
               className="bg-white/20 text-white hover:bg-white/30"
@@ -72,7 +72,7 @@ export default function FlashcardBack({ word, isFlipped }: FlashcardBackProps) {
           <motion.img
             src={word.image_url}
             alt={word.english}
-            className="w-full max-h-16 sm:max-h-20 object-cover rounded-2xl shadow-lg mx-auto"
+            className="h-20 sm:h-24 max-w-[160px] object-contain rounded-2xl shadow-lg mx-auto"
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: isFlipped ? 1 : 0, scale: isFlipped ? 1 : 0.85 }}
             transition={{ delay: 0.5 }}

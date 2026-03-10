@@ -738,27 +738,17 @@ export default function Practice() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, hskLevel])
 
-  const handleNextWord = async (knewIt: boolean = true) => {
+  const handleNextWord = (knewIt: boolean = true) => {
     if (mode === 'learn' || mode === 'review') {
-      // Track progress using SRS system
-      try {
-        const currentWord = words[currentWordIndex]
-        // Quality ratings:
-        // Learn mode: 3 (good) - they're seeing it for the first time
-        // Review mode: 4 (easy) if they knew it without revealing, 2 (hard) if they revealed
-        let quality = 3 // default for learn mode
-
-        if (mode === 'review') {
-          quality = knewIt ? 4 : 2
-        }
-
-        await learningApi.recordReview(currentWord.id, quality)
-      } catch (error) {
-        console.error('Failed to update progress:', error)
-      }
+      // Fire-and-forget: record progress without blocking the UI
+      const currentWord = words[currentWordIndex]
+      const quality = mode === 'review' ? (knewIt ? 4 : 2) : 3
+      learningApi.recordReview(currentWord.id, quality).catch(err =>
+        console.error('Failed to update progress:', err)
+      )
     }
 
-    // Reset showAnswer for next word
+    // Move to next word immediately — don't wait for the API
     setShowAnswer(false)
 
     if (currentWordIndex < words.length - 1) {
@@ -1029,7 +1019,7 @@ export default function Practice() {
                         </div>
                         <AudioButton
                           text={currentWord.simplified}
-                          language="zh-CN"
+                          language="cmn-CN"
                           size="sm"
                           variant="secondary"
                           tooltipText="Hear the pronunciation"
@@ -1190,7 +1180,7 @@ export default function Practice() {
                         </div>
                         <AudioButton
                           text={currentWord.simplified}
-                          language="zh-CN"
+                          language="cmn-CN"
                           size="sm"
                           variant="secondary"
                           tooltipText="Hear the pronunciation"

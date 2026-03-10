@@ -16,10 +16,16 @@ CACHE_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "tts_cache")
 
 
 def normalize_language(language: str, voice_name: str) -> tuple[str, str]:
-    """Map zh-CN to cmn-CN for WaveNet/Neural2 voices."""
+    """Ensure language code matches the voice's language code.
+
+    Google TTS uses 'cmn-CN' for Mandarin voices (not 'zh-CN').
+    """
     lang = language
     voice = voice_name
-    if language == "zh-CN" and ("wavenet" in voice_name.lower() or "neural2" in voice_name.lower()):
+    # If voice requires cmn-CN (WaveNet, Neural2, Chirp, Standard), normalize language
+    if language == "zh-CN" and voice_name.startswith("cmn-CN-"):
+        lang = "cmn-CN"
+    elif language == "zh-CN" and ("wavenet" in voice_name.lower() or "neural2" in voice_name.lower()):
         lang = "cmn-CN"
         voice = voice_name.replace("zh-CN-", "cmn-CN-")
     return lang, voice

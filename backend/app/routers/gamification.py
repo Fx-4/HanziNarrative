@@ -128,18 +128,24 @@ def get_badge_usage(
 def get_leaderboard(
     limit: int = 50,
     metric: str = "total_xp",
+    period: str = "all_time",
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
-    Get leaderboard rankings
+    Get leaderboard rankings.
 
     Args:
         limit: Number of users to return (default: 50, max: 100)
         metric: Ranking metric - total_xp, current_streak, accuracy_rate, total_words_reviewed
+        period: 'all_time' or 'weekly' (this Mon 00:00 → now)
     """
-    from app.models import UserGamification
-    from sqlalchemy import desc, case
+    from app.models import UserGamification, UserProgress
+    from sqlalchemy import desc, case, func as sqlfunc
+    from datetime import datetime, timezone, timedelta
+
+    if period not in ("all_time", "weekly"):
+        raise HTTPException(status_code=400, detail="period must be 'all_time' or 'weekly'")
 
     # Limit validation
     if limit > 100:
@@ -147,7 +153,93 @@ def get_leaderboard(
     elif limit < 1:
         limit = 10
 
-    # Determine sort column — accuracy_rate computed fully in SQL (no Python sort)
+    # ── Weekly leaderboard ─────────────────────────────────────────────────
+    if period == "weekly":
+        now = datetime.now(timezone.utc)
+        week_start = now - timedelta(days=now.weekday(), hours=now.hour,
+                                     minutes=now.minute, seconds=now.second,
+                                     microseconds=now.microsecond)  # Monday 00:00 UTC
+
+        # Count words reviewed since Monday, per user — as a subquery
+        weekly_sq = (
+            db.query(
+                UserProgress.user_id,
+                sqlfunc.count(UserProgress.word_id).label("words_this_week"),
+            )
+            .filter(UserProgress.last_reviewed >= week_start)
+            .group_by(UserProgress.user_id)
+            .subquery()
+        )
+
+        # Join User + UserGamification, order by weekly count
+        rows = (
+            db.query(User, UserGamification, weekly_sq.c.words_this_week)
+            .join(UserGamification, UserGamification.user_id == User.id)
+            .join(weekly_sq, weekly_sq.c.user_id == User.id)
+            .order_by(desc(weekly_sq.c.words_this_week))
+            .limit(limit)
+            .all()
+        )
+
+        leaderboard = []
+        current_user_rank = None
+        for idx, row in enumerate(rows, start=1):
+            user = row.User
+            gamif = row.UserGamification
+            words_this_week = row.words_this_week
+            entry = {
+                "rank": idx,
+                "user_id": user.id,
+                "username": user.username,
+                "full_name": user.full_name,
+                "profile_picture": user.profile_picture,
+                "level": gamif.level,
+                "total_xp": gamif.total_xp,
+                "current_streak": gamif.current_streak,
+                "accuracy_rate": 0.0,
+                "total_words_reviewed": gamif.total_words_reviewed,
+                "total_stories_read": gamif.total_stories_read,
+                "words_this_week": words_this_week,
+            }
+            leaderboard.append(entry)
+            if user.id == current_user.id:
+                current_user_rank = idx
+
+        if current_user_rank is None:
+            user_week_count = (
+                db.query(sqlfunc.count(UserProgress.word_id))
+                .filter(UserProgress.user_id == current_user.id,
+                        UserProgress.last_reviewed >= week_start)
+                .scalar() or 0
+            )
+            higher = (
+                db.query(UserProgress.user_id)
+                .filter(UserProgress.last_reviewed >= week_start)
+                .group_by(UserProgress.user_id)
+                .having(sqlfunc.count(UserProgress.word_id) > user_week_count)
+                .count()
+            )
+            current_user_rank = higher + 1
+
+        total_active = (
+            db.query(sqlfunc.count(sqlfunc.distinct(UserProgress.user_id)))
+            .filter(UserProgress.last_reviewed >= week_start)
+            .scalar() or 0
+        )
+
+        return {
+            "metric": "words_this_week",
+            "period": "weekly",
+            "week_start": week_start.isoformat(),
+            "leaderboard": leaderboard,
+            "current_user_rank": current_user_rank,
+            "total_users": total_active,
+        }
+
+    # ── All-time leaderboard ───────────────────────────────────────────────
+    from sqlalchemy import desc, case
+
+    # Limit validation already done above
     valid_metrics = {
         "total_xp": UserGamification.total_xp,
         "current_streak": UserGamification.current_streak,
@@ -167,25 +259,18 @@ def get_leaderboard(
 
     sort_expr = valid_metrics[metric]
 
-    # Single DB query — no full-table Python sort
-    query = (
+    leaderboard_data = (
         db.query(UserGamification, User)
         .join(User, UserGamification.user_id == User.id)
-    )
-
-    leaderboard_data = (
-        query
         .order_by(desc(sort_expr))
         .limit(limit)
         .all()
     )
 
-    # Format response
     leaderboard = []
     current_user_rank = None
 
     for idx, (gamif, user) in enumerate(leaderboard_data, start=1):
-        # Calculate accuracy rate dynamically
         accuracy = 0.0
         if gamif.total_words_reviewed > 0:
             accuracy = (gamif.total_correct_answers / gamif.total_words_reviewed) * 100
@@ -202,15 +287,12 @@ def get_leaderboard(
             "accuracy_rate": round(accuracy, 1),
             "total_words_reviewed": gamif.total_words_reviewed,
             "total_stories_read": gamif.total_stories_read,
+            "words_this_week": None,
         }
-
         leaderboard.append(entry)
-
-        # Track current user's rank
         if user.id == current_user.id:
             current_user_rank = idx
 
-    # If current user not in top results, approximate their rank via SQL
     if current_user_rank is None:
         current_user_gamif = (
             db.query(UserGamification)
@@ -246,6 +328,7 @@ def get_leaderboard(
 
     return {
         "metric": metric,
+        "period": "all_time",
         "leaderboard": leaderboard,
         "current_user_rank": current_user_rank,
         "total_users": db.query(UserGamification).count()
