@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { storiesApi } from '@/services/api'
 import { Story } from '@/types'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { BookOpen, Calendar, Sparkles } from 'lucide-react'
 import StoryGenerator from '@/components/StoryGenerator'
 
