@@ -22,6 +22,46 @@ const HSK_LEVELS = [
 
 type ViewMode = 'grid' | 'list'
 
+function VocabGridSkeleton() {
+  return (
+    <div className="rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
+      {/* Gradient header placeholder */}
+      <div className="h-[100px] bg-gray-200 dark:bg-gray-700 animate-pulse" />
+      {/* Pinyin + english lines */}
+      <div className="p-3 space-y-2">
+        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-2/3 mx-auto" />
+        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-full" />
+        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-4/5" />
+      </div>
+      {/* Badge row */}
+      <div className="px-3 pb-3 flex gap-1.5">
+        <div className="h-5 w-12 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+        <div className="h-5 w-10 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+      </div>
+    </div>
+  )
+}
+
+function VocabListRowSkeleton() {
+  return (
+    <div className="grid grid-cols-12 gap-3 px-4 py-3.5 items-center border-b border-gray-50 dark:border-gray-800">
+      <div className="col-span-2 sm:col-span-1">
+        <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+      </div>
+      <div className="col-span-3 sm:col-span-2">
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+      </div>
+      <div className="col-span-7 sm:col-span-5">
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-3/4" />
+      </div>
+      <div className="hidden sm:block sm:col-span-2">
+        <div className="h-5 w-14 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+      </div>
+      <div className="hidden sm:block sm:col-span-2" />
+    </div>
+  )
+}
+
 export default function Vocabulary() {
   const [searchParams] = useSearchParams()
   const [words, setWords]                       = useState<HanziWord[]>([])
@@ -127,7 +167,15 @@ export default function Vocabulary() {
 
       {/* ── STATS BAR ── */}
       <AnimatePresence mode="wait">
-        {!loading && !isSearchMode && (
+        {loading ? (
+          <motion.div
+            key="stats-skeleton"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="rounded-xl p-4 mb-5 bg-gray-200 dark:bg-gray-700 animate-pulse h-[72px]"
+          />
+        ) : !isSearchMode && (
           <motion.div
             key={`stats-${selectedLevel}`}
             initial={{ opacity: 0, y: -8 }}
@@ -281,21 +329,37 @@ export default function Vocabulary() {
 
         {/* Loading */}
         {loading ? (
-          <motion.div
-            key="loading"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center py-20 gap-4"
-          >
+          viewMode === 'grid' ? (
             <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-              className={`w-12 h-12 rounded-full border-4 border-gray-200`}
-              style={{ borderTopColor: 'transparent' }}
-            />
-            <p className="text-gray-600 dark:text-gray-400 text-sm">Loading vocabulary…</p>
-          </motion.div>
+              key="loading-grid"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+            >
+              {Array.from({ length: 10 }).map((_, i) => (
+                <VocabGridSkeleton key={i} />
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="loading-list"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden bg-white dark:bg-gray-900"
+            >
+              {/* Column headers placeholder */}
+              <div className="grid grid-cols-12 gap-3 px-4 py-3 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+                <div className="col-span-2 sm:col-span-1 h-4 w-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                <div className="col-span-3 sm:col-span-2 h-4 w-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                <div className="col-span-7 sm:col-span-5 h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+              </div>
+              {Array.from({ length: 10 }).map((_, i) => (
+                <VocabListRowSkeleton key={i} />
+              ))}
+            </motion.div>
+          )
 
         ) : words.length === 0 ? (
           /* Empty state */
