@@ -326,22 +326,23 @@ export default function StoryGenerator() {
               </span>
             </div>
             {usageStats ? (
-              <div className="flex gap-4 text-sm">
-                <div>
-                  <span className="text-gray-500 dark:text-gray-400">Daily: </span>
-                  <span className={`font-bold ${
-                    usageStats.used_today >= usageStats.limit_daily ? 'text-red-600' : 'text-gray-700 dark:text-gray-300'
+              <div className="flex gap-3 text-sm">
+                <div className="text-center">
+                  <div className={`font-bold text-base leading-none ${
+                    usageStats.used_today >= usageStats.limit_daily ? 'text-red-600' : isAdvanced ? 'text-indigo-600 dark:text-indigo-400' : 'text-emerald-600 dark:text-emerald-400'
                   }`}>
-                    {usageStats.used_today}/{usageStats.limit_daily}
-                  </span>
+                    {usageStats.limit_daily - usageStats.used_today}
+                  </div>
+                  <div className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">left today</div>
                 </div>
-                <div>
-                  <span className="text-gray-500 dark:text-gray-400">Hourly: </span>
-                  <span className={`font-bold ${
-                    usageStats.used_this_hour >= usageStats.limit_hourly ? 'text-red-600' : 'text-gray-700 dark:text-gray-300'
+                <div className="w-px bg-gray-200 dark:bg-gray-700 self-stretch" />
+                <div className="text-center">
+                  <div className={`font-bold text-base leading-none ${
+                    usageStats.used_this_hour >= usageStats.limit_hourly ? 'text-red-600' : isAdvanced ? 'text-indigo-600 dark:text-indigo-400' : 'text-emerald-600 dark:text-emerald-400'
                   }`}>
-                    {usageStats.used_this_hour}/{usageStats.limit_hourly}
-                  </span>
+                    {usageStats.limit_hourly - usageStats.used_this_hour}
+                  </div>
+                  <div className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">left/hour</div>
                 </div>
               </div>
             ) : (
