@@ -9,6 +9,26 @@ import StoryGenerator from '@/components/StoryGenerator'
 
 type TabType = 'browse' | 'generate'
 
+function StoryCardSkeleton() {
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 h-full p-5">
+      <div className="flex justify-between items-start mb-4">
+        <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-lg flex-1 mr-2 animate-pulse" />
+        <div className="h-5 w-14 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse flex-shrink-0" />
+      </div>
+      <div className="space-y-2 mb-4">
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-5/6" />
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-4/6" />
+      </div>
+      <div className="flex items-center gap-2 mt-auto">
+        <div className="h-4 w-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+        <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+      </div>
+    </div>
+  )
+}
+
 export default function Stories() {
   const [activeTab, setActiveTab] = useState<TabType>('browse')
   const [stories, setStories] = useState<Story[]>([])
@@ -131,12 +151,13 @@ export default function Stories() {
 
           {loading ? (
             <motion.div
-              className="text-center py-20"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
-              <LoadingSpinner size="lg" />
-              <p className="text-gray-600 dark:text-gray-400 mt-4">Loading stories...</p>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <StoryCardSkeleton key={i} />
+              ))}
             </motion.div>
           ) : stories.length === 0 ? (
             <motion.div
