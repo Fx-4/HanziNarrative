@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import HanziWriter from 'hanzi-writer'
 import { Play, Pause, RotateCcw } from 'lucide-react'
 
@@ -16,16 +16,59 @@ export default function StrokeOrderAnimation({
   loop = false
 }: StrokeOrderAnimationProps) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const writerRef = useRef<any>(null)
-  const dataLoadedRef = useRef(false)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [isPaused, setIsPaused] = useState(false)
+  const writerRef    = useRef<any>(null)
+  const dataReady    = useRef(false)          // true once CDN data loaded
+  const loopTimer    = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const loopRef      = useRef(loop)           // always current value of loop prop
+  const activeRef    = useRef(false)          // true while this component is mounted
+
+  // animation state: 'idle' | 'playing' | 'paused' | 'between-loops'
+  const [phase, setPhase] = useState<'idle' | 'playing' | 'paused' | 'between-loops'>('idle')
+
+  // keep loopRef in sync
+  useEffect(() => { loopRef.current = loop }, [loop])
+
+  const clearTimer = () => {
+    if (loopTimer.current) { clearTimeout(loopTimer.current); loopTimer.current = null }
+  }
+
+  // Stable animation starter — reads all mutable state from refs
+  const runAnimation = useCallback((w: any) => {
+    if (!w || !dataReady.current || !activeRef.current) return
+
+    // cancel any in-progress animation before starting fresh
+    try { w.cancelAnimation() } catch (_) {}
+
+    setPhase('playing')
+
+    w.animateCharacter({
+      onComplete: () => {
+        if (!activeRef.current) return
+        if (loopRef.current) {
+          setPhase('between-loops')
+          loopTimer.current = setTimeout(() => {
+            if (!activeRef.current || !writerRef.current || !dataReady.current) return
+            runAnimation(writerRef.current)
+          }, 1500)
+        } else {
+          setPhase('idle')
+        }
+      }
+    })
+  }, []) // intentionally empty — uses refs only
 
   useEffect(() => {
     if (!containerRef.current) return
 
+    // Each effect run gets its own cancellation token so stale callbacks are ignored
+    // (React StrictMode fires effects twice in dev — this prevents double animate())
+    let cancelled = false
+
+    activeRef.current = true
     containerRef.current.innerHTML = ''
-    dataLoadedRef.current = false
+    dataReady.current = false
+    clearTimer()
+    setPhase('idle')
 
     try {
       const writer = HanziWriter.create(containerRef.current, character, {
@@ -39,125 +82,117 @@ export default function StrokeOrderAnimation({
         showOutline: true,
         strokeAnimationSpeed: 2,
         delayBetweenStrokes: 300,
-        delayBetweenLoops: 2000,
         onLoadCharDataSuccess: () => {
-          dataLoadedRef.current = true
-          if (autoPlay) {
-            playAnimation(writer)
-          }
+          if (cancelled) return          // stale effect run — ignore
+          dataReady.current = true
+          if (autoPlay) runAnimation(writer)
         },
         onLoadCharDataError: (err: any) => {
-          console.warn(`Failed to load character data for ${character}:`, err)
+          console.warn(`HanziWriter: failed to load "${character}"`, err)
         }
       })
-
       writerRef.current = writer
-    } catch (error) {
-      console.error(`Error creating HanziWriter for ${character}:`, error)
+    } catch (err) {
+      console.error(`HanziWriter: create error for "${character}"`, err)
     }
 
     return () => {
+      cancelled = true               // invalidate this effect run's callbacks
+      activeRef.current = false
+      clearTimer()
       writerRef.current = null
-      dataLoadedRef.current = false
+      dataReady.current = false
     }
-  }, [character, size])
+  }, [character, size, autoPlay, runAnimation])
 
-  const playAnimation = (writer?: any) => {
-    const w = writer || writerRef.current
-    if (!w || !dataLoadedRef.current) return
+  // ── Button handlers ──────────────────────────────────────────────────────────
 
-    setIsPlaying(true)
-    setIsPaused(false)
-
-    w.animateCharacter({
-      onComplete: () => {
-        setIsPlaying(false)
-        if (loop) {
-          setTimeout(() => playAnimation(), 1000)
-        }
-      }
-    })
+  const handlePlay = () => {
+    clearTimer()
+    runAnimation(writerRef.current)
   }
 
-  const pauseAnimation = () => {
-    if (!writerRef.current || !dataLoadedRef.current) return
-    try {
-      writerRef.current.pauseAnimation()
-      setIsPaused(true)
-      setIsPlaying(false)
-    } catch (e) {
-      // data not ready yet
-    }
+  const handlePause = () => {
+    clearTimer()
+    const w = writerRef.current
+    if (!w || !dataReady.current) return
+    try { w.pauseAnimation(); setPhase('paused') } catch (_) {}
   }
 
-  const resumeAnimation = () => {
-    if (!writerRef.current || !dataLoadedRef.current) return
-    try {
-      writerRef.current.resumeAnimation()
-      setIsPaused(false)
-      setIsPlaying(true)
-    } catch (e) {
-      // data not ready yet
-    }
+  const handleResume = () => {
+    const w = writerRef.current
+    if (!w || !dataReady.current) return
+    try { w.resumeAnimation(); setPhase('playing') } catch (_) {}
   }
 
-  const resetAnimation = () => {
-    if (!writerRef.current || !dataLoadedRef.current) return
-    try {
-      writerRef.current.hideCharacter()
-      setIsPlaying(false)
-      setIsPaused(false)
-    } catch (e) {
-      // data not ready yet
-    }
+  const handleReset = () => {
+    clearTimer()
+    const w = writerRef.current
+    if (!w || !dataReady.current) return
+    try { w.cancelAnimation(); w.hideCharacter() } catch (_) {}
+    setPhase('idle')
   }
+
+  // ── Render ───────────────────────────────────────────────────────────────────
+
+  const isPlaying      = phase === 'playing' || phase === 'between-loops'
+  const showPlay       = phase === 'idle'
+  const showPause      = phase === 'playing' || phase === 'between-loops'
+  const showResume     = phase === 'paused'
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center gap-4">
       <div
         ref={containerRef}
-        className="border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 shadow-sm mb-4"
+        className="border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 shadow-sm"
       />
 
       <div className="flex gap-2">
-        {!isPlaying && !isPaused && (
+        {showPlay && (
           <button
-            onClick={() => playAnimation()}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center"
+            onClick={handlePlay}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center gap-1.5 text-sm"
           >
-            <Play className="w-4 h-4 mr-1" />
+            <Play className="w-4 h-4" />
             Play
           </button>
         )}
 
-        {isPlaying && (
+        {showPause && (
           <button
-            onClick={pauseAnimation}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center"
+            onClick={handlePause}
+            className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center gap-1.5 text-sm"
           >
-            <Pause className="w-4 h-4 mr-1" />
-            Pause
+            <Pause className="w-4 h-4" />
+            {phase === 'between-loops' ? 'Stop' : 'Pause'}
           </button>
         )}
 
-        {isPaused && (
+        {showResume && (
           <button
-            onClick={resumeAnimation}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center"
+            onClick={handleResume}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center gap-1.5 text-sm"
           >
-            <Play className="w-4 h-4 mr-1" />
+            <Play className="w-4 h-4" />
             Resume
           </button>
         )}
 
         <button
-          onClick={resetAnimation}
-          className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center"
+          onClick={handleReset}
+          className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center gap-1.5 text-sm"
         >
-          <RotateCcw className="w-4 h-4 mr-1" />
+          <RotateCcw className="w-4 h-4" />
           Reset
         </button>
       </div>
+
+      {/* subtle indicator while looping */}
+      {isPlaying && loop && (
+        <p className="text-xs text-indigo-400 dark:text-indigo-500 animate-pulse">
+          Animasi berjalan otomatis…
+        </p>
+      )}
     </div>
   )
 }
