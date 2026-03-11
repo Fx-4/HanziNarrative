@@ -129,7 +129,7 @@ def root():
         "message": "Welcome to HanziNarrative API",
     }
 
-@app.api_route("/health", methods=["GET", "HEAD"])
+@app.get("/health")
 def health():
     return {"status": "ok"}
 
