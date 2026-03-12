@@ -1,6 +1,9 @@
 from typing import List, Optional
 from datetime import date
+import json
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from .. import models, schemas
@@ -55,6 +58,34 @@ def get_word_of_the_day(db: Session = Depends(get_db)):
         "date": today.isoformat(),
         "message": "每日一词 - Word of the Day"
     }
+
+
+@router.get("/word-of-the-day-stream")
+async def get_word_of_the_day_stream(db: Session = Depends(get_db)):
+    """Stream word-of-the-day payload via SSE."""
+
+    def sse(data: dict) -> str:
+        return f"data: {json.dumps(jsonable_encoder(data))}\\n\\n"
+
+    async def event_generator():
+        try:
+            yield sse({"type": "progress", "message": "Selecting word of the day..."})
+            payload = get_word_of_the_day(db)
+            yield sse({"type": "done", "data": payload})
+        except HTTPException as e:
+            yield sse({"type": "error", "message": e.detail})
+        except Exception:
+            yield sse({"type": "error", "message": "Failed to load word of the day"})
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+            "Connection": "keep-alive",
+        },
+    )
 
 
 @router.get("/categories/all")

@@ -2,7 +2,10 @@
 Typing Practice Router
 API endpoints for typing practice (pinyin, IME, speed modes)
 """
+import json
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from app.database import get_db
@@ -187,6 +190,35 @@ async def get_typing_statistics(
     )
 
     return stats
+
+
+@router.get("/stats-stream")
+async def get_typing_statistics_stream(
+    mode: Optional[str] = None,
+    hsk_level: Optional[int] = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Stream typing stats payload via SSE."""
+
+    def sse(data: dict) -> str:
+        return f"data: {json.dumps(jsonable_encoder(data))}\\n\\n"
+
+    async def event_generator():
+        try:
+            yield sse({"type": "progress", "message": "Loading typing stats..."})
+            payload = await get_typing_statistics(mode=mode, hsk_level=hsk_level, current_user=current_user, db=db)
+            yield sse({"type": "done", "data": payload})
+        except HTTPException as e:
+            yield sse({"type": "error", "message": e.detail})
+        except Exception:
+            yield sse({"type": "error", "message": "Failed to load typing stats"})
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"},
+    )
 
 
 @router.get("/word/{word_id}/progress/{mode}", response_model=Optional[TypingProgressSchema])

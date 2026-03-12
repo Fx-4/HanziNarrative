@@ -27,10 +27,77 @@ import { apiLogger } from '@/utils/debugLogger'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
+type StreamOptions = {
+  method?: 'GET' | 'POST'
+  params?: Record<string, unknown>
+  body?: unknown
+  onProgress?: (message: string) => void
+}
+
+async function streamEndpoint<T>(path: string, options: StreamOptions = {}): Promise<T> {
+  const { method = 'GET', params, body, onProgress } = options
+
+  const qs = params
+    ? `?${new URLSearchParams(
+      Object.entries(params)
+        .filter(([, v]) => v !== undefined && v !== null)
+        .map(([k, v]) => [k, String(v)])
+    ).toString()}`
+    : ''
+
+  const token = localStorage.getItem('access_token')
+  const res = await fetch(`${API_URL}${path}${qs}`, {
+    method,
+    headers: {
+      ...(body ? { 'Content-Type': 'application/json' } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  })
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => null)
+    throw new Error(errData?.detail || `Server error ${res.status}`)
+  }
+
+  if (!res.body) {
+    throw new Error('No response body')
+  }
+
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+
+    buffer += decoder.decode(value, { stream: true })
+    const parts = buffer.split('\n\n')
+    buffer = parts.pop() ?? ''
+
+    for (const part of parts) {
+      const line = part.trim()
+      if (!line.startsWith('data: ')) continue
+      const event = JSON.parse(line.slice(6))
+
+      if (event.type === 'progress') {
+        onProgress?.(event.message || '')
+      } else if (event.type === 'done') {
+        return event.data as T
+      } else if (event.type === 'error') {
+        throw new Error(event.message || 'Stream request failed')
+      }
+    }
+  }
+
+  throw new Error('Stream closed before completion')
+}
+
 const api = axios.create({
   baseURL: API_URL,
-  // Render free tier/cold starts can exceed 15s; keep a generous timeout.
-  timeout: 60000,
+  // Non-stream calls should never fail due to client timeout.
+  timeout: 0,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -222,8 +289,7 @@ export const vocabularyApi = {
   },
 
   getWordOfTheDay: async (): Promise<{ word: HanziWord; date: string; message: string }> => {
-    const response = await api.get('/vocabulary/word-of-the-day')
-    return response.data
+    return streamEndpoint<{ word: HanziWord; date: string; message: string }>('/vocabulary/word-of-the-day-stream')
   },
 }
 
@@ -282,9 +348,8 @@ export const writingApi = {
   },
 
   getStats: async (hskLevel?: number): Promise<WritingStats> => {
-    const params = hskLevel ? { hsk_level: hskLevel } : {}
-    const response = await api.get('/writing/stats', { params })
-    return response.data
+    const params = hskLevel ? { hsk_level: hskLevel } : undefined
+    return streamEndpoint<WritingStats>('/writing/stats-stream', { params })
   },
 
   getCharacterProgress: async (wordId: number): Promise<WritingProgress | null> => {
@@ -319,8 +384,7 @@ export const typingApi = {
     const params: any = {}
     if (mode) params.mode = mode
     if (hskLevel) params.hsk_level = hskLevel
-    const response = await api.get('/typing/stats', { params })
-    return response.data
+    return streamEndpoint<TypingStats>('/typing/stats-stream', { params })
   },
 
   getWordProgress: async (wordId: number, mode: string): Promise<TypingProgress | null> => {
@@ -365,18 +429,16 @@ export const learningApi = {
 
   // Get learning statistics
   getStats: async (hskLevel?: number) => {
-    const params = hskLevel ? { hsk_level: hskLevel } : {}
-    const response = await api.get('/learning/stats', { params })
-    return response.data
+    const params = hskLevel ? { hsk_level: hskLevel } : undefined
+    return streamEndpoint('/learning/stats-stream', { params })
   },
 
   // Get all stats (overall + all 6 HSK levels) in a single request
   getAllStats: async () => {
-    const response = await api.get('/learning/stats/all')
-    return response.data as {
+    return streamEndpoint<{
       overall: { total_words_learning: number; mastered_words: number; due_for_review: number; average_mastery: number; total_reviews: number; accuracy: number }
       levels: Record<number, { total_words_learning: number; mastered_words: number; due_for_review: number; average_mastery: number; total_reviews: number; accuracy: number }>
-    }
+    }>('/learning/stats/all-stream')
   },
 
   // Get progress for a specific word
@@ -414,8 +476,7 @@ export const quizApi = {
 export const onboardingApi = {
   // Get onboarding status
   getStatus: async (): Promise<OnboardingStatus> => {
-    const response = await api.get('/onboarding/status')
-    return response.data
+    return streamEndpoint<OnboardingStatus>('/onboarding/status-stream')
   },
 
   // Get assessment questions
@@ -451,8 +512,7 @@ export const onboardingApi = {
 
 export const gamificationApi = {
   getStats: async () => {
-    const response = await api.get('/gamification/stats')
-    return response.data
+    return streamEndpoint('/gamification/stats-stream')
   },
 
   dailyCheckin: async () => {
@@ -536,16 +596,14 @@ export const sttApi = {
   },
 
   getStatus: async () => {
-    const response = await api.get('/stt/status')
-    return response.data
+    return streamEndpoint('/stt/status-stream')
   },
 }
 
 // Daily Challenge API — zero AI cost
 export const dailyChallengeApi = {
   getToday: async () => {
-    const response = await api.get('/daily-challenge/today')
-    return response.data
+    return streamEndpoint('/daily-challenge/today-stream')
   },
 
   complete: async () => {
@@ -554,8 +612,7 @@ export const dailyChallengeApi = {
   },
 
   getStats: async () => {
-    const response = await api.get('/daily-challenge/stats')
-    return response.data
+    return streamEndpoint('/daily-challenge/stats-stream')
   },
 }
 
@@ -586,8 +643,7 @@ export const conversationApi = {
 
 export const adminApi = {
   getStats: async () => {
-    const response = await api.get('/admin/stats')
-    return response.data
+    return streamEndpoint('/admin/stats-stream')
   },
 
   getUsers: async (page = 1, pageSize = 20, search?: string) => {

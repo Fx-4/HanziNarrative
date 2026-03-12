@@ -73,7 +73,8 @@
       "Bash(where python python3 py)",
       "Bash(node:*)",
       "Bash(npx tsc:*)",
-      "Bash(sort:*)"
+      "Bash(sort:*)",
+      "mcp__Desktop_Commander__read_file"
     ],
     "deny": [],
     "ask": []

@@ -3,11 +3,14 @@ Onboarding routes for new user setup and level assessment
 """
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime, date, timezone as dt_timezone
+import json
 from .. import models, auth
 from ..database import get_db
 import random
@@ -102,6 +105,33 @@ def get_onboarding_status(
         "goals": onboarding.goals,
         "preferences": onboarding.preferences
     }
+
+
+@router.get("/status-stream")
+async def get_onboarding_status_stream(
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Stream onboarding status payload via SSE."""
+
+    def sse(data: dict) -> str:
+        return f"data: {json.dumps(jsonable_encoder(data))}\\n\\n"
+
+    async def event_generator():
+        try:
+            yield sse({"type": "progress", "message": "Loading onboarding status..."})
+            payload = get_onboarding_status(current_user=current_user, db=db)
+            yield sse({"type": "done", "data": payload})
+        except HTTPException as e:
+            yield sse({"type": "error", "message": e.detail})
+        except Exception:
+            yield sse({"type": "error", "message": "Failed to load onboarding status"})
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"},
+    )
 
 
 @router.get("/assessment/questions")

@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from app.database import get_db
+from fastapi.encoders import jsonable_encoder
 from app.auth import get_current_user
 from app.models import User
 from app.services.gamification_service import get_gamification_stats, update_streak
@@ -218,6 +219,33 @@ def get_stats(
     return get_gamification_stats(db, current_user)
 
 
+@router.get("/stats-stream")
+async def get_stats_stream(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Stream gamification stats payload via SSE."""
+
+    def sse(data: dict) -> str:
+        return f"data: {json.dumps(jsonable_encoder(data))}\\n\\n"
+
+    async def event_generator():
+        try:
+            yield sse({"type": "progress", "message": "Loading gamification stats..."})
+            payload = get_stats(current_user=current_user, db=db)
+            yield sse({"type": "done", "data": payload})
+        except HTTPException as e:
+            yield sse({"type": "error", "message": e.detail})
+        except Exception:
+            yield sse({"type": "error", "message": "Failed to load gamification stats"})
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"},
+    )
+
+
 @router.post("/daily-checkin")
 def daily_checkin(
     current_user: User = Depends(get_current_user),
@@ -356,7 +384,7 @@ async def get_leaderboard_stream(
     """Stream leaderboard progress and final payload via SSE."""
 
     def sse(data: dict) -> str:
-        return f"data: {json.dumps(data)}\n\n"
+        return f"data: {json.dumps(jsonable_encoder(data))}\n\n"
 
     async def event_generator():
         try:
