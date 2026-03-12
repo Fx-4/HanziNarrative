@@ -71,7 +71,7 @@ export default function StrokeOrderAnimation({
     setPhase('idle')
 
     try {
-      const writer = HanziWriter.create(containerRef.current, character, {
+      const writer = HanziWriter.create(containerRef.current, character.charAt(0), {
         width: size,
         height: size,
         padding: 10,

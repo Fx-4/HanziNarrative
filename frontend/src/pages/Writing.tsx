@@ -36,7 +36,7 @@ import CountUp from '@/components/animations/CountUp'
 
 type WritingMode = 'practice' | 'timed' | 'mastery' | null
 
-// ─── Stroke Order Lookup ─────────────────────────────────────────────────────
+// ——— Stroke Order Lookup ————————————————————————————————————————
 function StrokeOrderLookup() {
   const [inputValue, setInputValue] = useState('')
   const [lookupChar, setLookupChar] = useState<string | null>(null)
@@ -933,35 +933,11 @@ export default function Writing() {
                 transition={{ duration: 0.3 }}
               >
                 {!showFeedback ? (
-                  /* Writing Canvas + Stroke Order Panel side by side */
-                  <div className="grid md:grid-cols-3 gap-4 sm:gap-6">
-                    <div className="md:col-span-2">
-                      <WritingCanvas
-                        character={currentCharacter}
-                        onComplete={handleCharacterComplete}
-                        mode={mode}
-                        showStrokeOrder={mode === 'practice'}
-                      />
-                    </div>
-                    <div className="md:col-span-1">
-                      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden p-4 h-full flex flex-col">
-                        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-center">
-                          Stroke Order Guide
-                        </h3>
-                        <div className="flex-1 flex items-center justify-center">
-                          <StrokeOrderAnimation
-                            character={currentCharacter.simplified}
-                            size={180}
-                            autoPlay={true}
-                            loop={true}
-                          />
-                        </div>
-                        <p className="text-xs text-gray-400 dark:text-gray-500 text-center mt-2">
-                          Ikuti urutan goresan ini
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                  <WritingCanvas
+                    character={currentCharacter}
+                    onComplete={handleCharacterComplete}
+                    mode={mode}
+                  />
                 ) : (
                   <div className="space-y-4 sm:space-y-6">
                     {lastAttemptResult && currentCharacter && (
@@ -980,49 +956,38 @@ export default function Writing() {
                           }
                         />
 
-                        {/* Stroke Order Reference + Countdown */}
-                        <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
-                          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden p-4 sm:p-6">
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Stroke Order Reference</h3>
-                            <div className="flex justify-center">
-                              <StrokeOrderAnimation
-                                character={currentCharacter.simplified}
-                                size={200}
-                                autoPlay={true}
-                                loop={true}
-                              />
-                            </div>
-                          </div>
-
-                          {/* Countdown + Navigation */}
-                          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden p-4 sm:p-6 flex flex-col items-center justify-center gap-5">
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Lanjut otomatis dalam</p>
-                            {/* Countdown circle */}
-                            <div className="relative w-20 h-20">
-                              <svg className="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
-                                <circle cx="40" cy="40" r="34" fill="none" stroke="#E5E7EB" strokeWidth="6" className="dark:stroke-gray-700" />
-                                <circle
-                                  cx="40" cy="40" r="34"
-                                  fill="none"
-                                  stroke="#4F46E5"
-                                  strokeWidth="6"
-                                  strokeLinecap="round"
-                                  strokeDasharray={`${2 * Math.PI * 34}`}
-                                  strokeDashoffset={`${2 * Math.PI * 34 * (1 - (countdown ?? 5) / 5)}`}
-                                  className="transition-all duration-1000 ease-linear"
-                                />
-                              </svg>
-                              <span className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                                {countdown ?? 5}
-                              </span>
+                        {/* Countdown + Navigation */}
+                        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden p-4 sm:p-6">
+                          <div className="flex flex-col items-center gap-4 sm:gap-5">
+                            <div className="flex flex-col items-center gap-1">
+                              <p className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Lanjut otomatis</p>
+                              {/* Countdown circle */}
+                              <div className="relative w-16 h-16 sm:w-20 sm:h-20 mt-1">
+                                <svg className="w-16 h-16 sm:w-20 sm:h-20 -rotate-90" viewBox="0 0 80 80">
+                                  <circle cx="40" cy="40" r="34" fill="none" stroke="#E5E7EB" strokeWidth="6" className="dark:stroke-gray-700" />
+                                  <circle
+                                    cx="40" cy="40" r="34"
+                                    fill="none"
+                                    stroke="#4F46E5"
+                                    strokeWidth="6"
+                                    strokeLinecap="round"
+                                    strokeDasharray={213.6283}
+                                    strokeDashoffset={213.6283 * (1 - (countdown ?? 5) / 5)}
+                                    className="transition-all duration-1000 ease-linear"
+                                  />
+                                </svg>
+                                <span className="absolute inset-0 flex items-center justify-center text-xl sm:text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                                  {countdown ?? 5}
+                                </span>
+                              </div>
                             </div>
 
                             {/* Nav buttons */}
-                            <div className="flex flex-col sm:flex-row gap-3 w-full">
+                            <div className="flex gap-2 sm:gap-3 w-full">
                               {currentCharacterIndex > 0 && (
                                 <button
                                   onClick={handlePreviousCharacter}
-                                  className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-2xl px-4 py-3 font-semibold cursor-pointer flex items-center justify-center gap-2 text-sm sm:text-base transition-colors"
+                                  className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-2xl px-3 sm:px-4 py-3 font-semibold cursor-pointer flex items-center justify-center gap-2 text-sm sm:text-base transition-colors"
                                 >
                                   <ArrowLeft className="w-4 h-4" />
                                   Back
@@ -1030,7 +995,7 @@ export default function Writing() {
                               )}
                               <button
                                 onClick={handleNextCharacter}
-                                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-4 py-3 font-semibold cursor-pointer flex items-center justify-center gap-2 text-sm sm:text-base transition-colors"
+                                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-3 sm:px-4 py-3 font-semibold cursor-pointer flex items-center justify-center gap-2 text-sm sm:text-base transition-colors"
                               >
                                 {currentCharacterIndex < characters.length - 1 ? (
                                   <>

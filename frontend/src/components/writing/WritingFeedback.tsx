@@ -35,6 +35,7 @@ export default function WritingFeedback({
   }
 
   const getSpeedRating = () => {
+    if (totalStrokes === 0) return { rating: 'slow', icon: Clock, message: 'Take your time!' }
     const timePerStroke = timeTaken / totalStrokes
     if (timePerStroke < 1) return { rating: 'fast', icon: Zap, message: 'Lightning fast!' }
     if (timePerStroke < 2) return { rating: 'good', icon: TrendingUp, message: 'Good pace!' }
@@ -150,7 +151,7 @@ export default function WritingFeedback({
           <div>
             <div className="text-xs text-gray-600 mb-1">Speed</div>
             <div className="text-xl font-bold text-gray-900">
-              {(timeTaken / totalStrokes).toFixed(1)}s/stroke
+              {totalStrokes > 0 ? (timeTaken / totalStrokes).toFixed(1) : '—'}s/stroke
             </div>
           </div>
 
