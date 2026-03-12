@@ -1,11 +1,13 @@
 import os
 import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from .routers import auth, stories, vocabulary, progress, vocabulary_sets, exercises, learning, writing, quiz, gamification, onboarding, typing, tts, dictation, adventure, stt, scramble, daily_challenge, conversation, admin, battle
 from .database import engine, Base
+from .config import settings
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -83,9 +85,13 @@ app = FastAPI(
     openapi_url=None if IS_PRODUCTION else "/openapi.json",
 )
 
-# Get CORS origins from environment variable or use defaults
-cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://localhost:5174,http://localhost:5175")
-allowed_origins = [origin.strip() for origin in cors_origins.split(",")]
+# Get CORS origins: strict in production, convenient localhost set in development.
+cors_origins = settings.CORS_ORIGINS if IS_PRODUCTION else "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000"
+allowed_origins = [origin.strip() for origin in cors_origins.split(",") if origin.strip()]
+if settings.FRONTEND_URL:
+    frontend_origin = settings.FRONTEND_URL.strip().rstrip("/")
+    if frontend_origin and frontend_origin not in allowed_origins:
+        allowed_origins.append(frontend_origin)
 
 app.add_middleware(
     CORSMiddleware,
@@ -93,7 +99,17 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    max_age=86400,
 )
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    logger.error("Unhandled server error on %s", request.url.path, exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Request could not be completed"},
+    )
 
 app.include_router(auth.router)
 app.include_router(stories.router)

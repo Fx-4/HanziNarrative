@@ -11,7 +11,8 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql://hanzinarrative:hanzinarrative_dev@localhost:5432/hanzinarrative"
     SECRET_KEY: str = _INSECURE_DEFAULT_KEY
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 10080  # 7 days
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 30
 
     # Gemini AI
     GEMINI_API_KEY: str = ""
@@ -39,6 +40,10 @@ class Settings(BaseSettings):
 
     # Frontend URL (for OAuth callbacks and reset links)
     FRONTEND_URL: str = "http://localhost:5173"
+    ALLOWED_REDIRECT_ORIGINS: str = "https://hanzi-narrative.vercel.app,http://localhost:5173,http://127.0.0.1:5173"
+
+    # CORS origins (production should be explicit)
+    CORS_ORIGINS: str = "https://hanzi-narrative.vercel.app"
 
     # Backend URL (for OAuth redirect_uri — change in production)
     BACKEND_URL: str = "http://localhost:8000"

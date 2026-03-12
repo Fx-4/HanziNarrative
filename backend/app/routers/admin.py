@@ -10,7 +10,7 @@ import json
 from .. import models, schemas, auth
 from ..database import get_db
 
-router = APIRouter(prefix="/admin", tags=["admin"])
+router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(auth.get_admin_user)])
 
 TRASH_RETENTION_DAYS = 30
 

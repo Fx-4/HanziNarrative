@@ -185,6 +185,7 @@ class VocabularySet(VocabularySetBase):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    refresh_token: Optional[str] = None
 
 
 class TokenData(BaseModel):
@@ -209,6 +210,10 @@ class ResetPasswordRequest(BaseModel):
         if not re.search(r'[0-9]', v):
             raise ValueError('Password must contain at least one number')
         return v
+
+
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
 
 
 # Writing Practice Schemas

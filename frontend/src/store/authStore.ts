@@ -30,6 +30,9 @@ export const useAuthStore = create<AuthState>()(
       login: async (username: string, password: string) => {
         const tokens = await authApi.login({ username, password })
         localStorage.setItem('access_token', tokens.access_token)
+        if (tokens.refresh_token) {
+          localStorage.setItem('refresh_token', tokens.refresh_token)
+        }
         const user = await authApi.getCurrentUser()
 
         // Check onboarding status after login
@@ -49,6 +52,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: () => {
         localStorage.removeItem('access_token')
+        localStorage.removeItem('refresh_token')
         set({ user: null, token: null, isAuthenticated: false, onboardingCompleted: false, authInitialized: true })
       },
 
@@ -73,6 +77,7 @@ export const useAuthStore = create<AuthState>()(
         } catch (error) {
           set({ user: null, token: null, isAuthenticated: false, onboardingCompleted: false, authInitialized: true })
           localStorage.removeItem('access_token')
+          localStorage.removeItem('refresh_token')
           throw error // Re-throw so App.tsx can catch it
         }
       },

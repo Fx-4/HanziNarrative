@@ -35,7 +35,7 @@ function log(level: LogLevel, component: string, message: string, data?: LogData
     } else if (level === 'warn') {
       console.warn(`%c${formatted}`, style, data)
     } else {
-      console.log(`%c${formatted}`, style, data)
+      console.info(`%c${formatted}`, style, data)
     }
   } else {
     if (level === 'error') {
@@ -43,7 +43,7 @@ function log(level: LogLevel, component: string, message: string, data?: LogData
     } else if (level === 'warn') {
       console.warn(`%c${formatted}`, style)
     } else {
-      console.log(`%c${formatted}`, style)
+      console.info(`%c${formatted}`, style)
     }
   }
 }

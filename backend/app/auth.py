@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta
+import secrets
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
 import bcrypt
@@ -42,6 +43,54 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
+
+
+def create_refresh_token(db: Session, user_id: int) -> str:
+    token = secrets.token_urlsafe(48)
+    expires_at = datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    db_token = models.RefreshToken(
+        user_id=user_id,
+        token=token,
+        expires_at=expires_at,
+    )
+    db.add(db_token)
+    db.commit()
+    return token
+
+
+def rotate_refresh_token(db: Session, refresh_token: str) -> models.User:
+    token_row = db.query(models.RefreshToken).filter(models.RefreshToken.token == refresh_token).first()
+    invalid_exc = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    if not token_row:
+        raise invalid_exc
+
+    now = datetime.now(timezone.utc)
+    expires_at = token_row.expires_at
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if token_row.revoked_at is not None or expires_at < now:
+        raise invalid_exc
+
+    user = db.query(models.User).filter(models.User.id == token_row.user_id).first()
+    if not user:
+        raise invalid_exc
+
+    token_row.revoked_at = now
+    new_token = secrets.token_urlsafe(48)
+    token_row.replaced_by_token = new_token
+    db.add(models.RefreshToken(
+        user_id=user.id,
+        token=new_token,
+        expires_at=now + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS),
+    ))
+    db.commit()
+    user._new_refresh_token = new_token  # attach transient value for caller
+    return user
 
 
 async def get_current_user(

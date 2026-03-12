@@ -9,6 +9,7 @@ export default function AuthCallback() {
 
     useEffect(() => {
         const token = params.get('token')
+        const refreshToken = params.get('refresh_token')
         const error = params.get('error')
 
         if (error || !token) {
@@ -18,6 +19,9 @@ export default function AuthCallback() {
 
         // Save token then fetch user profile
         localStorage.setItem('access_token', token)
+        if (refreshToken) {
+            localStorage.setItem('refresh_token', refreshToken)
+        }
         fetchUser()
             .then(() => {
                 const { onboardingCompleted } = useAuthStore.getState()
@@ -25,6 +29,7 @@ export default function AuthCallback() {
             })
             .catch(() => {
                 localStorage.removeItem('access_token')
+                localStorage.removeItem('refresh_token')
                 setAuthInitialized(true)
                 navigate('/login?error=google_failed', { replace: true })
             })

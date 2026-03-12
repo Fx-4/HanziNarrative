@@ -1,6 +1,7 @@
 import uuid
 import logging
 from datetime import datetime, timedelta, timezone
+from urllib.parse import urlencode, urlparse
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
@@ -18,6 +19,50 @@ GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
+
+
+def _normalize_origin(value: str) -> str:
+    p = urlparse(value.strip())
+    return f"{p.scheme}://{p.netloc}" if p.scheme and p.netloc else ""
+
+
+def _allowed_redirect_origins() -> set[str]:
+    origins = {
+        _normalize_origin(o)
+        for o in settings.ALLOWED_REDIRECT_ORIGINS.split(",")
+        if o.strip()
+    }
+    if settings.FRONTEND_URL:
+        origins.add(_normalize_origin(settings.FRONTEND_URL))
+    return {o for o in origins if o}
+
+
+def _safe_frontend_redirect(path: str, params: dict[str, str] | None = None) -> RedirectResponse:
+    base = settings.FRONTEND_URL.rstrip("/")
+    base_origin = _normalize_origin(base)
+    allowed = _allowed_redirect_origins()
+
+    if base_origin not in allowed:
+        logger.error("Blocked redirect due to non-allowlisted FRONTEND_URL: %s", settings.FRONTEND_URL)
+        fallback_origin = next(iter(allowed), "https://hanzi-narrative.vercel.app")
+        base = fallback_origin
+
+    query = f"?{urlencode(params)}" if params else ""
+    return RedirectResponse(url=f"{base}{path}{query}")
+
+
+def _issue_tokens(db: Session, user: models.User) -> dict:
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = auth.create_access_token(
+        data={"sub": user.username},
+        expires_delta=access_token_expires,
+    )
+    refresh_token = auth.create_refresh_token(db, user.id)
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+    }
 
 
 @router.post("/register", response_model=schemas.Token)
@@ -63,12 +108,8 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     except Exception as e:
         logger.warning(f"Story seed after registration failed (non-fatal): {e}")
 
-    # Auto-login: create access token for the new user
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = auth.create_access_token(
-        data={"sub": db_user.username}, expires_delta=access_token_expires
-    )
-    return {"access_token": access_token, "token_type": "bearer"}
+    # Auto-login token pair
+    return _issue_tokens(db, db_user)
 
 
 @router.post("/login", response_model=schemas.Token)
@@ -84,11 +125,25 @@ def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+    return _issue_tokens(db, user)
+
+
+@router.post("/refresh", response_model=schemas.Token)
+def refresh_token(
+    body: schemas.RefreshTokenRequest,
+    db: Session = Depends(get_db),
+):
+    user = auth.rotate_refresh_token(db, body.refresh_token)
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = auth.create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": user.username},
+        expires_delta=access_token_expires,
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "refresh_token": getattr(user, "_new_refresh_token", None),
+        "token_type": "bearer",
+    }
 
 
 @router.get("/me", response_model=schemas.User)
@@ -121,18 +176,39 @@ def forgot_password(
     db: Session = Depends(get_db),
 ):
     """Request a password reset link. Always returns 200 to avoid user enumeration."""
-    user = db.query(models.User).filter(models.User.email == body.email).first()
-    if user:
-        token = str(uuid.uuid4())
-        expires_at = datetime.now(timezone.utc) + timedelta(hours=1)
-        reset_token = models.PasswordResetToken(
-            user_id=user.id,
-            token=token,
-            expires_at=expires_at,
+    now = datetime.now(timezone.utc)
+    one_hour_ago = now - timedelta(hours=1)
+    email_key = body.email.strip().lower()
+
+    recent_count = (
+        db.query(models.PasswordResetRequestLog)
+        .filter(
+            models.PasswordResetRequestLog.email == email_key,
+            models.PasswordResetRequestLog.requested_at >= one_hour_ago,
         )
-        db.add(reset_token)
-        db.commit()
-        send_password_reset_email(user.email, token)
+        .count()
+    )
+    if recent_count >= 3:
+        raise HTTPException(status_code=429, detail="Too many requests. Please try again later.")
+
+    db.add(models.PasswordResetRequestLog(email=email_key, requested_at=now))
+    db.commit()
+
+    user = db.query(models.User).filter(models.User.email == body.email).first()
+    try:
+        if user:
+            token = str(uuid.uuid4())
+            expires_at = datetime.now(timezone.utc) + timedelta(hours=1)
+            reset_token = models.PasswordResetToken(
+                user_id=user.id,
+                token=token,
+                expires_at=expires_at,
+            )
+            db.add(reset_token)
+            db.commit()
+            send_password_reset_email(user.email, token)
+    except Exception as e:
+        logger.error("Failed to process forgot-password request", exc_info=True)
     return {"message": "If that email exists, a reset link has been sent."}
 
 
@@ -142,30 +218,34 @@ def reset_password(
     db: Session = Depends(get_db),
 ):
     """Reset password using a valid token."""
-    reset_token = (
-        db.query(models.PasswordResetToken)
-        .filter(models.PasswordResetToken.token == body.token)
-        .first()
-    )
-    if not reset_token:
-        raise HTTPException(status_code=400, detail="Invalid or expired token")
-    if reset_token.used:
-        raise HTTPException(status_code=400, detail="Token already used")
-    now = datetime.now(timezone.utc)
-    expires = reset_token.expires_at
-    if expires.tzinfo is None:
-        expires = expires.replace(tzinfo=timezone.utc)
-    if now > expires:
-        raise HTTPException(status_code=400, detail="Token has expired")
+    try:
+        reset_token = (
+            db.query(models.PasswordResetToken)
+            .filter(models.PasswordResetToken.token == body.token)
+            .first()
+        )
+        if not reset_token or reset_token.used:
+            raise HTTPException(status_code=400, detail="Invalid reset request")
+        now = datetime.now(timezone.utc)
+        expires = reset_token.expires_at
+        if expires.tzinfo is None:
+            expires = expires.replace(tzinfo=timezone.utc)
+        if now > expires:
+            raise HTTPException(status_code=400, detail="Invalid reset request")
 
-    user = db.query(models.User).filter(models.User.id == reset_token.user_id).first()
-    if not user:
-        raise HTTPException(status_code=400, detail="User not found")
+        user = db.query(models.User).filter(models.User.id == reset_token.user_id).first()
+        if not user:
+            raise HTTPException(status_code=400, detail="Invalid reset request")
 
-    user.hashed_password = auth.get_password_hash(body.new_password)
-    reset_token.used = True
-    db.commit()
-    return {"message": "Password updated successfully"}
+        user.hashed_password = auth.get_password_hash(body.new_password)
+        reset_token.used = True
+        db.commit()
+        return {"message": "Password updated successfully"}
+    except HTTPException:
+        raise
+    except Exception:
+        logger.error("Reset password failed", exc_info=True)
+        raise HTTPException(status_code=500, detail="Request could not be completed")
 
 
 # ── Google OAuth ──────────────────────────────────────────────────────────────
@@ -206,7 +286,7 @@ async def google_callback(code: str, db: Session = Depends(get_db)):
         )
     if token_response.status_code != 200:
         logger.error(f"Google token exchange failed: {token_response.text}")
-        return RedirectResponse(url=f"{settings.FRONTEND_URL}/login?error=google_failed")
+        return _safe_frontend_redirect("/login", {"error": "google_failed"})
 
     token_data = token_response.json()
     access_token_google = token_data.get("access_token")
@@ -218,7 +298,7 @@ async def google_callback(code: str, db: Session = Depends(get_db)):
             headers={"Authorization": f"Bearer {access_token_google}"},
         )
     if userinfo_response.status_code != 200:
-        return RedirectResponse(url=f"{settings.FRONTEND_URL}/login?error=google_failed")
+        return _safe_frontend_redirect("/login", {"error": "google_failed"})
 
     userinfo = userinfo_response.json()
     google_id = userinfo.get("sub")
@@ -226,7 +306,7 @@ async def google_callback(code: str, db: Session = Depends(get_db)):
     name = userinfo.get("name", "")
 
     if not email or not google_id:
-        return RedirectResponse(url=f"{settings.FRONTEND_URL}/login?error=google_failed")
+        return _safe_frontend_redirect("/login", {"error": "google_failed"})
 
     # Find or create user
     user = db.query(models.User).filter(models.User.google_id == google_id).first()
@@ -254,8 +334,12 @@ async def google_callback(code: str, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(user)
 
-    # Issue JWT
-    expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    jwt_token = auth.create_access_token(data={"sub": user.username}, expires_delta=expires)
-
-    return RedirectResponse(url=f"{settings.FRONTEND_URL}/auth/callback?token={jwt_token}")
+    # Issue token pair
+    token_pair = _issue_tokens(db, user)
+    return _safe_frontend_redirect(
+        "/auth/callback",
+        {
+            "token": token_pair["access_token"],
+            "refresh_token": token_pair["refresh_token"],
+        },
+    )

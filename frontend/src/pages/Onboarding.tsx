@@ -1,9 +1,9 @@
-﻿import { useState, useEffect } from 'react'
+﻿import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { onboardingApi } from '@/services/api'
-import type { Goals, Preferences } from '@/types'
+import type { Goals, Preferences, OnboardingCompleteResponse } from '@/types'
 import toast from 'react-hot-toast'
 
 // Components
@@ -30,20 +30,20 @@ const Onboarding = () => {
   const [determinedLevel, setDeterminedLevel] = useState(1)
 
   // Completion data
-  const [completionData, setCompletionData] = useState<any>(null)
+  const [completionData, setCompletionData] = useState<OnboardingCompleteResponse | null>(null)
 
-  useEffect(() => {
-    checkStatus()
-  }, [])
-
-  const checkStatus = async () => {
+  const checkStatus = useCallback(async () => {
     try {
       const status = await onboardingApi.getStatus()
 
       if (status.onboarding_completed) {
+        await checkOnboardingStatus()
         navigate('/dashboard')
         return
       }
+
+      // Ensure auth store is in sync with backend status without directly mutating store state
+      await checkOnboardingStatus()
 
       // Resume from saved step
       // Backend step numbers: 2=goals saved, 3=assessment done, 4=assessment skipped
@@ -54,6 +54,7 @@ const Onboarding = () => {
           2: 3, // level selector (goals already saved)
           3: 5, // preferences (assessment done)
           4: 5, // preferences (assessment skipped)
+          5: 5, // keep user on preferences instead of resetting to welcome
         }
         const frontendStep = BACKEND_TO_FRONTEND_STEP[status.current_step] ?? 1
         setCurrentStep(frontendStep)
@@ -69,7 +70,11 @@ const Onboarding = () => {
       console.error('Failed to check onboarding status:', error)
       setLoading(false)
     }
-  }
+  }, [checkOnboardingStatus, navigate])
+
+  useEffect(() => {
+    void checkStatus()
+  }, [checkStatus])
 
   const handleWelcomeNext = () => setCurrentStep(2)
 
@@ -116,7 +121,7 @@ const Onboarding = () => {
         preferences: selectedPreferences,
       })
       setCompletionData(result)
-      await checkOnboardingStatus()
+      useAuthStore.setState({ onboardingCompleted: true })
       setCurrentStep(6)
     } catch {
       toast.error('Could not complete setup. Please try again.')

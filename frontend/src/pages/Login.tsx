@@ -40,7 +40,6 @@ const FLOAT_CONFIG: FloatItem[] = [
 export default function Login() {
   const navigate = useNavigate()
   const login = useAuthStore((state) => state.login)
-  const onboardingCompleted = useAuthStore((state) => state.onboardingCompleted)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [searchParams] = useState(() => new URLSearchParams(window.location.search))
@@ -60,6 +59,7 @@ export default function Login() {
     setLoading(true)
     try {
       await login(username, password)
+      const { onboardingCompleted } = useAuthStore.getState()
       if (!onboardingCompleted) {
         navigate('/onboarding')
       } else {

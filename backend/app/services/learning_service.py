@@ -42,6 +42,16 @@ class LearningService:
         return query.limit(limit).all()
 
     @staticmethod
+    def _is_due(next_review: datetime | None, now: datetime) -> bool:
+        if not next_review:
+            return False
+        if next_review.tzinfo is None:
+            aware_next_review = next_review.replace(tzinfo=timezone.utc)
+        else:
+            aware_next_review = next_review
+        return aware_next_review <= now
+
+    @staticmethod
     def get_words_for_review(
         db: Session,
         user: User,
@@ -199,7 +209,7 @@ class LearningService:
                 return {"total_words_learning": 0, "mastered_words": 0, "due_for_review": 0,
                         "average_mastery": 0, "total_reviews": 0, "accuracy": 0}
             mastered = sum(1 for p, _ in rows if p.mastery_level >= 8)
-            due = sum(1 for p, _ in rows if p.next_review and p.next_review <= now)
+            due = sum(1 for p, _ in rows if LearningService._is_due(p.next_review, now))
             correct = sum(p.correct_count for p, _ in rows)
             incorrect = sum(p.incorrect_count for p, _ in rows)
             total_reviews = correct + incorrect
@@ -249,7 +259,7 @@ class LearningService:
 
         now = datetime.now(timezone.utc)
         mastered = sum(1 for p in all_progress if p.mastery_level >= 8)
-        due_for_review = sum(1 for p in all_progress if p.next_review and p.next_review <= now)
+        due_for_review = sum(1 for p in all_progress if LearningService._is_due(p.next_review, now))
         total_correct = sum(p.correct_count for p in all_progress)
         total_incorrect = sum(p.incorrect_count for p in all_progress)
         total_reviews = total_correct + total_incorrect

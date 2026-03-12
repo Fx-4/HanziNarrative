@@ -22,6 +22,7 @@ import type {
   Goals,
   OnboardingCompleteRequest,
   OnboardingCompleteResponse,
+  GamificationStats,
 } from '@/types'
 import { apiLogger } from '@/utils/debugLogger'
 
@@ -94,6 +95,50 @@ async function streamEndpoint<T>(path: string, options: StreamOptions = {}): Pro
   throw new Error('Stream closed before completion')
 }
 
+type LearningStatsResponse = {
+  hsk_level: number | 'all'
+  stats: {
+    total_words_learning: number
+    mastered_words: number
+    due_for_review: number
+    average_mastery: number
+    total_reviews: number
+    accuracy: number
+  }
+}
+
+type DailyChallengeTodayResponse = {
+  story: {
+    id: number
+    title: string
+    title_english: string
+    hsk_level: number
+    content?: string
+    content_pinyin?: string
+    english_translation?: string
+  }
+  completed: boolean
+  date: string
+}
+
+type DailyChallengeStatsResponse = {
+  total_completions: number
+  challenge_streak: number
+  total_xp_earned: number
+}
+
+type AdminSystemStatsResponse = {
+  total_users: number
+  total_stories: number
+  published_stories: number
+  total_ai_requests: number
+  total_vocabulary: number
+  new_users_today: number
+  new_users_this_week: number
+  stories_by_hsk: Record<string, number>
+  ai_usage_by_feature: Record<string, number>
+}
+
 const api = axios.create({
   baseURL: API_URL,
   // Non-stream calls should never fail due to client timeout.
@@ -118,7 +163,7 @@ api.interceptors.response.use(
     apiLogger.debug(`← ${response.status} ${response.config.url}`)
     return response
   },
-  (error) => {
+  async (error) => {
     const status = error.response?.status
     const url = error.config?.url ?? 'unknown'
     const method = error.config?.method?.toUpperCase() ?? '?'
@@ -128,8 +173,35 @@ api.interceptors.response.use(
     if (isTimeout) {
       apiLogger.warn(`← TIMEOUT ${method} ${url} — request exceeded client timeout`)
     } else if (status === 401) {
+      const originalRequest = error.config as typeof error.config & { _retry?: boolean }
+      const refreshToken = localStorage.getItem('refresh_token')
+      const isRefreshCall = String(url).includes('/auth/refresh')
+
+      if (!isRefreshCall && refreshToken && !originalRequest?._retry) {
+        try {
+          originalRequest._retry = true
+          const refreshResponse = await axios.post(`${API_URL}/auth/refresh`, {
+            refresh_token: refreshToken,
+          })
+          const newAccessToken: string = refreshResponse.data.access_token
+          const newRefreshToken: string | undefined = refreshResponse.data.refresh_token
+
+          localStorage.setItem('access_token', newAccessToken)
+          if (newRefreshToken) {
+            localStorage.setItem('refresh_token', newRefreshToken)
+          }
+
+          originalRequest.headers = originalRequest.headers ?? {}
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
+          return api(originalRequest)
+        } catch (refreshErr) {
+          apiLogger.warn('Refresh token rotation failed; redirecting to login')
+        }
+      }
+
       apiLogger.warn(`← 401 ${method} ${url} — session expired, redirecting to login`)
       localStorage.removeItem('access_token')
+      localStorage.removeItem('refresh_token')
       localStorage.removeItem('user')
       if (!window.location.pathname.includes('/login')) {
         window.location.href = '/login'
@@ -178,6 +250,11 @@ export const authApi = {
 
   resetPassword: async (token: string, newPassword: string): Promise<void> => {
     await api.post('/auth/reset-password', { token, new_password: newPassword })
+  },
+
+  refresh: async (refreshToken: string): Promise<AuthTokens> => {
+    const response = await api.post('/auth/refresh', { refresh_token: refreshToken })
+    return response.data
   },
 }
 
@@ -428,9 +505,9 @@ export const learningApi = {
   },
 
   // Get learning statistics
-  getStats: async (hskLevel?: number) => {
+  getStats: async (hskLevel?: number): Promise<LearningStatsResponse> => {
     const params = hskLevel ? { hsk_level: hskLevel } : undefined
-    return streamEndpoint('/learning/stats-stream', { params })
+    return streamEndpoint<LearningStatsResponse>('/learning/stats-stream', { params })
   },
 
   // Get all stats (overall + all 6 HSK levels) in a single request
@@ -511,8 +588,8 @@ export const onboardingApi = {
 }
 
 export const gamificationApi = {
-  getStats: async () => {
-    return streamEndpoint('/gamification/stats-stream')
+  getStats: async (): Promise<GamificationStats> => {
+    return streamEndpoint<GamificationStats>('/gamification/stats-stream')
   },
 
   dailyCheckin: async () => {
@@ -595,15 +672,15 @@ export const sttApi = {
     return response.data
   },
 
-  getStatus: async () => {
-    return streamEndpoint('/stt/status-stream')
+  getStatus: async (): Promise<{ available: boolean; credentials_path: string }> => {
+    return streamEndpoint<{ available: boolean; credentials_path: string }>('/stt/status-stream')
   },
 }
 
 // Daily Challenge API — zero AI cost
 export const dailyChallengeApi = {
-  getToday: async () => {
-    return streamEndpoint('/daily-challenge/today-stream')
+  getToday: async (): Promise<DailyChallengeTodayResponse> => {
+    return streamEndpoint<DailyChallengeTodayResponse>('/daily-challenge/today-stream')
   },
 
   complete: async () => {
@@ -611,8 +688,8 @@ export const dailyChallengeApi = {
     return response.data
   },
 
-  getStats: async () => {
-    return streamEndpoint('/daily-challenge/stats-stream')
+  getStats: async (): Promise<DailyChallengeStatsResponse> => {
+    return streamEndpoint<DailyChallengeStatsResponse>('/daily-challenge/stats-stream')
   },
 }
 
@@ -642,8 +719,8 @@ export const conversationApi = {
 }
 
 export const adminApi = {
-  getStats: async () => {
-    return streamEndpoint('/admin/stats-stream')
+  getStats: async (): Promise<AdminSystemStatsResponse> => {
+    return streamEndpoint<AdminSystemStatsResponse>('/admin/stats-stream')
   },
 
   getUsers: async (page = 1, pageSize = 20, search?: string) => {

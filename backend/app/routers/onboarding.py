@@ -87,12 +87,46 @@ def get_onboarding_status(
     ).first()
 
     if not onboarding:
+        # Backfill onboarding for legacy users that already have learning activity.
+        progress_exists = (
+            db.query(models.UserProgress.id)
+            .filter(models.UserProgress.user_id == current_user.id)
+            .first()
+            is not None
+        )
+        story_exists = (
+            db.query(models.Story.id)
+            .filter(models.Story.author_id == current_user.id)
+            .first()
+            is not None
+        )
+        gamification = db.query(models.UserGamification).filter(
+            models.UserGamification.user_id == current_user.id
+        ).first()
+        gamification_exists = bool(
+            gamification and (
+                (gamification.total_xp or 0) > 0
+                or (gamification.total_words_reviewed or 0) > 0
+                or (gamification.total_stories_read or 0) > 0
+            )
+        )
+        has_legacy_activity = progress_exists or story_exists or gamification_exists
+
+        max_hsk_level = (
+            db.query(func.max(models.HanziWord.hsk_level))
+            .join(models.UserProgress, models.UserProgress.word_id == models.HanziWord.id)
+            .filter(models.UserProgress.user_id == current_user.id)
+            .scalar()
+        )
+        inferred_level = max(1, min(6, int(max_hsk_level or 1)))
+
         # Create default onboarding record
         onboarding = models.UserOnboarding(
             user_id=current_user.id,
-            onboarding_completed=False,
-            current_step=0,
-            determined_hsk_level=1
+            onboarding_completed=has_legacy_activity,
+            current_step=4 if has_legacy_activity else 0,
+            determined_hsk_level=inferred_level,
+            completed_at=datetime.now(dt_timezone.utc) if has_legacy_activity else None,
         )
         db.add(onboarding)
         db.commit()

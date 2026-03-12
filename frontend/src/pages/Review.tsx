@@ -57,6 +57,7 @@ export default function Review() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [showQuizResult, setShowQuizResult] = useState(false)
   const [isCorrectAnswer, setIsCorrectAnswer] = useState(false)
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false)
 
   useEffect(() => {
     if (!user) {
@@ -154,9 +155,10 @@ export default function Review() {
 
   const handleReview = async (quality: number) => {
     const currentItem = reviewItems[currentIndex]
-    if (!currentItem) return
+    if (!currentItem || isSubmittingReview) return
 
     try {
+      setIsSubmittingReview(true)
       // Auto-adjust quality based on quiz result if quiz was attempted
       let finalQuality = quality
       if (selectedAnswer !== null && showQuizResult) {
@@ -169,7 +171,24 @@ export default function Review() {
         }
       }
 
-      await learningApi.recordReview(currentItem.word.id, finalQuality)
+      const submitReview = async (attempt: number = 1) => {
+        try {
+          await learningApi.recordReview(currentItem.word.id, finalQuality)
+        } catch (error: any) {
+          const status = error?.response?.status
+          const shouldRetry = (!status || status >= 500) && attempt < 2
+          if (shouldRetry) {
+            setTimeout(() => {
+              void submitReview(attempt + 1)
+            }, 1200)
+            return
+          }
+          toast.error('Review sync failed. Check your connection and try again.')
+        }
+      }
+
+      // Fire-and-forget to keep the review flow snappy even when backend is slow.
+      void submitReview()
 
       // Update session stats
       setSessionStats(prev => {
@@ -202,11 +221,13 @@ export default function Review() {
           // Session complete
           toast.success(`Review session complete! You reviewed ${reviewItems.length} words.`)
         }
+        setIsSubmittingReview(false)
       }, 1000)
 
     } catch (error) {
       console.error('Failed to record review:', error)
       toast.error('Failed to record review')
+      setIsSubmittingReview(false)
     }
   }
 

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import HanziWriter from 'hanzi-writer'
+import { appLogger } from '@/utils/debugLogger'
 import { Play, RotateCcw, Pencil, Eye } from 'lucide-react'
 
 interface StrokeOrderDisplayProps {
@@ -142,7 +143,7 @@ export default function StrokeOrderDisplay({
         }, 500)
       },
       onMistake: (strokeData: { strokeNum: number }) => {
-        console.log('Mistake on stroke:', strokeData.strokeNum)
+        appLogger.debug('Mistake on stroke', { strokeNum: strokeData.strokeNum })
       }
     })
   }

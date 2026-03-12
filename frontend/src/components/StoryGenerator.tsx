@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { storiesApi } from '@/services/api'
+import { apiLogger } from '@/utils/debugLogger'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import {
   Sparkles,
@@ -224,7 +225,7 @@ export default function StoryGenerator() {
       const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000')
       const token = localStorage.getItem('access_token')
 
-      console.log('[SSE] Connecting to', `${apiUrl}/stories/generate-stream`)
+      apiLogger.debug('SSE connecting', { url: `${apiUrl}/stories/generate-stream` })
 
       const res = await fetch(`${apiUrl}/stories/generate-stream`, {
         method: 'POST',
@@ -235,7 +236,7 @@ export default function StoryGenerator() {
         body: JSON.stringify(request),
       })
 
-      console.log('[SSE] Response status:', res.status, res.ok)
+      apiLogger.debug('SSE response status', { status: res.status, ok: res.ok })
 
       if (!res.ok) {
         const errData = await res.json().catch(() => null)
