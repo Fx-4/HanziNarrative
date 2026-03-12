@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { gamificationApi } from '@/services/api'
 import {
   Trophy, Medal, TrendingUp, Zap, Target, Award,
   Loader2, RotateCcw, Users, Calendar, BookOpen, Clock,
@@ -136,39 +135,94 @@ function PodiumCard({
 
 export default function Leaderboard() {
   const [loading, setLoading]               = useState(true)
+  const [loadingMessage, setLoadingMessage] = useState('Loading leaderboard...')
   const [error, setError]                   = useState<string | null>(null)
   const [data, setData]                     = useState<LeaderboardResponse | null>(null)
   const [selectedMetric, setSelectedMetric] = useState<MetricType>('total_xp')
   const [period, setPeriod]                 = useState<PeriodType>('all_time')
 
-  useEffect(() => {
-    let cancelled = false
+  const loadLeaderboardRealtime = async (signal?: AbortSignal) => {
     setData(null)
     setLoading(true)
     setError(null)
-    gamificationApi.getLeaderboard(50, selectedMetric, period)
-      .then(response => {
-        if (!cancelled) { setData(response); setLoading(false) }
+    setLoadingMessage('Connecting to leaderboard service...')
+
+    try {
+      const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000')
+      const token = localStorage.getItem('access_token')
+      const params = new URLSearchParams({
+        limit: '50',
+        metric: selectedMetric,
+        period,
       })
-      .catch((err: { response?: { data?: { detail?: string } }; message?: string }) => {
-        if (!cancelled) {
-          setError(err.response?.data?.detail || 'Failed to load leaderboard')
-          setLoading(false)
+
+      const res = await fetch(`${apiUrl}/gamification/leaderboard-stream?${params.toString()}`, {
+        method: 'GET',
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        signal,
+      })
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => null)
+        throw new Error(errData?.detail || `Server error ${res.status}`)
+      }
+
+      if (!res.body) {
+        throw new Error('No response body')
+      }
+
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+      let gotDone = false
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+        const parts = buffer.split('\n\n')
+        buffer = parts.pop() ?? ''
+
+        for (const part of parts) {
+          const line = part.trim()
+          if (!line.startsWith('data: ')) continue
+          const event = JSON.parse(line.slice(6))
+
+          if (event.type === 'progress') {
+            setLoadingMessage(event.message || 'Loading leaderboard...')
+          } else if (event.type === 'done') {
+            gotDone = true
+            setData(event.data)
+            setLoading(false)
+            setLoadingMessage('')
+          } else if (event.type === 'error') {
+            throw new Error(event.message || 'Failed to load leaderboard')
+          }
         }
-      })
-    return () => { cancelled = true }
+      }
+
+      if (!gotDone) {
+        throw new Error('Leaderboard stream closed before completion')
+      }
+    } catch (err: any) {
+      if (err?.name === 'AbortError') return
+      setError(err?.message || 'Failed to load leaderboard')
+      setLoading(false)
+      setLoadingMessage('')
+    }
+  }
+
+  useEffect(() => {
+    const controller = new AbortController()
+    loadLeaderboardRealtime(controller.signal)
+    return () => { controller.abort() }
   }, [selectedMetric, period])
 
   const fetchLeaderboard = () => {
-    setData(null)
-    setLoading(true)
-    setError(null)
-    gamificationApi.getLeaderboard(50, selectedMetric, period)
-      .then(response => { setData(response); setLoading(false) })
-      .catch((err: { response?: { data?: { detail?: string } }; message?: string }) => {
-        setError(err.response?.data?.detail || 'Failed to load leaderboard')
-        setLoading(false)
-      })
+    loadLeaderboardRealtime()
   }
 
   const activeMetricCfg = METRICS.find(m => m.id === selectedMetric)!
@@ -322,7 +376,7 @@ export default function Leaderboard() {
       {loading ? (
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-12 flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-          <p className="text-sm text-gray-400">Loading leaderboard…</p>
+          <p className="text-sm text-gray-400">{loadingMessage || 'Loading leaderboard…'}</p>
         </div>
       ) : error ? (
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-10 text-center">

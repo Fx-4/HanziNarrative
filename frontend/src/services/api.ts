@@ -29,7 +29,8 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 15000, // 15 s — prevents UI hanging on slow/dead endpoints
+  // Render free tier/cold starts can exceed 15s; keep a generous timeout.
+  timeout: 60000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -55,8 +56,11 @@ api.interceptors.response.use(
     const url = error.config?.url ?? 'unknown'
     const method = error.config?.method?.toUpperCase() ?? '?'
     const detail = error.response?.data?.detail ?? error.message
+    const isTimeout = error.code === 'ECONNABORTED' || /timeout/i.test(String(error.message))
 
-    if (status === 401) {
+    if (isTimeout) {
+      apiLogger.warn(`← TIMEOUT ${method} ${url} — request exceeded client timeout`)
+    } else if (status === 401) {
       apiLogger.warn(`← 401 ${method} ${url} — session expired, redirecting to login`)
       localStorage.removeItem('access_token')
       localStorage.removeItem('user')
