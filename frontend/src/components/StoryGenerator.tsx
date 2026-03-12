@@ -245,6 +245,7 @@ export default function StoryGenerator() {
 
       if (!res.body) {
         throw new Error('No response body')
+      }
 
       const reader = res.body!.getReader()
       const decoder = new TextDecoder()
