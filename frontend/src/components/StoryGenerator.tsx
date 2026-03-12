@@ -36,13 +36,6 @@ interface GeneratedStory {
   grammar_points?: string[]
 }
 
-interface GenerateResponse {
-  story: GeneratedStory
-  story_id: number
-  mode: string
-  usage_stats: LimitStats
-}
-
 interface LimitStats {
   used_today: number
   limit_daily: number
