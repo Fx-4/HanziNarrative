@@ -224,6 +224,8 @@ export default function StoryGenerator() {
       const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000')
       const token = localStorage.getItem('access_token')
 
+      console.log('[SSE] Connecting to', `${apiUrl}/stories/generate-stream`)
+
       const res = await fetch(`${apiUrl}/stories/generate-stream`, {
         method: 'POST',
         headers: {
@@ -233,10 +235,16 @@ export default function StoryGenerator() {
         body: JSON.stringify(request),
       })
 
+      console.log('[SSE] Response status:', res.status, res.ok)
+
       if (!res.ok) {
         const errData = await res.json().catch(() => null)
+        console.error('[SSE] Error response:', res.status, errData)
         throw new Error(errData?.detail || `Server error ${res.status}`)
       }
+
+      if (!res.body) {
+        throw new Error('No response body')
 
       const reader = res.body!.getReader()
       const decoder = new TextDecoder()
@@ -278,6 +286,7 @@ export default function StoryGenerator() {
         }
       }
     } catch (err: any) {
+      console.error('[SSE] Generation error:', err)
       setError(err.message || 'Failed to generate story')
     } finally {
       setLoading(false)
