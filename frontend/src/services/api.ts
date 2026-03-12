@@ -148,7 +148,7 @@ export const storiesApi = {
     include_dialogue?: boolean
     cultural_theme?: string
   }) => {
-    const response = await api.post('/stories/generate', request)
+    const response = await api.post('/stories/generate', request, { timeout: 0 }) // no timeout — wait until AI finishes
     return response.data
   },
 

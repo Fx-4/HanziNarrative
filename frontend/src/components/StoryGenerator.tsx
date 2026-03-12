@@ -229,7 +229,20 @@ export default function StoryGenerator() {
 
       const response: GenerateResponse = await storiesApi.generateStory(request)
 
-      setGeneratedStory(response.story)
+      // Normalize the story shape from backend field names
+      const raw = response.story as any
+      const normalized: GeneratedStory = {
+        ...raw,
+        pinyin: raw.pinyin ?? raw.content_pinyin,
+        hsk_level: raw.hsk_level ?? raw.difficulty_level ?? hskLevel,
+        vocabulary: raw.vocabulary ?? (raw.key_vocabulary?.map((v: any) => ({
+          word: v.word ?? v.simplified,
+          pinyin: v.pinyin,
+          meaning: v.meaning ?? v.english,
+        }))),
+      }
+
+      setGeneratedStory(normalized)
       setGeneratedStoryId(response.story_id)
       if (response.usage_stats) {
         setUsageStats(response.usage_stats)
