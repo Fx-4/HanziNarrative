@@ -178,6 +178,7 @@ export default function StoryGenerator() {
 
   // Generation state
   const [loading, setLoading] = useState(false)
+  const [loadingMessage, setLoadingMessage] = useState<string | null>(null)
   const [generatedStory, setGeneratedStory] = useState<GeneratedStory | null>(null)
   const [generatedStoryId, setGeneratedStoryId] = useState<number | null>(null)
   const [usageStats, setUsageStats] = useState<LimitStats | null>(null)
@@ -192,6 +193,7 @@ export default function StoryGenerator() {
 
   const handleGenerate = async () => {
     setLoading(true)
+    setLoadingMessage('Connecting...')
     setError(null)
     setGeneratedStory(null)
     setGeneratedStoryId(null)
@@ -207,7 +209,7 @@ export default function StoryGenerator() {
         .map(v => v.trim())
         .filter(v => v.length > 0)
 
-      const request: Parameters<typeof storiesApi.generateStory>[0] = {
+      const request: Record<string, any> = {
         hsk_level: hskLevel,
         topic: topic || undefined,
         character_names: characterNamesArray.length > 0 ? characterNamesArray : undefined,
@@ -215,7 +217,6 @@ export default function StoryGenerator() {
         mode,
       }
 
-      // Add advanced fields only in advanced mode
       if (isAdvanced) {
         if (genre) request.genre = genre
         if (tone) request.tone = tone
@@ -227,34 +228,67 @@ export default function StoryGenerator() {
         if (vocabArray.length > 0) request.target_vocabulary = vocabArray
       }
 
-      const response: GenerateResponse = await storiesApi.generateStory(request)
+      const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000')
+      const token = localStorage.getItem('access_token')
 
-      // Normalize the story shape from backend field names
-      const raw = response.story as any
-      const normalized: GeneratedStory = {
-        ...raw,
-        pinyin: raw.pinyin ?? raw.content_pinyin,
-        hsk_level: raw.hsk_level ?? raw.difficulty_level ?? hskLevel,
-        vocabulary: raw.vocabulary ?? (raw.key_vocabulary?.map((v: any) => ({
-          word: v.word ?? v.simplified,
-          pinyin: v.pinyin,
-          meaning: v.meaning ?? v.english,
-        }))),
+      const res = await fetch(`${apiUrl}/stories/generate-stream`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(request),
+      })
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => null)
+        throw new Error(errData?.detail || `Server error ${res.status}`)
       }
 
-      setGeneratedStory(normalized)
-      setGeneratedStoryId(response.story_id)
-      if (response.usage_stats) {
-        setUsageStats(response.usage_stats)
+      const reader = res.body!.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+        const parts = buffer.split('\n\n')
+        buffer = parts.pop() ?? ''
+
+        for (const part of parts) {
+          const line = part.trim()
+          if (!line.startsWith('data: ')) continue
+          const event = JSON.parse(line.slice(6))
+
+          if (event.type === 'progress') {
+            setLoadingMessage(event.message)
+          } else if (event.type === 'done') {
+            const raw = event.story as any
+            const normalized: GeneratedStory = {
+              ...raw,
+              pinyin: raw.pinyin ?? raw.content_pinyin,
+              hsk_level: raw.hsk_level ?? raw.difficulty_level ?? hskLevel,
+              vocabulary: raw.vocabulary ?? (raw.key_vocabulary?.map((v: any) => ({
+                word: v.word ?? v.simplified,
+                pinyin: v.pinyin,
+                meaning: v.meaning ?? v.english,
+              }))),
+            }
+            setGeneratedStory(normalized)
+            setGeneratedStoryId(event.story_id)
+            if (event.usage_stats) setUsageStats(event.usage_stats)
+          } else if (event.type === 'error') {
+            setError(event.message || 'Failed to generate story')
+          }
+        }
       }
     } catch (err: any) {
-      if (err.response?.status === 429) {
-        setError('Rate limit reached. Please wait a while before generating another story.')
-      } else {
-        setError(err.response?.data?.detail || 'Failed to generate story')
-      }
+      setError(err.message || 'Failed to generate story')
     } finally {
       setLoading(false)
+      setLoadingMessage(null)
     }
   }
 
@@ -660,7 +694,7 @@ export default function StoryGenerator() {
               {loading ? (
                 <>
                   <LoadingSpinner size="sm" className="mr-2" />
-                  {isAdvanced ? 'Crafting Your Custom Story...' : 'Generating Story...'}
+                  {loadingMessage || (isAdvanced ? 'Crafting Your Custom Story...' : 'Generating Story...')}
                 </>
               ) : (
                 <>

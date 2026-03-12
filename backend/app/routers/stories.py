@@ -1,7 +1,9 @@
 from typing import List, Optional
 from datetime import datetime, timezone
 import logging
-from fastapi import APIRouter, Depends, HTTPException, status
+import json
+from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, Table, MetaData, text
 from pydantic import BaseModel
@@ -288,10 +290,141 @@ async def generate_ai_story_stream(
     current_user: models.User = Depends(auth.get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Streaming endpoint disabled — use /stories/generate instead (free providers)."""
-    raise HTTPException(
-        status_code=410,
-        detail="Streaming is no longer supported. Use POST /stories/generate instead."
+    """Stream story generation progress via Server-Sent Events."""
+
+    def sse(data: dict) -> str:
+        return f"data: {json.dumps(data)}\n\n"
+
+    async def event_generator():
+        rate_feature = 'story_generation'
+
+        # ── Rate limit check ────────────────────────────────────────
+        try:
+            check_rate_limit(db, current_user, rate_feature)
+        except HTTPException as e:
+            yield sse({"type": "error", "message": e.detail})
+            return
+
+        yield sse({"type": "progress", "step": 1, "message": "Starting AI generation..."})
+
+        try:
+            # ── Build enriched topic ─────────────────────────────────
+            enriched_topic = request.topic or ""
+            advanced_instructions = ""
+
+            if request.mode == "advanced":
+                parts = []
+                if request.genre:
+                    parts.append(f"Genre: {request.genre}")
+                if request.tone:
+                    parts.append(f"Tone: {request.tone}")
+                if request.setting:
+                    parts.append(f"Setting: {request.setting}")
+                if request.narrative_perspective:
+                    parts.append(f"Narrative perspective: {request.narrative_perspective}")
+                if request.include_dialogue is not None:
+                    parts.append(f"Include dialogue: {'yes, plenty of it' if request.include_dialogue else 'minimal or none'}")
+                if request.cultural_theme:
+                    parts.append(f"Cultural theme to weave in: {request.cultural_theme}")
+                if request.target_grammar:
+                    parts.append(f"Must use these grammar patterns: {', '.join(request.target_grammar)}")
+                if request.target_vocabulary:
+                    parts.append(f"Must incorporate these vocabulary words: {', '.join(request.target_vocabulary)}")
+                if parts:
+                    advanced_instructions = "\n".join(parts)
+
+            full_topic = enriched_topic
+            if advanced_instructions:
+                full_topic = (
+                    f"{enriched_topic}\n\nAdditional creative requirements:\n{advanced_instructions}"
+                    if enriched_topic
+                    else f"Additional creative requirements:\n{advanced_instructions}"
+                )
+
+            # ── Call AI ──────────────────────────────────────────────
+            yield sse({"type": "progress", "step": 2, "message": "AI is writing your story..."})
+
+            story_data = await _generate_story(
+                hsk_level=request.hsk_level,
+                topic=full_topic or None,
+                character_names=request.character_names,
+                length=request.length
+            )
+
+            # ── Save to DB ───────────────────────────────────────────
+            yield sse({"type": "progress", "step": 3, "message": "Saving story..."})
+
+            db_story = models.Story(
+                title=story_data.get('title', 'Generated Story'),
+                title_english=story_data.get('title_english', ''),
+                content=story_data.get('content', ''),
+                content_pinyin=story_data.get('content_pinyin', ''),
+                english_translation=story_data.get('content_english', ''),
+                hsk_level=request.hsk_level,
+                author_id=current_user.id,
+                is_published=True
+            )
+            db.add(db_story)
+            db.commit()
+            db.refresh(db_story)
+
+            record_ai_usage(
+                db=db,
+                user=current_user,
+                feature=rate_feature,
+                request_data={
+                    'hsk_level': request.hsk_level,
+                    'topic': request.topic,
+                    'length': request.length,
+                    'mode': request.mode,
+                    'story_id': db_story.id
+                }
+            )
+
+            words_used = story_data.get('words_used', [])
+            if words_used:
+                word_ids = []
+                for word_char in words_used:
+                    word = db.query(models.HanziWord).filter(
+                        models.HanziWord.simplified == word_char,
+                        models.HanziWord.hsk_level <= request.hsk_level
+                    ).first()
+                    if word:
+                        word_ids.append(word.id)
+                if word_ids:
+                    story_words = db.query(models.HanziWord).filter(
+                        models.HanziWord.id.in_(word_ids)
+                    ).all()
+                    db_story.words = story_words
+                    db.commit()
+                    db.refresh(db_story)
+
+            usage_stats = get_usage_stats(db, current_user, rate_feature)
+
+            # ── Done — send result ───────────────────────────────────
+            yield sse({
+                "type": "done",
+                "story": story_data,
+                "story_id": db_story.id,
+                "word_count": len(db_story.words),
+                "mode": request.mode,
+                "usage_stats": usage_stats
+            })
+
+        except HTTPException as e:
+            yield sse({"type": "error", "message": e.detail})
+        except Exception as e:
+            logger.error(f"SSE story generation failed: {str(e)}", exc_info=True)
+            yield sse({"type": "error", "message": "Failed to generate story. Please try again later."})
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",   # disable Nginx/Render proxy buffering
+            "Connection": "keep-alive",
+        }
     )
 
 
