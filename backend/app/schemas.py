@@ -120,6 +120,7 @@ class StoryBase(BaseModel):
     content_pinyin: Optional[str] = None
     english_translation: Optional[str] = None
     hsk_level: int
+    category: Optional[str] = None
 
 
 class StoryCreate(StoryBase):

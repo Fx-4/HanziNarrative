@@ -34,6 +34,7 @@ export default function Stories() {
   const [selectedLevel, setSelectedLevel] = useState<number | undefined>()
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'curated' | 'ai_generated'>('all')
 
   useEffect(() => {
     loadStories()
@@ -70,6 +71,7 @@ export default function Stories() {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       is_published: false,
+      category: 'ai_generated',
     }
     setStories(prev => {
       // Avoid duplicates if the story is already in the list
@@ -79,12 +81,18 @@ export default function Stories() {
   }
 
   // Client-side filter — no extra API call on every keystroke
-  const filteredStories = searchQuery.trim()
-    ? stories.filter(s =>
-        s.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.title_english?.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : stories
+  const filteredStories = stories
+    .filter(s =>
+      !searchQuery.trim() ||
+      s.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.title_english?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .filter(s => {
+      if (categoryFilter === 'all') return true
+      // Treat null/undefined category as 'curated' for backward compatibility
+      const storyCategory = s.category ?? 'curated'
+      return storyCategory === categoryFilter
+    })
 
   const levels = [
     { value: undefined, label: 'All Levels' },
@@ -182,6 +190,31 @@ export default function Stories() {
                 </motion.div>
               ))}
             </div>
+
+            {/* Category filter */}
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+              Filter by Category
+            </label>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {([
+                { value: 'all', label: 'All Stories' },
+                { value: 'curated', label: '📚 Curated' },
+                { value: 'ai_generated', label: '✨ AI Generated' },
+              ] as const).map((cat) => (
+                <button
+                  key={cat.value}
+                  onClick={() => setCategoryFilter(cat.value)}
+                  className={`px-3 py-1.5 rounded-xl text-sm font-semibold cursor-pointer transition-colors ${
+                    categoryFilter === cat.value
+                      ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                      : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+
             {/* Client-side search — filters already-loaded stories with no extra API call */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
@@ -230,13 +263,25 @@ export default function Stories() {
                 >
                   <Link to={`/stories/${story.id}`} className="block h-full">
                     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 h-full p-5 hover:shadow-md transition-shadow duration-200 cursor-pointer">
-                      <div className="flex justify-between items-start mb-4">
+                      <div className="flex justify-between items-start mb-2">
                         <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex-1 mr-2">
                           {story.title}
                         </h3>
                         <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400 flex-shrink-0">
                           HSK {story.hsk_level}
                         </span>
+                      </div>
+                      {/* Category badge */}
+                      <div className="mb-3">
+                        {(story.category ?? 'curated') === 'ai_generated' ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300">
+                            ✨ AI Generated
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
+                            📚 Curated
+                          </span>
+                        )}
                       </div>
                       <p className="text-gray-600 dark:text-gray-400 line-clamp-3 mb-4 text-sm sm:text-base">
                         {story.content.substring(0, 100)}...

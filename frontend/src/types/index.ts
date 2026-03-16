@@ -39,6 +39,7 @@ export interface Story {
   created_at: string
   updated_at: string
   is_published: boolean
+  category?: 'curated' | 'ai_generated' | string
 }
 
 export interface StoryWord {

@@ -71,6 +71,7 @@ class Story(Base):
     hsk_level = Column(Integer, index=True, nullable=False)
     author_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     is_published = Column(Boolean, default=False)
+    category = Column(String, nullable=True, default="curated")  # "curated" or "ai_generated"
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     soft_deleted_at = Column(DateTime(timezone=True), nullable=True)

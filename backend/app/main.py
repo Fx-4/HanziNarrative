@@ -53,6 +53,7 @@ def _auto_seed_stories():
                     hsk_level=s["hsk_level"],
                     author_id=user.id,
                     is_published=True,
+                    category="curated",
                 )
                 db.add(story)
                 added += 1

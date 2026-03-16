@@ -48,6 +48,7 @@ class StoryGenerateRequest(BaseModel):
 @router.get("/", response_model=List[schemas.Story])
 def get_stories(
     hsk_level: Optional[int] = None,
+    category: Optional[str] = None,
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db)
@@ -58,6 +59,8 @@ def get_stories(
     )
     if hsk_level:
         query = query.filter(models.Story.hsk_level == hsk_level)
+    if category:
+        query = query.filter(models.Story.category == category)
     stories = query.offset(skip).limit(limit).all()
     return stories
 
@@ -219,7 +222,8 @@ async def generate_ai_story(
             english_translation=story_data.get('content_english', ''),
             hsk_level=request.hsk_level,
             author_id=current_user.id,
-            is_published=True  # Auto-publish AI generated stories
+            is_published=True,  # Auto-publish AI generated stories
+            category="ai_generated"
         )
         db.add(db_story)
         db.commit()
@@ -362,7 +366,8 @@ async def generate_ai_story_stream(
                 english_translation=story_data.get('content_english', ''),
                 hsk_level=request.hsk_level,
                 author_id=current_user.id,
-                is_published=True
+                is_published=True,
+                category="ai_generated"
             )
             db.add(db_story)
             db.commit()

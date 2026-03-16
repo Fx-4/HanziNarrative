@@ -792,9 +792,20 @@ export default function StoryReader() {
               {story.title_english}
             </p>
           )}
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-700">
-            HSK {story.hsk_level}
-          </span>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-700">
+              HSK {story.hsk_level}
+            </span>
+            {(story.category ?? 'curated') === 'ai_generated' ? (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700">
+                ✨ AI Generated
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                📚 Curated
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Interactive Controls */}

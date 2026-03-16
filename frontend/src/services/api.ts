@@ -188,8 +188,10 @@ export const authApi = {
 }
 
 export const storiesApi = {
-  getAll: async (hskLevel?: number): Promise<Story[]> => {
-    const params = hskLevel ? { hsk_level: hskLevel } : {}
+  getAll: async (hskLevel?: number, category?: string): Promise<Story[]> => {
+    const params: any = {}
+    if (hskLevel) params.hsk_level = hskLevel
+    if (category) params.category = category
     const response = await api.get('/stories/', { params })
     return response.data
   },
