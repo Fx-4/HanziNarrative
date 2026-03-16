@@ -785,7 +785,7 @@ export default function Practice() {
       } else {
         setTestComplete(true)
       }
-    }, 1500)
+    }, 800)
   }
 
   const renderModeSelection = () => (

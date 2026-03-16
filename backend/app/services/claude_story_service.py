@@ -419,3 +419,220 @@ Output ONLY JSON:
 
     cleaned = full_text.strip().lstrip("```json").lstrip("```").rstrip("```").strip()
     return json.loads(cleaned)
+
+
+# ---------------------------------------------------------------------------
+# Adventure streaming generators (SSE)
+# ---------------------------------------------------------------------------
+
+def _build_adventure_start_prompt(hsk_level: int, topic: str, setting: str, archetype: str) -> str:
+    return f"""Create the opening of an interactive Chinese learning adventure for HSK {hsk_level} students.
+
+Setting: {setting}
+Situation: {archetype}
+Topic flavour: {topic}
+
+Requirements:
+- 2–4 sentences of engaging Chinese text at HSK {hsk_level} level
+- End with a genuine decision moment that matters to the protagonist
+- 3 distinct choices — each leads somewhere clearly different
+
+Output ONLY this JSON:
+{{
+  "paragraph": "Opening in simplified Chinese",
+  "paragraph_pinyin": "Pinyin with diacritics",
+  "paragraph_english": "English translation",
+  "choices": [
+    {{"id": 1, "text": "Chinese", "text_pinyin": "pinyin", "text_english": "English"}},
+    {{"id": 2, "text": "Chinese", "text_pinyin": "pinyin", "text_english": "English"}},
+    {{"id": 3, "text": "Chinese", "text_pinyin": "pinyin", "text_english": "English"}}
+  ],
+  "setting": "{setting}"
+}}"""
+
+
+def _build_adventure_continue_prompt(
+    story_so_far: str, chosen_option: str, hsk_level: int, step_number: int
+) -> str:
+    is_ending = step_number >= 5
+    ending_instruction = (
+        'This is the FINAL paragraph — write a satisfying conclusion. '
+        'Set "is_ending": true and include a "moral" field. Do NOT include "choices".'
+        if is_ending
+        else 'Provide 3 new choices. Set "is_ending": false.'
+    )
+    moral_field = '"moral": "Lesson in English",' if is_ending else ""
+    return f"""Continue this interactive Chinese adventure (HSK {hsk_level}).
+
+Story so far:
+{story_so_far}
+
+The reader chose: {chosen_option}
+
+Write 2–4 new sentences continuing naturally from that choice.
+Use only HSK {hsk_level} vocabulary. Keep it engaging.
+{ending_instruction}
+
+Output ONLY JSON:
+{{
+  "paragraph": "Next paragraph in simplified Chinese",
+  "paragraph_pinyin": "Pinyin with diacritics",
+  "paragraph_english": "English translation",
+  "is_ending": {'true' if is_ending else 'false'},
+  {moral_field}
+  "choices": [
+    {{"id": 1, "text": "Chinese", "text_pinyin": "pinyin", "text_english": "English"}},
+    {{"id": 2, "text": "Chinese", "text_pinyin": "pinyin", "text_english": "English"}},
+    {{"id": 3, "text": "Chinese", "text_pinyin": "pinyin", "text_english": "English"}}
+  ]
+}}"""
+
+
+async def generate_adventure_start_stream(
+    hsk_level: int,
+    topic: str = "daily life",
+) -> AsyncGenerator[str, None]:
+    """
+    Async generator that streams SSE events for adventure start.
+    Yields token events while the paragraph text arrives, then a final `done` event
+    containing the full parsed adventure data.
+    """
+    client = _get_client()
+
+    setting = random.choice(SETTINGS_BANK)
+    level_archetypes = ARCHETYPES_BY_LEVEL.get(hsk_level, ARCHETYPES_BY_LEVEL[3])
+    archetype = random.choice(level_archetypes)
+    prompt = _build_adventure_start_prompt(hsk_level, topic, setting, archetype)
+
+    full_text = ""
+    # Buffer to detect when paragraph text starts streaming so we can send tokens
+    paragraph_started = False
+    paragraph_buf = ""
+
+    async with client.messages.stream(
+        model="claude-opus-4-6",
+        max_tokens=1024,
+        thinking={"type": "adaptive"},
+        messages=[{"role": "user", "content": prompt}],
+    ) as stream:
+        async for text in stream.text_stream:
+            full_text += text
+
+            # Extract paragraph characters from accumulated JSON as they arrive
+            # Look for the "paragraph": "..." field and stream its content
+            if not paragraph_started:
+                # Check if we've passed the paragraph key
+                search_in = full_text
+                para_key_pos = search_in.find('"paragraph"')
+                if para_key_pos != -1:
+                    after_key = search_in[para_key_pos + len('"paragraph"'):]
+                    # Find opening quote of value
+                    open_q = after_key.find('"')
+                    if open_q != -1:
+                        paragraph_started = True
+                        paragraph_buf = after_key[open_q + 1:]
+            else:
+                paragraph_buf += text
+
+            if paragraph_started and paragraph_buf:
+                # Find how many characters to emit before the closing quote
+                # We emit everything before an unescaped closing quote
+                emit = ""
+                i = 0
+                while i < len(paragraph_buf):
+                    ch = paragraph_buf[i]
+                    if ch == '\\' and i + 1 < len(paragraph_buf):
+                        escaped = paragraph_buf[i + 1]
+                        if escaped == 'n':
+                            emit += '\n'
+                        elif escaped == '"':
+                            emit += '"'
+                        else:
+                            emit += '\\' + escaped
+                        i += 2
+                        continue
+                    if ch == '"':
+                        # Closing quote — stop
+                        paragraph_buf = ""
+                        paragraph_started = False
+                        break
+                    emit += ch
+                    i += 1
+                paragraph_buf = paragraph_buf[i:] if paragraph_started else ""
+
+                if emit:
+                    yield f"data: {json.dumps({'type': 'token', 'text': emit})}\n\n"
+
+    # Parse full JSON and send done event
+    cleaned = full_text.strip().lstrip("```json").lstrip("```").rstrip("```").strip()
+    data = json.loads(cleaned)
+    yield f"data: {json.dumps({'type': 'done', 'data': data})}\n\n"
+
+
+async def generate_adventure_continue_stream(
+    story_so_far: str,
+    chosen_option: str,
+    hsk_level: int,
+    step_number: int = 2,
+) -> AsyncGenerator[str, None]:
+    """
+    Async generator that streams SSE events for adventure continue.
+    Yields token events while the paragraph text arrives, then a final `done` event.
+    """
+    client = _get_client()
+    prompt = _build_adventure_continue_prompt(story_so_far, chosen_option, hsk_level, step_number)
+
+    full_text = ""
+    paragraph_started = False
+    paragraph_buf = ""
+
+    async with client.messages.stream(
+        model="claude-opus-4-6",
+        max_tokens=1024,
+        thinking={"type": "adaptive"},
+        messages=[{"role": "user", "content": prompt}],
+    ) as stream:
+        async for text in stream.text_stream:
+            full_text += text
+
+            if not paragraph_started:
+                search_in = full_text
+                para_key_pos = search_in.find('"paragraph"')
+                if para_key_pos != -1:
+                    after_key = search_in[para_key_pos + len('"paragraph"'):]
+                    open_q = after_key.find('"')
+                    if open_q != -1:
+                        paragraph_started = True
+                        paragraph_buf = after_key[open_q + 1:]
+            else:
+                paragraph_buf += text
+
+            if paragraph_started and paragraph_buf:
+                emit = ""
+                i = 0
+                while i < len(paragraph_buf):
+                    ch = paragraph_buf[i]
+                    if ch == '\\' and i + 1 < len(paragraph_buf):
+                        escaped = paragraph_buf[i + 1]
+                        if escaped == 'n':
+                            emit += '\n'
+                        elif escaped == '"':
+                            emit += '"'
+                        else:
+                            emit += '\\' + escaped
+                        i += 2
+                        continue
+                    if ch == '"':
+                        paragraph_buf = ""
+                        paragraph_started = False
+                        break
+                    emit += ch
+                    i += 1
+                paragraph_buf = paragraph_buf[i:] if paragraph_started else ""
+
+                if emit:
+                    yield f"data: {json.dumps({'type': 'token', 'text': emit})}\n\n"
+
+    cleaned = full_text.strip().lstrip("```json").lstrip("```").rstrip("```").strip()
+    data = json.loads(cleaned)
+    yield f"data: {json.dumps({'type': 'done', 'data': data})}\n\n"

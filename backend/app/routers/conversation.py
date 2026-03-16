@@ -5,6 +5,7 @@ Rate limited to stay within free tier: 3 starts/day, 20 replies/day.
 from typing import List
 from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -15,6 +16,8 @@ from ..services.conversation_service import (
     TOPICS,
     start_conversation,
     reply_to_message,
+    stream_reply_to_message,
+    stream_start_conversation,
 )
 
 router = APIRouter(prefix="/conversation", tags=["conversation"])
@@ -75,3 +78,54 @@ async def reply(
     result = await reply_to_message(req.message, req.hsk_level, history)
     record_ai_usage(db, current_user, "conversation_reply")
     return result
+
+
+_SSE_HEADERS = {
+    "Cache-Control": "no-cache",
+    "X-Accel-Buffering": "no",
+    "Connection": "keep-alive",
+}
+
+
+@router.post("/start-stream")
+async def start_stream(
+    req: StartRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Start a new conversation and stream the AI greeting token by token."""
+    check_rate_limit(db, current_user, "conversation_start")
+
+    if req.hsk_level < 1 or req.hsk_level > 6:
+        raise HTTPException(status_code=400, detail="HSK level must be 1-6")
+
+    record_ai_usage(db, current_user, "conversation_start")
+
+    return StreamingResponse(
+        stream_start_conversation(req.hsk_level, req.topic),
+        media_type="text/event-stream",
+        headers=_SSE_HEADERS,
+    )
+
+
+@router.post("/reply-stream")
+async def reply_stream(
+    req: ReplyRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Send a message and stream the AI reply token by token. Rate: 20/day, 8/hour."""
+    check_rate_limit(db, current_user, "conversation_reply")
+
+    if not req.message.strip():
+        raise HTTPException(status_code=400, detail="Message cannot be empty")
+
+    record_ai_usage(db, current_user, "conversation_reply")
+
+    history = [{"role": m.role, "content": m.content} for m in req.history]
+
+    return StreamingResponse(
+        stream_reply_to_message(req.message, req.hsk_level, history),
+        media_type="text/event-stream",
+        headers=_SSE_HEADERS,
+    )

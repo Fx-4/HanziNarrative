@@ -58,7 +58,12 @@ def create_refresh_token(db: Session, user_id: int) -> str:
     return token
 
 
-def rotate_refresh_token(db: Session, refresh_token: str) -> models.User:
+def rotate_refresh_token(db: Session, refresh_token: str) -> tuple[models.User, str]:
+    """Validate the incoming refresh token, revoke it, and issue a new one.
+
+    Returns a (user, new_refresh_token) tuple so callers never need to reach
+    into ORM internals via transient attributes.
+    """
     token_row = db.query(models.RefreshToken).filter(models.RefreshToken.token == refresh_token).first()
     invalid_exc = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -80,6 +85,7 @@ def rotate_refresh_token(db: Session, refresh_token: str) -> models.User:
     if not user:
         raise invalid_exc
 
+    # Revoke old token and issue a new one (rotation)
     token_row.revoked_at = now
     new_token = secrets.token_urlsafe(48)
     token_row.replaced_by_token = new_token
@@ -88,9 +94,18 @@ def rotate_refresh_token(db: Session, refresh_token: str) -> models.User:
         token=new_token,
         expires_at=now + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS),
     ))
+
+    # Cleanup: delete all previously revoked/expired tokens for this user so
+    # the table doesn't grow without bound.
+    cutoff = now - timedelta(days=1)  # keep a 1-day grace window for audit purposes
+    db.query(models.RefreshToken).filter(
+        models.RefreshToken.user_id == user.id,
+        models.RefreshToken.revoked_at.isnot(None),
+        models.RefreshToken.revoked_at < cutoff,
+    ).delete(synchronize_session=False)
+
     db.commit()
-    user._new_refresh_token = new_token  # attach transient value for caller
-    return user
+    return user, new_token
 
 
 async def get_current_user(

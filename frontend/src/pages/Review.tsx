@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { learningApi } from '@/services/api'
 import { HanziWord } from '@/types'
@@ -37,6 +37,11 @@ interface QuizQuestion {
 export default function Review() {
   const navigate = useNavigate()
   const { user } = useAuthStore()
+  const isMountedRef = useRef(true)
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => { isMountedRef.current = false }
+  }, [])
   const [loading, setLoading] = useState(true)
   const [reviewItems, setReviewItems] = useState<ReviewItem[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -179,11 +184,13 @@ export default function Review() {
           const shouldRetry = (!status || status >= 500) && attempt < 2
           if (shouldRetry) {
             setTimeout(() => {
-              void submitReview(attempt + 1)
+              if (isMountedRef.current) void submitReview(attempt + 1)
             }, 1200)
             return
           }
-          toast.error('Review sync failed. Check your connection and try again.')
+          if (isMountedRef.current) {
+            toast.error('Review sync failed. Check your connection and try again.')
+          }
         }
       }
 

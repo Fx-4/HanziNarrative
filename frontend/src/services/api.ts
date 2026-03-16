@@ -28,72 +28,6 @@ import { apiLogger } from '@/utils/debugLogger'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
-type StreamOptions = {
-  method?: 'GET' | 'POST'
-  params?: Record<string, unknown>
-  body?: unknown
-  onProgress?: (message: string) => void
-}
-
-async function streamEndpoint<T>(path: string, options: StreamOptions = {}): Promise<T> {
-  const { method = 'GET', params, body, onProgress } = options
-
-  const qs = params
-    ? `?${new URLSearchParams(
-      Object.entries(params)
-        .filter(([, v]) => v !== undefined && v !== null)
-        .map(([k, v]) => [k, String(v)])
-    ).toString()}`
-    : ''
-
-  const token = localStorage.getItem('access_token')
-  const res = await fetch(`${API_URL}${path}${qs}`, {
-    method,
-    headers: {
-      ...(body ? { 'Content-Type': 'application/json' } : {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  })
-
-  if (!res.ok) {
-    const errData = await res.json().catch(() => null)
-    throw new Error(errData?.detail || `Server error ${res.status}`)
-  }
-
-  if (!res.body) {
-    throw new Error('No response body')
-  }
-
-  const reader = res.body.getReader()
-  const decoder = new TextDecoder()
-  let buffer = ''
-
-  while (true) {
-    const { done, value } = await reader.read()
-    if (done) break
-
-    buffer += decoder.decode(value, { stream: true })
-    const parts = buffer.split('\n\n')
-    buffer = parts.pop() ?? ''
-
-    for (const part of parts) {
-      const line = part.trim()
-      if (!line.startsWith('data: ')) continue
-      const event = JSON.parse(line.slice(6))
-
-      if (event.type === 'progress') {
-        onProgress?.(event.message || '')
-      } else if (event.type === 'done') {
-        return event.data as T
-      } else if (event.type === 'error') {
-        throw new Error(event.message || 'Stream request failed')
-      }
-    }
-  }
-
-  throw new Error('Stream closed before completion')
-}
 
 type LearningStatsResponse = {
   hsk_level: number | 'all'
@@ -251,11 +185,6 @@ export const authApi = {
   resetPassword: async (token: string, newPassword: string): Promise<void> => {
     await api.post('/auth/reset-password', { token, new_password: newPassword })
   },
-
-  refresh: async (refreshToken: string): Promise<AuthTokens> => {
-    const response = await api.post('/auth/refresh', { refresh_token: refreshToken })
-    return response.data
-  },
 }
 
 export const storiesApi = {
@@ -366,7 +295,8 @@ export const vocabularyApi = {
   },
 
   getWordOfTheDay: async (): Promise<{ word: HanziWord; date: string; message: string }> => {
-    return streamEndpoint<{ word: HanziWord; date: string; message: string }>('/vocabulary/word-of-the-day-stream')
+    const response = await api.get('/vocabulary/word-of-the-day')
+    return response.data
   },
 }
 
@@ -426,7 +356,8 @@ export const writingApi = {
 
   getStats: async (hskLevel?: number): Promise<WritingStats> => {
     const params = hskLevel ? { hsk_level: hskLevel } : undefined
-    return streamEndpoint<WritingStats>('/writing/stats-stream', { params })
+    const response = await api.get('/writing/stats', { params })
+    return response.data
   },
 
   getCharacterProgress: async (wordId: number): Promise<WritingProgress | null> => {
@@ -461,7 +392,8 @@ export const typingApi = {
     const params: any = {}
     if (mode) params.mode = mode
     if (hskLevel) params.hsk_level = hskLevel
-    return streamEndpoint<TypingStats>('/typing/stats-stream', { params })
+    const response = await api.get('/typing/stats', { params })
+    return response.data
   },
 
   getWordProgress: async (wordId: number, mode: string): Promise<TypingProgress | null> => {
@@ -507,15 +439,17 @@ export const learningApi = {
   // Get learning statistics
   getStats: async (hskLevel?: number): Promise<LearningStatsResponse> => {
     const params = hskLevel ? { hsk_level: hskLevel } : undefined
-    return streamEndpoint<LearningStatsResponse>('/learning/stats-stream', { params })
+    const response = await api.get('/learning/stats', { params })
+    return response.data
   },
 
   // Get all stats (overall + all 6 HSK levels) in a single request
   getAllStats: async () => {
-    return streamEndpoint<{
+    const response = await api.get<{
       overall: { total_words_learning: number; mastered_words: number; due_for_review: number; average_mastery: number; total_reviews: number; accuracy: number }
       levels: Record<number, { total_words_learning: number; mastered_words: number; due_for_review: number; average_mastery: number; total_reviews: number; accuracy: number }>
-    }>('/learning/stats/all-stream')
+    }>('/learning/stats/all')
+    return response.data
   },
 
   // Get progress for a specific word
@@ -553,7 +487,8 @@ export const quizApi = {
 export const onboardingApi = {
   // Get onboarding status
   getStatus: async (): Promise<OnboardingStatus> => {
-    return streamEndpoint<OnboardingStatus>('/onboarding/status-stream')
+    const response = await api.get('/onboarding/status')
+    return response.data
   },
 
   // Get assessment questions
@@ -589,7 +524,8 @@ export const onboardingApi = {
 
 export const gamificationApi = {
   getStats: async (): Promise<GamificationStats> => {
-    return streamEndpoint<GamificationStats>('/gamification/stats-stream')
+    const response = await api.get('/gamification/stats')
+    return response.data
   },
 
   dailyCheckin: async () => {
@@ -651,6 +587,105 @@ export const adventureApi = {
     const response = await api.get('/adventure/usage-stats')
     return response.data
   },
+
+  /**
+   * Start an adventure with SSE token streaming.
+   * Calls onToken for each streamed text chunk, resolves with the full adventure data
+   * from the `done` event.  Pass an AbortSignal to cancel mid-stream.
+   */
+  startStream: async (
+    hskLevel: number,
+    topic: string = 'daily life',
+    onToken: (text: string) => void,
+    signal?: AbortSignal,
+  ): Promise<any> => {
+    const token = localStorage.getItem('access_token')
+    const response = await fetch(`${API_URL}/adventure/start-stream`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ hsk_level: hskLevel, topic }),
+      signal,
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`)
+    }
+    return _readAdventureStream(response, onToken)
+  },
+
+  /**
+   * Continue an adventure with SSE token streaming.
+   */
+  continueStream: async (
+    storySoFar: string,
+    chosenOption: string,
+    hskLevel: number,
+    stepNumber: number,
+    onToken: (text: string) => void,
+    signal?: AbortSignal,
+  ): Promise<any> => {
+    const token = localStorage.getItem('access_token')
+    const response = await fetch(`${API_URL}/adventure/continue-stream`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        story_so_far: storySoFar,
+        chosen_option: chosenOption,
+        hsk_level: hskLevel,
+        step_number: stepNumber,
+      }),
+      signal,
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`)
+    }
+    return _readAdventureStream(response, onToken)
+  },
+}
+
+/** Parse an SSE stream for the adventure endpoints. */
+async function _readAdventureStream(
+  response: Response,
+  onToken: (text: string) => void,
+): Promise<any> {
+  const reader = response.body!.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  let finalData: any = null
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+
+    const lines = buffer.split('\n')
+    buffer = lines.pop() ?? ''
+
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue
+      const payload = line.slice(6).trim()
+      if (!payload) continue
+      try {
+        const event = JSON.parse(payload)
+        if (event.type === 'token') {
+          onToken(event.text as string)
+        } else if (event.type === 'done') {
+          finalData = event.data
+        } else if (event.type === 'error') {
+          throw new Error(event.message as string)
+        }
+      } catch (_e) {
+        // Skip malformed SSE lines
+      }
+    }
+  }
+
+  return finalData
 }
 
 // Sentence Scramble API — zero AI cost
@@ -673,14 +708,16 @@ export const sttApi = {
   },
 
   getStatus: async (): Promise<{ available: boolean; credentials_path: string }> => {
-    return streamEndpoint<{ available: boolean; credentials_path: string }>('/stt/status-stream')
+    const response = await api.get('/stt/status')
+    return response.data
   },
 }
 
 // Daily Challenge API — zero AI cost
 export const dailyChallengeApi = {
   getToday: async (): Promise<DailyChallengeTodayResponse> => {
-    return streamEndpoint<DailyChallengeTodayResponse>('/daily-challenge/today-stream')
+    const response = await api.get('/daily-challenge/today')
+    return response.data
   },
 
   complete: async () => {
@@ -689,8 +726,64 @@ export const dailyChallengeApi = {
   },
 
   getStats: async (): Promise<DailyChallengeStatsResponse> => {
-    return streamEndpoint<DailyChallengeStatsResponse>('/daily-challenge/stats-stream')
+    const response = await api.get('/daily-challenge/stats')
+    return response.data
   },
+}
+
+// ── SSE helpers ─────────────────────────────────────────────────────────────
+
+/**
+ * Pump a fetch Response body that emits SSE events.
+ * Calls onToken for each "token" event and onDone when the "done" event arrives.
+ * Returns the full parsed data object from the "done" event, or throws on "error".
+ */
+async function pumpSSE(
+  res: Response,
+  onToken: (text: string) => void,
+  signal?: AbortSignal,
+): Promise<any> {
+  if (!res.ok) {
+    const body = await res.text().catch(() => '')
+    throw new Error(`HTTP ${res.status}: ${body}`)
+  }
+  const reader = res.body!.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+
+  while (true) {
+    if (signal?.aborted) break
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+
+    // SSE events are separated by double newlines
+    const parts = buffer.split('\n\n')
+    buffer = parts.pop() ?? ''
+
+    for (const part of parts) {
+      const line = part.trim()
+      if (!line.startsWith('data:')) continue
+      const raw = line.slice('data:'.length).trim()
+      let event: any
+      try {
+        event = JSON.parse(raw)
+      } catch {
+        continue
+      }
+      if (event.type === 'token') {
+        onToken(event.text as string)
+      } else if (event.type === 'done') {
+        reader.cancel()
+        return event.data
+      } else if (event.type === 'error') {
+        reader.cancel()
+        throw new Error(event.message ?? 'SSE stream error')
+      }
+    }
+  }
+
+  return null
 }
 
 // AI Conversation API — Gemini free tier
@@ -716,11 +809,53 @@ export const conversationApi = {
     })
     return response.data
   },
+
+  /** Stream the opening AI greeting. Returns the full parsed response object. */
+  startStream: async (
+    hskLevel: number,
+    topic: string,
+    onToken: (text: string) => void,
+    signal?: AbortSignal,
+  ): Promise<any> => {
+    const token = localStorage.getItem('access_token')
+    const res = await fetch(`${API_URL}/conversation/start-stream`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ hsk_level: hskLevel, topic }),
+      signal,
+    })
+    return pumpSSE(res, onToken, signal)
+  },
+
+  /** Stream an AI reply. Returns the full parsed response object. */
+  replyStream: async (
+    message: string,
+    hskLevel: number,
+    history: { role: string; content: string }[],
+    onToken: (text: string) => void,
+    signal?: AbortSignal,
+  ): Promise<any> => {
+    const token = localStorage.getItem('access_token')
+    const res = await fetch(`${API_URL}/conversation/reply-stream`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ message, hsk_level: hskLevel, history }),
+      signal,
+    })
+    return pumpSSE(res, onToken, signal)
+  },
 }
 
 export const adminApi = {
   getStats: async (): Promise<AdminSystemStatsResponse> => {
-    return streamEndpoint<AdminSystemStatsResponse>('/admin/stats-stream')
+    const response = await api.get('/admin/stats')
+    return response.data
   },
 
   getUsers: async (page = 1, pageSize = 20, search?: string) => {

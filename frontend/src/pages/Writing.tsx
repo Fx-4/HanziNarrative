@@ -245,6 +245,7 @@ export default function Writing() {
   const [lastAttemptResult, setLastAttemptResult] = useState<AttemptResult | null>(null)
   const [countdown, setCountdown] = useState<number | null>(null)
   const countdownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const seenCharacterIds = useRef<Set<number>>(new Set())
 
   // Timed mode state
   const [timeRemaining, setTimeRemaining] = useState(300) // 5 minutes
@@ -313,15 +314,52 @@ export default function Writing() {
     }
   }
 
+  const updateRecentHistory = (id: number) => {
+    const RECENT_KEY = 'recentWritingIds'
+    const MAX_RECENT = 20
+    try {
+      const stored = localStorage.getItem(RECENT_KEY)
+      const recent: number[] = stored ? JSON.parse(stored) : []
+      // Remove existing entry if present, then add to end (most recent)
+      const updated = [...recent.filter(x => x !== id), id]
+      // Keep only last MAX_RECENT entries
+      const trimmed = updated.slice(-MAX_RECENT)
+      localStorage.setItem(RECENT_KEY, JSON.stringify(trimmed))
+    } catch {
+      // ignore localStorage errors
+    }
+  }
+
   const loadCharacters = async () => {
     setLoading(true)
     try {
       const limit = mode === 'timed' ? 10 : 20
       const data = await writingApi.getCharacters(hskLevel, limit)
-      setCharacters(data)
 
-      if (data.length > 0) {
-        setCurrentCharacter(data[0])
+      // Filter out characters already seen in this session
+      const unseen = data.filter(c => !seenCharacterIds.current.has(c.id as number))
+      const toUse = unseen.length > 0 ? unseen : data
+
+      // Sort: characters NOT in recent localStorage history come first
+      const RECENT_KEY = 'recentWritingIds'
+      let recentIds: number[] = []
+      try {
+        const stored = localStorage.getItem(RECENT_KEY)
+        recentIds = stored ? JSON.parse(stored) : []
+      } catch {
+        // ignore
+      }
+      const recentSet = new Set(recentIds)
+      const sorted = [...toUse].sort((a, b) => {
+        const aRecent = recentSet.has(a.id as number) ? 1 : 0
+        const bRecent = recentSet.has(b.id as number) ? 1 : 0
+        return aRecent - bRecent
+      })
+
+      setCharacters(sorted)
+
+      if (sorted.length > 0) {
+        setCurrentCharacter(sorted[0])
         setCurrentCharacterIndex(0)
       }
     } catch (error: any) {
@@ -429,6 +467,12 @@ export default function Writing() {
     setShowFeedback(false)
     setLastAttemptResult(null)
     setCountdown(null)
+
+    // Mark current character as seen and update recent history
+    if (currentCharacter?.id != null) {
+      seenCharacterIds.current.add(currentCharacter.id as number)
+      updateRecentHistory(currentCharacter.id as number)
+    }
 
     if (currentCharacterIndex < characters.length - 1) {
       const nextIndex = currentCharacterIndex + 1
@@ -933,11 +977,38 @@ export default function Writing() {
                 transition={{ duration: 0.3 }}
               >
                 {!showFeedback ? (
-                  <WritingCanvas
-                    character={currentCharacter}
-                    onComplete={handleCharacterComplete}
-                    mode={mode}
-                  />
+                  <div>
+                    {/* Navigation bar above canvas */}
+                    <div className="flex items-center justify-between mb-3">
+                      <button
+                        onClick={handlePreviousCharacter}
+                        disabled={currentCharacterIndex === 0}
+                        className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition-colors"
+                      >
+                        <ArrowLeft className="w-3.5 h-3.5" />
+                        Prev
+                      </button>
+
+                      <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                        {currentCharacterIndex + 1} / {characters.length}
+                      </span>
+
+                      <button
+                        onClick={handleNextCharacter}
+                        disabled={currentCharacterIndex === characters.length - 1 && characters.length === 0}
+                        className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition-colors"
+                      >
+                        Next
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <WritingCanvas
+                      character={currentCharacter}
+                      onComplete={handleCharacterComplete}
+                      mode={mode}
+                    />
+                  </div>
                 ) : (
                   <div className="space-y-4 sm:space-y-6">
                     {lastAttemptResult && currentCharacter && (
@@ -984,15 +1055,14 @@ export default function Writing() {
 
                             {/* Nav buttons */}
                             <div className="flex gap-2 sm:gap-3 w-full">
-                              {currentCharacterIndex > 0 && (
-                                <button
-                                  onClick={handlePreviousCharacter}
-                                  className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-2xl px-3 sm:px-4 py-3 font-semibold cursor-pointer flex items-center justify-center gap-2 text-sm sm:text-base transition-colors"
-                                >
-                                  <ArrowLeft className="w-4 h-4" />
-                                  Back
-                                </button>
-                              )}
+                              <button
+                                onClick={handlePreviousCharacter}
+                                disabled={currentCharacterIndex === 0}
+                                className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-2xl px-3 sm:px-4 py-3 font-semibold cursor-pointer flex items-center justify-center gap-2 text-sm sm:text-base transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                              >
+                                <ArrowLeft className="w-4 h-4" />
+                                Back
+                              </button>
                               <button
                                 onClick={handleNextCharacter}
                                 className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-3 sm:px-4 py-3 font-semibold cursor-pointer flex items-center justify-center gap-2 text-sm sm:text-base transition-colors"

@@ -15,6 +15,7 @@ interface ConversationMessage {
   english?: string
   corrections?: { original: string; corrected: string; explanation: string }[]
   new_vocabulary?: { word: string; pinyin: string; english: string }[]
+  isStreaming?: boolean
 }
 
 interface Topic {
@@ -36,6 +37,7 @@ export default function Conversation() {
   const [showEnglish, setShowEnglish] = useState(false)
   const [topicsLoading, setTopicsLoading] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     conversationApi.getTopics()
@@ -48,26 +50,77 @@ export default function Conversation() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  // Cancel any in-flight SSE stream when unmounting
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort()
+    }
+  }, [])
+
   const startConversation = async () => {
     if (!selectedTopic) {
       toast.error('Please select a topic')
       return
     }
     setLoading(true)
+
+    // Cancel previous stream if any
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
+    // Add placeholder assistant message immediately
+    const placeholder: ConversationMessage = {
+      role: 'assistant',
+      content: '',
+      isStreaming: true,
+    }
+    setMessages([placeholder])
+    setStage('chat')
+
     try {
-      const result = await conversationApi.start(hskLevel, selectedTopic)
-      setMessages([{
-        role: 'assistant',
-        content: result.reply,
-        pinyin: result.reply_pinyin,
-        english: result.reply_english,
-        corrections: result.corrections,
-        new_vocabulary: result.new_vocabulary,
-      }])
-      setStage('chat')
+      const result = await conversationApi.startStream(
+        hskLevel,
+        selectedTopic,
+        (chunk) => {
+          // As tokens arrive, accumulate into the placeholder message
+          setMessages(prev => {
+            const last = prev[prev.length - 1]
+            if (!last || last.role !== 'assistant') return prev
+            return [
+              ...prev.slice(0, -1),
+              { ...last, content: last.content + chunk },
+            ]
+          })
+        },
+        controller.signal,
+      )
+
+      if (result) {
+        // Replace placeholder with full structured data from done event
+        setMessages([{
+          role: 'assistant',
+          content: result.reply ?? '',
+          pinyin: result.reply_pinyin,
+          english: result.reply_english,
+          corrections: result.corrections,
+          new_vocabulary: result.new_vocabulary,
+          isStreaming: false,
+        }])
+      } else {
+        // Stream was aborted or yielded no done event — mark done
+        setMessages(prev => {
+          const last = prev[prev.length - 1]
+          if (!last) return prev
+          return [...prev.slice(0, -1), { ...last, isStreaming: false }]
+        })
+      }
     } catch (err: any) {
-      const detail = err?.response?.data?.detail || 'Failed to start conversation'
-      toast.error(detail)
+      if (err?.name === 'AbortError') return
+      toast.error(err?.message || 'Failed to start conversation')
+      // Remove the empty placeholder on error
+      setMessages([])
+      setStage('setup')
     } finally {
       setLoading(false)
     }
@@ -77,28 +130,76 @@ export default function Conversation() {
     const text = input.trim()
     if (!text || loading) return
 
+    // Cancel any previous in-flight stream
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     const userMsg: ConversationMessage = { role: 'user', content: text }
     setMessages(prev => [...prev, userMsg])
     setInput('')
     setLoading(true)
+
+    // Add streaming placeholder for AI reply
+    const placeholder: ConversationMessage = {
+      role: 'assistant',
+      content: '',
+      isStreaming: true,
+    }
+    setMessages(prev => [...prev, placeholder])
 
     try {
       const history = [...messages, userMsg].map(m => ({
         role: m.role,
         content: m.content,
       }))
-      const result = await conversationApi.reply(text, hskLevel, history)
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: result.reply,
-        pinyin: result.reply_pinyin,
-        english: result.reply_english,
-        corrections: result.corrections,
-        new_vocabulary: result.new_vocabulary,
-      }])
+
+      const result = await conversationApi.replyStream(
+        text,
+        hskLevel,
+        history,
+        (chunk) => {
+          setMessages(prev => {
+            const last = prev[prev.length - 1]
+            if (!last || last.role !== 'assistant') return prev
+            return [
+              ...prev.slice(0, -1),
+              { ...last, content: last.content + chunk },
+            ]
+          })
+        },
+        controller.signal,
+      )
+
+      if (result) {
+        setMessages(prev => [
+          ...prev.slice(0, -1),
+          {
+            role: 'assistant',
+            content: result.reply ?? '',
+            pinyin: result.reply_pinyin,
+            english: result.reply_english,
+            corrections: result.corrections,
+            new_vocabulary: result.new_vocabulary,
+            isStreaming: false,
+          },
+        ])
+      } else {
+        setMessages(prev => {
+          const last = prev[prev.length - 1]
+          if (!last) return prev
+          return [...prev.slice(0, -1), { ...last, isStreaming: false }]
+        })
+      }
     } catch (err: any) {
-      const detail = err?.response?.data?.detail || 'Failed to get reply'
-      toast.error(detail)
+      if (err?.name === 'AbortError') return
+      toast.error(err?.message || 'Failed to get reply')
+      // Remove the empty streaming placeholder on error
+      setMessages(prev => {
+        const last = prev[prev.length - 1]
+        if (last?.isStreaming) return prev.slice(0, -1)
+        return prev
+      })
     } finally {
       setLoading(false)
     }
@@ -112,9 +213,11 @@ export default function Conversation() {
   }
 
   const resetConversation = () => {
+    abortControllerRef.current?.abort()
     setMessages([])
     setStage('setup')
     setInput('')
+    setLoading(false)
   }
 
   // ── Setup Screen ──
@@ -268,23 +371,34 @@ export default function Conversation() {
                   ? 'bg-blue-600 text-white rounded-2xl rounded-br-md'
                   : 'bg-white border border-gray-200 rounded-2xl rounded-bl-md shadow-sm'
               } p-3.5`}>
-                {/* Main text */}
-                <p className={`text-sm leading-relaxed ${msg.role === 'user' ? 'text-white' : 'text-gray-900'}`}>
-                  {msg.content}
-                </p>
+                {/* Main text — show typing dots only if streaming with no content yet */}
+                {msg.isStreaming && !msg.content ? (
+                  <div className="flex items-center gap-1.5 py-0.5">
+                    <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                ) : (
+                  <p className={`text-sm leading-relaxed ${msg.role === 'user' ? 'text-white' : 'text-gray-900'}`}>
+                    {msg.content}
+                    {msg.isStreaming && (
+                      <span className="inline-block w-[2px] h-[1em] bg-gray-500 ml-0.5 align-middle animate-pulse" />
+                    )}
+                  </p>
+                )}
 
-                {/* Pinyin */}
-                {msg.role === 'assistant' && showPinyin && msg.pinyin && (
+                {/* Pinyin — only shown once streaming is complete */}
+                {msg.role === 'assistant' && !msg.isStreaming && showPinyin && msg.pinyin && (
                   <p className="text-xs text-gray-400 mt-1 italic">{msg.pinyin}</p>
                 )}
 
-                {/* English */}
-                {msg.role === 'assistant' && showEnglish && msg.english && (
+                {/* English — only shown once streaming is complete */}
+                {msg.role === 'assistant' && !msg.isStreaming && showEnglish && msg.english && (
                   <p className="text-xs text-blue-500 mt-1">{msg.english}</p>
                 )}
 
-                {/* TTS button for assistant messages */}
-                {msg.role === 'assistant' && (
+                {/* TTS button for assistant messages — only when done streaming */}
+                {msg.role === 'assistant' && !msg.isStreaming && (
                   <button
                     onClick={() => speakText(msg.content)}
                     className="mt-2 p-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
@@ -293,8 +407,8 @@ export default function Conversation() {
                   </button>
                 )}
 
-                {/* Corrections */}
-                {msg.corrections && msg.corrections.length > 0 && (
+                {/* Corrections — only when done streaming */}
+                {!msg.isStreaming && msg.corrections && msg.corrections.length > 0 && (
                   <div className="mt-2 p-2 bg-amber-50 rounded-xl border border-amber-200">
                     <p className="text-[10px] font-bold text-amber-700 mb-1 flex items-center gap-1">
                       <AlertCircle className="w-3 h-3" /> Corrections
@@ -312,8 +426,8 @@ export default function Conversation() {
                   </div>
                 )}
 
-                {/* New Vocabulary */}
-                {msg.new_vocabulary && msg.new_vocabulary.length > 0 && (
+                {/* New Vocabulary — only when done streaming */}
+                {!msg.isStreaming && msg.new_vocabulary && msg.new_vocabulary.length > 0 && (
                   <div className="mt-2 p-2 bg-blue-50 rounded-xl border border-blue-200">
                     <p className="text-[10px] font-bold text-blue-700 mb-1 flex items-center gap-1">
                       <BookOpen className="w-3 h-3" /> New Words
@@ -332,21 +446,6 @@ export default function Conversation() {
           ))}
         </AnimatePresence>
 
-        {loading && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex justify-start"
-          >
-            <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-md p-3.5 shadow-sm">
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-              </div>
-            </div>
-          </motion.div>
-        )}
         <div ref={messagesEndRef} />
       </div>
 

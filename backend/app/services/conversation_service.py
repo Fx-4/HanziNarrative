@@ -4,9 +4,10 @@ Provides Chinese conversation practice with corrections and vocabulary help.
 """
 import json
 import logging
-from typing import List, Dict
+from typing import List, Dict, AsyncGenerator
 
 from app.services.ai_provider import generate_text, parse_json_response
+from app.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -146,3 +147,131 @@ async def reply_to_message(
     except Exception as e:
         logger.error(f"Conversation reply failed: {e}")
         raise
+
+
+# ──────────────────────────────────────────────
+# Streaming variants
+# ──────────────────────────────────────────────
+
+async def _stream_gemini_text(prompt: str) -> AsyncGenerator[str, None]:
+    """Stream text token-by-token from Gemini. Yields text chunks."""
+    import google.generativeai as genai
+    genai.configure(api_key=settings.GEMINI_API_KEY)
+    model = genai.GenerativeModel('gemini-2.5-flash')
+    response = model.generate_content(prompt, stream=True)
+    for chunk in response:
+        if chunk.text:
+            yield chunk.text
+
+
+async def stream_reply_to_message(
+    message: str,
+    hsk_level: int,
+    history: List[Dict[str, str]],
+) -> AsyncGenerator[str, None]:
+    """
+    Stream a conversation reply token-by-token via Gemini.
+
+    Yields SSE-formatted strings:
+      - ``data: {"type": "token", "text": "...chunk..."}\\n\\n``  for each token
+      - ``data: {"type": "done", "data": {...full_response...}}\\n\\n``  at completion
+      - ``data: {"type": "error", "message": "..."}\\n\\n``  on failure
+    """
+    system_prompt = _build_system_prompt(hsk_level, "free_talk")
+
+    conversation_parts = [system_prompt + "\n\n"]
+    for msg in history[-6:]:
+        role = "Student" if msg["role"] == "user" else "You"
+        conversation_parts.append(f"{role}: {msg['content']}")
+    conversation_parts.append(f"Student: {message}")
+    conversation_parts.append("Respond with ONLY valid JSON:")
+    full_prompt = "\n".join(conversation_parts)
+
+    # Try Gemini streaming first; fall back to non-streaming generate_text on error
+    gemini_key = getattr(settings, "GEMINI_API_KEY", "")
+    if gemini_key and gemini_key.strip():
+        try:
+            accumulated = ""
+            async for chunk in _stream_gemini_text(full_prompt):
+                accumulated += chunk
+                yield f"data: {json.dumps({'type': 'token', 'text': chunk})}\n\n"
+
+            # Parse the full accumulated JSON for the done event
+            try:
+                result = parse_json_response(accumulated)
+            except json.JSONDecodeError:
+                result = _FALLBACK_REPLY
+            yield f"data: {json.dumps({'type': 'done', 'data': result})}\n\n"
+            return
+        except Exception as e:
+            logger.warning(f"Gemini streaming failed, falling back to non-streaming: {e}")
+            # Fall through to non-streaming fallback below
+
+    # Non-streaming fallback — collect full response then emit as one token + done
+    try:
+        text, provider = await generate_text(full_prompt, exclude_paid=True)
+        logger.info(f"Conversation stream reply (non-streaming) via {provider}")
+        try:
+            result = parse_json_response(text)
+        except json.JSONDecodeError:
+            result = _FALLBACK_REPLY
+        # Emit the reply text as a single token so the frontend still gets a token event
+        yield f"data: {json.dumps({'type': 'token', 'text': result.get('reply', '')})}\n\n"
+        yield f"data: {json.dumps({'type': 'done', 'data': result})}\n\n"
+    except Exception as e:
+        logger.error(f"Conversation stream reply failed: {e}")
+        yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+
+
+async def stream_start_conversation(hsk_level: int, topic: str) -> AsyncGenerator[str, None]:
+    """
+    Stream the opening conversation message token-by-token.
+
+    Yields the same SSE event format as stream_reply_to_message.
+    """
+    topic_info = next((t for t in TOPICS if t["id"] == topic), None)
+    topic_label = topic_info["label_en"] if topic_info else topic
+
+    prompt = f"""Start a casual Chinese conversation about {topic_label} with a student at HSK {hsk_level} level.
+Say hello and ask them an opening question about the topic.
+{HSK_DESCRIPTIONS.get(hsk_level, HSK_DESCRIPTIONS[3])}
+
+Respond with ONLY valid JSON:
+{{
+  "reply": "你好！...",
+  "reply_pinyin": "nǐ hǎo! ...",
+  "reply_english": "Hello! ...",
+  "corrections": [],
+  "new_vocabulary": []
+}}"""
+
+    gemini_key = getattr(settings, "GEMINI_API_KEY", "")
+    if gemini_key and gemini_key.strip():
+        try:
+            accumulated = ""
+            async for chunk in _stream_gemini_text(prompt):
+                accumulated += chunk
+                yield f"data: {json.dumps({'type': 'token', 'text': chunk})}\n\n"
+
+            try:
+                result = parse_json_response(accumulated)
+            except json.JSONDecodeError:
+                result = _FALLBACK_GREETING
+            yield f"data: {json.dumps({'type': 'done', 'data': result})}\n\n"
+            return
+        except Exception as e:
+            logger.warning(f"Gemini streaming (start) failed, falling back: {e}")
+
+    # Non-streaming fallback
+    try:
+        text, provider = await generate_text(prompt, exclude_paid=True)
+        logger.info(f"Conversation stream start (non-streaming) via {provider}")
+        try:
+            result = parse_json_response(text)
+        except json.JSONDecodeError:
+            result = _FALLBACK_GREETING
+        yield f"data: {json.dumps({'type': 'token', 'text': result.get('reply', '')})}\n\n"
+        yield f"data: {json.dumps({'type': 'done', 'data': result})}\n\n"
+    except Exception as e:
+        logger.error(f"Conversation stream start failed: {e}")
+        yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"

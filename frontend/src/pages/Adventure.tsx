@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { adventureApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
@@ -80,9 +80,14 @@ export default function Adventure() {
     const [usageStats, setUsageStats] = useState<any>(null)
     const [isPlaying, setIsPlaying] = useState(false)
     const [audioRef, setAudioRef] = useState<HTMLAudioElement | null>(null)
+    const [streamingText, setStreamingText] = useState<string | null>(null)
+    const abortRef = useRef<AbortController | null>(null)
 
     useEffect(() => {
         loadUsageStats()
+        return () => {
+            abortRef.current?.abort()
+        }
     }, [])
 
     const loadUsageStats = async () => {
@@ -96,47 +101,72 @@ export default function Adventure() {
 
     const startAdventure = async () => {
         setLoading(true)
+        setStreamingText('')
+        abortRef.current?.abort()
+        const controller = new AbortController()
+        abortRef.current = controller
+
         try {
-            const result = await adventureApi.start(hskLevel, topic)
-            setStorySteps([result.adventure])
-            setStepNumber(1)
-            setUsageStats(null) // refresh
-            loadUsageStats()
+            const result = await adventureApi.startStream(
+                hskLevel,
+                topic,
+                (chunk) => setStreamingText(prev => (prev ?? '') + chunk),
+                controller.signal,
+            )
+            if (result) {
+                setStorySteps([result])
+                setStepNumber(1)
+                setUsageStats(null)
+                loadUsageStats()
+            }
         } catch (error: any) {
-            if (error.response?.status === 429) {
+            if (error.name === 'AbortError') return
+            if (error.message?.includes('429') || error.response?.status === 429) {
                 toast.error('Rate limit reached! Try again later.')
             } else {
                 toast.error('Failed to start adventure')
             }
         } finally {
             setLoading(false)
+            setStreamingText(null)
         }
     }
 
     const handleChoice = async (choice: Choice) => {
         setLoading(true)
+        setStreamingText('')
+        abortRef.current?.abort()
+        const controller = new AbortController()
+        abortRef.current = controller
+
         try {
             // Build story context from all previous paragraphs
             const context = storySteps.map(s => s.paragraph).join('\n')
 
-            const result = await adventureApi.continue(
+            const result = await adventureApi.continueStream(
                 context,
                 choice.text,
                 hskLevel,
                 stepNumber + 1,
+                (chunk) => setStreamingText(prev => (prev ?? '') + chunk),
+                controller.signal,
             )
 
-            setStorySteps(prev => [...prev, result.adventure])
-            setStepNumber(prev => prev + 1)
-            loadUsageStats()
+            if (result) {
+                setStorySteps(prev => [...prev, result])
+                setStepNumber(prev => prev + 1)
+                loadUsageStats()
+            }
         } catch (error: any) {
-            if (error.response?.status === 429) {
+            if (error.name === 'AbortError') return
+            if (error.message?.includes('429') || error.response?.status === 429) {
                 toast.error('Rate limit reached! Try again later.')
             } else {
                 toast.error('Failed to continue story')
             }
         } finally {
             setLoading(false)
+            setStreamingText(null)
         }
     }
 
@@ -178,8 +208,11 @@ export default function Adventure() {
     }
 
     const resetAdventure = () => {
+        abortRef.current?.abort()
         setStorySteps([])
         setStepNumber(0)
+        setStreamingText(null)
+        setLoading(false)
         if (audioRef) { audioRef.pause(); setAudioRef(null) }
         window.speechSynthesis.cancel()
         setIsPlaying(false)
@@ -429,12 +462,30 @@ export default function Adventure() {
                     ))}
                 </div>
 
+                {/* Streaming paragraph — shown while AI is generating */}
+                {loading && streamingText !== null && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                    >
+                        <div className="bg-white rounded-2xl shadow-sm border border-emerald-200 ring-1 ring-emerald-100 p-4 sm:p-5 mb-4">
+                            <p className="text-xl sm:text-2xl font-chinese leading-relaxed text-gray-900">
+                                {streamingText}
+                                <span className="inline-block w-0.5 h-6 bg-emerald-500 ml-0.5 animate-pulse align-middle">▊</span>
+                            </p>
+                        </div>
+                    </motion.div>
+                )}
+
                 {/* Choices or Ending */}
-                {loading ? (
+                {loading && streamingText === null ? (
                     <div className="flex items-center justify-center py-8">
                         <LoadingSpinner size="lg" />
-                        <span className="ml-3 text-gray-600">Gemini is writing the next chapter...</span>
+                        <span className="ml-3 text-gray-600">Writing the next chapter...</span>
                     </div>
+                ) : loading ? (
+                    /* streaming in progress — choices will appear after done */
+                    null
                 ) : isEnding ? (
                     /* Story Ending */
                     <motion.div

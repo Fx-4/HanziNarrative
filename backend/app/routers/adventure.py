@@ -3,9 +3,11 @@ Adventure Stories router — AI-powered branching stories.
 Uses Claude claude-opus-4-6 when ANTHROPIC_API_KEY is set, falls back to Gemini.
 """
 
+import json
 import logging
-from typing import Optional, List
+from typing import AsyncGenerator, Optional, List
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from ..database import get_db
@@ -27,6 +29,25 @@ async def _adventure_continue(*args, **kwargs):
     if _use_claude():
         return await claude_story_service.generate_adventure_continue(*args, **kwargs)
     return await gemini_service.generate_adventure_continue(*args, **kwargs)
+
+
+def _adventure_start_stream(*args, **kwargs) -> AsyncGenerator[str, None]:
+    if _use_claude():
+        return claude_story_service.generate_adventure_start_stream(*args, **kwargs)
+    return gemini_service.generate_adventure_start_stream(*args, **kwargs)
+
+
+def _adventure_continue_stream(*args, **kwargs) -> AsyncGenerator[str, None]:
+    if _use_claude():
+        return claude_story_service.generate_adventure_continue_stream(*args, **kwargs)
+    return gemini_service.generate_adventure_continue_stream(*args, **kwargs)
+
+
+_SSE_HEADERS = {
+    "Cache-Control": "no-cache",
+    "X-Accel-Buffering": "no",
+    "Connection": "keep-alive",
+}
 
 logger = logging.getLogger(__name__)
 
@@ -138,6 +159,99 @@ async def continue_adventure(
             status_code=500,
             detail="Failed to continue adventure. Please try again later."
         )
+
+
+@router.post("/start-stream")
+async def start_adventure_stream(
+    request: AdventureStartRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Start a new adventure story with SSE token streaming.
+    Emits `token` events while the paragraph is generated, then a `done` event
+    with the full adventure data (same shape as /start).
+    Rate limited identically to /start.
+    """
+    check_rate_limit(db, current_user, 'adventure_start')
+
+    async def event_generator():
+        try:
+            async for chunk in _adventure_start_stream(
+                hsk_level=request.hsk_level,
+                topic=request.topic,
+            ):
+                yield chunk
+
+            # Record usage after streaming completes
+            record_ai_usage(
+                db=db,
+                user=current_user,
+                feature='adventure_start',
+                request_data={
+                    'hsk_level': request.hsk_level,
+                    'topic': request.topic,
+                }
+            )
+        except HTTPException as exc:
+            yield f"data: {json.dumps({'type': 'error', 'message': exc.detail})}\n\n"
+        except Exception as exc:
+            import traceback
+            traceback.print_exc()
+            logger.error(f"Adventure start-stream failed: {exc}", exc_info=True)
+            yield f"data: {json.dumps({'type': 'error', 'message': str(exc)})}\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers=_SSE_HEADERS,
+    )
+
+
+@router.post("/continue-stream")
+async def continue_adventure_stream(
+    request: AdventureContinueRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Continue an adventure story with SSE token streaming.
+    Emits `token` events while the paragraph is generated, then a `done` event
+    with the full adventure data (same shape as /continue).
+    Rate limited identically to /continue.
+    """
+    check_rate_limit(db, current_user, 'adventure_continue')
+
+    async def event_generator():
+        try:
+            async for chunk in _adventure_continue_stream(
+                story_so_far=request.story_so_far,
+                chosen_option=request.chosen_option,
+                hsk_level=request.hsk_level,
+                step_number=request.step_number,
+            ):
+                yield chunk
+
+            record_ai_usage(
+                db=db,
+                user=current_user,
+                feature='adventure_continue',
+                request_data={
+                    'hsk_level': request.hsk_level,
+                    'step_number': request.step_number,
+                }
+            )
+        except HTTPException as exc:
+            yield f"data: {json.dumps({'type': 'error', 'message': exc.detail})}\n\n"
+        except Exception as exc:
+            logger.error(f"Adventure continue-stream failed: {exc}", exc_info=True)
+            yield f"data: {json.dumps({'type': 'error', 'message': str(exc)})}\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers=_SSE_HEADERS,
+    )
 
 
 @router.get("/usage-stats")

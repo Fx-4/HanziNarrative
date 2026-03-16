@@ -18,7 +18,7 @@ import { Loader2 } from 'lucide-react'
 
 const Onboarding = () => {
   const navigate = useNavigate()
-  const { checkOnboardingStatus } = useAuthStore()
+  // (checkOnboardingStatus not needed here — we setState directly for instant sync)
 
   const [loading, setLoading] = useState(true)
   const [currentStep, setCurrentStep] = useState(1)
@@ -37,13 +37,11 @@ const Onboarding = () => {
       const status = await onboardingApi.getStatus()
 
       if (status.onboarding_completed) {
-        await checkOnboardingStatus()
+        // Sync store flag in background — don't block navigation
+        useAuthStore.setState({ onboardingCompleted: true })
         navigate('/dashboard')
         return
       }
-
-      // Ensure auth store is in sync with backend status without directly mutating store state
-      await checkOnboardingStatus()
 
       // Resume from saved step
       // Backend step numbers: 2=goals saved, 3=assessment done, 4=assessment skipped
@@ -70,7 +68,7 @@ const Onboarding = () => {
       console.error('Failed to check onboarding status:', error)
       setLoading(false)
     }
-  }, [checkOnboardingStatus, navigate])
+  }, [navigate])
 
   useEffect(() => {
     void checkStatus()
@@ -78,15 +76,13 @@ const Onboarding = () => {
 
   const handleWelcomeNext = () => setCurrentStep(2)
 
-  const handleGoalsNext = async (selectedGoals: Goals) => {
+  const handleGoalsNext = (selectedGoals: Goals) => {
     setGoals(selectedGoals)
-    try {
-      await onboardingApi.saveGoals(selectedGoals)
-    } catch {
-      toast.error('Could not save goals. Please try again.')
-      return
-    }
     setCurrentStep(3)
+    // Fire-and-forget — failure is non-blocking (user can still proceed)
+    onboardingApi.saveGoals(selectedGoals).catch(() =>
+      toast('Goals may not have saved — check your connection.', { icon: '⚠️', duration: 3000 })
+    )
   }
 
   const handleTakeAssessment = () => {
@@ -94,15 +90,12 @@ const Onboarding = () => {
     setCurrentStep(4)
   }
 
-  const handleSkipAssessment = async () => {
+  const handleSkipAssessment = () => {
     setTookAssessment(false)
-    try {
-      await onboardingApi.skipAssessment()
-      setDeterminedLevel(1)
-      setCurrentStep(5)
-    } catch {
-      toast.error('Something went wrong. Please try again.')
-    }
+    setDeterminedLevel(1)
+    setCurrentStep(5)
+    // Fire-and-forget — just marks the step on the backend
+    onboardingApi.skipAssessment().catch(() => { /* non-critical */ })
   }
 
   const handleAssessmentComplete = (level: number, xp: number) => {
@@ -113,19 +106,30 @@ const Onboarding = () => {
 
   const handlePreferencesNext = async (selectedPreferences: Preferences) => {
     setPreferences(selectedPreferences)
-    try {
-      const result = await onboardingApi.complete({
-        took_assessment: tookAssessment,
-        determined_hsk_level: determinedLevel,
-        goals,
-        preferences: selectedPreferences,
+
+    // Optimistic: show completion screen immediately with sensible defaults
+    setCompletionData({
+      message: 'Setup complete!',
+      xp_earned: 150,
+      level: 1,
+      leveled_up: false,
+      initial_words_count: 10,
+      achievement_unlocked: true,
+      redirect_to: '/dashboard',
+    })
+    useAuthStore.setState({ onboardingCompleted: true })
+    setCurrentStep(6)
+
+    // Update with real server data (XP, level-up, etc.) in the background
+    onboardingApi.complete({
+      took_assessment: tookAssessment,
+      determined_hsk_level: determinedLevel,
+      goals,
+      preferences: selectedPreferences,
+    }).then(result => setCompletionData(result))
+      .catch(() => {
+        toast('Setup saved locally — some rewards may take a moment to apply.', { icon: '⚠️', duration: 4000 })
       })
-      setCompletionData(result)
-      useAuthStore.setState({ onboardingCompleted: true })
-      setCurrentStep(6)
-    } catch {
-      toast.error('Could not complete setup. Please try again.')
-    }
   }
 
   /**

@@ -5,7 +5,7 @@ Uses multi-provider fallback: Gemini → Groq → OpenRouter → Claude (paid, l
 
 import json
 import logging
-from typing import Dict, List, Optional
+from typing import AsyncGenerator, Dict, List, Optional
 
 from app.services.ai_provider import generate_text, generate_json, parse_json_response
 
@@ -413,3 +413,105 @@ Return as JSON:
     except Exception as e:
         logger.error(f"AI adventure continue failed: {e}")
         raise Exception(f"Failed to continue adventure: {str(e)}")
+
+
+async def generate_adventure_start_stream(
+    hsk_level: int,
+    topic: str = "daily life",
+) -> AsyncGenerator[str, None]:
+    """
+    Gemini fallback: generates adventure start non-streaming, then sends full paragraph
+    as tokens followed by a done event.  Gemini free tier doesn't support streaming
+    in the same SDK-level way as Claude, so we batch-generate then fake the stream.
+    """
+    prompt = f"""You are a creative Chinese language teacher. Create the opening paragraph of an interactive adventure story for HSK Level {hsk_level} students.
+
+Topic: {topic}
+
+Requirements:
+- Use ONLY HSK Level {hsk_level} vocabulary (and levels below)
+- Opening paragraph: 2-4 sentences in Chinese
+- Present 3 choices for what happens next
+
+Return as JSON:
+{{
+  "paragraph": "Opening paragraph in simplified Chinese",
+  "paragraph_pinyin": "Pinyin for the paragraph with tone marks",
+  "paragraph_english": "English translation",
+  "choices": [
+    {{"id": 1, "text": "Choice in Chinese", "text_pinyin": "Pinyin", "text_english": "English"}},
+    {{"id": 2, "text": "Choice in Chinese", "text_pinyin": "Pinyin", "text_english": "English"}},
+    {{"id": 3, "text": "Choice in Chinese", "text_pinyin": "Pinyin", "text_english": "English"}}
+  ],
+  "setting": "Brief English description of the setting"
+}}
+
+Make it fun and engaging! Keep sentences simple for HSK {hsk_level}."""
+
+    data, provider = await generate_json(prompt, exclude_paid=True)
+    logger.info(f"Adventure start (stream/batch) generated via {provider}")
+
+    # Stream the paragraph text character by character
+    paragraph = data.get("paragraph", "")
+    for char in paragraph:
+        yield f"data: {json.dumps({'type': 'token', 'text': char})}\n\n"
+
+    yield f"data: {json.dumps({'type': 'done', 'data': data})}\n\n"
+
+
+async def generate_adventure_continue_stream(
+    story_so_far: str,
+    chosen_option: str,
+    hsk_level: int,
+    step_number: int = 2,
+) -> AsyncGenerator[str, None]:
+    """
+    Gemini fallback: generates adventure continue non-streaming, then fake-streams
+    the paragraph text followed by a done event.
+    """
+    is_ending = step_number >= 5
+
+    ending_instruction = ""
+    if is_ending:
+        ending_instruction = """
+IMPORTANT: This is the FINAL paragraph. Wrap up the story with a satisfying conclusion.
+Do NOT provide choices. Instead, provide a "moral" field with the lesson learned.
+Set "is_ending" to true."""
+    else:
+        ending_instruction = """Provide 3 new choices for what happens next. Set "is_ending" to false."""
+
+    prompt = f"""Continue this interactive Chinese adventure story for HSK Level {hsk_level} students.
+
+Story so far:
+{story_so_far}
+
+The reader chose: {chosen_option}
+
+Requirements:
+- Continue with 2-4 new sentences based on their choice
+- Use ONLY HSK Level {hsk_level} vocabulary
+- Keep it engaging and fun
+{ending_instruction}
+
+Return as JSON:
+{{
+  "paragraph": "Next paragraph in simplified Chinese",
+  "paragraph_pinyin": "Pinyin with tone marks",
+  "paragraph_english": "English translation",
+  "is_ending": {'true' if is_ending else 'false'},
+  {"\"moral\": \"Lesson learned in English\"," if is_ending else ""}
+  "choices": [
+    {{"id": 1, "text": "Chinese", "text_pinyin": "Pinyin", "text_english": "English"}},
+    {{"id": 2, "text": "Chinese", "text_pinyin": "Pinyin", "text_english": "English"}},
+    {{"id": 3, "text": "Chinese", "text_pinyin": "Pinyin", "text_english": "English"}}
+  ]
+}}"""
+
+    data, provider = await generate_json(prompt, exclude_paid=True)
+    logger.info(f"Adventure continue (stream/batch) generated via {provider}")
+
+    paragraph = data.get("paragraph", "")
+    for char in paragraph:
+        yield f"data: {json.dumps({'type': 'token', 'text': char})}\n\n"
+
+    yield f"data: {json.dumps({'type': 'done', 'data': data})}\n\n"

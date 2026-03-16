@@ -133,7 +133,7 @@ def refresh_token(
     body: schemas.RefreshTokenRequest,
     db: Session = Depends(get_db),
 ):
-    user = auth.rotate_refresh_token(db, body.refresh_token)
+    user, new_refresh_token = auth.rotate_refresh_token(db, body.refresh_token)
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = auth.create_access_token(
         data={"sub": user.username},
@@ -141,7 +141,7 @@ def refresh_token(
     )
     return {
         "access_token": access_token,
-        "refresh_token": getattr(user, "_new_refresh_token", None),
+        "refresh_token": new_refresh_token,
         "token_type": "bearer",
     }
 
