@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { storiesApi } from '@/services/api'
 import { Story } from '@/types'
-import { BookOpen, Calendar, Sparkles } from 'lucide-react'
+import { BookOpen, Calendar, Sparkles, Search } from 'lucide-react'
 import StoryGenerator from '@/components/StoryGenerator'
 
 type TabType = 'browse' | 'generate'
@@ -33,6 +33,7 @@ export default function Stories() {
   const [stories, setStories] = useState<Story[]>([])
   const [selectedLevel, setSelectedLevel] = useState<number | undefined>()
   const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     loadStories()
@@ -49,6 +50,41 @@ export default function Stories() {
       setLoading(false)
     }
   }
+
+  // Called by StoryGenerator when a story finishes generating — adds it to the
+  // top of the list instantly without re-fetching the full list.
+  const handleStoryGenerated = (partial: {
+    id: number
+    title: string
+    title_english?: string
+    content: string
+    hsk_level: number
+  }) => {
+    const newStory: Story = {
+      id: partial.id,
+      title: partial.title,
+      title_english: partial.title_english,
+      content: partial.content,
+      hsk_level: partial.hsk_level,
+      author_id: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      is_published: false,
+    }
+    setStories(prev => {
+      // Avoid duplicates if the story is already in the list
+      if (prev.some(s => s.id === newStory.id)) return prev
+      return [newStory, ...prev]
+    })
+  }
+
+  // Client-side filter — no extra API call on every keystroke
+  const filteredStories = searchQuery.trim()
+    ? stories.filter(s =>
+        s.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        s.title_english?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : stories
 
   const levels = [
     { value: undefined, label: 'All Levels' },
@@ -125,7 +161,7 @@ export default function Stories() {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               Filter by HSK Level
             </label>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 mb-4">
               {levels.map((level, index) => (
                 <motion.div
                   key={level.label}
@@ -146,6 +182,17 @@ export default function Stories() {
                 </motion.div>
               ))}
             </div>
+            {/* Client-side search — filters already-loaded stories with no extra API call */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Search stories by title..."
+                className="w-full pl-9 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+              />
+            </div>
           </motion.div>
 
           {loading ? (
@@ -158,7 +205,7 @@ export default function Stories() {
                 <StoryCardSkeleton key={i} />
               ))}
             </motion.div>
-          ) : stories.length === 0 ? (
+          ) : filteredStories.length === 0 ? (
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -166,13 +213,15 @@ export default function Stories() {
               <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 text-center py-12 px-6">
                 <BookOpen className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
                 <p className="text-gray-600 dark:text-gray-400 text-lg">
-                  No stories found for this level. Check back soon!
+                  {searchQuery.trim()
+                    ? `No stories match "${searchQuery}".`
+                    : 'No stories found for this level. Check back soon!'}
                 </p>
               </div>
             </motion.div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {stories.map((story, index) => (
+              {filteredStories.map((story, index) => (
                 <motion.div
                   key={story.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -212,7 +261,9 @@ export default function Stories() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <StoryGenerator />
+          <StoryGenerator
+            onStoryGenerated={handleStoryGenerated}
+          />
         </motion.div>
       )}
     </motion.div>

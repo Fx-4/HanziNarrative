@@ -3,7 +3,7 @@ import axios from 'axios'
 import { getVoiceName } from '@/utils/voicePreference'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { pinyin } from 'pinyin-pro'
 import { storiesApi, vocabularyApi } from '@/services/api'
@@ -39,8 +39,12 @@ interface ComprehensionQuestion {
 export default function StoryReader() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [story, setStory] = useState<Story | null>(null)
-  const [loading, setLoading] = useState(true)
+  const location = useLocation()
+  // Story data passed via router state (e.g. from StoryGenerator "View" button)
+  // avoids a redundant DB fetch when the data is already available client-side.
+  const preloadedStory = (location.state as any)?.story as Story | null | undefined
+  const [story, setStory] = useState<Story | null>(preloadedStory ?? null)
+  const [loading, setLoading] = useState(!preloadedStory)
 
   // Interactive features state
   const [showTranslation, setShowTranslation] = useState(false)
@@ -70,15 +74,25 @@ export default function StoryReader() {
   }, [id])
 
   const loadStory = async (storyId: number) => {
+    if (preloadedStory) {
+      // Story data was passed via router state — use it immediately, no network call.
+      // Bookmark status is independent, so check it in the background.
+      storiesApi.isBookmarked(storyId)
+        .then(bm => setIsBookmarked(bm.is_bookmarked))
+        .catch(() => { /* ignore — user might not be logged in */ })
+      // loading is already false (set in useState initializer)
+      return
+    }
+
     setLoading(true)
     try {
-      const storyData = await storiesApi.getById(storyId)
+      // Fetch story and bookmark status in parallel
+      const [storyData, bm] = await Promise.all([
+        storiesApi.getById(storyId),
+        storiesApi.isBookmarked(storyId).catch(() => ({ is_bookmarked: false })),
+      ])
       setStory(storyData)
-      // Check bookmark status
-      try {
-        const bm = await storiesApi.isBookmarked(storyId)
-        setIsBookmarked(bm.is_bookmarked)
-      } catch { /* ignore - user might not be logged in */ }
+      setIsBookmarked(bm.is_bookmarked)
     } catch (error) {
       console.error('Failed to load story:', error)
       toast.error('Failed to load story')

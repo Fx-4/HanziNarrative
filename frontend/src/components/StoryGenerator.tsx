@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { storiesApi } from '@/services/api'
 import { apiLogger } from '@/utils/debugLogger'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
@@ -150,8 +150,13 @@ function ChipSelector({
   )
 }
 
+interface StoryGeneratorProps {
+  onStoryGenerated?: (story: GeneratedStory & { id: number }) => void
+}
+
 // ─── Main Component ─────────────────────────────────────────────────
-export default function StoryGenerator() {
+export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps = {}) {
+  const navigate = useNavigate()
   // Shared fields (both modes)
   const [hskLevel, setHskLevel] = useState(1)
   const [topic, setTopic] = useState('')
@@ -280,8 +285,13 @@ export default function StoryGenerator() {
               }))),
             }
             setGeneratedStory(normalized)
-            setGeneratedStoryId(event.story_id)
+            const newStoryId: number = event.story_id
+            setGeneratedStoryId(newStoryId)
             if (event.usage_stats) setUsageStats(event.usage_stats)
+            // Notify parent so it can add the story to the browse list immediately
+            if (onStoryGenerated && newStoryId) {
+              onStoryGenerated({ ...normalized, id: newStoryId })
+            }
           } else if (event.type === 'error') {
             setError(event.message || 'Failed to generate story')
           }
@@ -760,17 +770,38 @@ export default function StoryGenerator() {
                 }`}>
                   HSK {generatedStory.hsk_level}
                 </span>
-                {generatedStoryId && (
-                  <Link to={`/stories/${generatedStoryId}`}>
-                    <button className={`flex items-center text-white rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors ${
+                {generatedStoryId && generatedStory && (
+                  <button
+                    onClick={() => {
+                      // Build a Story-shaped object from the generated data so StoryReader
+                      // can use it directly — no extra network round-trip needed.
+                      const storyForReader = {
+                        id: generatedStoryId,
+                        title: generatedStory.title,
+                        title_english: generatedStory.title_english,
+                        content: generatedStory.content,
+                        content_pinyin: generatedStory.pinyin,
+                        hsk_level: generatedStory.hsk_level,
+                        // Fields that StoryReader may access but aren't in GeneratedStory
+                        english_translation: undefined as string | undefined,
+                        author_id: 0,
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString(),
+                        is_published: false,
+                      }
+                      navigate(`/stories/${generatedStoryId}`, {
+                        state: { story: storyForReader },
+                      })
+                    }}
+                    className={`flex items-center text-white rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors ${
                       isAdvanced
                         ? 'bg-indigo-600 hover:bg-indigo-700'
                         : 'bg-emerald-600 hover:bg-emerald-700'
-                    }`}>
-                      <Eye className="w-4 h-4 mr-1" />
-                      View
-                    </button>
-                  </Link>
+                    }`}
+                  >
+                    <Eye className="w-4 h-4 mr-1" />
+                    View
+                  </button>
                 )}
               </div>
             </div>
