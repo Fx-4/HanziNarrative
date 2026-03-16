@@ -1,10 +1,7 @@
 """
 Learning routes for Learn/Review/Test modes
 """
-import json
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List, Optional
 from sqlalchemy.orm import Session
@@ -180,61 +177,6 @@ def get_learning_stats(
         "hsk_level": hsk_level if hsk_level else "all",
         "stats": stats
     }
-
-
-@router.get("/stats/all-stream")
-async def get_all_learning_stats_stream(
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """Stream all learning stats payload via SSE."""
-
-    def sse(data: dict) -> str:
-        return f"data: {json.dumps(jsonable_encoder(data))}\\n\\n"
-
-    async def event_generator():
-        try:
-            yield sse({"type": "progress", "message": "Loading overall learning stats..."})
-            payload = get_all_learning_stats(current_user=current_user, db=db)
-            yield sse({"type": "done", "data": payload})
-        except HTTPException as e:
-            yield sse({"type": "error", "message": e.detail})
-        except Exception:
-            yield sse({"type": "error", "message": "Failed to load learning stats"})
-
-    return StreamingResponse(
-        event_generator(),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"},
-    )
-
-
-@router.get("/stats-stream")
-async def get_learning_stats_stream(
-    hsk_level: Optional[int] = None,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """Stream learning stats payload via SSE."""
-
-    def sse(data: dict) -> str:
-        return f"data: {json.dumps(jsonable_encoder(data))}\\n\\n"
-
-    async def event_generator():
-        try:
-            yield sse({"type": "progress", "message": "Loading learning stats..."})
-            payload = get_learning_stats(hsk_level=hsk_level, current_user=current_user, db=db)
-            yield sse({"type": "done", "data": payload})
-        except HTTPException as e:
-            yield sse({"type": "error", "message": e.detail})
-        except Exception:
-            yield sse({"type": "error", "message": "Failed to load learning stats"})
-
-    return StreamingResponse(
-        event_generator(),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"},
-    )
 
 
 @router.get("/review-count")

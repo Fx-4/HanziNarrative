@@ -3,11 +3,8 @@ Daily Story Challenge Router — Zero AI Cost
 Deterministic daily story selection per user.
 """
 import hashlib
-import json
 from datetime import datetime, timezone, timedelta
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import StreamingResponse
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
@@ -151,55 +148,3 @@ def get_challenge_stats(
     }
 
 
-@router.get("/today-stream")
-async def get_today_challenge_stream(
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    """Stream today's challenge payload via SSE."""
-
-    def sse(data: dict) -> str:
-        return f"data: {json.dumps(jsonable_encoder(data))}\\n\\n"
-
-    async def event_generator():
-        try:
-            yield sse({"type": "progress", "message": "Loading daily challenge..."})
-            payload = get_today_challenge(current_user=current_user, db=db)
-            yield sse({"type": "done", "data": payload})
-        except HTTPException as e:
-            yield sse({"type": "error", "message": e.detail})
-        except Exception:
-            yield sse({"type": "error", "message": "Failed to load daily challenge"})
-
-    return StreamingResponse(
-        event_generator(),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"},
-    )
-
-
-@router.get("/stats-stream")
-async def get_challenge_stats_stream(
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    """Stream daily challenge stats payload via SSE."""
-
-    def sse(data: dict) -> str:
-        return f"data: {json.dumps(jsonable_encoder(data))}\\n\\n"
-
-    async def event_generator():
-        try:
-            yield sse({"type": "progress", "message": "Loading challenge stats..."})
-            payload = get_challenge_stats(current_user=current_user, db=db)
-            yield sse({"type": "done", "data": payload})
-        except HTTPException as e:
-            yield sse({"type": "error", "message": e.detail})
-        except Exception:
-            yield sse({"type": "error", "message": "Failed to load challenge stats"})
-
-    return StreamingResponse(
-        event_generator(),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"},
-    )

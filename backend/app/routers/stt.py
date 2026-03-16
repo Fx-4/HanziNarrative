@@ -8,8 +8,6 @@ import json
 import logging
 import base64
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 try:
     from google.cloud import speech
@@ -188,25 +186,3 @@ async def stt_status(current_user: User = Depends(get_current_user)):
         "credentials_path": creds_path,
     }
 
-@router.get("/status-stream")
-async def stt_status_stream(current_user: User = Depends(get_current_user)):
-    """Stream STT status payload via SSE."""
-
-    def sse(data: dict) -> str:
-        return f"data: {json.dumps(jsonable_encoder(data))}\\n\\n"
-
-    async def event_generator():
-        try:
-            yield sse({"type": "progress", "message": "Checking STT status..."})
-            payload = await stt_status(current_user=current_user)
-            yield sse({"type": "done", "data": payload})
-        except HTTPException as e:
-            yield sse({"type": "error", "message": e.detail})
-        except Exception:
-            yield sse({"type": "error", "message": "Failed to load STT status"})
-
-    return StreamingResponse(
-        event_generator(),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"},
-    )

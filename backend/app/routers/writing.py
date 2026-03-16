@@ -2,10 +2,7 @@
 Writing Practice Router
 API endpoints for character writing practice
 """
-import json
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from app.database import get_db
@@ -149,34 +146,6 @@ async def get_writing_statistics(
     )
 
     return stats
-
-
-@router.get("/stats-stream")
-async def get_writing_statistics_stream(
-    hsk_level: Optional[int] = None,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """Stream writing stats payload via SSE."""
-
-    def sse(data: dict) -> str:
-        return f"data: {json.dumps(jsonable_encoder(data))}\\n\\n"
-
-    async def event_generator():
-        try:
-            yield sse({"type": "progress", "message": "Loading writing stats..."})
-            payload = await get_writing_statistics(hsk_level=hsk_level, current_user=current_user, db=db)
-            yield sse({"type": "done", "data": payload})
-        except HTTPException as e:
-            yield sse({"type": "error", "message": e.detail})
-        except Exception:
-            yield sse({"type": "error", "message": "Failed to load writing stats"})
-
-    return StreamingResponse(
-        event_generator(),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"},
-    )
 
 
 @router.get("/character/{word_id}/progress", response_model=Optional[WritingProgressSchema])

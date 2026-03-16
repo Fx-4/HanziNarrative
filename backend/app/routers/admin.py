@@ -1,12 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func, desc
 from typing import List, Optional
 from datetime import datetime, timedelta, timezone
 from pydantic import BaseModel
-import json
 from .. import models, schemas, auth
 from ..database import get_db
 
@@ -171,33 +168,6 @@ def get_system_stats(
         new_users_this_week=new_users_this_week or 0,
         stories_by_hsk=stories_by_hsk,
         ai_usage_by_feature=ai_usage_by_feature,
-    )
-
-
-@router.get("/stats-stream")
-async def get_system_stats_stream(
-    db: Session = Depends(get_db),
-    _admin: models.User = Depends(auth.get_admin_user),
-):
-    """Stream admin system stats payload via SSE."""
-
-    def sse(data: dict) -> str:
-        return f"data: {json.dumps(jsonable_encoder(data))}\\n\\n"
-
-    async def event_generator():
-        try:
-            yield sse({"type": "progress", "message": "Loading system stats..."})
-            payload = get_system_stats(db=db, _admin=_admin)
-            yield sse({"type": "done", "data": payload})
-        except HTTPException as e:
-            yield sse({"type": "error", "message": e.detail})
-        except Exception:
-            yield sse({"type": "error", "message": "Failed to load system stats"})
-
-    return StreamingResponse(
-        event_generator(),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"},
     )
 
 
