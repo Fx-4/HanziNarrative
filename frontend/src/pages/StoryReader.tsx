@@ -11,6 +11,7 @@ import { Story } from '@/types'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import HanziWordPopup from '@/components/HanziWordPopup'
 import WordDetailsModal from '@/components/WordDetailsModal'
+import { PinyinText } from '@/components/PinyinText'
 import {
   BookOpen,
   Languages,
@@ -323,125 +324,28 @@ export default function StoryReader() {
     }
   }
 
-  // Parse AI-generated pinyin to map each character to correct pinyin
-  const parsePinyinMapping = (content: string, contentPinyin: string | null | undefined): Map<number, string> => {
-    const pinyinMap = new Map<number, string>()
-
-    if (!contentPinyin) {
-      // Fallback to pinyin-pro if no AI pinyin available
-      return pinyinMap
-    }
-
-    // Remove newlines and preserve structure
-    const normalizedContent = content.replace(/\n/g, ' ').trim()
-    const normalizedPinyin = contentPinyin.replace(/\n/g, ' ').trim()
-
-    // Split pinyin by spaces to get individual syllables
-    const pinyinSyllables = normalizedPinyin.split(/\s+/).filter(s => s.length > 0)
-
-    // Extract only Chinese characters (no punctuation)
-    const chineseChars: string[] = []
-    for (let i = 0; i < normalizedContent.length; i++) {
-      const char = normalizedContent[i]
-      // Skip punctuation and whitespace
-      if (!/[，。！？、；：""''（）《》【】…—\s\n]/.test(char)) {
-        chineseChars.push(char)
-      }
-    }
-
-    // Debug logging (optional - remove in production)
-    if (chineseChars.length !== pinyinSyllables.length) {
-      console.warn(
-        `Pinyin mismatch: ${chineseChars.length} characters but ${pinyinSyllables.length} pinyin syllables`,
-        {
-          characters: chineseChars.join(''),
-          pinyin: pinyinSyllables.join(' ')
-        }
-      )
-    }
-
-    // Map each character to its pinyin
-    let charIndex = 0
-    let syllableIndex = 0
-
-    for (let i = 0; i < normalizedContent.length; i++) {
-      const char = normalizedContent[i]
-
-      // Skip punctuation and whitespace - they don't have pinyin
-      if (/[，。！？、；：""''（）《》【】…—\s\n]/.test(char)) {
-        continue
-      }
-
-      // Assign pinyin syllable to this character
-      if (syllableIndex < pinyinSyllables.length) {
-        pinyinMap.set(charIndex, pinyinSyllables[syllableIndex])
-        syllableIndex++
-      }
-
-      charIndex++
-    }
-
-    return pinyinMap
-  }
-
-  const renderCharacterWithPinyin = (char: string, index: number, pinyinMap: Map<number, string>) => {
-    // Skip rendering pinyin for punctuation and whitespace
-    const isPunctuation = /[\s\n，。！？、；：""''（）《》【】…—]/.test(char)
-
-    if (isPunctuation) {
-      return <span key={index} className="text-2xl">{char}</span>
-    }
-
-    // Get pinyin from AI-generated map or fallback to pinyin-pro
-    let charPinyin = pinyinMap.get(index)
-    if (!charPinyin) {
-      // Fallback to pinyin-pro library (but it won't be context-aware for duoyinzi)
-      charPinyin = pinyin(char, { toneType: 'symbol', type: 'array' })[0] || ''
-    }
-
-    return (
-      <ruby key={index} className="inline-block mx-0.5">
-        <span
-          className="text-2xl font-chinese text-gray-900 hover:text-indigo-600 cursor-pointer transition-colors hover:bg-indigo-100 rounded px-1"
-          onClick={(e) => handleCharacterClick(char, e)}
-        >
-          {char}
-        </span>
-        {showPinyin && charPinyin && (
-          <rt className="text-xs text-indigo-600 font-sans select-none">
-            {charPinyin}
-          </rt>
-        )}
-      </ruby>
-    )
-  }
-
   const renderStoryContent = () => {
     if (!story) return null
 
     const paragraphs = story.content.split('\n').filter(p => p.trim())
 
-    // Parse AI-generated pinyin for context-aware mapping
-    const pinyinMap = parsePinyinMapping(story.content, story.content_pinyin)
-
-    // globalCharIndex tracks the non-punctuation character position across ALL paragraphs
-    // This MUST match how parsePinyinMapping assigns keys (sequential non-punct index)
-    let globalCharIndex = 0
+    // Build per-paragraph content_pinyin slices.
+    // content_pinyin is one syllable per character (including punctuation),
+    // space-separated, produced by the AI.  We split it alongside the
+    // characters so each paragraph gets the right slice.
+    let pinyinParts: string[] = []
+    let pinyinConsumed = 0
+    if (story.content_pinyin) {
+      pinyinParts = story.content_pinyin.trim().split(/\s+/).filter(Boolean)
+    }
 
     return (
       <div className="space-y-8">
         {paragraphs.map((paragraph, pIdx) => {
-          // Render each character in this paragraph, using the global non-punct index
-          const rendered = Array.from(paragraph).map((char, cIdx) => {
-            const isPunctuation = /[\s\n，。！？、；：""''（）《》【】…—]/.test(char)
-            if (isPunctuation) {
-              return <span key={cIdx} className="text-2xl">{char}</span>
-            }
-            // Use globalCharIndex so later paragraphs don't reset to 0
-            const currentIndex = globalCharIndex
-            globalCharIndex++
-            return renderCharacterWithPinyin(char, currentIndex, pinyinMap)
-          })
+          // Determine the pinyin slice for this paragraph
+          const charCount = Array.from(paragraph).length
+          const paraSlice = pinyinParts.slice(pinyinConsumed, pinyinConsumed + charCount).join(' ')
+          pinyinConsumed += charCount
 
           return (
             <motion.div
@@ -451,7 +355,15 @@ export default function StoryReader() {
               transition={{ delay: pIdx * 0.1 }}
               className="relative"
             >
-              <div className="leading-[3rem]">{rendered}</div>
+              <PinyinText
+                content={paragraph}
+                contentPinyin={story.content_pinyin ? paraSlice : null}
+                showPinyin={showPinyin}
+                onCharClick={handleCharacterClick}
+                getPinyinFallback={(char) =>
+                  pinyin(char, { toneType: 'symbol', type: 'array' })[0] || ''
+                }
+              />
             </motion.div>
           )
         })}
