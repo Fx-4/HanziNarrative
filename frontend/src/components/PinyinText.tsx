@@ -34,7 +34,7 @@ function isPerCharPinyinParts(chars: string[], parts: string[]): boolean {
  * Split any token where punctuation is merged with a syllable by the AI.
  * e.g. "。tā" → ["。", "tā"],  "sheng。" → ["sheng", "。"]
  */
-function splitPinyinTokens(raw: string[]): string[] {
+export function splitPinyinTokens(raw: string[]): string[] {
   const out: string[] = []
   for (const tok of raw) {
     // Fast path: no punctuation chars in token (most syllables)
@@ -52,7 +52,11 @@ function splitPinyinTokens(raw: string[]): string[] {
   return out
 }
 
-export function parse(content: string, contentPinyin?: string | null): Unit[] {
+/** Returns the parsed units and how many normalised pinyin tokens were consumed. */
+export function parse(
+  content: string,
+  contentPinyin?: string | null,
+): { units: Unit[]; tokensConsumed: number } {
   const chars = Array.from(content)
   const units: Unit[] = []
 
@@ -72,7 +76,7 @@ export function parse(content: string, contentPinyin?: string | null): Unit[] {
       if (PUNCT.has(ch)) { units.push({ hanzi: ch, pinyin: '', isPunct: true, isBreak: false }); continue }
       units.push({ hanzi: ch, pinyin: '', isPunct: false, isBreak: false })
     }
-    return units
+    return { units, tokensConsumed: 0 }
   }
 
   let pIdx = 0
@@ -105,7 +109,7 @@ export function parse(content: string, contentPinyin?: string | null): Unit[] {
     units.push({ hanzi: ch, pinyin: py, isPunct: false, isBreak: false })
   }
 
-  return units
+  return { units, tokensConsumed: pIdx }
 }
 
 // ─── Style constants (module-level — never recreated) ────────────────────────
@@ -161,7 +165,7 @@ export function PinyinText({
   onCharClick,
   getPinyinFallback,
 }: PinyinTextProps) {
-  const units = React.useMemo(
+  const { units } = React.useMemo(
     () => parse(content, contentPinyin),
     [content, contentPinyin],
   )

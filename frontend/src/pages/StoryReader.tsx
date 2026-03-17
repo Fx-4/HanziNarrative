@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { parse as parsePinyin, splitPinyinTokens } from '@/components/PinyinText'
 import axios from 'axios'
 import { getVoiceName } from '@/utils/voicePreference'
 
@@ -306,18 +307,25 @@ export default function StoryReader() {
     [],
   )
 
-  // Pre-compute paragraph+pinyin slices once when story changes (not on every render)
+  // Pre-compute paragraph+pinyin slices once when story changes (not on every render).
+  // Uses parse()'s tokensConsumed to advance the pointer — not character count — so
+  // erhua (点儿 → diǎnr, no separate token for 儿) and punct merging don't cause drift.
   const paragraphSlices = React.useMemo(() => {
     if (!story) return []
     const paragraphs = story.content.split('\n').filter(p => p.trim())
-    const pinyinParts = story.content_pinyin
-      ? story.content_pinyin.trim().split(/\s+/).filter(Boolean)
-      : []
+    if (!story.content_pinyin) return paragraphs.map(paragraph => ({ paragraph, paraSlice: '' }))
+
+    // Normalise once so splitPinyinTokens doesn't run O(n) times per paragraph
+    const normalizedParts = splitPinyinTokens(
+      story.content_pinyin.trim().split(/\s+/).filter(Boolean)
+    )
     let consumed = 0
     return paragraphs.map(paragraph => {
-      const charCount = Array.from(paragraph).length
-      const paraSlice = pinyinParts.slice(consumed, consumed + charCount).join(' ')
-      consumed += charCount
+      // Pass all remaining tokens; parse() only consumes what it needs
+      const remaining = normalizedParts.slice(consumed).join(' ')
+      const { tokensConsumed } = parsePinyin(paragraph, remaining)
+      const paraSlice = normalizedParts.slice(consumed, consumed + tokensConsumed).join(' ')
+      consumed += tokensConsumed
       return { paragraph, paraSlice }
     })
   }, [story])
