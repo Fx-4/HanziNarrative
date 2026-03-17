@@ -87,16 +87,24 @@ const outerCharStyle: React.CSSProperties = {
   display: 'inline-flex', flexDirection: 'column',
   alignItems: 'center', width: CHAR_SIZE, verticalAlign: 'bottom',
 }
+// Clickable variant — pre-spread so no object is created per character per render
+const outerCharClickableStyle: React.CSSProperties = {
+  ...outerCharStyle, cursor: 'pointer',
+}
 const pinyinStyle: React.CSSProperties = {
   display: 'block', height: PINYIN_H, lineHeight: PINYIN_H,
   fontSize: PINYIN_FS, color: '#6366f1', fontWeight: 400,
   letterSpacing: '0.01em', textAlign: 'center',
   whiteSpace: 'nowrap', position: 'relative', zIndex: 1,
 }
+// Two visibility variants — avoids spread on every character per render
+const pinyinVisibleStyle: React.CSSProperties = { ...pinyinStyle, visibility: 'visible' }
+const pinyinHiddenStyle:  React.CSSProperties = { ...pinyinStyle, visibility: 'hidden'  }
 const hanziStyle: React.CSSProperties = {
   display: 'block', width: CHAR_SIZE, fontSize: CHAR_SIZE,
   lineHeight: 1.2, textAlign: 'center', color: '#1f2937',
 }
+const containerStyle: React.CSSProperties = { lineHeight: 1 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
 interface PinyinTextProps {
@@ -130,7 +138,7 @@ export function PinyinText({
   )
 
   return (
-    <div style={{ lineHeight: 1 }} onClick={onCharClick ? handleClick : undefined}>
+    <div style={containerStyle} onClick={onCharClick ? handleClick : undefined}>
       {units.map((unit, i) => {
         if (unit.isBreak) return <br key={i} />
 
@@ -149,10 +157,10 @@ export function PinyinText({
           <span
             key={i}
             data-hanzi={unit.hanzi}
-            style={onCharClick ? { ...outerCharStyle, cursor: 'pointer' } : outerCharStyle}
+            style={onCharClick ? outerCharClickableStyle : outerCharStyle}
           >
             {showPinyin && (
-              <span style={{ ...pinyinStyle, visibility: py ? 'visible' : 'hidden' }}>
+              <span style={py ? pinyinVisibleStyle : pinyinHiddenStyle}>
                 {py}
               </span>
             )}

@@ -344,7 +344,7 @@ export default function StoryReader() {
   }, [])
 
   const renderStoryContent = () => {
-    if (!story || paragraphSlices.length === 0) return null
+    if (!story) return null
 
     return (
       <div className="space-y-8">
