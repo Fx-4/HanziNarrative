@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import axios from 'axios'
 import { getVoiceName } from '@/utils/voicePreference'
 
@@ -300,11 +300,30 @@ export default function StoryReader() {
     }
   }
 
-  const handleCharacterClick = async (char: string, event: React.MouseEvent) => {
-    // Skip if punctuation
-    const isPunctuation = /[\s\n，。！？、；：""''（）《》【】…—]/.test(char)
-    if (isPunctuation) return
+  // Stable fallback — useCallback so PinyinText memo isn't defeated on re-renders
+  const getPinyinFallback = useCallback(
+    (char: string) => pinyin(char, { toneType: 'symbol', type: 'array' })[0] || '',
+    [],
+  )
 
+  // Pre-compute paragraph+pinyin slices once when story changes (not on every render)
+  const paragraphSlices = React.useMemo(() => {
+    if (!story) return []
+    const paragraphs = story.content.split('\n').filter(p => p.trim())
+    const pinyinParts = story.content_pinyin
+      ? story.content_pinyin.trim().split(/\s+/).filter(Boolean)
+      : []
+    let consumed = 0
+    return paragraphs.map(paragraph => {
+      const charCount = Array.from(paragraph).length
+      const paraSlice = pinyinParts.slice(consumed, consumed + charCount).join(' ')
+      consumed += charCount
+      return { paragraph, paraSlice }
+    })
+  }, [story])
+
+  const handleCharacterClick = useCallback(async (char: string, event: React.MouseEvent) => {
+    // PinyinText only fires onCharClick for non-punct cells; guard is a safety net
     try {
       // Search for this character in vocabulary
       const words = await vocabularyApi.searchWords(char)
@@ -322,51 +341,30 @@ export default function StoryReader() {
     } catch (error) {
       console.error('Failed to lookup word:', error)
     }
-  }
+  }, [])
 
   const renderStoryContent = () => {
-    if (!story) return null
-
-    const paragraphs = story.content.split('\n').filter(p => p.trim())
-
-    // Build per-paragraph content_pinyin slices.
-    // content_pinyin is one syllable per character (including punctuation),
-    // space-separated, produced by the AI.  We split it alongside the
-    // characters so each paragraph gets the right slice.
-    let pinyinParts: string[] = []
-    let pinyinConsumed = 0
-    if (story.content_pinyin) {
-      pinyinParts = story.content_pinyin.trim().split(/\s+/).filter(Boolean)
-    }
+    if (!story || paragraphSlices.length === 0) return null
 
     return (
       <div className="space-y-8">
-        {paragraphs.map((paragraph, pIdx) => {
-          // Determine the pinyin slice for this paragraph
-          const charCount = Array.from(paragraph).length
-          const paraSlice = pinyinParts.slice(pinyinConsumed, pinyinConsumed + charCount).join(' ')
-          pinyinConsumed += charCount
-
-          return (
-            <motion.div
-              key={pIdx}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: pIdx * 0.1 }}
-              className="relative"
-            >
-              <PinyinText
-                content={paragraph}
-                contentPinyin={story.content_pinyin ? paraSlice : null}
-                showPinyin={showPinyin}
-                onCharClick={handleCharacterClick}
-                getPinyinFallback={(char) =>
-                  pinyin(char, { toneType: 'symbol', type: 'array' })[0] || ''
-                }
-              />
-            </motion.div>
-          )
-        })}
+        {paragraphSlices.map(({ paragraph, paraSlice }, pIdx) => (
+          <motion.div
+            key={pIdx}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: pIdx * 0.1 }}
+            className="relative"
+          >
+            <PinyinText
+              content={paragraph}
+              contentPinyin={story.content_pinyin ? paraSlice : null}
+              showPinyin={showPinyin}
+              onCharClick={handleCharacterClick}
+              getPinyinFallback={getPinyinFallback}
+            />
+          </motion.div>
+        ))}
       </div>
     )
   }
