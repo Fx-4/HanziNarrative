@@ -30,12 +30,36 @@ function isPerCharPinyinParts(chars: string[], parts: string[]): boolean {
   return ratio > 0.6 && ratio < 1.6
 }
 
+/**
+ * Split any token where punctuation is merged with a syllable by the AI.
+ * e.g. "。tā" → ["。", "tā"],  "sheng。" → ["sheng", "。"]
+ */
+function splitPinyinTokens(raw: string[]): string[] {
+  const out: string[] = []
+  for (const tok of raw) {
+    // Fast path: no punctuation chars in token (most syllables)
+    if (![...tok].some(c => PUNCT.has(c))) { out.push(tok); continue }
+    // Strip leading punct chars
+    let i = 0
+    while (i < tok.length && PUNCT.has(tok[i])) { out.push(tok[i]); i++ }
+    // Find end of syllable body (stop before trailing punct)
+    let j = tok.length - 1
+    while (j >= i && PUNCT.has(tok[j])) j--
+    if (j >= i) out.push(tok.slice(i, j + 1))
+    // Trailing punct chars
+    for (let k = j + 1; k < tok.length; k++) out.push(tok[k])
+  }
+  return out
+}
+
 export function parse(content: string, contentPinyin?: string | null): Unit[] {
   const chars = Array.from(content)
   const units: Unit[] = []
 
-  // Split pinyin once — reused for both the heuristic check and alignment
-  const parts = contentPinyin ? contentPinyin.trim().split(/\s+/).filter(Boolean) : []
+  // Split pinyin once, then normalise so punct is never merged with a syllable
+  const parts = contentPinyin
+    ? splitPinyinTokens(contentPinyin.trim().split(/\s+/).filter(Boolean))
+    : []
   const nonSpaceChars = chars.filter(c => c.trim() !== '')
 
   const perChar = contentPinyin != null && isPerCharPinyinParts(nonSpaceChars, parts)
@@ -52,18 +76,33 @@ export function parse(content: string, contentPinyin?: string | null): Unit[] {
   }
 
   let pIdx = 0
+  let lastPy = ''   // used to detect erhua 儿
   for (const ch of chars) {
-    if (ch === '\n') { units.push({ hanzi: '\n', pinyin: '', isPunct: false, isBreak: true }); continue }
+    if (ch === '\n') { units.push({ hanzi: '\n', pinyin: '', isPunct: false, isBreak: true }); lastPy = ''; continue }
     if (ch === ' ')  continue
 
     if (PUNCT.has(ch)) {
       units.push({ hanzi: ch, pinyin: '', isPunct: true, isBreak: false })
       // Consume the matching punctuation token so the index stays aligned
       if (pIdx < parts.length && (PUNCT.has(parts[pIdx]) || parts[pIdx] === ch)) pIdx++
+      lastPy = ''
       continue
     }
 
-    units.push({ hanzi: ch, pinyin: pIdx < parts.length ? parts[pIdx++] : '', isPunct: false, isBreak: false })
+    // Erhua 儿: if the preceding syllable ends in 'r' (e.g. "diǎnr") AND the
+    // next token is not 儿's own syllable "ér/er", the AI folded 点儿 into one
+    // token — skip consuming an extra token for 儿.
+    if (ch === '儿' && lastPy.length > 1 && lastPy.endsWith('r')) {
+      const nextTok = pIdx < parts.length ? parts[pIdx] : ''
+      if (!/^[eé]r/i.test(nextTok)) {
+        units.push({ hanzi: '儿', pinyin: '', isPunct: false, isBreak: false })
+        continue
+      }
+    }
+
+    const py = pIdx < parts.length ? parts[pIdx++] : ''
+    lastPy = py
+    units.push({ hanzi: ch, pinyin: py, isPunct: false, isBreak: false })
   }
 
   return units
