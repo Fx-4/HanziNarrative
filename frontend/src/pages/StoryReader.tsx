@@ -8,7 +8,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { pinyin } from 'pinyin-pro'
 import { storiesApi, vocabularyApi } from '@/services/api'
-import { Story } from '@/types'
+import { Story, HanziWord } from '@/types'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import HanziWordPopup from '@/components/HanziWordPopup'
 import WordDetailsModal from '@/components/WordDetailsModal'
@@ -44,7 +44,7 @@ export default function StoryReader() {
   const location = useLocation()
   // Story data passed via router state (e.g. from StoryGenerator "View" button)
   // avoids a redundant DB fetch when the data is already available client-side.
-  const preloadedStory = (location.state as any)?.story as Story | null | undefined
+  const preloadedStory = (location.state as { story?: Story } | null)?.story as Story | null | undefined
   const [story, setStory] = useState<Story | null>(preloadedStory ?? null)
   const [loading, setLoading] = useState(!preloadedStory)
 
@@ -59,7 +59,7 @@ export default function StoryReader() {
   const [selectedChar, setSelectedChar] = useState<string | null>(null)
   const [questions, setQuestions] = useState<ComprehensionQuestion[]>([])
   const [loadingQuiz, setLoadingQuiz] = useState(false)
-  const [selectedWord, setSelectedWord] = useState<any | null>(null)
+  const [selectedWord, setSelectedWord] = useState<HanziWord | null>(null)
   const [wordPosition, setWordPosition] = useState<{ x: number; y: number } | null>(null)
   const [showWordDetails, setShowWordDetails] = useState(false)
   const [isBookmarked, setIsBookmarked] = useState(false)
@@ -73,6 +73,7 @@ export default function StoryReader() {
     if (id) {
       loadStory(parseInt(id))
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
   const loadStory = async (storyId: number) => {
@@ -234,11 +235,12 @@ export default function StoryReader() {
       await storiesApi.delete(story.id)
       toast.success('Story deleted successfully')
       navigate('/stories')
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as { response?: { status?: number } }
       console.error('Failed to delete story:', error)
-      if (error.response?.status === 404) {
+      if (err.response?.status === 404) {
         toast.error('Story not found')
-      } else if (error.response?.status === 401) {
+      } else if (err.response?.status === 401) {
         toast.error('You must be logged in to delete stories')
       } else {
         toast.error('Failed to delete story. You can only delete stories you created.')

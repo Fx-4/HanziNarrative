@@ -16,6 +16,7 @@ export default function StrokeOrderAnimation({
   loop = false
 }: StrokeOrderAnimationProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const writerRef    = useRef<any>(null)
   const dataReady    = useRef(false)          // true once CDN data loaded
   const loopTimer    = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -33,11 +34,12 @@ export default function StrokeOrderAnimation({
   }
 
   // Stable animation starter — reads all mutable state from refs
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const runAnimation = useCallback((w: any) => {
     if (!w || !dataReady.current || !activeRef.current) return
 
     // cancel any in-progress animation before starting fresh
-    try { w.cancelAnimation() } catch (_) {}
+    try { w.cancelAnimation() } catch { /* no-op */ }
 
     setPhase('playing')
 
@@ -87,7 +89,7 @@ export default function StrokeOrderAnimation({
           dataReady.current = true
           if (autoPlay) runAnimation(writer)
         },
-        onLoadCharDataError: (err: any) => {
+        onLoadCharDataError: (err: unknown) => {
           console.warn(`HanziWriter: failed to load "${character}"`, err)
         }
       })
@@ -116,20 +118,20 @@ export default function StrokeOrderAnimation({
     clearTimer()
     const w = writerRef.current
     if (!w || !dataReady.current) return
-    try { w.pauseAnimation(); setPhase('paused') } catch (_) {}
+    try { w.pauseAnimation(); setPhase('paused') } catch { /* no-op */ }
   }
 
   const handleResume = () => {
     const w = writerRef.current
     if (!w || !dataReady.current) return
-    try { w.resumeAnimation(); setPhase('playing') } catch (_) {}
+    try { w.resumeAnimation(); setPhase('playing') } catch { /* no-op */ }
   }
 
   const handleReset = () => {
     clearTimer()
     const w = writerRef.current
     if (!w || !dataReady.current) return
-    try { w.cancelAnimation(); w.hideCharacter() } catch (_) {}
+    try { w.cancelAnimation(); w.hideCharacter() } catch { /* no-op */ }
     setPhase('idle')
   }
 

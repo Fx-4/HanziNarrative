@@ -12,7 +12,7 @@ interface Props {
   onBack: () => void
 }
 
-export default function PinyinTypingMode({ words, hskLevel: _hskLevel, onBack }: Props) {
+export default function PinyinTypingMode({ words, onBack }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [inputValue, setInputValue] = useState('')
   const [showFeedback, setShowFeedback] = useState(false)

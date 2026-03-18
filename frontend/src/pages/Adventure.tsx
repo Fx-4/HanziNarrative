@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { adventureApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
@@ -47,7 +47,7 @@ interface StoryStep {
     setting?: string
 }
 
-const TOPIC_ICONS: Record<string, any> = {
+const TOPIC_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
     'daily life': Home,
     'food and restaurant': UtensilsCrossed,
     'school and studying': GraduationCap,
@@ -77,7 +77,7 @@ export default function Adventure() {
     const [loading, setLoading] = useState(false)
     const [showPinyin, setShowPinyin] = useState(true)
     const [showTranslation, setShowTranslation] = useState(false)
-    const [usageStats, setUsageStats] = useState<any>(null)
+    const [usageStats, setUsageStats] = useState<{ adventure_start?: { remaining_daily: number; remaining_hourly: number; limit_daily: number }; adventure_continue?: { remaining_daily: number; limit_daily: number } } | null>(null)
     const [isPlaying, setIsPlaying] = useState(false)
     const [audioRef, setAudioRef] = useState<HTMLAudioElement | null>(null)
     const [streamingText, setStreamingText] = useState<string | null>(null)
@@ -119,9 +119,10 @@ export default function Adventure() {
                 setUsageStats(null)
                 loadUsageStats()
             }
-        } catch (error: any) {
-            if (error.name === 'AbortError') return
-            if (error.message?.includes('429') || error.response?.status === 429) {
+        } catch (error) {
+            const err = error as { name?: string; message?: string; response?: { status?: number } }
+            if (err.name === 'AbortError') return
+            if (err.message?.includes('429') || err.response?.status === 429) {
                 toast.error('Rate limit reached! Try again later.')
             } else {
                 toast.error('Failed to start adventure')
@@ -157,9 +158,10 @@ export default function Adventure() {
                 setStepNumber(prev => prev + 1)
                 loadUsageStats()
             }
-        } catch (error: any) {
-            if (error.name === 'AbortError') return
-            if (error.message?.includes('429') || error.response?.status === 429) {
+        } catch (error) {
+            const err = error as { name?: string; message?: string; response?: { status?: number } }
+            if (err.name === 'AbortError') return
+            if (err.message?.includes('429') || err.response?.status === 429) {
                 toast.error('Rate limit reached! Try again later.')
             } else {
                 toast.error('Failed to continue story')

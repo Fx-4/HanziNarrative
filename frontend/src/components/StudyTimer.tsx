@@ -54,6 +54,7 @@ export default function StudyTimer() {
         clearInterval(intervalRef.current)
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning, sessionType])
 
   const handleSessionComplete = () => {
@@ -83,6 +84,7 @@ export default function StudyTimer() {
   const playNotificationSound = () => {
     // Simple beep using Web Audio API
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
       const oscillator = audioContext.createOscillator()
       const gainNode = audioContext.createGain()

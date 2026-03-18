@@ -1,6 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import HanziWriter from 'hanzi-writer'
 import { HanziWord, AttemptResult } from '@/types'
+
+interface HanziStrokeData {
+  strokeNum?: number
+  strokesRemaining?: number
+  totalMistakes?: number
+}
+interface HanziSummaryData {
+  totalMistakes?: number
+  [key: string]: unknown
+}
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   RotateCcw,
@@ -21,12 +31,12 @@ interface WritingCanvasProps {
 
 export default function WritingCanvas({
   character,
-  showStrokeOrder: _showStrokeOrder = true,
   onComplete,
   mode = 'practice'
 }: WritingCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLDivElement>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const writerRef = useRef<any>(null)
   const [canvasSize, setCanvasSize] = useState(260)
   const [showHints, setShowHints] = useState(true)
@@ -55,8 +65,8 @@ export default function WritingCanvas({
     return () => ro.disconnect()
   }, [])
 
-  const handleCompleteRef = useRef<(summaryData: any) => void>(() => { })
-  handleCompleteRef.current = (summaryData: any) => {
+  const handleCompleteRef = useRef<(summaryData: HanziSummaryData) => void>(() => { })
+  handleCompleteRef.current = (summaryData: HanziSummaryData) => {
     const prev = startTimeRef.current
     if (!prev) return
     const timeTaken = (Date.now() - prev) / 1000
@@ -88,7 +98,7 @@ export default function WritingCanvas({
     if (writerRef.current) {
       try {
         writerRef.current.cancelQuiz()
-      } catch (_) {}
+      } catch { /* no-op */ }
       writerRef.current = null
     }
 
@@ -124,7 +134,7 @@ export default function WritingCanvas({
         drawingWidth: 4,
         strokeAnimationSpeed: 1,
         delayBetweenStrokes: 200,
-        onLoadCharDataError: (err: any) => {
+        onLoadCharDataError: (err: unknown) => {
           console.warn(`HanziWriter: failed to load "${char}"`, err)
           setLoadError(true)
         }
@@ -133,7 +143,7 @@ export default function WritingCanvas({
       writerRef.current = writer
 
       writer.quiz({
-        onMistake: (strokeData: any) => {
+        onMistake: (strokeData: HanziStrokeData) => {
           mistakesRef.current = strokeData.totalMistakes ?? (mistakesRef.current + 1)
           setMistakes(mistakesRef.current)
           if (strokeData.strokeNum !== undefined && strokeData.strokesRemaining !== undefined) {
@@ -142,7 +152,7 @@ export default function WritingCanvas({
             setTotalStrokes(total)
           }
         },
-        onCorrectStroke: (strokeData: any) => {
+        onCorrectStroke: (strokeData: HanziStrokeData) => {
           if (strokeData.strokeNum !== undefined && strokeData.strokesRemaining !== undefined) {
             const total = strokeData.strokeNum + strokeData.strokesRemaining + 1
             totalStrokesRef.current = total
@@ -156,7 +166,7 @@ export default function WritingCanvas({
             return newCount
           })
         },
-        onComplete: (summaryData: any) => {
+        onComplete: (summaryData: HanziSummaryData) => {
           handleCompleteRef.current(summaryData)
         }
       })
@@ -168,10 +178,11 @@ export default function WritingCanvas({
       if (writerRef.current) {
         try {
           writerRef.current.cancelQuiz()
-        } catch (_) {}
+        } catch { /* no-op */ }
         writerRef.current = null
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [character.simplified, canvasSize])
 
   useEffect(() => {
@@ -193,7 +204,7 @@ export default function WritingCanvas({
     totalStrokesRef.current = 0
 
     writerRef.current.quiz({
-      onMistake: (strokeData: any) => {
+      onMistake: (strokeData: HanziStrokeData) => {
         mistakesRef.current = strokeData.totalMistakes ?? (mistakesRef.current + 1)
         setMistakes(mistakesRef.current)
         if (strokeData.strokeNum !== undefined && strokeData.strokesRemaining !== undefined) {
@@ -202,7 +213,7 @@ export default function WritingCanvas({
           setTotalStrokes(total)
         }
       },
-      onCorrectStroke: (strokeData: any) => {
+      onCorrectStroke: (strokeData: HanziStrokeData) => {
         if (strokeData.strokeNum !== undefined && strokeData.strokesRemaining !== undefined) {
           const total = strokeData.strokeNum + strokeData.strokesRemaining + 1
           totalStrokesRef.current = total
@@ -214,7 +225,7 @@ export default function WritingCanvas({
           return newCount
         })
       },
-      onComplete: (summaryData: any) => handleCompleteRef.current(summaryData)
+      onComplete: (summaryData: HanziSummaryData) => handleCompleteRef.current(summaryData)
     })
     setStrokesCompleted(0)
     setMistakes(0)
@@ -238,7 +249,7 @@ export default function WritingCanvas({
         writerRef.current.hideCharacter()
         // Restart quiz after animation
         writerRef.current.quiz({
-          onMistake: (strokeData: any) => {
+          onMistake: (strokeData: HanziStrokeData) => {
             mistakesRef.current = strokeData.totalMistakes ?? (mistakesRef.current + 1)
             setMistakes(mistakesRef.current)
             if (strokeData.strokeNum !== undefined && strokeData.strokesRemaining !== undefined) {
@@ -247,7 +258,7 @@ export default function WritingCanvas({
               setTotalStrokes(total)
             }
           },
-          onCorrectStroke: (strokeData: any) => {
+          onCorrectStroke: (strokeData: HanziStrokeData) => {
             if (strokeData.strokeNum !== undefined && strokeData.strokesRemaining !== undefined) {
               const total = strokeData.strokeNum + strokeData.strokesRemaining + 1
               totalStrokesRef.current = total
@@ -259,7 +270,7 @@ export default function WritingCanvas({
               return newCount
             })
           },
-          onComplete: (summaryData: any) => handleCompleteRef.current(summaryData)
+          onComplete: (summaryData: HanziSummaryData) => handleCompleteRef.current(summaryData)
         })
       }
     })

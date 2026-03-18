@@ -115,9 +115,10 @@ export default function Conversation() {
           return [...prev.slice(0, -1), { ...last, isStreaming: false }]
         })
       }
-    } catch (err: any) {
-      if (err?.name === 'AbortError') return
-      toast.error(err?.message || 'Failed to start conversation')
+    } catch (err) {
+      const e = err as { name?: string; message?: string }
+      if (e?.name === 'AbortError') return
+      toast.error(e?.message || 'Failed to start conversation')
       // Remove the empty placeholder on error
       setMessages([])
       setStage('setup')
@@ -191,9 +192,10 @@ export default function Conversation() {
           return [...prev.slice(0, -1), { ...last, isStreaming: false }]
         })
       }
-    } catch (err: any) {
-      if (err?.name === 'AbortError') return
-      toast.error(err?.message || 'Failed to get reply')
+    } catch (err) {
+      const e = err as { name?: string; message?: string }
+      if (e?.name === 'AbortError') return
+      toast.error(e?.message || 'Failed to get reply')
       // Remove the empty streaming placeholder on error
       setMessages(prev => {
         const last = prev[prev.length - 1]

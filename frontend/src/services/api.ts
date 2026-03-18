@@ -189,7 +189,7 @@ export const authApi = {
 
 export const storiesApi = {
   getAll: async (hskLevel?: number, category?: string): Promise<Story[]> => {
-    const params: any = {}
+    const params: Record<string, string | number> = {}
     if (hskLevel) params.hsk_level = hskLevel
     if (category) params.category = category
     const response = await api.get('/stories/', { params })
@@ -383,7 +383,7 @@ export const typingApi = {
   },
 
   getProgress: async (mode?: string, hskLevel?: number): Promise<TypingProgress[]> => {
-    const params: any = {}
+    const params: Record<string, string | number> = {}
     if (mode) params.mode = mode
     if (hskLevel) params.hsk_level = hskLevel
     const response = await api.get('/typing/progress', { params })
@@ -391,7 +391,7 @@ export const typingApi = {
   },
 
   getStats: async (mode?: string, hskLevel?: number): Promise<TypingStats> => {
-    const params: any = {}
+    const params: Record<string, string | number> = {}
     if (mode) params.mode = mode
     if (hskLevel) params.hsk_level = hskLevel
     const response = await api.get('/typing/stats', { params })
@@ -408,7 +408,7 @@ export const typingApi = {
 export const learningApi = {
   // Get new words for learning
   getNewWords: async (hskLevel: number, limit: number = 20, category?: string) => {
-    const params: any = { hsk_level: hskLevel, limit }
+    const params: Record<string, string | number> = { hsk_level: hskLevel, limit }
     if (category) params.category = category
     const response = await api.get('/learning/words/new', { params })
     return response.data
@@ -423,7 +423,7 @@ export const learningApi = {
 
   // Get words for testing
   getTestWords: async (hskLevel: number, limit: number = 20, category?: string) => {
-    const params: any = { hsk_level: hskLevel, limit }
+    const params: Record<string, string | number> = { hsk_level: hskLevel, limit }
     if (category) params.category = category
     const response = await api.get('/learning/words/test', { params })
     return response.data
@@ -479,7 +479,7 @@ export const quizApi = {
     return response.data
   },
 
-  submit: async (quizResults: any) => {
+  submit: async (quizResults: unknown) => {
     const response = await api.post('/quiz/submit', quizResults)
     return response.data
   }
@@ -600,6 +600,7 @@ export const adventureApi = {
     topic: string = 'daily life',
     onToken: (text: string) => void,
     signal?: AbortSignal,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> => {
     const token = localStorage.getItem('access_token')
     const response = await fetch(`${API_URL}/adventure/start-stream`, {
@@ -627,6 +628,7 @@ export const adventureApi = {
     stepNumber: number,
     onToken: (text: string) => void,
     signal?: AbortSignal,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> => {
     const token = localStorage.getItem('access_token')
     const response = await fetch(`${API_URL}/adventure/continue-stream`, {
@@ -654,12 +656,15 @@ export const adventureApi = {
 async function _readAdventureStream(
   response: Response,
   onToken: (text: string) => void,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   const reader = response.body!.getReader()
   const decoder = new TextDecoder()
   let buffer = ''
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let finalData: any = null
 
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     const { done, value } = await reader.read()
     if (done) break
@@ -744,6 +749,7 @@ async function pumpSSE(
   res: Response,
   onToken: (text: string) => void,
   signal?: AbortSignal,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   if (!res.ok) {
     const body = await res.text().catch(() => '')
@@ -753,6 +759,7 @@ async function pumpSSE(
   const decoder = new TextDecoder()
   let buffer = ''
 
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     if (signal?.aborted) break
     const { done, value } = await reader.read()
@@ -767,9 +774,9 @@ async function pumpSSE(
       const line = part.trim()
       if (!line.startsWith('data:')) continue
       const raw = line.slice('data:'.length).trim()
-      let event: any
+      let event: Record<string, unknown>
       try {
-        event = JSON.parse(raw)
+        event = JSON.parse(raw) as Record<string, unknown>
       } catch {
         continue
       }
@@ -780,7 +787,7 @@ async function pumpSSE(
         return event.data
       } else if (event.type === 'error') {
         reader.cancel()
-        throw new Error(event.message ?? 'SSE stream error')
+        throw new Error((event.message as string) ?? 'SSE stream error')
       }
     }
   }
@@ -818,6 +825,7 @@ export const conversationApi = {
     topic: string,
     onToken: (text: string) => void,
     signal?: AbortSignal,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> => {
     const token = localStorage.getItem('access_token')
     const res = await fetch(`${API_URL}/conversation/start-stream`, {
@@ -839,6 +847,7 @@ export const conversationApi = {
     history: { role: string; content: string }[],
     onToken: (text: string) => void,
     signal?: AbortSignal,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> => {
     const token = localStorage.getItem('access_token')
     const res = await fetch(`${API_URL}/conversation/reply-stream`, {

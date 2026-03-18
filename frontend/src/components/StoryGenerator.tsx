@@ -208,7 +208,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
         .map(v => v.trim())
         .filter(v => v.length > 0)
 
-      const request: Record<string, any> = {
+      const request: Record<string, unknown> = {
         hsk_level: hskLevel,
         topic: topic || undefined,
         character_names: characterNamesArray.length > 0 ? characterNamesArray : undefined,
@@ -257,6 +257,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
       const decoder = new TextDecoder()
       let buffer = ''
 
+      // eslint-disable-next-line no-constant-condition
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
@@ -273,11 +274,13 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
           if (event.type === 'progress') {
             setLoadingMessage(event.message)
           } else if (event.type === 'done') {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const raw = event.story as any
             const normalized: GeneratedStory = {
               ...raw,
               pinyin: raw.pinyin ?? raw.content_pinyin,
               hsk_level: raw.hsk_level ?? raw.difficulty_level ?? hskLevel,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               vocabulary: raw.vocabulary ?? (raw.key_vocabulary?.map((v: any) => ({
                 word: v.word ?? v.simplified,
                 pinyin: v.pinyin,
@@ -297,9 +300,9 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
           }
         }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[SSE] Generation error:', err)
-      setError(err.message || 'Failed to generate story')
+      setError((err instanceof Error ? err.message : null) || 'Failed to generate story')
     } finally {
       setLoading(false)
       setLoadingMessage(null)

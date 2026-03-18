@@ -18,7 +18,7 @@ interface WordResult {
   isCorrect: boolean
 }
 
-export default function SpeedTypingMode({ words, hskLevel: _hskLevel, onBack }: Props) {
+export default function SpeedTypingMode({ words, onBack }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [inputValue, setInputValue] = useState('')
   const [startTime, setStartTime] = useState<number>(Date.now())

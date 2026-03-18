@@ -3,7 +3,7 @@
  * Uses jsdelivr CDN with fallback to ensure characters load reliably.
  * Only supports single characters — returns first character if multi-char string is passed.
  */
-export function loadCharacterData(char: string): Promise<any> {
+export function loadCharacterData(char: string): Promise<unknown> {
   // HanziWriter only supports single characters
   const singleChar = char.charAt(0)
   const code = singleChar.charCodeAt(0)

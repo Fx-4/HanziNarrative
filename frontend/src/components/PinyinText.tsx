@@ -8,6 +8,7 @@
 import React from 'react'
 
 // ─── Punctuation (full-width CJK + common ASCII used in Chinese text) ────────
+// eslint-disable-next-line react-refresh/only-export-components
 export const PUNCT = new Set([
   // Full-width
   '。','，','！','？','；','：','、','…','—','～',
@@ -34,6 +35,7 @@ function isPerCharPinyinParts(chars: string[], parts: string[]): boolean {
  * Split any token where punctuation is merged with a syllable by the AI.
  * e.g. "。tā" → ["。", "tā"],  "sheng。" → ["sheng", "。"]
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function splitPinyinTokens(raw: string[]): string[] {
   const out: string[] = []
   for (const tok of raw) {
@@ -53,6 +55,7 @@ export function splitPinyinTokens(raw: string[]): string[] {
 }
 
 /** Returns the parsed units and how many normalised pinyin tokens were consumed. */
+// eslint-disable-next-line react-refresh/only-export-components
 export function parse(
   content: string,
   contentPinyin?: string | null,

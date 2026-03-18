@@ -67,7 +67,7 @@ export default function SpeakingPractice() {
     const [isProcessing, setIsProcessing] = useState(false)
     const [sessionStarted, setSessionStarted] = useState(false)
     const [showResult, setShowResult] = useState(false)
-    const [result, setResult] = useState<any>(null)
+    const [result, setResult] = useState<{ is_correct: boolean; accuracy_score: number; feedback: string; transcript?: string; confidence?: number } | null>(null)
     const [score, setScore] = useState(0)
     const [totalAttempted, setTotalAttempted] = useState(0)
     const [isPlaying, setIsPlaying] = useState(false)
@@ -152,7 +152,7 @@ export default function SpeakingPractice() {
 
             mediaRecorder.start()
             setIsRecording(true)
-        } catch (err: any) {
+        } catch {
             toast.error('Microphone access denied. Please allow microphone access.')
         }
     }
@@ -183,8 +183,9 @@ export default function SpeakingPractice() {
             } else {
                 toast(response.feedback, { icon: '✎' })
             }
-        } catch (err: any) {
-            const msg = err.response?.data?.detail || 'Speech recognition failed'
+        } catch (err) {
+            const e = err as { response?: { data?: { detail?: string } } }
+            const msg = e.response?.data?.detail || 'Speech recognition failed'
             toast.error(msg)
         } finally {
             setIsProcessing(false)

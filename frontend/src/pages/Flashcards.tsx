@@ -65,7 +65,7 @@ export default function Flashcards() {
       if (studyMode === 'review') {
         const response = await learningApi.getReviewWords()
         // Extract words from reviews array
-        data = response.reviews?.map((r: any) => r.word) || []
+        data = response.reviews?.map((r: { word: HanziWord }) => r.word) || []
       } else if (studyMode === 'learn') {
         const response = await learningApi.getNewWords(selectedHSK || 1, 20)
         // Extract words array from response
@@ -74,7 +74,7 @@ export default function Flashcards() {
         // Mix of both
         const reviewResponse = await learningApi.getReviewWords()
         const newWordsResponse = await learningApi.getNewWords(selectedHSK || 1, 10)
-        const reviewWords = reviewResponse.reviews?.map((r: any) => r.word) || []
+        const reviewWords = reviewResponse.reviews?.map((r: { word: HanziWord }) => r.word) || []
         const newWords = newWordsResponse.words || []
         data = [...reviewWords, ...newWords]
       }
@@ -147,7 +147,7 @@ export default function Flashcards() {
     }
   }
 
-  const handleDragEnd = (_: any, info: any) => {
+  const handleDragEnd = (_: unknown, info: { offset: { x: number } }) => {
     if (!isFlipped) return
 
     const threshold = 100

@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom'
 
 interface ReviewItem {
   word: HanziWord
-  progress: any
+  progress: unknown
   days_overdue: number
 }
 
@@ -55,7 +55,7 @@ export default function Review() {
     wrong: 0
   })
   const [hskLevel, setHskLevel] = useState<number | undefined>(undefined)
-  const [stats, setStats] = useState<any>(null)
+  const [stats, setStats] = useState<{ total_words_learning: number; mastered_words: number; due_for_review: number; total_reviews: number; accuracy: number } | null>(null)
 
   // Active testing states
   const [quizQuestion, setQuizQuestion] = useState<QuizQuestion | null>(null)
@@ -71,6 +71,7 @@ export default function Review() {
     }
     loadReviewWords()
     loadStats()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, hskLevel])
 
   const loadReviewWords = async () => {
@@ -84,10 +85,11 @@ export default function Review() {
       if (data.reviews.length > 0) {
         generateQuizQuestion(0, data.reviews)
       }
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as { response?: { status?: number } }
       console.error('Failed to load review words:', error)
       // Don't show error toast if user is not authenticated - they'll see the login prompt
-      if (error.response?.status !== 401 && error.response?.status !== 403) {
+      if (err.response?.status !== 401 && err.response?.status !== 403) {
         toast.error('Failed to load review words')
       }
     } finally {
@@ -136,9 +138,10 @@ export default function Review() {
     try {
       const data = await learningApi.getStats(hskLevel)
       setStats(data.stats)
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as { response?: { status?: number } }
       // Silently fail for stats - not critical
-      if (error.response?.status !== 401 && error.response?.status !== 403) {
+      if (err.response?.status !== 401 && err.response?.status !== 403) {
         console.error('Failed to load stats:', error)
       }
     }
@@ -179,8 +182,9 @@ export default function Review() {
       const submitReview = async (attempt: number = 1) => {
         try {
           await learningApi.recordReview(currentItem.word.id, finalQuality)
-        } catch (error: any) {
-          const status = error?.response?.status
+        } catch (error) {
+          const err = error as { response?: { status?: number } }
+          const status = err?.response?.status
           const shouldRetry = (!status || status >= 500) && attempt < 2
           if (shouldRetry) {
             setTimeout(() => {

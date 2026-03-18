@@ -74,7 +74,11 @@
       "Bash(node:*)",
       "Bash(npx tsc:*)",
       "Bash(sort:*)",
-      "mcp__Desktop_Commander__read_file"
+      "mcp__Desktop_Commander__read_file",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npx vite:*)",
+      "Bash(cmd /c \"taskkill /PID 18688 /F\")",
+      "Bash(npx eslint:*)"
     ],
     "deny": [],
     "ask": []

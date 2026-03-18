@@ -55,6 +55,7 @@ export default function SentenceBuilder() {
   // Fetch vocabulary for the selected HSK level
   useEffect(() => {
     fetchVocabulary();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hskLevel]);
 
   // Load usage stats on component mount
@@ -69,9 +70,10 @@ export default function SentenceBuilder() {
     try {
       const stats = await storiesApi.getAIUsageStats();
       setUsageStats(stats);
-    } catch (err: any) {
+    } catch (err) {
+      const e = err as { response?: { status?: number } }
       // Only log error if it's not a 401/422 (not authenticated)
-      if (err?.response?.status !== 401 && err?.response?.status !== 422) {
+      if (e?.response?.status !== 401 && e?.response?.status !== 422) {
         console.error('Failed to load usage stats:', err);
       }
       // Set empty stats on error so it doesn't show "Loading..." forever
@@ -176,14 +178,15 @@ export default function SentenceBuilder() {
       } else {
         toast.error(`Score: ${response.data.score}/100 - Check feedback below`);
       }
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as { response?: { status?: number; data?: { detail?: string } }; message?: string }
       console.error('Validation failed:', error);
-      if (error.response?.status === 401 || error.response?.status === 403) {
+      if (err.response?.status === 401 || err.response?.status === 403) {
         toast.error('Authentication error. Please login again.');
-      } else if (error.response?.status === 429) {
+      } else if (err.response?.status === 429) {
         toast.error('Rate limit exceeded. Please wait a moment and try again.');
       } else {
-        toast.error(`Failed to validate sentence: ${error.response?.data?.detail || error.message}`);
+        toast.error(`Failed to validate sentence: ${err.response?.data?.detail || err.message}`);
       }
     } finally {
       setIsValidating(false);

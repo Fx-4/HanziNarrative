@@ -118,7 +118,7 @@ export interface WritingStats {
 export interface AttemptResult {
   accuracy: number
   timeTaken: number
-  strokeData: any
+  strokeData: Record<string, unknown>
 }
 
 // Onboarding Types

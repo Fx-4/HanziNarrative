@@ -38,11 +38,11 @@ function generateCandidates(word: HanziWord, allWords: HanziWord[]): string[] {
   return candidates.sort(() => Math.random() - 0.5).slice(0, 6)
 }
 
-export default function IMEPracticeMode({ words, hskLevel: _hskLevel, onBack }: Props) {
+export default function IMEPracticeMode({ words, onBack }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [inputValue, setInputValue] = useState('')
   const [candidates, setCandidates] = useState<string[]>([])
-  const [_selectedCandidate, setSelectedCandidate] = useState<string | null>(null)
+  const [, setSelectedCandidate] = useState<string | null>(null)
   const [attempts, setAttempts] = useState(0)
   const [showFeedback, setShowFeedback] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
@@ -248,7 +248,7 @@ export default function IMEPracticeMode({ words, hskLevel: _hskLevel, onBack }: 
               </div>
               <button
                 onClick={handleNext}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors w-full mt-4 flex items-center justify-center text-lg py-3"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-3 font-semibold cursor-pointer transition-colors w-full mt-4 flex items-center justify-center text-lg"
               >
                 {currentIndex < words.length - 1 ? (
                   <>

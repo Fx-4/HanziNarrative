@@ -1,7 +1,8 @@
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { forwardRef } from 'react'
+import { forwardRef, type FC } from 'react'
 import { useAuthStore } from '@/store/authStore'
+import type { User as UserProfile } from '@/types'
 import { useThemeStore } from '@/store/themeStore'
 import {
   BookOpen, BookMarked, User, LogOut, PenTool, GraduationCap, Brain,
@@ -14,8 +15,9 @@ import { useState, useEffect, useRef } from 'react'
 import { learningApi } from '@/services/api'
 import VoiceSelector from '@/components/VoiceSelector'
 
-type MenuItem = { to: string; label: string; icon: any; badge?: boolean }
-type DropdownMenu = { label: string; icon: any; items: MenuItem[] }
+type NavIcon = FC<{ className?: string }>
+type MenuItem = { to: string; label: string; icon: NavIcon; badge?: boolean }
+type DropdownMenu = { label: string; icon: NavIcon; items: MenuItem[] }
 
 /* ─── animation variants ─── */
 const drawerVariants = {
@@ -587,7 +589,7 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
 
 /* ─── Desktop user menu ─── */
 const UserMenu = forwardRef<HTMLDivElement, {
-  user: any; showMenu: boolean; onToggle: () => void; onClose: () => void; onLogout: () => void
+  user: UserProfile | null; showMenu: boolean; onToggle: () => void; onClose: () => void; onLogout: () => void
 }>(function UserMenu({ user, showMenu, onToggle, onClose, onLogout }, ref) {
   return (
     <div ref={ref} className="relative ml-1">

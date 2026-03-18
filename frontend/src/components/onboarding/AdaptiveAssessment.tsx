@@ -9,13 +9,23 @@ interface AdaptiveAssessmentProps {
   onComplete: (determinedLevel: number, xpEarned: number) => void
 }
 
+interface GeneratedQuestion {
+  word_id: number
+  hsk_level: number
+  chinese: string
+  pinyin: string
+  english: string
+  options: string[]
+  correctIndex: number
+}
+
 const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
   const [questionsPool, setQuestionsPool] = useState<QuestionData[]>([])
   const [currentLevel, setCurrentLevel] = useState(2)
   const [questionIndex, setQuestionIndex] = useState(0)
-  const [currentQuestion, setCurrentQuestion] = useState<any>(null)
+  const [currentQuestion, setCurrentQuestion] = useState<GeneratedQuestion | null>(null)
   const [answers, setAnswers] = useState<AssessmentAnswer[]>([])
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
@@ -45,6 +55,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
     if (questionsPool.length > 0 && !currentQuestion && !submittedRef.current) {
       generateNextQuestion()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questionsPool, currentQuestion, currentLevel])
 
   const loadQuestions = async () => {
@@ -80,7 +91,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
   }
 
   const handleAnswer = (optionIndex: number) => {
-    if (showFeedback) return
+    if (showFeedback || !currentQuestion) return
     setSelectedAnswer(optionIndex)
     setShowFeedback(true)
 

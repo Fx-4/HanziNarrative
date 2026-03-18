@@ -57,7 +57,7 @@ export default function StrokeOrderDisplay({
                 .then(res => res.json())
             })
         },
-        onLoadCharDataError: (err: any) => {
+        onLoadCharDataError: (err: unknown) => {
           console.warn(`Failed to load character data for ${character}:`, err)
           // Don't show error to user, just log it
         }
@@ -116,7 +116,7 @@ export default function StrokeOrderDisplay({
                 .then(res => res.json())
             })
         },
-        onLoadCharDataError: (err: any) => {
+        onLoadCharDataError: (err: unknown) => {
           console.warn(`Failed to load character data for ${character}:`, err)
         }
       })

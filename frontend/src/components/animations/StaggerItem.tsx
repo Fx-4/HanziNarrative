@@ -25,7 +25,6 @@ export default function StaggerItem({
   children,
   className = '',
   direction = 'up',
-  distance: _distance,
 }: StaggerItemProps) {
   const itemVariants: Variants = {
     hidden: {

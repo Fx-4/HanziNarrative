@@ -24,7 +24,7 @@ interface BlankQuestion {
     storyTitle: string
 }
 
-function extractQuestions(stories: any[]): BlankQuestion[] {
+function extractQuestions(stories: { content: string; title_english?: string; title: string }[]): BlankQuestion[] {
     const questions: BlankQuestion[] = []
 
     for (const story of stories) {
@@ -55,7 +55,7 @@ function extractQuestions(stories: any[]): BlankQuestion[] {
 
             // Generate wrong options from other candidates in other sentences
             const otherWords = stories
-                .flatMap((s: any) => {
+                .flatMap((s: { content: string }) => {
                     const words: string[] = []
                     for (let i = 0; i < s.content.length - 1; i++) {
                         const p = s.content.substring(i, i + 2)
@@ -98,7 +98,7 @@ export default function FillBlank() {
         setLoading(true)
         try {
             const stories = await storiesApi.getAll(hskLevel)
-            const published = stories.filter((s: any) => s.is_published)
+            const published = stories.filter((s: { is_published: boolean }) => s.is_published)
             if (published.length === 0) {
                 toast.error('No stories available for this level.')
                 return

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { type FC } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HanziWord, WritingProgress } from '@/types'
 import {
@@ -7,6 +8,8 @@ import {
   Award,
   Sparkles
 } from 'lucide-react'
+
+type IconComponent = FC<{ className?: string }>
 
 interface CharacterGridProps {
   characters: HanziWord[]
@@ -21,7 +24,6 @@ export default function CharacterGrid({
   progress = [],
   selectedCharacter,
   onCharacterSelect,
-  mode: _mode = 'practice'
 }: CharacterGridProps) {
   const [filter, setFilter] = useState<'all' | 'new' | 'learning' | 'mastered'>('all')
 
@@ -31,7 +33,7 @@ export default function CharacterGrid({
 
   const getMasteryLevel = (characterProgress?: WritingProgress): {
     level: 'new' | 'learning' | 'mastered'
-    icon: any
+    icon: IconComponent
     color: string
   } => {
     if (!characterProgress) {

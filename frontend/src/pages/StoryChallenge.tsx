@@ -36,7 +36,7 @@ interface Story {
 export default function StoryChallenge() {
     const [searchParams] = useSearchParams()
     const [hskLevel, setHskLevel] = useState(1)
-    const [stories, setStories] = useState<any[]>([])
+    const [stories, setStories] = useState<{ id: number; title: string; title_pinyin?: string; is_published: boolean; difficulty_level?: number; key_vocabulary?: { simplified: string }[] }[]>([])
     const [selectedStory, setSelectedStory] = useState<Story | null>(null)
     const [loading, setLoading] = useState(false)
     const [hiddenWords, setHiddenWords] = useState<Set<string>>(new Set())
@@ -56,13 +56,14 @@ export default function StoryChallenge() {
         } else {
             loadStories()
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hskLevel])
 
     const loadStories = async () => {
         setLoading(true)
         try {
             const data = await storiesApi.getAll(hskLevel)
-            setStories(data.filter((s: any) => s.is_published))
+            setStories(data.filter((s: { is_published: boolean }) => s.is_published))
         } catch {
             toast.error('Failed to load stories')
         } finally {
@@ -79,7 +80,7 @@ export default function StoryChallenge() {
             let vocab: { simplified: string; pinyin: string; english: string }[] = []
             try {
                 const words = await storiesApi.getStoryWords(storyId)
-                vocab = words.map((w: any) => ({ simplified: w.simplified, pinyin: w.pinyin, english: w.english }))
+                vocab = words.map((w: { simplified: string; pinyin: string; english: string }) => ({ simplified: w.simplified, pinyin: w.pinyin, english: w.english }))
             } catch {
                 // No associated words — extract 2-char substrings from content as fallback
             }
@@ -104,7 +105,7 @@ export default function StoryChallenge() {
                 .map(v => v.simplified)
 
                 // Store vocab on the data object for later use
-                ; (data as any)._vocab = vocab
+                ; (data as Story & { _vocab?: typeof vocab })._vocab = vocab
             setSelectedStory(data)
             setHiddenWords(new Set(wordsToHide))
             setUnlockedWords(new Set())
@@ -119,7 +120,7 @@ export default function StoryChallenge() {
         if (unlockedWords.has(word)) return
 
         // Find vocab data for this word
-        const vocabItem = (selectedStory as any)?._vocab?.find((v: any) => v.simplified === word)
+        const vocabItem = (selectedStory as Story & { _vocab?: { simplified: string; pinyin: string; english: string }[] })?._vocab?.find((v) => v.simplified === word)
 
         setWritingWord(word)
         setWritingCharIndex(0)
@@ -143,7 +144,7 @@ export default function StoryChallenge() {
             if (nextIndex < writingWord.length) {
                 setWritingCharIndex(nextIndex)
                 const char = writingWord[nextIndex]
-                const vocabItem = (selectedStory as any)?._vocab?.find((v: any) => v.simplified === writingWord)
+                const vocabItem = (selectedStory as Story & { _vocab?: { simplified: string; pinyin: string; english: string }[] })?._vocab?.find((v) => v.simplified === writingWord)
                 setWritingChar({
                     id: 0,
                     simplified: char,

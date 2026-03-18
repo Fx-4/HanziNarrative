@@ -129,7 +129,7 @@ function InventoryPanel({ inventory, players, currentUserId, sendMessage }: {
 
   const opponents = players.filter(p => p.user_id !== currentUserId && !p.eliminated)
 
-  const useItem = (effectId: string, targetId: number) => {
+  const applyItem = (effectId: string, targetId: number) => {
     sendMessage({ type: 'use_effect', effect_id: effectId, target_user_id: targetId })
     setActiveItem(null)
   }
@@ -137,10 +137,10 @@ function InventoryPanel({ inventory, players, currentUserId, sendMessage }: {
   const handleClick = (effectId: string) => {
     const isBuff = BUFF_IDS.has(effectId)
     if (isBuff) {
-      useItem(effectId, currentUserId)   // buffs → use on self
+      applyItem(effectId, currentUserId)   // buffs → use on self
     } else {
       if (opponents.length === 1) {
-        useItem(effectId, opponents[0].user_id)  // only one opponent → auto-target
+        applyItem(effectId, opponents[0].user_id)  // only one opponent → auto-target
       } else {
         setActiveItem(effectId === activeItem ? null : effectId)  // show target picker
       }
@@ -185,7 +185,7 @@ function InventoryPanel({ inventory, players, currentUserId, sendMessage }: {
                     <p className="text-[10px] font-bold text-rose-500 mb-1.5 uppercase tracking-wide">Target:</p>
                     <div className="space-y-1">
                       {opponents.map(op => (
-                        <button key={op.user_id} onClick={() => useItem(id, op.user_id)}
+                        <button key={op.user_id} onClick={() => applyItem(id, op.user_id)}
                           className="w-full flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all text-left">
                           <Avatar player={op} size="sm" />
                           <span className="text-xs font-medium text-gray-800 dark:text-gray-200 truncate">{op.username}</span>
@@ -239,10 +239,10 @@ function HomeView({ onCreated, onJoined }: { onCreated: (c: string) => void; onJ
   const handleCreate = async () => {
     setCreating(true)
     try { const r = await axios.post(`${API}/battle/rooms`, { mode }, { headers: authHeaders() }); onCreated(r.data.room_code) }
-    catch (e: any) { toast.error(e.response?.data?.detail || 'Failed to create room') }
+    catch (e) { const err = e as { response?: { data?: { detail?: string } } }; toast.error(err.response?.data?.detail || 'Failed to create room') }
     finally { setCreating(false) }
   }
-  const handleJoin = () => { const c = joinCode.trim().toUpperCase(); if (c.length !== 6) { toast.error('Enter a 6-character room code'); return }; onJoined(c) }
+  const handleJoin = () => { const c = joinCode.trim().toUpperCase(); if (c.length !== 6) { toast.error('Enter a 6-character room code'); return } onJoined(c) }
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-lg mx-auto space-y-4 sm:space-y-6">
       <div className="text-center">
@@ -386,18 +386,18 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
               <div className="flex flex-wrap gap-1.5">{[5, 10, 15, 20].map(n => <button key={n} onClick={() => setNumQ(n)} className={`px-3 h-9 rounded-xl text-sm font-semibold transition-all ${numQ === n ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}>{n}</button>)}</div>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 flex items-center gap-1"><Timer className="w-3 h-3" /> Time per Question</label>
+              <label className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1"><Timer className="w-3 h-3" /> Time per Question</label>
               <div className="flex flex-wrap gap-1.5">{[10, 15, 20, 30].map(s => <button key={s} onClick={() => setTimeLimitSec(s)} className={`px-3 h-9 rounded-xl text-sm font-semibold transition-all ${timeLimitSec === s ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}>{s}s</button>)}</div>
             </div>
             {gameState.mode === 'battle_royale' && (
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 flex items-center gap-1"><Heart className="w-3 h-3" /> Lives</label>
+                <label className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1"><Heart className="w-3 h-3" /> Lives</label>
                 <div className="flex flex-wrap gap-1.5">{[1, 2, 3].map(n => <button key={n} onClick={() => setStartingLivesLocal(n)} className={`px-3 h-9 rounded-xl text-sm font-semibold transition-all ${startingLives === n ? 'bg-rose-500 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}>{'❤️'.repeat(n)}</button>)}</div>
               </div>
             )}
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 flex items-center gap-1"><BookOpen className="w-3 h-3" /> Question Type</label>
+            <label className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1"><BookOpen className="w-3 h-3" /> Question Type</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
               {QTYPES.map(({ value, label, desc }) => (
                 <button key={value} onClick={() => setQType(value)} className={`p-2 rounded-xl text-center transition-all border-2 ${qType === value ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300'}`}>
@@ -409,7 +409,7 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
           </div>
           {/* Buff / Debuff Mode */}
           <div>
-            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 flex items-center gap-1">
+            <label className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1">
               ✨ Power-ups Mode
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">

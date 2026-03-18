@@ -32,10 +32,11 @@ function AchievementCard({ achievement }: AchievementCardProps) {
     try {
       const result = await gamificationApi.generateBadge(achievement.id, s)
       setBadgeImage(result.badge_image)
-    } catch (err: any) {
-      const msg = err.response?.status === 429
+    } catch (err) {
+      const e = err as { response?: { status?: number; data?: { detail?: string } } }
+      const msg = e.response?.status === 429
         ? 'Rate limit reached. Try again later.'
-        : err.response?.data?.detail || 'Failed to generate badge.'
+        : e.response?.data?.detail || 'Failed to generate badge.'
       setError(msg)
     } finally {
       setLoading(false)
