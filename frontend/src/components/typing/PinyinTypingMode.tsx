@@ -80,13 +80,22 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
     }
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !showFeedback) {
       handleSubmit()
-    } else if (e.key === 'Enter' && showFeedback) {
-      handleNext()
     }
   }
+
+  // When feedback is shown the input is disabled, so listen at document level
+  useEffect(() => {
+    if (!showFeedback) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') handleNext()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showFeedback])
 
   if (!currentWord) {
     return (
@@ -136,7 +145,7 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
                 type="text"
                 value={inputValue}
                 onChange={handleInputChange}
-                onKeyPress={handleKeyPress}
+                onKeyDown={handleKeyDown}
                 placeholder="Type pinyin (e.g., ni hao)"
                 className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-indigo-500 focus:outline-none transition-colors"
                 disabled={showFeedback}
