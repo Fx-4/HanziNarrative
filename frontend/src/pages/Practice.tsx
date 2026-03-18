@@ -45,56 +45,64 @@ const MOTIVATIONAL_MESSAGES = [
     iconClass: 'text-orange-500',
     title: 'You\'re on fire!',
     message: 'Keep up the amazing work! Your Chinese is getting better with every answer.',
-    color: 'from-orange-400 to-red-500'
+    color: 'from-orange-400 to-red-500',
+    meme: { top: 'Me before studying Chinese:', bottom: '"How hard can it possibly be?" 😂', emoji: '🐉' }
   },
   {
     Icon: Dumbbell,
     iconClass: 'text-purple-500',
     title: 'Beast mode activated!',
     message: 'You\'re crushing it! Remember, every character you learn makes you stronger.',
-    color: 'from-purple-400 to-pink-500'
+    color: 'from-purple-400 to-pink-500',
+    meme: { top: 'My brain after 5 Chinese questions:', bottom: '"I am inevitable." 💪', emoji: '🧠' }
   },
   {
     Icon: Zap,
     iconClass: 'text-yellow-500',
     title: 'Power up!',
     message: 'Your brain is leveling up! Take a deep breath and keep going.',
-    color: 'from-yellow-400 to-orange-500'
+    color: 'from-yellow-400 to-orange-500',
+    meme: { top: 'Confucius once said:', bottom: '"He who learns 5 questions deserves a snack break 🍜"', emoji: '☯️' }
   },
   {
     Icon: Rocket,
     iconClass: 'text-blue-500',
     title: 'To the moon!',
     message: 'Your progress is out of this world! The Chinese language is yours to conquer.',
-    color: 'from-blue-400 to-purple-500'
+    color: 'from-blue-400 to-purple-500',
+    meme: { top: 'Grandma asks if I know Chinese yet.', bottom: 'Me: 我很好！ Grandma: 😱 omg genius', emoji: '👴' }
   },
   {
     Icon: Target,
     iconClass: 'text-green-500',
     title: 'Right on target!',
     message: 'Your focus is incredible! Keep that energy going - you got this!',
-    color: 'from-green-400 to-blue-500'
+    color: 'from-green-400 to-blue-500',
+    meme: { top: '"Learning Chinese is impossible"', bottom: 'You, right now: hold my 茶 🍵', emoji: '🏆' }
   },
   {
     Icon: Star,
     iconClass: 'text-yellow-400',
     title: 'Superstar alert!',
     message: 'You\'re absolutely killing it! Every question brings you closer to fluency.',
-    color: 'from-yellow-400 to-pink-500'
+    color: 'from-yellow-400 to-pink-500',
+    meme: { top: 'Normal people on a break:', bottom: 'You: STILL GOING 🔥🔥🔥', emoji: '⭐' }
   },
   {
     Icon: Sparkles,
     iconClass: 'text-cyan-500',
     title: 'Shining bright!',
     message: 'Your dedication is inspiring! Keep shining and learning!',
-    color: 'from-cyan-400 to-blue-500'
+    color: 'from-cyan-400 to-blue-500',
+    meme: { top: 'Me explaining to my friend I can read 汉字:', bottom: '"It\'s not a phase, it\'s a lifestyle" ✨', emoji: '💎' }
   },
   {
     Icon: Gem,
     iconClass: 'text-indigo-500',
     title: 'Diamond in the making!',
     message: 'Pressure makes diamonds, and you\'re forming into something brilliant!',
-    color: 'from-indigo-400 to-purple-500'
+    color: 'from-indigo-400 to-purple-500',
+    meme: { top: 'Teacher: "Any questions?"', bottom: 'Me, who just learned 5 new words: 没有问题！😎', emoji: '🎓' }
   }
 ]
 
@@ -647,6 +655,7 @@ export default function Practice() {
   const [score, setScore] = useState(0)
   const [testComplete, setTestComplete] = useState(false)
   const [showMotivationalBreak, setShowMotivationalBreak] = useState(false)
+  const [userAnswers, setUserAnswers] = useState<number[]>([])
 
   const loadWords = async () => {
     setLoading(true)
@@ -729,6 +738,17 @@ export default function Practice() {
     setTestComplete(false)
     setSelectedAnswer(null)
     setShowMotivationalBreak(false)
+    setUserAnswers([])
+  }
+
+  const handleTryAgain = () => {
+    setCurrentQuestionIndex(0)
+    setScore(0)
+    setTestComplete(false)
+    setSelectedAnswer(null)
+    setShowMotivationalBreak(false)
+    setUserAnswers([])
+    loadWords()
   }
 
   useEffect(() => {
@@ -763,6 +783,7 @@ export default function Practice() {
     if (selectedAnswer !== null) return
 
     setSelectedAnswer(answerIndex)
+    setUserAnswers(prev => [...prev, answerIndex])
     const question = questions[currentQuestionIndex]
 
     if (answerIndex === question.correctAnswer) {
@@ -1486,9 +1507,16 @@ export default function Practice() {
               {randomMessage.title}
             </h2>
 
-            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
               {randomMessage.message}
             </p>
+
+            {/* Meme card */}
+            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-5 py-4 mb-6 max-w-sm mx-auto text-center">
+              <div className="text-3xl mb-2">{randomMessage.meme.emoji}</div>
+              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1">{randomMessage.meme.top}</p>
+              <p className="text-base font-bold text-gray-800 dark:text-gray-100">{randomMessage.meme.bottom}</p>
+            </div>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-8">
               <div className="text-center">
@@ -1547,8 +1575,8 @@ export default function Practice() {
       const passed = percentage >= 70
 
       return (
-        <div className="max-w-2xl mx-auto px-3 sm:px-4">
-          <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-8 sm:p-12 text-center">
+        <div className="max-w-2xl mx-auto px-3 sm:px-4 pb-8">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-8 sm:p-12 text-center mb-6">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -1582,13 +1610,66 @@ export default function Practice() {
                   Back to Menu
                 </button>
                 <button
-                  onClick={() => handleModeSelect('test')}
+                  onClick={handleTryAgain}
                   className="bg-indigo-600 text-white rounded-2xl px-6 py-3.5 font-semibold hover:bg-indigo-700 transition-all flex items-center gap-2 cursor-pointer w-full sm:w-auto justify-center"
                 >
                   Try Again
                 </button>
               </div>
             </motion.div>
+          </div>
+
+          {/* Answer Review */}
+          <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-6 sm:p-8">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">Answer Review</h3>
+            <div className="space-y-4">
+              {questions.map((q, qi) => {
+                const userAnswer = userAnswers[qi]
+                const isCorrect = userAnswer === q.correctAnswer
+                return (
+                  <div
+                    key={qi}
+                    className={`rounded-2xl border-2 p-4 ${isCorrect ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20' : 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/20'}`}
+                  >
+                    <div className="flex items-start gap-3 mb-3">
+                      {isCorrect ? (
+                        <CheckCircle className="w-5 h-5 text-green-500 dark:text-green-400 shrink-0 mt-0.5" />
+                      ) : (
+                        <XCircle className="w-5 h-5 text-red-500 dark:text-red-400 shrink-0 mt-0.5" />
+                      )}
+                      <div>
+                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                          {q.type === 'recognition' && 'Character Recognition'}
+                          {q.type === 'meaning' && 'Meaning'}
+                          {q.type === 'pinyin' && 'Pinyin'}
+                        </span>
+                        <p className="text-sm sm:text-base font-medium text-gray-800 dark:text-gray-200 mt-0.5">
+                          {q.type === 'recognition' && `What character is "${q.word.pinyin}" (${q.word.english})?`}
+                          {q.type === 'meaning' && `What does "${q.word.simplified}" mean?`}
+                          {q.type === 'pinyin' && `What is the pinyin for "${q.word.simplified}"?`}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="ml-8 space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-500 dark:text-gray-400 w-20 shrink-0">Correct:</span>
+                        <span className={`text-sm font-semibold text-green-700 dark:text-green-400 ${q.type === 'recognition' ? 'text-2xl font-chinese' : ''}`}>
+                          {q.options[q.correctAnswer]}
+                        </span>
+                      </div>
+                      {!isCorrect && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-500 dark:text-gray-400 w-20 shrink-0">Your answer:</span>
+                          <span className={`text-sm font-semibold text-red-600 dark:text-red-400 ${q.type === 'recognition' ? 'text-2xl font-chinese' : ''}`}>
+                            {q.options[userAnswer]}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </div>
         </div>
       )
