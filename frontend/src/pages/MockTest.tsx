@@ -16,17 +16,30 @@ import {
     Home,
     Headphones,
     Eye,
-    PenTool
+    PenTool,
+    Volume2,
+    Play
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import BlurText from '@/components/animations/BlurText'
 
 type TestSection = 'listening' | 'reading' | 'writing'
 
+// Question subtypes — maps closely to real HSK skill areas
+type QuestionSubtype =
+    | 'listen-pinyin-pick-chinese'   // See pinyin sentence + hear target word → pick Chinese char
+    | 'listen-chinese-pick-english'  // Hear Chinese word spoken → pick English meaning
+    | 'read-fill-blank'              // Chinese sentence with ___ → pick Chinese word
+    | 'read-match-meaning'           // See Chinese word → pick English meaning
+    | 'write-pick-character'         // English meaning + pinyin hint → pick Chinese char
+    | 'write-pick-pinyin'            // See Chinese character → pick correct pinyin
+
 interface Question {
     type: TestSection
-    prompt: string
-    promptSub: string
+    subtype: QuestionSubtype
+    prompt: string       // Main stimulus text
+    promptSub: string    // Instruction or hint line
+    audioText: string    // TTS text for listening questions (empty otherwise)
     options: string[]
     correctIndex: number
     word: HanziWord
@@ -38,132 +51,179 @@ interface SectionResult {
     total: number
 }
 
-// Sentence templates for listening / reading questions
+// ── Sentence templates ────────────────────────────────────────────────────────
 const SENTENCE_TEMPLATES = [
-    { template: '他是我的___。', slot: 'word' },
-    { template: '我喜欢___。', slot: 'word' },
-    { template: '她学___很努力。', slot: 'word' },
-    { template: '这是一个___。', slot: 'word' },
-    { template: '我每天___。', slot: 'word' },
-    { template: '他有一个___。', slot: 'word' },
-    { template: '我们去___吧。', slot: 'word' },
-    { template: '她喜欢吃___。', slot: 'word' },
+    '他是我的___。', '我喜欢___。', '她学___很努力。', '这是一个___。',
+    '我每天___。', '他有一个___。', '我们去___吧。', '她喜欢吃___。',
+    '我想学___。', '这个___很好。', '他在___工作。', '我的___很漂亮。',
+    '我们需要___。', '她买了一个___。', '请问，___在哪里？',
+    '今天的___很好吃。', '他给我一个___。', '我在___里看书。',
+    '那个___很贵。', '我不喜欢___。', '他每天喝___。',
+    '这是我的___朋友。', '她在___学习中文。', '我今天买了___。',
 ]
 
 const PINYIN_TEMPLATES = [
-    { template: 'Tā shì wǒ de ___。', slot: 'pinyin' },
-    { template: 'Wǒ xǐhuān ___。', slot: 'pinyin' },
-    { template: 'Zhè shì yīgè ___。', slot: 'pinyin' },
-    { template: 'Tā yǒu yīgè ___。', slot: 'pinyin' },
-    { template: 'Wǒmen qù ___ ba。', slot: 'pinyin' },
-    { template: 'Tā měitiān ___。', slot: 'pinyin' },
+    'Tā shì wǒ de ___.',
+    'Wǒ xǐhuān ___.',
+    'Zhè shì yīgè ___.',
+    'Tā yǒu yīgè ___.',
+    'Wǒmen qù ___ ba.',
+    'Tā měitiān ___.',
+    'Wǒ xiǎng xué ___.',
+    'Tā gěi wǒ yīgè ___.',
+    'Nàgè ___ hěn guì.',
+    'Qǐngwèn, ___ zài nǎlǐ?',
+    'Wǒ jīntiān mǎi le ___.',
+    'Tā zài ___ xuéxí Zhōngwén.',
 ]
 
-function buildListeningQuestion(word: HanziWord, others: HanziWord[]): Omit<Question, 'type'> {
-    const tpl = PINYIN_TEMPLATES[Math.floor(Math.random() * PINYIN_TEMPLATES.length)]
-    const prompt = tpl.template.replace('___', `[${word.pinyin}]`)
-    const promptSub = 'Which Chinese word fits the blank?'
-    const correct = word.simplified
-    const wrongs = others.slice(0, 3).map(o => o.simplified)
-    const options = [correct, ...wrongs].sort(() => Math.random() - 0.5)
-    return { prompt, promptSub, options, correctIndex: options.indexOf(correct), word }
+// ── Question builders ─────────────────────────────────────────────────────────
+function buildListeningQuestion(word: HanziWord, others: HanziWord[], idx: number): Omit<Question, 'type'> {
+    if (idx % 2 === 0) {
+        // Subtype A: Pinyin sentence shown + Chinese word spoken → pick Chinese char
+        const tpl = PINYIN_TEMPLATES[Math.floor(Math.random() * PINYIN_TEMPLATES.length)]
+        const prompt = tpl.replace('___', `[${word.pinyin}]`)
+        const promptSub = 'Listen to the word, then choose the correct Chinese character'
+        const correct = word.simplified
+        const wrongs = others.slice(0, 3).map(o => o.simplified)
+        const options = [correct, ...wrongs].sort(() => Math.random() - 0.5)
+        return {
+            subtype: 'listen-pinyin-pick-chinese',
+            prompt, promptSub,
+            audioText: word.simplified,
+            options, correctIndex: options.indexOf(correct), word,
+        }
+    } else {
+        // Subtype B: Hear Chinese word spoken → pick English meaning (no visual hint)
+        const promptSub = 'Listen carefully and choose the correct English meaning'
+        const correct = word.english
+        const wrongs = others.slice(0, 3).map(o => o.english)
+        const options = [correct, ...wrongs].sort(() => Math.random() - 0.5)
+        return {
+            subtype: 'listen-chinese-pick-english',
+            prompt: '',
+            promptSub,
+            audioText: word.simplified,
+            options, correctIndex: options.indexOf(correct), word,
+        }
+    }
 }
 
-function buildReadingQuestion(word: HanziWord, others: HanziWord[]): Omit<Question, 'type'> {
-    const tpl = SENTENCE_TEMPLATES[Math.floor(Math.random() * SENTENCE_TEMPLATES.length)]
-    const prompt = tpl.template
-    const promptSub = `Fill in the blank — hint: ${word.english}`
-    const correct = word.simplified
-    const wrongs = others.slice(0, 3).map(o => o.simplified)
-    const options = [correct, ...wrongs].sort(() => Math.random() - 0.5)
-    return { prompt, promptSub, options, correctIndex: options.indexOf(correct), word }
+function buildReadingQuestion(word: HanziWord, others: HanziWord[], idx: number): Omit<Question, 'type'> {
+    if (idx % 3 !== 1) {
+        // Subtype A (majority): Chinese sentence with blank → pick correct Chinese word
+        const tpl = SENTENCE_TEMPLATES[Math.floor(Math.random() * SENTENCE_TEMPLATES.length)]
+        const prompt = tpl
+        const promptSub = `Meaning of the missing word: "${word.english}"`
+        const correct = word.simplified
+        const wrongs = others.slice(0, 3).map(o => o.simplified)
+        const options = [correct, ...wrongs].sort(() => Math.random() - 0.5)
+        return {
+            subtype: 'read-fill-blank',
+            prompt, promptSub, audioText: '',
+            options, correctIndex: options.indexOf(correct), word,
+        }
+    } else {
+        // Subtype B: See Chinese word → pick English meaning
+        const prompt = word.simplified
+        const promptSub = 'Choose the correct English meaning for this word'
+        const correct = word.english
+        const wrongs = others.slice(0, 3).map(o => o.english)
+        const options = [correct, ...wrongs].sort(() => Math.random() - 0.5)
+        return {
+            subtype: 'read-match-meaning',
+            prompt, promptSub, audioText: '',
+            options, correctIndex: options.indexOf(correct), word,
+        }
+    }
 }
 
-function buildWritingQuestion(word: HanziWord, others: HanziWord[]): Omit<Question, 'type'> {
-    const prompt = word.english
-    const promptSub = `pīnyīn hint: ${word.pinyin}`
-    const correct = word.simplified
-    const wrongs = others.slice(0, 3).map(o => o.simplified)
-    const options = [correct, ...wrongs].sort(() => Math.random() - 0.5)
-    return { prompt, promptSub, options, correctIndex: options.indexOf(correct), word }
+function buildWritingQuestion(word: HanziWord, others: HanziWord[], idx: number): Omit<Question, 'type'> {
+    if (idx % 2 === 0) {
+        // Subtype A: English meaning + pinyin hint → pick Chinese character
+        const prompt = word.english
+        const promptSub = `Pinyin: ${word.pinyin}`
+        const correct = word.simplified
+        const wrongs = others.slice(0, 3).map(o => o.simplified)
+        const options = [correct, ...wrongs].sort(() => Math.random() - 0.5)
+        return {
+            subtype: 'write-pick-character',
+            prompt, promptSub, audioText: '',
+            options, correctIndex: options.indexOf(correct), word,
+        }
+    } else {
+        // Subtype B: See Chinese character → pick correct pinyin
+        const prompt = word.simplified
+        const promptSub = 'Choose the correct pinyin pronunciation'
+        const correct = word.pinyin
+        const wrongs = others.slice(0, 3)
+            .map(o => o.pinyin)
+            .filter(p => p !== correct)
+        // Ensure exactly 3 unique wrong options
+        while (wrongs.length < 3) wrongs.push(others[wrongs.length + 3]?.pinyin ?? `x${wrongs.length}`)
+        const options = [correct, ...wrongs.slice(0, 3)].sort(() => Math.random() - 0.5)
+        return {
+            subtype: 'write-pick-pinyin',
+            prompt, promptSub, audioText: '',
+            options, correctIndex: options.indexOf(correct), word,
+        }
+    }
 }
 
 function generateSectionedQuestions(words: HanziWord[]): [Question[], Question[], Question[]] {
     const shuffled = [...words].sort(() => Math.random() - 0.5)
-
     const listeningWords = shuffled.slice(0, 10)
     const readingWords = shuffled.slice(10, 20)
     const writingWords = shuffled.slice(20, 25)
-
     const getOthers = (word: HanziWord) =>
         words.filter(w => w.id !== word.id).sort(() => Math.random() - 0.5)
 
-    const listening: Question[] = listeningWords.map(w => ({
+    const listening: Question[] = listeningWords.map((w, i) => ({
         type: 'listening' as TestSection,
-        ...buildListeningQuestion(w, getOthers(w))
+        ...buildListeningQuestion(w, getOthers(w), i),
     }))
-
-    const reading: Question[] = readingWords.map(w => ({
+    const reading: Question[] = readingWords.map((w, i) => ({
         type: 'reading' as TestSection,
-        ...buildReadingQuestion(w, getOthers(w))
+        ...buildReadingQuestion(w, getOthers(w), i),
     }))
-
-    const writing: Question[] = writingWords.map(w => ({
+    const writing: Question[] = writingWords.map((w, i) => ({
         type: 'writing' as TestSection,
-        ...buildWritingQuestion(w, getOthers(w))
+        ...buildWritingQuestion(w, getOthers(w), i),
     }))
-
     return [listening, reading, writing]
 }
 
+// ── Section metadata ──────────────────────────────────────────────────────────
 const SECTION_META = {
     listening: {
-        label: '听力',
-        labelEn: 'Listening',
-        timePerQ: 45,
-        total: 10,
-        color: 'indigo',
-        gradient: 'from-indigo-500 to-blue-600',
+        label: '听力', labelEn: 'Listening', timePerQ: 45, total: 10,
+        color: 'indigo', gradient: 'from-indigo-500 to-blue-600',
         gradientLight: 'from-indigo-50 to-blue-50',
         gradientDark: 'from-indigo-950/30 to-blue-950/30',
         badge: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300',
         border: 'border-indigo-200 dark:border-indigo-800',
-        accent: 'text-indigo-600',
-        bar: 'bg-indigo-500',
-        icon: Headphones,
-        desc: 'Listen to the pinyin sentence and choose the correct Chinese word.',
+        accent: 'text-indigo-600', bar: 'bg-indigo-500', icon: Headphones,
+        desc: 'Listen to the spoken word/sentence and choose the correct answer.',
     },
     reading: {
-        label: '阅读',
-        labelEn: 'Reading',
-        timePerQ: 30,
-        total: 10,
-        color: 'emerald',
-        gradient: 'from-emerald-500 to-green-600',
+        label: '阅读', labelEn: 'Reading', timePerQ: 30, total: 10,
+        color: 'emerald', gradient: 'from-emerald-500 to-green-600',
         gradientLight: 'from-emerald-50 to-green-50',
         gradientDark: 'from-emerald-950/30 to-green-950/30',
         badge: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
         border: 'border-emerald-200 dark:border-emerald-800',
-        accent: 'text-emerald-600',
-        bar: 'bg-emerald-500',
-        icon: Eye,
-        desc: 'Read the Chinese sentence and choose the word that fills the blank.',
+        accent: 'text-emerald-600', bar: 'bg-emerald-500', icon: Eye,
+        desc: 'Read the Chinese text and choose the correct word or meaning.',
     },
     writing: {
-        label: '书写',
-        labelEn: 'Writing',
-        timePerQ: 60,
-        total: 5,
-        color: 'purple',
-        gradient: 'from-purple-500 to-violet-600',
+        label: '书写', labelEn: 'Writing', timePerQ: 60, total: 5,
+        color: 'purple', gradient: 'from-purple-500 to-violet-600',
         gradientLight: 'from-purple-50 to-violet-50',
         gradientDark: 'from-purple-950/30 to-violet-950/30',
         badge: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
         border: 'border-purple-200 dark:border-purple-800',
-        accent: 'text-purple-600',
-        bar: 'bg-purple-500',
-        icon: PenTool,
-        desc: 'Given the English meaning and pinyin, select the correct Chinese character.',
+        accent: 'text-purple-600', bar: 'bg-purple-500', icon: PenTool,
+        desc: 'Select the correct Chinese character or pinyin pronunciation.',
     },
 }
 
@@ -171,6 +231,7 @@ const SECTION_ORDER: TestSection[] = ['listening', 'reading', 'writing']
 
 type PageState = 'cover' | 'section-intro' | 'question' | 'section-done' | 'results'
 
+// ── Component ─────────────────────────────────────────────────────────────────
 export default function MockTest() {
     const [hskLevel, setHskLevel] = useState(1)
     const [loading, setLoading] = useState(false)
@@ -186,34 +247,77 @@ export default function MockTest() {
     const [timeLeft, setTimeLeft] = useState(0)
     const [totalTimeUsed, setTotalTimeUsed] = useState(0)
 
-    // SSE-based per-question countdown (replaces setInterval)
-    const timerAbortRef = useRef<AbortController | null>(null)
-    // Total elapsed time: computed from start timestamp — no interval needed
-    const testStartRef = useRef<number>(0)
+    // TTS
+    const [isSpeaking, setIsSpeaking] = useState(false)
 
-    // Abort SSE stream on unmount
-    useEffect(() => {
-        return () => { timerAbortRef.current?.abort() }
-    }, [])
+    // Track all answers across sections for result review
+    const allAnswersRef = useRef<(number | null)[][]>([[], [], []])
+    // Track current section answers via ref to avoid stale closure issues
+    const answersRef = useRef<(number | null)[]>([])
+
+    // SSE timer
+    const timerAbortRef = useRef<AbortController | null>(null)
+    const testStartRef = useRef<number>(0)
 
     const currentSection = SECTION_ORDER[sectionIndex]
     const meta = SECTION_META[currentSection]
     const SectionIcon = meta.icon
 
+    // Stop TTS on unmount
+    useEffect(() => {
+        return () => {
+            timerAbortRef.current?.abort()
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel()
+        }
+    }, [])
+
+    // ── TTS helpers ───────────────────────────────────────────────────────────
+    const stopSpeech = useCallback(() => {
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel()
+        setIsSpeaking(false)
+    }, [])
+
+    const speakText = useCallback((text: string) => {
+        if (!('speechSynthesis' in window)) {
+            toast.error('Text-to-speech not supported in this browser', { id: 'tts-unsupported' })
+            return
+        }
+        stopSpeech()
+        const utt = new SpeechSynthesisUtterance(text)
+        utt.lang = 'zh-CN'
+        utt.rate = 0.85
+        utt.pitch = 1.0
+        utt.onstart = () => setIsSpeaking(true)
+        utt.onend = () => setIsSpeaking(false)
+        utt.onerror = () => setIsSpeaking(false)
+        window.speechSynthesis.speak(utt)
+    }, [stopSpeech])
+
+    // Auto-play TTS for listening questions when question changes
+    useEffect(() => {
+        if (page !== 'question') return
+        const q = sectionQuestions[sectionIndex]?.[currentQ]
+        if (!q?.audioText || q.type !== 'listening') return
+        const timer = setTimeout(() => speakText(q.audioText), 600)
+        return () => {
+            clearTimeout(timer)
+            stopSpeech()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentQ, sectionIndex, page])
+
+    // ── SSE Timer ─────────────────────────────────────────────────────────────
     const stopTimer = () => {
         timerAbortRef.current?.abort()
         timerAbortRef.current = null
     }
 
     const startTimer = useCallback((seconds: number) => {
-        // Abort any existing stream first
         stopTimer()
-
         const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
         const token = localStorage.getItem('access_token')
         const abort = new AbortController()
         timerAbortRef.current = abort
-
         setTimeLeft(seconds)
 
         fetch(`${API_URL}/mock-test/timer-stream?seconds=${seconds}`, {
@@ -225,7 +329,6 @@ export default function MockTest() {
                 const reader = res.body.getReader()
                 const decoder = new TextDecoder()
                 let buffer = ''
-
                 const pump = (): Promise<void> =>
                     reader.read().then(({ done, value }) => {
                         if (done || abort.signal.aborted) return
@@ -243,18 +346,15 @@ export default function MockTest() {
                                     autoAdvance()
                                     return
                                 }
-                            } catch { /* malformed line — skip */ }
+                            } catch { /* malformed SSE line — skip */ }
                         }
                         return pump()
                     })
-
                 return pump()
             })
             .catch(err => {
-                // AbortError is expected when stopTimer() is called — not a real error
                 if (err?.name !== 'AbortError') {
                     console.error('Timer SSE error — falling back to local countdown', err)
-                    // Fallback: simple local countdown so the test remains playable
                     let remaining = seconds
                     const id = setInterval(() => {
                         remaining -= 1
@@ -270,7 +370,9 @@ export default function MockTest() {
     }, [])
 
     const autoAdvance = () => {
-        setSelectedAnswer(-1) // -1 = timed out
+        // Mark current question as timed-out (-1)
+        answersRef.current[currentQ] = -1
+        setSelectedAnswer(-1)
         setTimeout(() => advanceQuestion(), 800)
     }
 
@@ -280,19 +382,17 @@ export default function MockTest() {
         if (currentQ < qs.length - 1) {
             setCurrentQ(prev => prev + 1)
         } else {
-            // End of section
             finishSection()
         }
     }
 
-    // Re-start timer when currentQ changes (during active question phase)
+    // Re-start timer when question changes
     useEffect(() => {
-        if (page === 'question') {
-            startTimer(meta.timePerQ)
-        }
+        if (page === 'question') startTimer(meta.timePerQ)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentQ, page])
 
+    // ── Test flow ─────────────────────────────────────────────────────────────
     const startTest = async () => {
         setLoading(true)
         try {
@@ -306,10 +406,8 @@ export default function MockTest() {
             setSectionIndex(0)
             setSectionResults([])
             setTotalTimeUsed(0)
-            // Record test start time — elapsed is computed as a diff at the end,
-            // so no interval is needed at all.
+            allAnswersRef.current = [[], [], []]
             testStartRef.current = Date.now()
-
             setPage('section-intro')
         } catch {
             toast.error('Failed to load vocabulary')
@@ -320,7 +418,9 @@ export default function MockTest() {
 
     const beginSection = () => {
         const qs = sectionQuestions[sectionIndex]
-        setSectionAnswers(new Array(qs.length).fill(null))
+        const blank = new Array(qs.length).fill(null) as (number | null)[]
+        setSectionAnswers(blank)
+        answersRef.current = [...blank]
         setCurrentQ(0)
         setSelectedAnswer(null)
         setPage('question')
@@ -329,30 +429,30 @@ export default function MockTest() {
     const handleAnswer = (index: number) => {
         if (selectedAnswer !== null) return
         stopTimer()
-        setSelectedAnswer(index)
+        stopSpeech()
+        // Update both ref (immediate) and state (for display)
+        answersRef.current[currentQ] = index
         const newAnswers = [...sectionAnswers]
         newAnswers[currentQ] = index
         setSectionAnswers(newAnswers)
+        setSelectedAnswer(index)
         setTimeout(() => advanceQuestion(), 800)
     }
 
     const finishSection = () => {
         stopTimer()
+        stopSpeech()
         const qs = sectionQuestions[sectionIndex]
+        const answers = answersRef.current
+        // Persist for review
+        allAnswersRef.current[sectionIndex] = [...answers]
+
         let correct = 0
-        sectionAnswers.forEach((a, i) => {
+        answers.forEach((a, i) => {
             if (a === qs[i]?.correctIndex) correct++
         })
-        // also count the last answer in state (it might not be flushed yet)
-        // We compute from current state but that's fine - handleAnswer already updated sectionAnswers
-
-        const result: SectionResult = {
-            section: currentSection,
-            correct,
-            total: qs.length
-        }
-        const newResults = [...sectionResults, result]
-        setSectionResults(newResults)
+        const result: SectionResult = { section: currentSection, correct, total: qs.length }
+        setSectionResults(prev => [...prev, result])
         setPage('section-done')
     }
 
@@ -361,7 +461,6 @@ export default function MockTest() {
             setSectionIndex(prev => prev + 1)
             setPage('section-intro')
         } else {
-            // All sections done — compute total elapsed seconds from start timestamp
             setTotalTimeUsed(Math.round((Date.now() - testStartRef.current) / 1000))
             setPage('results')
         }
@@ -369,11 +468,14 @@ export default function MockTest() {
 
     const resetTest = () => {
         stopTimer()
+        stopSpeech()
         setSectionIndex(0)
         setSectionResults([])
         setSectionQuestions([[], [], []])
         setCurrentQ(0)
         setSelectedAnswer(null)
+        allAnswersRef.current = [[], [], []]
+        answersRef.current = []
         testStartRef.current = 0
         setPage('cover')
     }
@@ -389,7 +491,7 @@ export default function MockTest() {
         return { grade: 'D', color: 'text-red-600', bg: 'bg-red-50 dark:bg-red-950/30' }
     }
 
-    // ─── Breadcrumb ───────────────────────────────────────────────
+    // ── Breadcrumb ────────────────────────────────────────────────────────────
     const Breadcrumb = () => (
         <div className="flex items-center justify-center gap-2 mb-6">
             {SECTION_ORDER.map((sec, idx) => {
@@ -414,7 +516,7 @@ export default function MockTest() {
         </div>
     )
 
-    // ─── COVER PAGE ───────────────────────────────────────────────
+    // ── COVER PAGE ────────────────────────────────────────────────────────────
     if (page === 'cover') {
         return (
             <div className="min-h-screen py-6 sm:py-10 px-3 sm:px-4">
@@ -472,13 +574,23 @@ export default function MockTest() {
                         </div>
                     </motion.div>
 
+                    {/* TTS notice */}
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.14 }} className="mb-5">
+                        <div className="bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 rounded-2xl px-4 py-3 flex items-center gap-3">
+                            <Volume2 className="w-5 h-5 text-indigo-500 flex-shrink-0" />
+                            <p className="text-sm text-indigo-700 dark:text-indigo-300">
+                                <strong>Listening section</strong> uses text-to-speech to play Chinese audio. Make sure your audio is on and a Chinese voice is installed.
+                            </p>
+                        </div>
+                    </motion.div>
+
                     {/* Additional info */}
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.16 }} className="mb-7">
                         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 flex flex-wrap gap-6 justify-center text-center">
                             {[
                                 { icon: BookOpen, label: '25 Questions', sub: 'Across 3 sections', color: 'text-indigo-500' },
                                 { icon: Clock, label: '~20 Minutes', sub: 'Total exam time', color: 'text-amber-500' },
-                                { icon: BarChart3, label: 'Instant Results', sub: 'With section breakdown', color: 'text-emerald-500' },
+                                { icon: BarChart3, label: 'Instant Results', sub: 'Pass requires 60% per section', color: 'text-emerald-500' },
                             ].map(({ icon: Icon, label, sub, color }) => (
                                 <div key={label} className="flex items-center gap-3">
                                     <Icon className={`w-5 h-5 ${color}`} />
@@ -504,9 +616,23 @@ export default function MockTest() {
         )
     }
 
-    // ─── SECTION INTRO ────────────────────────────────────────────
+    // ── SECTION INTRO ─────────────────────────────────────────────────────────
     if (page === 'section-intro') {
         const Icon = SectionIcon
+        const subtypeDescriptions: Record<TestSection, string[]> = {
+            listening: [
+                'Listen to a Chinese word, then choose the correct Chinese character',
+                'Hear a spoken word and match it to its English meaning',
+            ],
+            reading: [
+                'Read a Chinese sentence and fill in the blank',
+                'See a Chinese word and choose its English meaning',
+            ],
+            writing: [
+                'Given the English meaning and pinyin, select the correct Chinese character',
+                'See a Chinese character and choose the correct pinyin pronunciation',
+            ],
+        }
         return (
             <div className="min-h-screen py-6 sm:py-10 px-3 sm:px-4 flex items-center">
                 <div className="max-w-2xl mx-auto w-full">
@@ -522,7 +648,17 @@ export default function MockTest() {
                         <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">
                             Section {sectionIndex + 1}: {meta.labelEn}
                         </h2>
-                        <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed max-w-md mx-auto">{meta.desc}</p>
+
+                        {/* Question types in this section */}
+                        <div className="space-y-2 mb-6 text-left max-w-sm mx-auto">
+                            {subtypeDescriptions[currentSection].map((desc, i) => (
+                                <div key={i} className="flex items-start gap-2 bg-white/70 dark:bg-gray-800/50 rounded-xl px-4 py-2">
+                                    <span className={`w-5 h-5 rounded-full ${meta.badge} flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5`}>{i + 1}</span>
+                                    <p className="text-sm text-gray-700 dark:text-gray-300">{desc}</p>
+                                </div>
+                            ))}
+                        </div>
+
                         <div className="flex items-center justify-center gap-6 mb-8">
                             <div className="bg-white/80 dark:bg-gray-800/60 rounded-2xl px-5 py-3">
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{meta.total}</p>
@@ -531,6 +667,10 @@ export default function MockTest() {
                             <div className="bg-white/80 dark:bg-gray-800/60 rounded-2xl px-5 py-3">
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{meta.timePerQ}s</p>
                                 <p className="text-xs text-gray-500">Per question</p>
+                            </div>
+                            <div className="bg-white/80 dark:bg-gray-800/60 rounded-2xl px-5 py-3">
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">60%</p>
+                                <p className="text-xs text-gray-500">Pass score</p>
                             </div>
                         </div>
                         <button onClick={beginSection}
@@ -543,7 +683,7 @@ export default function MockTest() {
         )
     }
 
-    // ─── SECTION DONE ─────────────────────────────────────────────
+    // ── SECTION DONE ──────────────────────────────────────────────────────────
     if (page === 'section-done') {
         const lastResult = sectionResults[sectionResults.length - 1]
         const pct = lastResult ? Math.round((lastResult.correct / lastResult.total) * 100) : 0
@@ -556,16 +696,16 @@ export default function MockTest() {
                     <Breadcrumb />
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                         className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-800 p-8 sm:p-10 text-center">
-                        <div className={`w-16 h-16 ${passed ? 'bg-green-100' : 'bg-amber-100'} rounded-full flex items-center justify-center mx-auto mb-4`}>
+                        <div className={`w-16 h-16 ${passed ? 'bg-green-100 dark:bg-green-900/30' : 'bg-amber-100 dark:bg-amber-900/30'} rounded-full flex items-center justify-center mx-auto mb-4`}>
                             {passed
                                 ? <CheckCircle className="w-9 h-9 text-green-600" />
                                 : <XCircle className="w-9 h-9 text-amber-600" />}
                         </div>
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
-                            Section {sectionIndex + 1} Complete!
+                            {meta.labelEn} Complete!
                         </h2>
                         <p className={`text-sm font-semibold mb-6 ${passed ? 'text-green-600' : 'text-amber-600'}`}>
-                            {passed ? 'Well done! Keep going.' : 'Keep practicing — you can do it!'}
+                            {passed ? '✓ Section passed — Keep going!' : '✗ Below 60% — Keep practicing!'}
                         </p>
 
                         {lastResult && (
@@ -577,6 +717,10 @@ export default function MockTest() {
                                 <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl px-6 py-4">
                                     <p className="text-3xl font-bold text-gray-700 dark:text-gray-300">{pct}%</p>
                                     <p className="text-xs text-gray-500 mt-0.5">Accuracy</p>
+                                </div>
+                                <div className={`rounded-2xl px-6 py-4 ${passed ? 'bg-green-50 dark:bg-green-950/30' : 'bg-red-50 dark:bg-red-950/30'}`}>
+                                    <p className={`text-3xl font-bold ${passed ? 'text-green-600' : 'text-red-600'}`}>{passed ? 'PASS' : 'FAIL'}</p>
+                                    <p className="text-xs text-gray-500 mt-0.5">≥ 60% needed</p>
                                 </div>
                             </div>
                         )}
@@ -595,17 +739,21 @@ export default function MockTest() {
         )
     }
 
-    // ─── RESULTS PAGE ─────────────────────────────────────────────
+    // ── RESULTS PAGE ──────────────────────────────────────────────────────────
     if (page === 'results') {
         const totalCorrect = sectionResults.reduce((s, r) => s + r.correct, 0)
         const totalQuestions = sectionResults.reduce((s, r) => s + r.total, 0)
         const overallPct = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0
-        const passed = overallPct >= 60
+        // Real HSK: must pass ALL sections (≥ 60% each)
+        const allSectionsPassed = sectionResults.every(r => (r.correct / r.total) >= 0.6)
         const gradeInfo = getGrade(totalCorrect, totalQuestions)
 
-        // Collect all questions + answers for wrong answer review
-        const allQuestions: Question[] = [...sectionQuestions[0], ...sectionQuestions[1], ...sectionQuestions[2]]
-        const allAnswers: (number | null)[] = [...sectionAnswers] // Note: only last section's answers are in sectionAnswers
+        const allQs = [...sectionQuestions[0], ...sectionQuestions[1], ...sectionQuestions[2]]
+        const allAns = [
+            ...allAnswersRef.current[0],
+            ...allAnswersRef.current[1],
+            ...allAnswersRef.current[2],
+        ]
 
         return (
             <div className="min-h-screen py-6 sm:py-8 px-3 sm:px-4">
@@ -619,8 +767,8 @@ export default function MockTest() {
 
                             <div className={`text-7xl font-bold ${gradeInfo.color} mb-2`}>{gradeInfo.grade}</div>
                             <p className="text-xl text-gray-700 dark:text-gray-300">{totalCorrect}/{totalQuestions} correct ({overallPct}%)</p>
-                            <div className={`inline-block mt-2 px-4 py-1 rounded-full text-sm font-bold ${passed ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                {passed ? '✓ PASS' : '✗ FAIL'} — {passed ? 'Score ≥ 60%' : 'Score < 60%'}
+                            <div className={`inline-block mt-2 px-4 py-1 rounded-full text-sm font-bold ${allSectionsPassed ? 'bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-300' : 'bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-300'}`}>
+                                {allSectionsPassed ? '✓ PASS' : '✗ FAIL'} — {allSectionsPassed ? 'All sections ≥ 60%' : 'Some sections below 60%'}
                             </div>
                             <p className="text-sm text-gray-400 mt-3">Total time: {formatTime(totalTimeUsed)}</p>
 
@@ -629,6 +777,8 @@ export default function MockTest() {
                                 {sectionResults.map((r) => {
                                     const m = SECTION_META[r.section]
                                     const Icon = m.icon
+                                    const secPct = Math.round((r.correct / r.total) * 100)
+                                    const secPassed = secPct >= 60
                                     return (
                                         <div key={r.section} className="bg-white/80 dark:bg-gray-800/60 rounded-2xl p-3">
                                             <div className={`w-8 h-8 bg-gradient-to-br ${m.gradient} rounded-lg flex items-center justify-center mx-auto mb-1`}>
@@ -636,7 +786,10 @@ export default function MockTest() {
                                             </div>
                                             <p className={`font-chinese font-bold ${m.accent}`}>{m.label}</p>
                                             <p className="text-lg font-bold text-gray-800 dark:text-gray-200">{r.correct}/{r.total}</p>
-                                            <p className="text-xs text-gray-500">{Math.round((r.correct / r.total) * 100)}%</p>
+                                            <p className="text-xs text-gray-500">{secPct}%</p>
+                                            <span className={`text-xs font-semibold ${secPassed ? 'text-green-600' : 'text-red-500'}`}>
+                                                {secPassed ? '✓ Pass' : '✗ Fail'}
+                                            </span>
                                         </div>
                                     )
                                 })}
@@ -655,8 +808,8 @@ export default function MockTest() {
                         </div>
                     </motion.div>
 
-                    {/* Wrong answer review for last section only (writing - we have answers) */}
-                    {allAnswers.some((a, i) => a !== null && a !== allQuestions[i]?.correctIndex) && (
+                    {/* Wrong answer review — all sections */}
+                    {allAns.some((a, i) => a !== null && a !== allQs[i]?.correctIndex) && (
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
                             <details className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
                                 <summary className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2 cursor-pointer list-none select-none">
@@ -664,16 +817,28 @@ export default function MockTest() {
                                     <span className="ml-auto text-xs text-gray-400">(click to expand)</span>
                                 </summary>
                                 <div className="space-y-3 mt-4">
-                                    {allQuestions.map((q, i) => {
-                                        if (allAnswers[i] === q.correctIndex) return null
+                                    {allQs.map((q, i) => {
+                                        if (allAns[i] === q.correctIndex) return null
+                                        const m = SECTION_META[q.type]
                                         return (
                                             <div key={i} className="bg-red-50 dark:bg-red-950/20 rounded-xl p-3 border border-red-100 dark:border-red-900">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${m.badge}`}>{m.labelEn}</span>
+                                                    {allAns[i] === -1 && <span className="text-xs text-amber-600 font-semibold">Timed out</span>}
+                                                </div>
                                                 <p className="font-chinese text-lg text-gray-900 dark:text-gray-100">
                                                     {q.word.simplified}
                                                     <span className="text-sm text-gray-500 ml-2">({q.word.pinyin})</span>
                                                 </p>
                                                 <p className="text-sm text-gray-600 dark:text-gray-400">{q.word.english}</p>
-                                                <p className="text-xs text-green-600 mt-1">Correct: {q.options[q.correctIndex]}</p>
+                                                <p className="text-xs text-green-600 mt-1">
+                                                    Correct answer: <strong>{q.options[q.correctIndex]}</strong>
+                                                </p>
+                                                {allAns[i] !== null && allAns[i] !== -1 && allAns[i] !== q.correctIndex && (
+                                                    <p className="text-xs text-red-500">
+                                                        Your answer: <strong>{q.options[allAns[i] as number]}</strong>
+                                                    </p>
+                                                )}
                                             </div>
                                         )
                                     })}
@@ -686,13 +851,19 @@ export default function MockTest() {
         )
     }
 
-    // ─── ACTIVE QUESTION ─────────────────────────────────────────
+    // ── ACTIVE QUESTION ───────────────────────────────────────────────────────
     const qs = sectionQuestions[sectionIndex]
     const q = qs[currentQ]
     if (!q) return null
+
     const isAnswered = selectedAnswer !== null
     const timerPct = (timeLeft / meta.timePerQ) * 100
     const timerUrgent = timeLeft <= 10
+
+    // Determine if options are Chinese characters (use font-chinese + large text)
+    const optionsAreChinese = q.subtype === 'listen-pinyin-pick-chinese' || q.subtype === 'read-fill-blank' || q.subtype === 'write-pick-character'
+    const optionsAreEnglish = q.subtype === 'listen-chinese-pick-english' || q.subtype === 'read-match-meaning'
+    const optionsArePinyin = q.subtype === 'write-pick-pinyin'
 
     return (
         <div className="min-h-screen py-4 sm:py-6 px-3 sm:px-4">
@@ -712,8 +883,8 @@ export default function MockTest() {
                     </div>
                 </div>
 
-                {/* Section progress bar */}
-                <div className="flex gap-1 mb-5">
+                {/* Section progress dots */}
+                <div className="flex gap-1 mb-4">
                     {qs.map((_, i) => (
                         <div key={i} className={`h-2 flex-1 rounded-full transition-all ${
                             i < currentQ
@@ -725,7 +896,7 @@ export default function MockTest() {
                     ))}
                 </div>
 
-                {/* Timer progress bar */}
+                {/* Timer bar */}
                 <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full mb-5 overflow-hidden">
                     <div
                         className={`h-full rounded-full transition-all duration-1000 ${timerUrgent ? 'bg-red-500' : meta.bar}`}
@@ -738,7 +909,7 @@ export default function MockTest() {
                         initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
                         transition={{ duration: 0.2 }}>
                         <div className={`bg-white dark:bg-gray-900 rounded-3xl shadow-xl border ${meta.border} p-6 sm:p-8 mb-4`}>
-                            {/* Question type badge + level */}
+                            {/* Section badge + level */}
                             <div className="flex justify-between items-center mb-6">
                                 <div className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${meta.badge}`}>
                                     <SectionIcon className="w-3.5 h-3.5" />
@@ -747,25 +918,85 @@ export default function MockTest() {
                                 <span className="text-xs text-gray-400">HSK {hskLevel}</span>
                             </div>
 
-                            {/* Question content */}
+                            {/* ── Question stimulus area ── */}
                             <div className="text-center mb-8">
-                                {q.type === 'listening' ? (
+
+                                {/* LISTENING subtypes */}
+                                {q.subtype === 'listen-pinyin-pick-chinese' && (
                                     <div>
                                         <div className="flex items-center justify-center gap-2 mb-3">
                                             <Headphones className="w-5 h-5 text-indigo-400" />
                                             <span className="text-xs text-indigo-500 font-semibold uppercase tracking-wide">Pinyin Sentence</span>
                                         </div>
-                                        <p className="text-xl sm:text-2xl text-gray-800 dark:text-gray-100 font-medium leading-relaxed bg-indigo-50 dark:bg-indigo-950/20 rounded-2xl px-6 py-4 inline-block">{q.prompt}</p>
+                                        <p className="text-lg sm:text-xl text-gray-800 dark:text-gray-100 font-medium leading-relaxed bg-indigo-50 dark:bg-indigo-950/20 rounded-2xl px-6 py-4 inline-block mb-3">
+                                            {q.prompt}
+                                        </p>
+                                        <div className="flex items-center justify-center gap-2 mt-2">
+                                            <button
+                                                onClick={() => speakText(q.audioText)}
+                                                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${isSpeaking ? 'bg-indigo-600 text-white animate-pulse' : 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-200'}`}
+                                            >
+                                                {isSpeaking ? <Volume2 className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                                                {isSpeaking ? 'Playing…' : 'Play Again'}
+                                            </button>
+                                        </div>
                                     </div>
-                                ) : q.type === 'reading' ? (
+                                )}
+
+                                {q.subtype === 'listen-chinese-pick-english' && (
+                                    <div>
+                                        <div className="flex items-center justify-center gap-2 mb-4">
+                                            <Headphones className="w-5 h-5 text-indigo-400" />
+                                            <span className="text-xs text-indigo-500 font-semibold uppercase tracking-wide">Listening</span>
+                                        </div>
+                                        {/* Big audio button — don't show the Chinese word to force listening */}
+                                        <button
+                                            onClick={() => speakText(q.audioText)}
+                                            className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 transition-all shadow-lg ${isSpeaking ? 'bg-indigo-600 text-white scale-110 animate-pulse' : 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-200 hover:scale-105'}`}
+                                        >
+                                            {isSpeaking ? <Volume2 className="w-10 h-10" /> : <Play className="w-10 h-10" />}
+                                        </button>
+                                        <p className="text-sm text-gray-400">
+                                            {isSpeaking ? 'Playing audio…' : 'Tap to hear the word'}
+                                        </p>
+                                        {/* Reveal Chinese after answering */}
+                                        {isAnswered && (
+                                            <motion.p
+                                                initial={{ opacity: 0, y: 8 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="font-chinese text-4xl text-gray-800 dark:text-gray-100 mt-3"
+                                            >
+                                                {q.word.simplified}
+                                                <span className="text-base text-gray-500 ml-2">({q.word.pinyin})</span>
+                                            </motion.p>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* READING subtypes */}
+                                {q.subtype === 'read-fill-blank' && (
                                     <div>
                                         <div className="flex items-center justify-center gap-2 mb-3">
                                             <Eye className="w-5 h-5 text-emerald-400" />
                                             <span className="text-xs text-emerald-500 font-semibold uppercase tracking-wide">Fill in the Blank</span>
                                         </div>
-                                        <p className="text-3xl sm:text-4xl font-chinese text-gray-900 dark:text-gray-100 mb-1">{q.prompt}</p>
+                                        <p className="text-3xl sm:text-4xl font-chinese text-gray-900 dark:text-gray-100 mb-1 leading-relaxed">{q.prompt}</p>
                                     </div>
-                                ) : (
+                                )}
+
+                                {q.subtype === 'read-match-meaning' && (
+                                    <div>
+                                        <div className="flex items-center justify-center gap-2 mb-3">
+                                            <Eye className="w-5 h-5 text-emerald-400" />
+                                            <span className="text-xs text-emerald-500 font-semibold uppercase tracking-wide">Match the Meaning</span>
+                                        </div>
+                                        <p className="text-5xl sm:text-6xl font-chinese text-gray-900 dark:text-gray-100 mb-2">{q.prompt}</p>
+                                        <p className="text-base text-gray-500">{q.word.pinyin}</p>
+                                    </div>
+                                )}
+
+                                {/* WRITING subtypes */}
+                                {q.subtype === 'write-pick-character' && (
                                     <div>
                                         <div className="flex items-center justify-center gap-2 mb-3">
                                             <PenTool className="w-5 h-5 text-purple-400" />
@@ -774,14 +1005,26 @@ export default function MockTest() {
                                         <p className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-1">{q.prompt}</p>
                                     </div>
                                 )}
+
+                                {q.subtype === 'write-pick-pinyin' && (
+                                    <div>
+                                        <div className="flex items-center justify-center gap-2 mb-3">
+                                            <PenTool className="w-5 h-5 text-purple-400" />
+                                            <span className="text-xs text-purple-500 font-semibold uppercase tracking-wide">Pinyin Selection</span>
+                                        </div>
+                                        <p className="text-6xl sm:text-7xl font-chinese text-gray-900 dark:text-gray-100 mb-2">{q.prompt}</p>
+                                        <p className="text-sm text-gray-500">{q.word.english}</p>
+                                    </div>
+                                )}
+
                                 <p className="text-sm text-gray-400 mt-3">{q.promptSub}</p>
                             </div>
 
-                            {/* Options grid */}
+                            {/* ── Options grid ── */}
                             <div className="grid grid-cols-2 gap-3">
                                 {q.options.map((opt, i) => {
                                     const label = ['A', 'B', 'C', 'D'][i]
-                                    let btnClass = `bg-gray-50 dark:bg-gray-800 hover:bg-${meta.color}-50 dark:hover:bg-${meta.color}-950/20 border-2 border-gray-100 dark:border-gray-700 hover:border-${meta.color}-300 text-gray-800 dark:text-gray-200`
+                                    let btnClass = `bg-gray-50 dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-gray-800 dark:text-gray-200 hover:border-${meta.color}-300`
                                     if (isAnswered) {
                                         if (i === q.correctIndex) btnClass = 'bg-green-50 dark:bg-green-950/30 border-2 border-green-400 text-green-800 dark:text-green-300'
                                         else if (i === selectedAnswer) btnClass = 'bg-red-50 dark:bg-red-950/30 border-2 border-red-400 text-red-800 dark:text-red-300'
@@ -793,7 +1036,9 @@ export default function MockTest() {
                                             <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 ${isAnswered && i === q.correctIndex ? 'bg-green-500 text-white' : isAnswered && i === selectedAnswer ? 'bg-red-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400'}`}>
                                                 {label}
                                             </span>
-                                            <span className="font-chinese text-xl flex-1 text-center">{opt}</span>
+                                            <span className={`flex-1 text-center ${optionsAreChinese ? 'font-chinese text-xl' : optionsAreEnglish ? 'text-sm' : optionsArePinyin ? 'text-base font-medium' : 'text-base'}`}>
+                                                {opt}
+                                            </span>
                                             {isAnswered && i === q.correctIndex && <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />}
                                             {isAnswered && i === selectedAnswer && i !== q.correctIndex && <XCircle className="w-4 h-4 text-red-500 flex-shrink-0" />}
                                         </button>
