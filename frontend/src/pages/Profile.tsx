@@ -121,6 +121,7 @@ export default function Profile() {
   const [gamification, setGamification] = useState<GamificationStats | null>(null)
   const [onboarding, setOnboarding] = useState<OnboardingStatus | null>(null)
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [uploadingPicture, setUploadingPicture] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -128,6 +129,7 @@ export default function Profile() {
 
   const loadData = async () => {
     setLoading(true)
+    setLoadError(false)
     try {
       const [progressData, gamificationData, onboardingData] = await Promise.all([
         userProgressApi.getProgress(),
@@ -139,6 +141,7 @@ export default function Profile() {
       setOnboarding(onboardingData)
     } catch (err) {
       console.error('Failed to load profile data:', err)
+      setLoadError(true)
     } finally {
       setLoading(false)
     }
@@ -268,7 +271,30 @@ export default function Profile() {
         )}
       </AnimatePresence>
 
-      {!loading && (
+      {/* ── Error state ─────────────────────────────────────────────────── */}
+      {!loading && loadError && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col items-center py-12 gap-4 bg-white rounded-3xl border border-red-100 shadow-sm"
+        >
+          <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center">
+            <TrendingUp className="w-6 h-6 text-red-400" />
+          </div>
+          <div className="text-center">
+            <p className="font-semibold text-gray-800">Could not load stats</p>
+            <p className="text-sm text-gray-400 mt-1">Check your connection and try again.</p>
+          </div>
+          <button
+            onClick={loadData}
+            className="px-4 py-2 text-sm font-semibold text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-colors"
+          >
+            Retry
+          </button>
+        </motion.div>
+      )}
+
+      {!loading && !loadError && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

@@ -86,13 +86,14 @@ app = FastAPI(
     openapi_url=None if IS_PRODUCTION else "/openapi.json",
 )
 
-# Get CORS origins: strict in production, convenient localhost set in development.
-cors_origins = settings.CORS_ORIGINS if IS_PRODUCTION else "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000"
-allowed_origins = [origin.strip() for origin in cors_origins.split(",") if origin.strip()]
+# Always include configured origins; in dev mode also add localhost conveniences.
+_dev_origins = ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"]
+_configured = [o.strip() for o in settings.CORS_ORIGINS.split(",") if o.strip()]
 if settings.FRONTEND_URL:
-    frontend_origin = settings.FRONTEND_URL.strip().rstrip("/")
-    if frontend_origin and frontend_origin not in allowed_origins:
-        allowed_origins.append(frontend_origin)
+    _fe = settings.FRONTEND_URL.strip().rstrip("/")
+    if _fe and _fe not in _configured:
+        _configured.append(_fe)
+allowed_origins = _configured if IS_PRODUCTION else list(dict.fromkeys(_configured + _dev_origins))
 
 app.add_middleware(
     CORSMiddleware,

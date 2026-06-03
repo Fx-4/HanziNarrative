@@ -6,9 +6,9 @@ import type { User as UserProfile } from '@/types'
 import { useThemeStore } from '@/store/themeStore'
 import {
   BookOpen, BookMarked, User, LogOut, PenTool, GraduationCap, Brain,
-  BarChart3, Type, ChevronDown, Library, Menu, X, Moon, Sun,
+  BarChart3, Type, ChevronDown, Menu, X, Moon, Sun,
   Layers, Keyboard, Trophy, ChevronRight, Headphones, Map, Mic, Lock,
-  Target, Grid3X3, Music, Heart, MessageCircle, Shield, Swords,
+  Target, Grid3X3, Music, Heart, MessageCircle, Shield, Swords, Zap,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useState, useEffect, useRef } from 'react'
@@ -16,8 +16,21 @@ import { learningApi } from '@/services/api'
 import VoiceSelector from '@/components/VoiceSelector'
 
 type NavIcon = FC<{ className?: string }>
-type MenuItem = { to: string; label: string; icon: NavIcon; badge?: boolean }
-type DropdownMenu = { label: string; icon: NavIcon; items: MenuItem[] }
+
+interface MenuItem {
+  to: string
+  label: string
+  icon: NavIcon
+  badge?: boolean
+  description?: string
+}
+
+interface DropdownMenu {
+  label: string
+  icon: NavIcon
+  items: MenuItem[]
+  cols?: 1 | 2
+}
 
 /* ─── animation variants ─── */
 const drawerVariants = {
@@ -40,15 +53,60 @@ const itemVariants = {
   }),
 }
 
+/* ─── Navigation data ─── */
+
+// Primary links — always visible in desktop bar
+const primaryLinks: MenuItem[] = [
+  { to: '/review', label: 'Review', icon: Brain, badge: true },
+  { to: '/stories', label: 'Stories', icon: BookOpen },
+  { to: '/dashboard', label: 'Dashboard', icon: BarChart3 },
+]
+
+// Dropdown menus
+const dropdownMenus: DropdownMenu[] = [
+  {
+    label: 'Practice',
+    icon: GraduationCap,
+    cols: 2,
+    items: [
+      { to: '/flashcards',      label: 'Flashcards',      icon: Layers,       description: 'Spaced repetition' },
+      { to: '/writing',         label: 'Writing',          icon: PenTool,      description: 'Stroke by stroke' },
+      { to: '/typing',          label: 'Typing',           icon: Keyboard,     description: 'Pinyin input' },
+      { to: '/speaking',        label: 'Speaking',         icon: Mic,          description: 'Pronunciation' },
+      { to: '/dictation',       label: 'Dictation',        icon: Headphones,   description: 'Listening' },
+      { to: '/quiz',            label: 'Quiz',             icon: Target,       description: 'Multiple choice' },
+      { to: '/tones',           label: 'Tones',            icon: Music,        description: 'Tone trainer' },
+      { to: '/mock-test',       label: 'Mock Test',        icon: GraduationCap,description: 'Exam simulation' },
+      { to: '/vocabulary',      label: 'Vocabulary',       icon: BookMarked,   description: 'Word browser' },
+    ],
+  },
+  {
+    label: 'Play',
+    icon: Zap,
+    cols: 1,
+    items: [
+      { to: '/battle',          label: 'Battle',           icon: Swords,       description: 'Real-time duel' },
+      { to: '/adventure',       label: 'Adventure',        icon: Map,          description: 'AI branching story' },
+      { to: '/conversation',    label: 'AI Chat',          icon: MessageCircle,description: 'Conversation practice' },
+      { to: '/matching',        label: 'Match Game',       icon: Grid3X3,      description: 'Card matching' },
+      { to: '/sentence-builder',label: 'Sentence Builder', icon: Type,         description: 'Arrange words' },
+      { to: '/story-challenge', label: 'Story Challenge',  icon: Lock,         description: 'Unlock stories' },
+    ],
+  },
+]
+
 export default function Navbar() {
   const { isAuthenticated, user, logout } = useAuthStore()
   const { isDarkMode, toggleDarkMode } = useThemeStore()
   const location = useLocation()
-  const [reviewCount, setReviewCount] = useState<number>(0)
+  const [reviewCount, setReviewCount] = useState(0)
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({ Learn: true, Library: true })
+  // Practice open by default so new users see it; Play collapsed to reduce overwhelm
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    Practice: true, Play: false, Track: false,
+  })
 
   const toggleSection = (label: string) =>
     setOpenSections(prev => ({ ...prev, [label]: !prev[label] }))
@@ -56,29 +114,22 @@ export default function Navbar() {
   const userMenuRef = useRef<HTMLDivElement>(null)
   const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
 
-  // Close mobile menu on route change
   useEffect(() => { setMobileMenuOpen(false) }, [location.pathname])
 
-  // Lock body scroll when drawer open
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [mobileMenuOpen])
 
   useEffect(() => {
-    if (isAuthenticated && user) {
-      const fetch = async () => {
-        try {
-          const data = await learningApi.getReviewCount()
-          setReviewCount(data.count)
-        } catch { setReviewCount(0) }
-      }
-      fetch()
-      const id = setInterval(fetch, 5 * 60 * 1000)
-      return () => clearInterval(id)
-    } else {
-      setReviewCount(0)
+    if (!isAuthenticated || !user) { setReviewCount(0); return }
+    const fetch = async () => {
+      try { setReviewCount((await learningApi.getReviewCount()).count) }
+      catch { setReviewCount(0) }
     }
+    fetch()
+    const id = setInterval(fetch, 5 * 60 * 1000)
+    return () => clearInterval(id)
   }, [isAuthenticated, user])
 
   useEffect(() => {
@@ -93,45 +144,6 @@ export default function Navbar() {
   }, [])
 
   const handleLogout = () => { logout(); setShowUserMenu(false); toast.success('Logged out successfully') }
-
-  const singleNavLinks: MenuItem[] = [
-    { to: '/practice', label: 'Practice', icon: GraduationCap },
-    { to: '/battle', label: 'Battle', icon: Swords },
-    { to: '/dashboard', label: 'Dashboard', icon: BarChart3 },
-    { to: '/leaderboard', label: 'Leaderboard', icon: Trophy },
-  ]
-
-  const dropdownMenus: DropdownMenu[] = [
-    {
-      label: 'Learn', icon: Brain,
-      items: [
-        { to: '/review', label: 'Review', icon: Brain, badge: true },
-        { to: '/flashcards', label: 'Flashcards', icon: Layers },
-        { to: '/writing', label: 'Writing', icon: PenTool },
-        { to: '/typing', label: 'Typing', icon: Keyboard },
-        { to: '/quiz', label: 'Quiz', icon: GraduationCap },
-        { to: '/speaking', label: 'Speaking', icon: Mic },
-        { to: '/mock-test', label: 'Mock Test', icon: Target },
-        { to: '/tones', label: 'Tones', icon: Music },
-      ]
-    },
-    {
-      label: 'Library', icon: Library,
-      items: [
-        { to: '/stories', label: 'Stories', icon: BookOpen },
-        { to: '/bookmarks', label: 'Bookmarks', icon: Heart },
-        { to: '/vocabulary', label: 'Vocabulary', icon: BookMarked },
-        { to: '/sentence-builder', label: 'Builder', icon: Type },
-        { to: '/dictation', label: 'Dictation', icon: Headphones },
-        { to: '/adventure', label: 'Adventure', icon: Map },
-        { to: '/story-challenge', label: 'Unlock', icon: Lock },
-        { to: '/explorer', label: 'Explorer', icon: Target },
-        { to: '/matching', label: 'Match', icon: Grid3X3 },
-        { to: '/conversation', label: 'AI Chat', icon: MessageCircle },
-      ]
-    }
-  ]
-
   const isActive = (path: string) => location.pathname === path
   const isDropdownActive = (items: MenuItem[]) => items.some(i => isActive(i.to))
 
@@ -166,14 +178,18 @@ export default function Navbar() {
               </motion.div>
             </Link>
 
-            {/* ── Desktop nav (md+ / tablet & above) ── */}
+            {/* ── Desktop nav ── */}
             <div className="hidden md:flex items-center gap-0.5 lg:gap-1">
-              {/* Dark mode toggle + Voice selector */}
               <DarkModeButton isDarkMode={isDarkMode} toggle={toggleDarkMode} />
               <VoiceSelector compact />
 
-              {singleNavLinks.map(link => (
-                <DesktopNavLink key={link.to} link={link} active={isActive(link.to)} />
+              {primaryLinks.map(link => (
+                <DesktopNavLink
+                  key={link.to}
+                  link={link}
+                  active={isActive(link.to)}
+                  badgeCount={link.badge ? reviewCount : 0}
+                />
               ))}
 
               {dropdownMenus.map(menu => (
@@ -211,22 +227,19 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* ── Mobile right side: dark toggle + user avatar + hamburger ── */}
+            {/* ── Mobile right: dark toggle + avatar + hamburger ── */}
             <div className="md:hidden flex items-center gap-2">
               <DarkModeButton isDarkMode={isDarkMode} toggle={toggleDarkMode} />
 
               {isAuthenticated && (
                 <div className="relative">
                   <Link to="/profile" className="flex items-center justify-center w-8 h-8 rounded-full ring-2 ring-transparent hover:ring-indigo-300 transition-all">
-                    {user?.profile_picture ? (
-                      <img src={user.profile_picture} alt={user.username} className="w-8 h-8 rounded-full object-cover" />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                        <span className="text-xs font-bold text-indigo-600">
-                          {user?.username?.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                    )}
+                    {user?.profile_picture
+                      ? <img src={user.profile_picture} alt={user.username} className="w-8 h-8 rounded-full object-cover" />
+                      : <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                          <span className="text-xs font-bold text-indigo-600">{user?.username?.charAt(0).toUpperCase()}</span>
+                        </div>
+                    }
                   </Link>
                   {reviewCount > 0 && (
                     <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[16px] h-4 bg-red-500 text-white text-[9px] font-bold rounded-full px-0.5 pointer-events-none">
@@ -242,9 +255,7 @@ export default function Navbar() {
                 whileTap={{ scale: 0.9 }}
                 aria-label="Open menu"
               >
-                <motion.div animate={mobileMenuOpen ? { rotate: 90 } : { rotate: 0 }} transition={{ duration: 0.2 }}>
-                  <Menu className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                </motion.div>
+                <Menu className="w-5 h-5 text-gray-700 dark:text-gray-300" />
               </motion.button>
             </div>
           </div>
@@ -255,39 +266,30 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
-            {/* Backdrop */}
             <motion.div
               key="backdrop"
               variants={backdropVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
+              initial="hidden" animate="visible" exit="exit"
               className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
               onClick={() => setMobileMenuOpen(false)}
             />
 
-            {/* Drawer panel */}
             <motion.div
               key="drawer"
               variants={drawerVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
+              initial="hidden" animate="visible" exit="exit"
               className="fixed top-0 right-0 h-full w-[min(320px,88vw)] sm:w-[min(360px,88vw)] bg-white dark:bg-gray-900 shadow-2xl z-60 flex flex-col"
             >
               {/* Drawer header */}
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800">
                 {isAuthenticated ? (
                   <div className="flex items-center gap-3">
-                    {user?.profile_picture ? (
-                      <img src={user.profile_picture} alt={user.username} className="w-9 h-9 rounded-full object-cover" />
-                    ) : (
-                      <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center">
-                        <span className="text-sm font-bold text-indigo-600">
-                          {user?.username?.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                    )}
+                    {user?.profile_picture
+                      ? <img src={user.profile_picture} alt={user.username} className="w-9 h-9 rounded-full object-cover" />
+                      : <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center">
+                          <span className="text-sm font-bold text-indigo-600">{user?.username?.charAt(0).toUpperCase()}</span>
+                        </div>
+                    }
                     <div className="leading-tight">
                       <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{user?.full_name || user?.username}</p>
                       <p className="text-[11px] text-gray-500 dark:text-gray-400">@{user?.username}</p>
@@ -307,118 +309,105 @@ export default function Navbar() {
                 </motion.button>
               </div>
 
-              {/* Drawer scrollable content */}
-              <div className="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
+              {/* Drawer body */}
+              <div className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
 
-                {/* Single nav links */}
-                {singleNavLinks.map((link, i) => {
-                  const Icon = link.icon
-                  const active = isActive(link.to)
-                  return (
-                    <motion.div key={link.to} custom={i} variants={itemVariants} initial="hidden" animate="visible">
-                      <Link to={link.to} onClick={() => setMobileMenuOpen(false)}>
-                        <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${active ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600'
+                {/* ── Daily section — always visible at top, no collapse ── */}
+                <div className="mb-2">
+                  <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+                    Daily
+                  </p>
+
+                  {/* Review — hero item with count pill */}
+                  <motion.div custom={0} variants={itemVariants} initial="hidden" animate="visible">
+                    <Link to="/review" onClick={() => setMobileMenuOpen(false)}>
+                      <div className={`flex items-center justify-between px-3 py-3 rounded-xl transition-colors mb-0.5 ${
+                        isActive('/review')
+                          ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600'
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                          }`}>
-                          <Icon className="w-4 h-4 flex-shrink-0" />
-                          <span className="text-sm font-medium">{link.label}</span>
-                          {active && <ChevronRight className="w-3.5 h-3.5 ml-auto opacity-60" />}
+                      }`}>
+                        <div className="flex items-center gap-3">
+                          <Brain className="w-4 h-4 flex-shrink-0" />
+                          <div>
+                            <p className="text-sm font-semibold leading-none">Review</p>
+                            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                              {reviewCount > 0 ? `${reviewCount} due today` : 'Spaced repetition'}
+                            </p>
+                          </div>
                         </div>
-                      </Link>
-                    </motion.div>
-                  )
-                })}
+                        {reviewCount > 0
+                          ? <span className="flex items-center justify-center min-w-[22px] h-5 bg-red-500 text-white text-[10px] font-bold rounded-full px-1.5">{reviewCount > 99 ? '99+' : reviewCount}</span>
+                          : isActive('/review') ? <ChevronRight className="w-3.5 h-3.5 opacity-50" /> : null
+                        }
+                      </div>
+                    </Link>
+                  </motion.div>
 
-                {/* Dropdown sections — collapsible */}
-                {dropdownMenus.map((menu, mi) => {
-                  const Icon = menu.icon
-                  const isOpen = openSections[menu.label] ?? true
-                  const hasActiveChild = menu.items.some(item => isActive(item.to))
+                  {/* Stories */}
+                  <motion.div custom={1} variants={itemVariants} initial="hidden" animate="visible">
+                    <Link to="/stories" onClick={() => setMobileMenuOpen(false)}>
+                      <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+                        isActive('/stories')
+                          ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                      }`}>
+                        <BookOpen className="w-4 h-4 flex-shrink-0" />
+                        <span className="text-sm font-medium">Stories</span>
+                        {isActive('/stories') && <ChevronRight className="w-3.5 h-3.5 ml-auto opacity-50" />}
+                      </div>
+                    </Link>
+                  </motion.div>
+                </div>
 
-                  return (
-                    <div key={menu.label} className="mt-1">
-                      {/* Collapsible section header */}
-                      <motion.button
-                        custom={singleNavLinks.length + mi * 10}
-                        variants={itemVariants}
-                        initial="hidden"
-                        animate="visible"
-                        onClick={() => toggleSection(menu.label)}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition-colors ${hasActiveChild
-                          ? 'text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/50'
-                          : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200'
-                          }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <Icon className="w-3.5 h-3.5" />
-                          <span className="text-[11px] font-bold uppercase tracking-widest">
-                            {menu.label}
-                          </span>
-                          {hasActiveChild && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
-                          )}
-                        </div>
-                        <motion.div
-                          animate={{ rotate: isOpen ? 0 : -90 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <ChevronDown className="w-3.5 h-3.5" />
-                        </motion.div>
-                      </motion.button>
+                {/* ── Practice section ── */}
+                <DrawerSection
+                  label="Practice"
+                  isOpen={openSections.Practice}
+                  onToggle={() => toggleSection('Practice')}
+                  hasActive={dropdownMenus[0].items.some(i => isActive(i.to))}
+                  animIndex={2}
+                >
+                  {dropdownMenus[0].items.map((item) => (
+                    <DrawerItem key={item.to} item={item} active={isActive(item.to)} onClose={() => setMobileMenuOpen(false)} />
+                  ))}
+                </DrawerSection>
 
-                      {/* Animated items */}
-                      <AnimatePresence initial={false}>
-                        {isOpen && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.22, ease: 'easeInOut' }}
-                            style={{ overflow: 'hidden' }}
-                          >
-                            <div className="pb-1 space-y-0.5">
-                              {menu.items.map((item) => {
-                                const ItemIcon = item.icon
-                                const itemActive = isActive(item.to)
-                                const showBadge = item.badge && reviewCount > 0
+                {/* ── Play section ── */}
+                <DrawerSection
+                  label="Play"
+                  isOpen={openSections.Play}
+                  onToggle={() => toggleSection('Play')}
+                  hasActive={dropdownMenus[1].items.some(i => isActive(i.to))}
+                  animIndex={12}
+                >
+                  {dropdownMenus[1].items.map((item) => (
+                    <DrawerItem key={item.to} item={item} active={isActive(item.to)} onClose={() => setMobileMenuOpen(false)} />
+                  ))}
+                </DrawerSection>
 
-                                return (
-                                  <Link key={item.to} to={item.to} onClick={() => setMobileMenuOpen(false)}>
-                                    <div className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-colors ${itemActive
-                                      ? 'bg-indigo-50 text-indigo-600'
-                                      : 'text-gray-700 hover:bg-gray-100'
-                                      }`}>
-                                      <div className="flex items-center gap-3">
-                                        <ItemIcon className="w-4 h-4 flex-shrink-0" />
-                                        <span className="text-sm font-medium">{item.label}</span>
-                                      </div>
-                                      {showBadge ? (
-                                        <span className="flex items-center justify-center min-w-[20px] h-5 bg-red-500 text-white text-[10px] font-bold rounded-full px-1.5">
-                                          {reviewCount}
-                                        </span>
-                                      ) : itemActive ? (
-                                        <ChevronRight className="w-3.5 h-3.5 opacity-50 flex-shrink-0" />
-                                      ) : null}
-                                    </div>
-                                  </Link>
-                                )
-                              })}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  )
-                })}
+                {/* ── Track section ── */}
+                <DrawerSection
+                  label="Track"
+                  isOpen={openSections.Track}
+                  onToggle={() => toggleSection('Track')}
+                  hasActive={isActive('/dashboard') || isActive('/leaderboard')}
+                  animIndex={18}
+                >
+                  {[
+                    { to: '/dashboard', label: 'Dashboard', icon: BarChart3, description: 'Your stats' },
+                    { to: '/leaderboard', label: 'Leaderboard', icon: Trophy, description: 'Rankings' },
+                    { to: '/bookmarks', label: 'Bookmarks', icon: Heart, description: 'Saved stories' },
+                  ].map((item) => (
+                    <DrawerItem key={item.to} item={item} active={isActive(item.to)} onClose={() => setMobileMenuOpen(false)} />
+                  ))}
+                </DrawerSection>
               </div>
 
-              {/* Drawer footer: voice selector + profile + logout or login/register */}
-              <div className="border-t border-gray-200 dark:border-gray-800 p-3 space-y-1.5">
-                {/* Voice selector (full toggle) */}
+              {/* Drawer footer */}
+              <div className="border-t border-gray-200 dark:border-gray-800 p-3 space-y-1">
                 <div className="px-3 py-2">
                   <VoiceSelector />
                 </div>
-
                 {isAuthenticated ? (
                   <>
                     <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
@@ -462,7 +451,83 @@ export default function Navbar() {
   )
 }
 
-/* ─── Dark Mode Button ─── */
+/* ─── Mobile drawer section (collapsible) ─── */
+function DrawerSection({
+  label, isOpen, onToggle, hasActive, animIndex, children,
+}: {
+  label: string
+  isOpen: boolean
+  onToggle: () => void
+  hasActive: boolean
+  animIndex: number
+  children: React.ReactNode
+}) {
+  return (
+    <div>
+      <motion.button
+        custom={animIndex}
+        variants={itemVariants}
+        initial="hidden"
+        animate="visible"
+        onClick={onToggle}
+        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition-colors ${
+          hasActive
+            ? 'text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/50'
+            : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200'
+        }`}
+      >
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-bold uppercase tracking-widest">{label}</span>
+          {hasActive && <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />}
+        </div>
+        <motion.div animate={{ rotate: isOpen ? 0 : -90 }} transition={{ duration: 0.2 }}>
+          <ChevronDown className="w-3.5 h-3.5" />
+        </motion.div>
+      </motion.button>
+
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.22, ease: 'easeInOut' }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div className="pb-1 space-y-0.5">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+/* ─── Mobile drawer item ─── */
+function DrawerItem({ item, active, onClose }: { item: MenuItem; active: boolean; onClose: () => void }) {
+  const Icon = item.icon
+  return (
+    <Link to={item.to} onClick={onClose}>
+      <div className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+        active
+          ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600'
+          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+      }`}>
+        <div className="flex items-center gap-3 min-w-0">
+          <Icon className="w-4 h-4 flex-shrink-0" />
+          <div className="min-w-0">
+            <p className="text-sm font-medium leading-none">{item.label}</p>
+            {item.description && (
+              <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 truncate">{item.description}</p>
+            )}
+          </div>
+        </div>
+        {active && <ChevronRight className="w-3.5 h-3.5 opacity-50 flex-shrink-0" />}
+      </div>
+    </Link>
+  )
+}
+
+/* ─── Dark mode button ─── */
 function DarkModeButton({ isDarkMode, toggle }: { isDarkMode: boolean; toggle: () => void }) {
   return (
     <motion.button
@@ -473,35 +538,38 @@ function DarkModeButton({ isDarkMode, toggle }: { isDarkMode: boolean; toggle: (
       title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
     >
       <AnimatePresence mode="wait">
-        {isDarkMode ? (
-          <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
-            <Sun className="w-4 h-4 text-yellow-400" />
-          </motion.div>
-        ) : (
-          <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
-            <Moon className="w-4 h-4 text-gray-600" />
-          </motion.div>
-        )}
+        {isDarkMode
+          ? <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}><Sun className="w-4 h-4 text-yellow-400" /></motion.div>
+          : <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}><Moon className="w-4 h-4 text-gray-600" /></motion.div>
+        }
       </AnimatePresence>
     </motion.button>
   )
 }
 
-/* ─── Desktop single nav link ─── */
-function DesktopNavLink({ link, active }: { link: MenuItem; active: boolean }) {
+/* ─── Desktop single nav link (supports badge count) ─── */
+function DesktopNavLink({ link, active, badgeCount = 0 }: {
+  link: MenuItem; active: boolean; badgeCount?: number
+}) {
   const Icon = link.icon
   return (
     <Link to={link.to}>
       <motion.div
-        className={`relative flex items-center gap-1.5 px-2 lg:px-3 py-2 rounded-lg text-sm font-medium transition-colors ${active
-          ? 'text-indigo-600 bg-indigo-50 dark:bg-indigo-950/50'
-          : 'text-gray-700 dark:text-gray-300 hover:text-indigo-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
-          }`}
+        className={`relative flex items-center gap-1.5 px-2 lg:px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+          active
+            ? 'text-indigo-600 bg-indigo-50 dark:bg-indigo-950/50'
+            : 'text-gray-700 dark:text-gray-300 hover:text-indigo-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+        }`}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
       >
         <Icon className="w-4 h-4" />
         <span className="hidden lg:inline">{link.label}</span>
+        {badgeCount > 0 && (
+          <span className="flex items-center justify-center min-w-[18px] h-[18px] bg-red-500 text-white text-[9px] font-bold rounded-full px-1 leading-none">
+            {badgeCount > 99 ? '99+' : badgeCount}
+          </span>
+        )}
         {active && (
           <motion.div
             className="absolute bottom-0 left-2 right-2 h-0.5 bg-indigo-600 rounded-full"
@@ -517,15 +585,18 @@ function DesktopNavLink({ link, active }: { link: MenuItem; active: boolean }) {
 const DesktopDropdown = forwardRef<HTMLDivElement, {
   menu: DropdownMenu; active: boolean; isOpen: boolean; reviewCount: number
   isActive: (p: string) => boolean; onToggle: () => void; onClose: () => void
-}>(function DesktopDropdown({ menu, active, isOpen, reviewCount, isActive, onToggle, onClose }, ref) {
+}>(function DesktopDropdown({ menu, active, isOpen, isActive, onToggle, onClose }, ref) {
   const Icon = menu.icon
+  const isTwoCol = menu.cols === 2
+
   return (
     <div ref={ref} className="relative">
       <motion.div
-        className={`flex items-center gap-1 px-2 lg:px-3 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${active || isOpen
-          ? 'text-indigo-600 bg-indigo-50 dark:bg-indigo-950/50'
-          : 'text-gray-700 dark:text-gray-300 hover:text-indigo-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
-          }`}
+        className={`flex items-center gap-1 px-2 lg:px-3 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
+          active || isOpen
+            ? 'text-indigo-600 bg-indigo-50 dark:bg-indigo-950/50'
+            : 'text-gray-700 dark:text-gray-300 hover:text-indigo-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+        }`}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
         onClick={onToggle}
@@ -550,36 +621,38 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.96 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute left-0 top-full mt-1.5 w-48 bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200/80 dark:border-gray-700 overflow-hidden z-50"
+            className={`absolute left-0 top-full mt-1.5 bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200/80 dark:border-gray-700 overflow-hidden z-50 ${
+              isTwoCol ? 'w-[380px]' : 'w-52'
+            }`}
           >
-            {menu.items.map((item, i) => {
-              const ItemIcon = item.icon
-              const itemActive = isActive(item.to)
-              const showBadge = item.badge && reviewCount > 0
-              return (
-                <motion.div
-                  key={item.to}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.04 }}
-                >
-                  <Link to={item.to} onClick={onClose}>
-                    <div className={`flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${itemActive ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600' : 'text-gray-700 dark:text-gray-300'
+            <div className={`p-1.5 ${isTwoCol ? 'grid grid-cols-2 gap-0.5' : ''}`}>
+              {menu.items.map((item, i) => {
+                const ItemIcon = item.icon
+                const itemActive = isActive(item.to)
+                return (
+                  <motion.div
+                    key={item.to}
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.03 }}
+                  >
+                    <Link to={item.to} onClick={onClose}>
+                      <div className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
+                        itemActive ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600' : 'text-gray-700 dark:text-gray-300'
                       }`}>
-                      <div className="flex items-center gap-2.5">
-                        <ItemIcon className="w-3.5 h-3.5" />
-                        <span className="text-sm">{item.label}</span>
+                        <ItemIcon className="w-3.5 h-3.5 flex-shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium leading-none">{item.label}</p>
+                          {item.description && (
+                            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">{item.description}</p>
+                          )}
+                        </div>
                       </div>
-                      {showBadge && (
-                        <span className="flex items-center justify-center min-w-[20px] h-5 bg-red-500 text-white text-[10px] font-bold rounded-full px-1.5">
-                          {reviewCount}
-                        </span>
-                      )}
-                    </div>
-                  </Link>
-                </motion.div>
-              )
-            })}
+                    </Link>
+                  </motion.div>
+                )
+              })}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -599,15 +672,12 @@ const UserMenu = forwardRef<HTMLDivElement, {
         whileTap={{ scale: 0.97 }}
         onClick={onToggle}
       >
-        {user?.profile_picture ? (
-          <img src={user.profile_picture} alt={user.username} className="w-7 h-7 rounded-full object-cover" />
-        ) : (
-          <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center">
-            <span className="text-xs font-bold text-indigo-600">
-              {user?.username?.charAt(0).toUpperCase()}
-            </span>
-          </div>
-        )}
+        {user?.profile_picture
+          ? <img src={user.profile_picture} alt={user.username} className="w-7 h-7 rounded-full object-cover" />
+          : <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center">
+              <span className="text-xs font-bold text-indigo-600">{user?.username?.charAt(0).toUpperCase()}</span>
+            </div>
+        }
         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{user?.full_name || user?.username}</span>
         <motion.div animate={{ rotate: showMenu ? 180 : 0 }} transition={{ duration: 0.2 }}>
           <ChevronDown className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
@@ -621,30 +691,47 @@ const UserMenu = forwardRef<HTMLDivElement, {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.96 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 top-full mt-1.5 w-44 bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200/80 dark:border-gray-700 overflow-hidden z-50"
+            className="absolute right-0 top-full mt-1.5 w-48 bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200/80 dark:border-gray-700 overflow-hidden z-50"
           >
-            <Link to="/profile" onClick={onClose}>
-              <div className="flex items-center gap-2.5 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300">
-                <User className="w-4 h-4" />
-                <span className="text-sm">Profile</span>
-              </div>
-            </Link>
-            {user?.is_admin && (
-              <Link to="/admin" onClick={onClose}>
-                <div className="flex items-center gap-2.5 px-4 py-2.5 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors text-indigo-600 dark:text-indigo-400">
-                  <Shield className="w-4 h-4" />
-                  <span className="text-sm font-medium">Admin Panel</span>
+            <div className="p-1">
+              <Link to="/profile" onClick={onClose}>
+                <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300">
+                  <User className="w-4 h-4" />
+                  <span className="text-sm">Profile</span>
                 </div>
               </Link>
-            )}
-            <div className="border-t border-gray-200 dark:border-gray-700 my-0.5" />
-            <button
-              onClick={onLogout}
-              className="w-full flex items-center gap-2.5 px-4 py-2.5 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors text-red-600"
-            >
-              <LogOut className="w-4 h-4" />
-              <span className="text-sm">Logout</span>
-            </button>
+              <Link to="/leaderboard" onClick={onClose}>
+                <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300">
+                  <Trophy className="w-4 h-4" />
+                  <span className="text-sm">Leaderboard</span>
+                </div>
+              </Link>
+              <Link to="/bookmarks" onClick={onClose}>
+                <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300">
+                  <Heart className="w-4 h-4" />
+                  <span className="text-sm">Bookmarks</span>
+                </div>
+              </Link>
+              {user?.is_admin && (
+                <>
+                  <div className="border-t border-gray-100 dark:border-gray-800 my-1" />
+                  <Link to="/admin" onClick={onClose}>
+                    <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors text-indigo-600 dark:text-indigo-400">
+                      <Shield className="w-4 h-4" />
+                      <span className="text-sm font-medium">Admin Panel</span>
+                    </div>
+                  </Link>
+                </>
+              )}
+              <div className="border-t border-gray-100 dark:border-gray-800 my-1" />
+              <button
+                onClick={onLogout}
+                className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors text-red-600"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="text-sm">Logout</span>
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
