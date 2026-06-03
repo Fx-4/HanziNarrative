@@ -1,9 +1,9 @@
 """
 Multi-Provider TTS Service — Cascading fallback chain.
 
-Priority order (best quality first, free fallback):
-  1. Google Cloud TTS  (highest quality, paid/free-tier quota)
-  2. Edge TTS          (free, neural quality, no API key, no limits)
+Priority order:
+  1. Edge TTS          (free, neural quality, no API key, no limits)
+  2. Google Cloud TTS  (fallback if configured)
 
 If both fail, the frontend falls back to browser speechSynthesis.
 """
@@ -188,14 +188,14 @@ async def _synthesize_edge(
 
 TTS_PROVIDERS = [
     {
-        "name": "google_cloud_tts",
-        "fn": _synthesize_google,
-        "available_check": _is_google_tts_available,
-    },
-    {
         "name": "edge_tts",
         "fn": _synthesize_edge,
         "available_check": lambda: True,  # Always available — no API key needed
+    },
+    {
+        "name": "google_cloud_tts",
+        "fn": _synthesize_google,
+        "available_check": _is_google_tts_available,
     },
 ]
 

@@ -19,6 +19,7 @@ import {
 import { toast } from 'react-hot-toast'
 import axios from 'axios'
 import BlurText from '@/components/animations/BlurText'
+import { getVoiceName } from '@/utils/voicePreference'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -166,14 +167,14 @@ export default function StoryChallenge() {
     const playStory = async () => {
         if (!selectedStory || isPlaying) return
         setIsPlaying(true)
+        const text = selectedStory.content.substring(0, 200)
 
         const token = localStorage.getItem('access_token')
         if (token) {
             try {
-                const text = selectedStory.content.substring(0, 200)
                 const response = await axios.post(
                     `${API_URL}/tts/synthesize`,
-                    { text, language: 'cmn-CN', speaking_rate: 0.8 },
+                    { text, language: 'cmn-CN', voice_name: getVoiceName(), speaking_rate: 0.8 },
                     { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' }
                 )
                 const url = URL.createObjectURL(new Blob([response.data], { type: 'audio/mpeg' }))
@@ -184,7 +185,7 @@ export default function StoryChallenge() {
                 return
             } catch { /* fallback */ }
         }
-        const utterance = new SpeechSynthesisUtterance(selectedStory.content.substring(0, 200))
+        const utterance = new SpeechSynthesisUtterance(text)
         utterance.lang = 'zh-CN'
         utterance.rate = 0.7
         utterance.onend = () => setIsPlaying(false)

@@ -5,6 +5,7 @@ import { useBattleWebSocket, PlayerInfo, BuffEvent } from '@/hooks/useBattleWebS
 import { toast } from 'react-hot-toast'
 import { Swords, Users, Copy, Check, Crown, Heart, Trophy, Shield, Zap, LogOut, Play, ArrowRight, Star, X, BookOpen, Timer, Flame, Volume2 } from 'lucide-react'
 import axios from 'axios'
+import { playTTS } from '@/utils/ttsHelper'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 function authHeaders() { const t = localStorage.getItem('access_token'); return t ? { Authorization: `Bearer ${t}` } : {} }
@@ -524,17 +525,31 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
   }, [])
 
   // ── TTS helper ────────────────────────────────────────────────────────────
-  const speakChinese = useCallback((text: string) => {
-    if (!text || !window.speechSynthesis) return
-    window.speechSynthesis.cancel()
-    const utt = new SpeechSynthesisUtterance(text)
-    utt.lang = 'zh-CN'
-    utt.rate = 0.85
-    // Prefer a Chinese voice if available
-    const voices = window.speechSynthesis.getVoices()
-    const zh = voices.find(v => v.lang.startsWith('zh'))
-    if (zh) utt.voice = zh
-    window.speechSynthesis.speak(utt)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  
+  const speakChinese = useCallback(async (text: string) => {
+    if (!text) return
+    if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+    }
+    if (window.speechSynthesis) window.speechSynthesis.cancel()
+    
+    try {
+        const audio = await playTTS({ text, speakingRate: 0.85 })
+        audioRef.current = audio
+        await audio.play()
+    } catch {
+        if (!window.speechSynthesis) return
+        const utt = new SpeechSynthesisUtterance(text)
+        utt.lang = 'zh-CN'
+        utt.rate = 0.85
+        // Prefer a Chinese voice if available
+        const voices = window.speechSynthesis.getVoices()
+        const zh = voices.find(v => v.lang.startsWith('zh'))
+        if (zh) utt.voice = zh
+        window.speechSynthesis.speak(utt)
+    }
   }, [])
 
   // Auto-play for tone_select (the whole point is to hear the word)

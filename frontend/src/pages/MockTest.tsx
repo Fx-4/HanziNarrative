@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { playTTS } from '@/utils/ttsHelper'
 import { vocabularyApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { HanziWord } from '@/types'
@@ -272,25 +273,42 @@ export default function MockTest() {
     }, [])
 
     // ── TTS helpers ───────────────────────────────────────────────────────────
+    const audioRef = useRef<HTMLAudioElement | null>(null)
+
     const stopSpeech = useCallback(() => {
+        if (audioRef.current) {
+            audioRef.current.pause()
+            audioRef.current = null
+        }
         if ('speechSynthesis' in window) window.speechSynthesis.cancel()
         setIsSpeaking(false)
     }, [])
 
-    const speakText = useCallback((text: string) => {
-        if (!('speechSynthesis' in window)) {
-            toast.error('Text-to-speech not supported in this browser', { id: 'tts-unsupported' })
-            return
-        }
+    const speakText = useCallback(async (text: string) => {
         stopSpeech()
-        const utt = new SpeechSynthesisUtterance(text)
-        utt.lang = 'zh-CN'
-        utt.rate = 0.85
-        utt.pitch = 1.0
-        utt.onstart = () => setIsSpeaking(true)
-        utt.onend = () => setIsSpeaking(false)
-        utt.onerror = () => setIsSpeaking(false)
-        window.speechSynthesis.speak(utt)
+        setIsSpeaking(true)
+        try {
+            const audio = await playTTS({ text, speakingRate: 0.85 })
+            audioRef.current = audio
+            audio.onended = () => setIsSpeaking(false)
+            audio.onerror = () => setIsSpeaking(false)
+            await audio.play()
+        } catch (e) {
+            // Fallback to browser
+            if (!('speechSynthesis' in window)) {
+                toast.error('Text-to-speech not supported in this browser', { id: 'tts-unsupported' })
+                setIsSpeaking(false)
+                return
+            }
+            const utt = new SpeechSynthesisUtterance(text)
+            utt.lang = 'zh-CN'
+            utt.rate = 0.85
+            utt.pitch = 1.0
+            utt.onstart = () => setIsSpeaking(true)
+            utt.onend = () => setIsSpeaking(false)
+            utt.onerror = () => setIsSpeaking(false)
+            window.speechSynthesis.speak(utt)
+        }
     }, [stopSpeech])
 
     // Auto-play TTS for listening questions when question changes
