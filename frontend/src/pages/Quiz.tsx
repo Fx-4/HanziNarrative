@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { quizApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
@@ -15,7 +15,7 @@ const getMotivationalMessage = (percentage: number) => {
       iconClass: 'text-orange-500',
       title: 'Absolutely Crushing It!',
       message: 'Your Chinese skills are on fire! You\'re a HSK superstar!',
-      color: 'from-orange-400 to-red-500'
+      color: 'from-orange-400 to-error-500'
     }
   } else if (percentage >= 80) {
     return {
@@ -179,9 +179,9 @@ export default function Quiz() {
             className={`bg-white dark:bg-gray-900 rounded-3xl shadow-xl border overflow-hidden p-4 sm:p-6 ${
               showResults
                 ? isCorrect
-                  ? 'border-emerald-400 dark:border-emerald-700'
+                  ? 'border-success-400 dark:border-success-700'
                   : isWrong
-                  ? 'border-red-400 dark:border-red-700'
+                  ? 'border-error-400 dark:border-error-700'
                   : 'border-gray-100 dark:border-gray-800'
                 : 'border-gray-100 dark:border-gray-800'
             }`}
@@ -190,9 +190,9 @@ export default function Quiz() {
               <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200">Question {idx + 1}</h3>
               {showResults && (
                 isCorrect
-                  ? <CheckCircle className="w-5 h-5 text-emerald-500 dark:text-emerald-400 flex-shrink-0" />
+                  ? <CheckCircle className="w-5 h-5 text-success-500 dark:text-success-400 flex-shrink-0" />
                   : isWrong
-                  ? <XCircle className="w-5 h-5 text-red-500 dark:text-red-400 flex-shrink-0" />
+                  ? <XCircle className="w-5 h-5 text-error-500 dark:text-error-400 flex-shrink-0" />
                   : null
               )}
             </div>
@@ -210,12 +210,12 @@ export default function Quiz() {
                     disabled={showResults}
                     className={`w-full text-left p-3 rounded-xl border-2 transition-all text-sm sm:text-base ${
                       isCorrectOption
-                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-400'
+                        ? 'border-success-500 bg-success-50 dark:bg-success-950/30 text-success-800 dark:text-success-400'
                         : isWrongOption
-                        ? 'border-red-500 bg-red-50 dark:bg-red-950/30 text-red-800 dark:text-red-400'
+                        ? 'border-error-500 bg-error-50 dark:bg-error-950/30 text-error-800 dark:text-error-400'
                         : isSelected
-                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-800 dark:text-indigo-400'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-600 text-gray-700 dark:text-gray-300'
+                        ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30 text-primary-800 dark:text-primary-400'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-600 text-gray-700 dark:text-gray-300'
                     } disabled:cursor-default`}
                   >
                     {option}
@@ -254,8 +254,8 @@ export default function Quiz() {
             className={`bg-white dark:bg-gray-900 rounded-3xl shadow-xl border overflow-hidden p-4 sm:p-6 ${
               showResults
                 ? isCorrect
-                  ? 'border-emerald-400 dark:border-emerald-700'
-                  : 'border-red-400 dark:border-red-700'
+                  ? 'border-success-400 dark:border-success-700'
+                  : 'border-error-400 dark:border-error-700'
                 : 'border-gray-100 dark:border-gray-800'
             }`}
           >
@@ -263,17 +263,17 @@ export default function Quiz() {
               <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200">Question {idx + 1}</h3>
               {showResults && (
                 isCorrect
-                  ? <CheckCircle className="w-5 h-5 text-emerald-500 dark:text-emerald-400 flex-shrink-0" />
-                  : <XCircle className="w-5 h-5 text-red-500 dark:text-red-400 flex-shrink-0" />
+                  ? <CheckCircle className="w-5 h-5 text-success-500 dark:text-success-400 flex-shrink-0" />
+                  : <XCircle className="w-5 h-5 text-error-500 dark:text-error-400 flex-shrink-0" />
               )}
             </div>
 
             {/* Sentence context with inline blank */}
             {sentenceParts && (
-              <div className="mb-3 p-3 sm:p-4 bg-indigo-50 dark:bg-indigo-950/30 rounded-xl border border-indigo-100 dark:border-indigo-800">
-                <p className="text-indigo-900 dark:text-indigo-200 text-xl sm:text-2xl font-chinese leading-relaxed text-center">
+              <div className="mb-3 p-3 sm:p-4 bg-primary-50 dark:bg-primary-950/30 rounded-xl border border-primary-100 dark:border-primary-800">
+                <p className="text-primary-900 dark:text-primary-200 text-xl sm:text-2xl font-chinese leading-relaxed text-center">
                   {sentenceParts[0]}
-                  <span className="inline-block border-b-2 border-indigo-500 text-indigo-400 dark:text-indigo-400 px-1 mx-0.5 min-w-[2rem] text-center">
+                  <span className="inline-block border-b-2 border-primary-500 text-primary-400 dark:text-primary-400 px-1 mx-0.5 min-w-[2rem] text-center">
                     ___
                   </span>
                   {sentenceParts.slice(1).join(question.blank_word)}
@@ -302,7 +302,7 @@ export default function Quiz() {
                 onChange={(e) => setAnswers({ ...answers, [idx]: e.target.value })}
                 disabled={showResults}
                 placeholder="Type the Chinese character(s)"
-                className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-700 rounded-xl text-xl sm:text-2xl font-chinese bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-indigo-400 disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:text-gray-500 dark:disabled:text-gray-500"
+                className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-700 rounded-xl text-xl sm:text-2xl font-chinese bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-primary-400 disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:text-gray-500 dark:disabled:text-gray-500"
               />
             </div>
 
@@ -382,12 +382,12 @@ export default function Quiz() {
           </div>
         )}
 
-        {/* Two-column match grid — always 2 cols, responsive sizing */}
+        {/* Two-column match grid â€” always 2 cols, responsive sizing */}
         <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-5">
           {/* LEFT: Chinese Characters */}
           <div>
             <h3 className="font-semibold mb-1.5 sm:mb-3 text-xs sm:text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-              汉字
+              æ±‰å­—
             </h3>
             <div className="space-y-1.5 sm:space-y-2">
               {leftItems.map((q) => {
@@ -400,13 +400,13 @@ export default function Quiz() {
                     className={`w-full px-1.5 py-2 sm:p-3 md:p-4 border-2 rounded-xl font-chinese transition-all text-center min-h-[44px] sm:min-h-[52px] ${
                       matches[q.id]
                         ? isCorrect && showResults
-                          ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-400'
+                          ? 'border-success-500 bg-success-50 dark:bg-success-950/30 text-success-800 dark:text-success-400'
                           : showResults
-                          ? 'border-red-500 bg-red-50 dark:bg-red-950/30 text-red-800 dark:text-red-400'
+                          ? 'border-error-500 bg-error-50 dark:bg-error-950/30 text-error-800 dark:text-error-400'
                           : 'border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-800 dark:text-blue-400'
                         : selectedLeft === q.id
-                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-800 dark:text-indigo-400 ring-2 ring-indigo-300 dark:ring-indigo-700'
-                        : 'border-gray-300 dark:border-gray-700 hover:border-indigo-400 dark:hover:border-indigo-600 text-gray-800 dark:text-gray-200'
+                        ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30 text-primary-800 dark:text-primary-400 ring-2 ring-primary-300 dark:ring-primary-700'
+                        : 'border-gray-300 dark:border-gray-700 hover:border-primary-400 dark:hover:border-primary-600 text-gray-800 dark:text-gray-200'
                     } disabled:cursor-default`}
                     disabled={!!matches[q.id] || showResults}
                   >
@@ -414,13 +414,13 @@ export default function Quiz() {
                       <span className="text-lg sm:text-2xl md:text-3xl leading-tight">{q.chinese}</span>
                       {matches[q.id] ? (
                         <span className="text-[10px] sm:text-xs leading-tight text-gray-500 dark:text-gray-400 font-sans line-clamp-1">
-                          {showResults ? (isCorrect ? '✓' : '✗ ') : ''}
+                          {showResults ? (isCorrect ? 'âœ“' : 'âœ— ') : ''}
                           {matchedEnglish}
                         </span>
                       ) : null}
                       {showResults && matches[q.id] && !isCorrect && (
-                        <span className="text-[9px] sm:text-[10px] text-emerald-600 dark:text-emerald-400 font-sans leading-tight line-clamp-1">
-                          ✓ {q.english}
+                        <span className="text-[9px] sm:text-[10px] text-success-600 dark:text-success-400 font-sans leading-tight line-clamp-1">
+                          âœ“ {q.english}
                         </span>
                       )}
                     </div>
@@ -451,8 +451,8 @@ export default function Quiz() {
                       isMatched
                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-800 dark:text-blue-400'
                         : selectedRight === q.id
-                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-800 dark:text-indigo-400 ring-2 ring-indigo-300 dark:ring-indigo-700'
-                        : 'border-gray-300 dark:border-gray-700 hover:border-indigo-400 dark:hover:border-indigo-600 text-gray-800 dark:text-gray-200'
+                        ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30 text-primary-800 dark:text-primary-400 ring-2 ring-primary-300 dark:ring-primary-700'
+                        : 'border-gray-300 dark:border-gray-700 hover:border-primary-400 dark:hover:border-primary-600 text-gray-800 dark:text-gray-200'
                     } disabled:cursor-default`}
                     disabled={isMatched || showResults}
                   >
@@ -478,14 +478,14 @@ export default function Quiz() {
     <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 flex items-center gap-2 sm:gap-3 text-gray-900 dark:text-gray-100">
-          <Brain className="w-7 h-7 sm:w-9 sm:h-9 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
+          <Brain className="w-7 h-7 sm:w-9 sm:h-9 text-primary-600 dark:text-primary-400 flex-shrink-0" />
           HSK Quiz Practice
         </h1>
       </motion.div>
 
       {!quiz ? (
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
-          <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
+          <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
           <div className="p-4 sm:p-6 md:p-8">
             <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900 dark:text-gray-100">Create Your Quiz</h2>
 
@@ -499,7 +499,7 @@ export default function Quiz() {
                       onClick={() => setHskLevel(level)}
                       className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${
                         hskLevel === level
-                          ? 'bg-indigo-600 text-white shadow-md'
+                          ? 'bg-primary-600 text-white shadow-md'
                           : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                       }`}
                     >
@@ -518,7 +518,7 @@ export default function Quiz() {
                       onClick={() => setQuizType(type.value as QuizType)}
                       className={`flex items-center gap-1.5 px-4 py-2 rounded-2xl text-xs sm:text-sm font-semibold transition-all ${
                         quizType === type.value
-                          ? 'bg-indigo-600 text-white shadow-md'
+                          ? 'bg-primary-600 text-white shadow-md'
                           : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                       }`}
                     >
@@ -535,7 +535,7 @@ export default function Quiz() {
                   id="quiz-num-questions"
                   value={numQuestions}
                   onChange={(e) => setNumQuestions(Number(e.target.value))}
-                  className="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm sm:text-base focus:outline-none focus:border-indigo-400"
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm sm:text-base focus:outline-none focus:border-primary-400"
                 >
                   {[5, 10, 15, 20].map(num => (
                     <option key={num} value={num}>{num} questions</option>
@@ -546,7 +546,7 @@ export default function Quiz() {
               <button
                 onClick={startQuiz}
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-2xl px-6 py-3 sm:py-4 font-semibold text-base sm:text-lg transition-all shadow-md"
+                className="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-2xl px-6 py-3 sm:py-4 font-semibold text-base sm:text-lg transition-all shadow-md"
               >
                 {loading ? <LoadingSpinner size="sm" /> : <Brain className="w-5 h-5" />}
                 Start Quiz
@@ -558,14 +558,14 @@ export default function Quiz() {
         <div className="space-y-5 sm:space-y-6">
           {/* Quiz info bar */}
           <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
-            <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
+            <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
             <div className="p-4 sm:p-5">
               <div className="flex flex-wrap justify-between items-center gap-3">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="bg-indigo-100 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 rounded-full px-3 py-1 text-sm font-semibold">
+                  <span className="bg-primary-100 dark:bg-primary-950/40 text-primary-700 dark:text-primary-400 rounded-full px-3 py-1 text-sm font-semibold">
                     HSK {hskLevel}
                   </span>
-                  <span className="text-gray-400 dark:text-gray-500">•</span>
+                  <span className="text-gray-400 dark:text-gray-500">â€¢</span>
                   <span className="text-sm sm:text-base font-semibold text-gray-700 dark:text-gray-300">
                     {quizTypes.find(t => t.value === quizType)?.label}
                   </span>
@@ -592,7 +592,7 @@ export default function Quiz() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border-2 border-indigo-200 dark:border-indigo-800 overflow-hidden relative">
+                <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border-2 border-primary-200 dark:border-primary-800 overflow-hidden relative">
                   <div className={`absolute inset-0 bg-gradient-to-br ${motivation.color} opacity-10`} />
                   <div className="relative z-10 text-center py-6 px-4 sm:px-8">
                     <div className="flex justify-center mb-3">
@@ -605,15 +605,15 @@ export default function Quiz() {
                       {motivation.message}
                     </p>
                     <div className="flex justify-center gap-4 sm:gap-8 items-center">
-                      <div className="bg-indigo-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg text-center min-w-[72px]">
+                      <div className="bg-primary-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg text-center min-w-[72px]">
                         <div className="text-2xl sm:text-3xl font-bold">{percentage}%</div>
                         <div className="text-xs mt-0.5 opacity-80">Score</div>
                       </div>
-                      <div className="bg-emerald-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg text-center min-w-[72px]">
+                      <div className="bg-success-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg text-center min-w-[72px]">
                         <div className="text-2xl sm:text-3xl font-bold">{score}</div>
                         <div className="text-xs mt-0.5 opacity-80">Correct</div>
                       </div>
-                      <div className="bg-red-500 rounded-2xl p-3 sm:p-4 text-white shadow-lg text-center min-w-[72px]">
+                      <div className="bg-error-500 rounded-2xl p-3 sm:p-4 text-white shadow-lg text-center min-w-[72px]">
                         <div className="text-2xl sm:text-3xl font-bold">{quiz.questions.length - score}</div>
                         <div className="text-xs mt-0.5 opacity-80">Missed</div>
                       </div>
@@ -632,14 +632,14 @@ export default function Quiz() {
             {!showResults ? (
               <button
                 onClick={submitQuiz}
-                className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-6 py-3 sm:py-4 font-semibold text-base sm:text-lg transition-all shadow-md"
+                className="flex-1 flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-6 py-3 sm:py-4 font-semibold text-base sm:text-lg transition-all shadow-md"
               >
                 Submit Quiz
               </button>
             ) : (
               <button
                 onClick={() => setQuiz(null)}
-                className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-6 py-3 sm:py-4 font-semibold text-base sm:text-lg transition-all shadow-md"
+                className="flex-1 flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-6 py-3 sm:py-4 font-semibold text-base sm:text-lg transition-all shadow-md"
               >
                 <RotateCcw className="w-5 h-5" />
                 New Quiz
@@ -651,3 +651,5 @@ export default function Quiz() {
     </div>
   )
 }
+
+

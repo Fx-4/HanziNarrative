@@ -103,7 +103,7 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
         <p className="text-gray-600">No words available for this HSK level.</p>
         <button
           onClick={onBack}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors mt-4"
+          className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors mt-4"
         >
           Go Back
         </button>
@@ -147,14 +147,14 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 placeholder="Type pinyin (e.g., ni hao)"
-                className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-indigo-500 focus:outline-none transition-colors"
+                className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-primary-500 focus:outline-none transition-colors"
                 disabled={showFeedback}
                 autoComplete="off"
               />
             </div>
             <button
               onClick={handleSubmit}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-3 font-semibold cursor-pointer transition-colors w-full text-lg"
+              className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-3 font-semibold cursor-pointer transition-colors w-full text-lg"
             >
               Check Answer
             </button>
@@ -170,40 +170,40 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
           >
             <div className={`p-6 rounded-lg ${
               isCorrect
-                ? 'bg-green-50 border-2 border-green-200'
-                : 'bg-red-50 border-2 border-red-200'
+                ? 'bg-success-50 border-2 border-success-200'
+                : 'bg-error-50 border-2 border-error-200'
             }`}>
               <div className="flex items-center justify-center gap-3 mb-4">
                 {isCorrect ? (
                   <>
-                    <CheckCircle className="w-8 h-8 text-green-600" />
-                    <span className="text-2xl font-semibold text-green-900">Correct!</span>
+                    <CheckCircle className="w-8 h-8 text-success-600" />
+                    <span className="text-2xl font-semibold text-success-900">Correct!</span>
                   </>
                 ) : (
                   <>
-                    <XCircle className="w-8 h-8 text-red-600" />
-                    <span className="text-2xl font-semibold text-red-900">Incorrect</span>
+                    <XCircle className="w-8 h-8 text-error-600" />
+                    <span className="text-2xl font-semibold text-error-900">Incorrect</span>
                   </>
                 )}
               </div>
               <div className="text-center space-y-2">
                 <p className="text-lg">
                   <span className="font-semibold">You typed:</span>{' '}
-                  <span className={isCorrect ? 'text-green-700' : 'text-red-700'}>
+                  <span className={isCorrect ? 'text-success-700' : 'text-error-700'}>
                     {inputValue}
                   </span>
                 </p>
                 {!isCorrect && (
                   <p className="text-lg">
                     <span className="font-semibold">Correct pinyin:</span>{' '}
-                    <span className="text-green-700">{currentWord.pinyin}</span>
+                    <span className="text-success-700">{currentWord.pinyin}</span>
                   </p>
                 )}
               </div>
             </div>
             <button
               onClick={handleNext}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-3 font-semibold cursor-pointer transition-colors w-full mt-4 flex items-center justify-center text-lg"
+              className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-3 font-semibold cursor-pointer transition-colors w-full mt-4 flex items-center justify-center text-lg"
             >
               {currentIndex < words.length - 1 ? (
                 <>
@@ -232,7 +232,7 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div
-            className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+            className="bg-primary-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${((currentIndex + (showFeedback ? 1 : 0)) / words.length) * 100}%` }}
           />
         </div>

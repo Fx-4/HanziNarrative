@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+﻿import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { adventureApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
@@ -58,14 +58,14 @@ const TOPIC_ICONS: Record<string, React.ComponentType<{ className?: string }>> =
 }
 
 const TOPICS = [
-    { value: 'daily life', label: '日常生活' },
-    { value: 'food and restaurant', label: '美食' },
-    { value: 'school and studying', label: '学习' },
-    { value: 'travel and transportation', label: '旅行' },
-    { value: 'shopping', label: '购物' },
-    { value: 'friendship', label: '友谊' },
-    { value: 'mystery', label: '神秘' },
-    { value: 'nature and animals', label: '自然' },
+    { value: 'daily life', label: 'æ—¥å¸¸ç”Ÿæ´»' },
+    { value: 'food and restaurant', label: 'ç¾Žé£Ÿ' },
+    { value: 'school and studying', label: 'å­¦ä¹ ' },
+    { value: 'travel and transportation', label: 'æ—…è¡Œ' },
+    { value: 'shopping', label: 'è´­ç‰©' },
+    { value: 'friendship', label: 'å‹è°Š' },
+    { value: 'mystery', label: 'ç¥žç§˜' },
+    { value: 'nature and animals', label: 'è‡ªç„¶' },
 ]
 
 export default function Adventure() {
@@ -94,7 +94,7 @@ export default function Adventure() {
             const stats = await adventureApi.getUsageStats()
             setUsageStats(stats)
         } catch {
-            // Ignore — will show default
+            // Ignore â€” will show default
         }
     }
 
@@ -234,7 +234,7 @@ export default function Adventure() {
                         className="text-center mb-8 sm:mb-12"
                     >
                         <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                            <Map className="w-8 h-8 sm:w-10 sm:h-10 text-emerald-600" />
+                            <Map className="w-8 h-8 sm:w-10 sm:h-10 text-success-600" />
                             <BlurText
                                 as="h1"
                                 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900"
@@ -244,7 +244,7 @@ export default function Adventure() {
                             </BlurText>
                         </div>
                         <p className="text-base sm:text-lg text-gray-600">
-                            Choose your own adventure — in Chinese!
+                            Choose your own adventure â€” in Chinese!
                         </p>
                     </motion.div>
 
@@ -263,7 +263,7 @@ export default function Adventure() {
                                         key={level}
                                         onClick={() => setHskLevel(level)}
                                         className={`rounded-2xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${hskLevel === level
-                                            ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                                            ? 'bg-success-600 hover:bg-success-700 text-white'
                                             : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                             }`}
                                     >
@@ -289,7 +289,7 @@ export default function Adventure() {
                                         key={t.value}
                                         onClick={() => setTopic(t.value)}
                                         className={`rounded-2xl px-3 py-3 text-sm font-medium cursor-pointer transition-all text-center ${topic === t.value
-                                            ? 'bg-emerald-100 border-2 border-emerald-500 text-emerald-800'
+                                            ? 'bg-success-100 border-2 border-success-500 text-success-800'
                                             : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100 text-gray-700'
                                             }`}
                                     >
@@ -309,22 +309,22 @@ export default function Adventure() {
                             transition={{ delay: 0.2 }}
                             className="mb-6"
                         >
-                            <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-3xl shadow border border-emerald-200 p-4 sm:p-5">
+                            <div className="bg-gradient-to-r from-success-50 to-success-50 rounded-3xl shadow border border-success-200 p-4 sm:p-5">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <AlertCircle className="w-4 h-4 text-emerald-600" />
-                                    <h4 className="text-sm font-semibold text-emerald-800">Today's Quota</h4>
+                                    <AlertCircle className="w-4 h-4 text-success-600" />
+                                    <h4 className="text-sm font-semibold text-success-800">Today's Quota</h4>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3">
                                     <div>
-                                        <p className="text-xs text-emerald-700">Adventures remaining</p>
-                                        <p className="text-lg font-bold text-emerald-800">
-                                            {startQuota ? `${startQuota.remaining_daily}/${startQuota.limit_daily}` : '—'}
+                                        <p className="text-xs text-success-700">Adventures remaining</p>
+                                        <p className="text-lg font-bold text-success-800">
+                                            {startQuota ? `${startQuota.remaining_daily}/${startQuota.limit_daily}` : 'â€”'}
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-emerald-700">Choices remaining</p>
-                                        <p className="text-lg font-bold text-emerald-800">
-                                            {continueQuota ? `${continueQuota.remaining_daily}/${continueQuota.limit_daily}` : '—'}
+                                        <p className="text-xs text-success-700">Choices remaining</p>
+                                        <p className="text-lg font-bold text-success-800">
+                                            {continueQuota ? `${continueQuota.remaining_daily}/${continueQuota.limit_daily}` : 'â€”'}
                                         </p>
                                     </div>
                                 </div>
@@ -342,10 +342,10 @@ export default function Adventure() {
                         <button
                             onClick={startAdventure}
                             disabled={loading || !canStart}
-                            className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white rounded-2xl px-8 py-4 font-semibold text-lg cursor-pointer transition-all flex items-center gap-3 mx-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="bg-gradient-to-r from-success-600 to-success-600 hover:from-success-700 hover:to-success-700 text-white rounded-2xl px-8 py-4 font-semibold text-lg cursor-pointer transition-all flex items-center gap-3 mx-auto disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {loading ? <LoadingSpinner size="sm" /> : <Map className="w-6 h-6" />}
-                            {canStart ? 'Start Adventure' : 'Quota exhausted — try tomorrow'}
+                            {canStart ? 'Start Adventure' : 'Quota exhausted â€” try tomorrow'}
                         </button>
                     </motion.div>
                 </div>
@@ -383,7 +383,7 @@ export default function Adventure() {
                             {showTranslation ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                             EN
                         </button>
-                        <div className="bg-emerald-50 rounded-xl border border-emerald-200 px-3 py-1.5 text-sm font-bold text-emerald-700">
+                        <div className="bg-success-50 rounded-xl border border-success-200 px-3 py-1.5 text-sm font-bold text-success-700">
                             Step {stepNumber}/5
                         </div>
                     </div>
@@ -394,7 +394,7 @@ export default function Adventure() {
                     {[1, 2, 3, 4, 5].map(s => (
                         <div
                             key={s}
-                            className={`h-2 flex-1 rounded-full transition-colors ${s <= stepNumber ? 'bg-emerald-500' : 'bg-gray-200'
+                            className={`h-2 flex-1 rounded-full transition-colors ${s <= stepNumber ? 'bg-success-500' : 'bg-gray-200'
                                 }`}
                         />
                     ))}
@@ -409,13 +409,13 @@ export default function Adventure() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx === storySteps.length - 1 ? 0.2 : 0 }}
                         >
-                            <div className={`bg-white rounded-2xl shadow-sm border p-4 sm:p-5 ${idx === storySteps.length - 1 ? 'border-emerald-200 ring-1 ring-emerald-100' : 'border-gray-100'
+                            <div className={`bg-white rounded-2xl shadow-sm border p-4 sm:p-5 ${idx === storySteps.length - 1 ? 'border-success-200 ring-1 ring-success-100' : 'border-gray-100'
                                 }`}>
                                 {/* Audio button */}
                                 <div className="flex justify-end mb-2">
                                     <button
                                         onClick={() => playParagraph(step.paragraph)}
-                                        className="text-gray-400 hover:text-emerald-600 cursor-pointer transition-colors"
+                                        className="text-gray-400 hover:text-success-600 cursor-pointer transition-colors"
                                     >
                                         {isPlaying && idx === storySteps.length - 1 ? (
                                             <Pause className="w-4 h-4" />
@@ -436,7 +436,7 @@ export default function Adventure() {
                                         initial={{ opacity: 0, height: 0 }}
                                         animate={{ opacity: 1, height: 'auto' }}
                                         exit={{ opacity: 0, height: 0 }}
-                                        className="text-emerald-600 text-sm mb-1"
+                                        className="text-success-600 text-sm mb-1"
                                     >
                                         {step.paragraph_pinyin}
                                     </motion.p>
@@ -463,16 +463,16 @@ export default function Adventure() {
                     ))}
                 </div>
 
-                {/* Streaming paragraph — shown while AI is generating */}
+                {/* Streaming paragraph â€” shown while AI is generating */}
                 {loading && streamingText !== null && (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                     >
-                        <div className="bg-white rounded-2xl shadow-sm border border-emerald-200 ring-1 ring-emerald-100 p-4 sm:p-5 mb-4">
+                        <div className="bg-white rounded-2xl shadow-sm border border-success-200 ring-1 ring-success-100 p-4 sm:p-5 mb-4">
                             <p className="text-xl sm:text-2xl font-chinese leading-relaxed text-gray-900">
                                 {streamingText}
-                                <span className="inline-block w-0.5 h-6 bg-emerald-500 ml-0.5 animate-pulse align-middle">▊</span>
+                                <span className="inline-block w-0.5 h-6 bg-success-500 ml-0.5 animate-pulse align-middle">â–Š</span>
                             </p>
                         </div>
                     </motion.div>
@@ -485,7 +485,7 @@ export default function Adventure() {
                         <span className="ml-3 text-gray-600">Writing the next chapter...</span>
                     </div>
                 ) : loading ? (
-                    /* streaming in progress — choices will appear after done */
+                    /* streaming in progress â€” choices will appear after done */
                     null
                 ) : isEnding ? (
                     /* Story Ending */
@@ -502,7 +502,7 @@ export default function Adventure() {
                             <p className="text-sm text-gray-500 mb-4">You completed {stepNumber} steps in this adventure!</p>
                             <button
                                 onClick={resetAdventure}
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors flex items-center gap-2 mx-auto"
+                                className="bg-success-600 hover:bg-success-700 text-white rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors flex items-center gap-2 mx-auto"
                             >
                                 <Map className="w-5 h-5" /> Start New Adventure
                             </button>
@@ -517,7 +517,7 @@ export default function Adventure() {
                     >
                         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
                             <div className="flex items-center gap-2 mb-4">
-                                <Sparkles className="w-5 h-5 text-emerald-600" />
+                                <Sparkles className="w-5 h-5 text-success-600" />
                                 <h3 className="font-semibold text-gray-900">What do you do?</h3>
                             </div>
                             <div className="space-y-3">
@@ -526,20 +526,20 @@ export default function Adventure() {
                                         key={choice.id}
                                         onClick={() => handleChoice(choice)}
                                         disabled={loading}
-                                        className="w-full text-left bg-gray-50 hover:bg-emerald-50 border-2 border-gray-100 hover:border-emerald-300 rounded-2xl p-4 cursor-pointer transition-all disabled:opacity-50 group"
+                                        className="w-full text-left bg-gray-50 hover:bg-success-50 border-2 border-gray-100 hover:border-success-300 rounded-2xl p-4 cursor-pointer transition-all disabled:opacity-50 group"
                                     >
                                         <div className="flex items-start gap-3">
-                                            <span className="w-7 h-7 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 group-hover:bg-emerald-200">
+                                            <span className="w-7 h-7 bg-success-100 text-success-700 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 group-hover:bg-success-200">
                                                 {choice.id}
                                             </span>
                                             <div className="flex-1">
                                                 <p className="text-lg font-chinese text-gray-900">{choice.text}</p>
                                                 {showPinyin && choice.text_pinyin && (
-                                                    <p className="text-sm text-emerald-600 mt-0.5">{choice.text_pinyin}</p>
+                                                    <p className="text-sm text-success-600 mt-0.5">{choice.text_pinyin}</p>
                                                 )}
                                                 <p className="text-sm text-gray-500 mt-0.5">{choice.text_english}</p>
                                             </div>
-                                            <ArrowRight className="w-5 h-5 text-gray-300 group-hover:text-emerald-500 flex-shrink-0 mt-1" />
+                                            <ArrowRight className="w-5 h-5 text-gray-300 group-hover:text-success-500 flex-shrink-0 mt-1" />
                                         </div>
                                     </button>
                                 ))}
@@ -551,3 +551,6 @@ export default function Adventure() {
         </div>
     )
 }
+
+
+

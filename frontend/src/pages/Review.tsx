@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+﻿import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { learningApi } from '@/services/api'
 import { HanziWord } from '@/types'
@@ -259,12 +259,12 @@ export default function Review() {
     return (
       <div className="max-w-md mx-auto text-center py-20 px-4">
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
-          <Brain className="w-16 h-16 text-indigo-300 mx-auto mb-4" />
+          <Brain className="w-16 h-16 text-primary-300 mx-auto mb-4" />
           <h2 className="text-2xl font-extrabold text-gray-900 mb-2">Please Login</h2>
           <p className="text-gray-500 mb-6 text-sm">You need to be logged in to access the review feature.</p>
           <button
             onClick={() => navigate('/login')}
-            className="bg-indigo-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-indigo-700 transition-all cursor-pointer"
+            className="bg-primary-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-primary-700 transition-all cursor-pointer"
           >
             Go to Login
           </button>
@@ -291,7 +291,7 @@ export default function Review() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-1 flex items-center gap-2">
-              <Brain className="w-6 h-6 sm:w-7 sm:h-7 text-indigo-500" />
+              <Brain className="w-6 h-6 sm:w-7 sm:h-7 text-primary-500" />
               Spaced Repetition Review
             </h1>
             <p className="text-sm text-gray-500">Review words at optimal intervals for maximum retention</p>
@@ -299,7 +299,7 @@ export default function Review() {
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setHskLevel(undefined)}
-              className={`px-3 py-1.5 rounded-xl font-semibold text-sm transition-all cursor-pointer ${hskLevel === undefined ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              className={`px-3 py-1.5 rounded-xl font-semibold text-sm transition-all cursor-pointer ${hskLevel === undefined ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
             >
               All Levels
             </button>
@@ -307,7 +307,7 @@ export default function Review() {
               <button
                 key={level}
                 onClick={() => setHskLevel(level)}
-                className={`px-3 py-1.5 rounded-xl font-semibold text-sm transition-all cursor-pointer ${hskLevel === level ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                className={`px-3 py-1.5 rounded-xl font-semibold text-sm transition-all cursor-pointer ${hskLevel === level ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
               >
                 HSK {level}
               </button>
@@ -318,14 +318,14 @@ export default function Review() {
         {/* Stats Bar */}
         {stats && (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 mb-4">
-            <div className="bg-indigo-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg shadow-indigo-500/20">
+            <div className="bg-primary-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg shadow-primary-500/20">
               <div className="flex items-center gap-1.5 mb-1 opacity-80">
                 <BarChart3 className="w-4 h-4" />
                 <span className="text-xs font-medium">Learning</span>
               </div>
               <div className="text-xl sm:text-2xl font-bold">{stats.total_words_learning}</div>
             </div>
-            <div className="bg-emerald-500 rounded-2xl p-3 sm:p-4 text-white shadow-lg shadow-emerald-500/20">
+            <div className="bg-success-500 rounded-2xl p-3 sm:p-4 text-white shadow-lg shadow-success-500/20">
               <div className="flex items-center gap-1.5 mb-1 opacity-80">
                 <Trophy className="w-4 h-4" />
                 <span className="text-xs font-medium">Mastered</span>
@@ -359,7 +359,7 @@ export default function Review() {
 
       {reviewItems.length === 0 ? (
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-          <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
+          <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
           <div className="p-8 sm:p-12 text-center">
             <Star className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
             <h2 className="text-2xl font-extrabold text-gray-900 mb-2">All Caught Up!</h2>
@@ -369,13 +369,13 @@ export default function Review() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={() => navigate('/practice')}
-                className="bg-indigo-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-indigo-700 transition-all cursor-pointer"
+                className="bg-primary-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-primary-700 transition-all cursor-pointer"
               >
                 Start Learning New Words
               </button>
               <button
                 onClick={() => navigate('/vocabulary')}
-                className="border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:border-indigo-300 hover:bg-indigo-50 transition-all cursor-pointer"
+                className="border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:border-primary-300 hover:bg-primary-50 transition-all cursor-pointer"
               >
                 Browse Vocabulary
               </button>
@@ -384,16 +384,16 @@ export default function Review() {
         </div>
       ) : isSessionComplete ? (
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-          <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
+          <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
           <div className="p-8 sm:p-12 text-center">
             <Trophy className="w-16 h-16 sm:w-20 sm:h-20 text-yellow-500 mx-auto mb-4" />
             <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-6">Session Complete!</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8 max-w-lg mx-auto">
-              <div className="bg-emerald-500 rounded-2xl p-4 text-white text-center">
+              <div className="bg-success-500 rounded-2xl p-4 text-white text-center">
                 <div className="text-2xl sm:text-3xl font-bold">{sessionStats.perfect}</div>
                 <div className="text-xs sm:text-sm opacity-90 mt-0.5">Perfect</div>
               </div>
-              <div className="bg-indigo-500 rounded-2xl p-4 text-white text-center">
+              <div className="bg-primary-500 rounded-2xl p-4 text-white text-center">
                 <div className="text-2xl sm:text-3xl font-bold">{sessionStats.good}</div>
                 <div className="text-xs sm:text-sm opacity-90 mt-0.5">Good</div>
               </div>
@@ -401,7 +401,7 @@ export default function Review() {
                 <div className="text-2xl sm:text-3xl font-bold">{sessionStats.hard}</div>
                 <div className="text-xs sm:text-sm opacity-90 mt-0.5">Hard</div>
               </div>
-              <div className="bg-red-500 rounded-2xl p-4 text-white text-center">
+              <div className="bg-error-500 rounded-2xl p-4 text-white text-center">
                 <div className="text-2xl sm:text-3xl font-bold">{sessionStats.wrong}</div>
                 <div className="text-xs sm:text-sm opacity-90 mt-0.5">Wrong</div>
               </div>
@@ -409,14 +409,14 @@ export default function Review() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={() => loadReviewWords()}
-                className="bg-indigo-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="bg-primary-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-primary-700 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4" />
                 Start New Session
               </button>
               <button
                 onClick={() => navigate('/practice')}
-                className="border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:border-indigo-300 hover:bg-indigo-50 transition-all cursor-pointer"
+                className="border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:border-primary-300 hover:bg-primary-50 transition-all cursor-pointer"
               >
                 Practice More Words
               </button>
@@ -433,7 +433,7 @@ export default function Review() {
             </div>
             <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full"
+                className="h-full bg-gradient-to-r from-primary-500 to-violet-500 rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${(sessionStats.completed / sessionStats.total) * 100}%` }}
                 transition={{ duration: 0.3 }}
@@ -451,7 +451,7 @@ export default function Review() {
               transition={{ duration: 0.3 }}
             >
               <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-                <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
+                <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
                 <div className="p-6 sm:p-8 md:p-10">
                   {/* Days Overdue Badge */}
                   {currentItem && currentItem.days_overdue > 0 && (
@@ -483,19 +483,19 @@ export default function Review() {
                       animate={{ scale: 1, opacity: 1 }}
                       className={`text-center mb-6 p-4 rounded-2xl border-2 ${
                         isCorrectAnswer
-                          ? 'bg-emerald-50 border-emerald-200'
-                          : 'bg-red-50 border-red-200'
+                          ? 'bg-success-50 border-success-200'
+                          : 'bg-error-50 border-error-200'
                       }`}
                     >
                       {isCorrectAnswer ? (
-                        <div className="flex items-center justify-center gap-2 text-emerald-700">
+                        <div className="flex items-center justify-center gap-2 text-success-700">
                           <CheckCircle className="w-5 h-5" />
                           <span className="text-base font-semibold">Correct!</span>
                         </div>
                       ) : (
-                        <div className="flex items-center justify-center gap-2 text-red-700">
+                        <div className="flex items-center justify-center gap-2 text-error-700">
                           <XCircle className="w-5 h-5" />
-                          <span className="text-base font-semibold">Incorrect – See the answer below</span>
+                          <span className="text-base font-semibold">Incorrect â€“ See the answer below</span>
                         </div>
                       )}
                     </motion.div>
@@ -517,16 +517,16 @@ export default function Review() {
                           let btnClass = 'w-full p-4 sm:p-5 text-left rounded-2xl border-2 transition-all cursor-pointer font-medium'
                           if (showResult) {
                             if (isCorrect) {
-                              btnClass += ' border-emerald-400 bg-emerald-50 text-emerald-900'
+                              btnClass += ' border-success-400 bg-success-50 text-success-900'
                             } else if (isSelected && !isCorrect) {
-                              btnClass += ' border-red-400 bg-red-50 text-red-900'
+                              btnClass += ' border-error-400 bg-error-50 text-error-900'
                             } else {
                               btnClass += ' border-gray-200 bg-gray-50 text-gray-400'
                             }
                           } else {
                             btnClass += isSelected
-                              ? ' border-indigo-500 bg-indigo-50 text-indigo-900'
-                              : ' border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 text-gray-800'
+                              ? ' border-primary-500 bg-primary-50 text-primary-900'
+                              : ' border-gray-200 hover:border-primary-300 hover:bg-primary-50 text-gray-800'
                           }
 
                           return (
@@ -539,10 +539,10 @@ export default function Review() {
                               <div className="flex items-center justify-between">
                                 <span className="text-base sm:text-lg">{option}</span>
                                 {showResult && isCorrect && (
-                                  <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+                                  <CheckCircle className="w-5 h-5 text-success-600 shrink-0" />
                                 )}
                                 {showResult && isSelected && !isCorrect && (
-                                  <XCircle className="w-5 h-5 text-red-600 shrink-0" />
+                                  <XCircle className="w-5 h-5 text-error-600 shrink-0" />
                                 )}
                               </div>
                             </button>
@@ -559,10 +559,10 @@ export default function Review() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="text-center mb-6 sm:mb-8 p-5 sm:p-6 bg-gradient-to-br from-indigo-50 to-violet-50 rounded-2xl border border-indigo-100"
+                        className="text-center mb-6 sm:mb-8 p-5 sm:p-6 bg-gradient-to-br from-primary-50 to-violet-50 rounded-2xl border border-primary-100"
                       >
                         <div className="flex items-center justify-center gap-2 mb-2">
-                          <div className="text-2xl sm:text-3xl font-bold text-indigo-600">
+                          <div className="text-2xl sm:text-3xl font-bold text-primary-600">
                             {currentItem.word.pinyin}
                           </div>
                           <AudioButton
@@ -577,7 +577,7 @@ export default function Review() {
                           {currentItem.word.english}
                         </div>
                         {currentItem.word.category && (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-100 text-primary-700">
                             {currentItem.word.category}
                           </span>
                         )}
@@ -590,9 +590,9 @@ export default function Review() {
                     <div className="flex justify-center">
                       <button
                         onClick={() => setShowAnswer(true)}
-                        className="border-2 border-gray-200 text-gray-700 rounded-2xl px-8 py-3.5 font-semibold hover:border-indigo-300 hover:bg-indigo-50 transition-all flex items-center gap-2 cursor-pointer"
+                        className="border-2 border-gray-200 text-gray-700 rounded-2xl px-8 py-3.5 font-semibold hover:border-primary-300 hover:bg-primary-50 transition-all flex items-center gap-2 cursor-pointer"
                       >
-                        Skip Quiz – Show Answer
+                        Skip Quiz â€“ Show Answer
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     </div>
@@ -602,10 +602,10 @@ export default function Review() {
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
                         <button
                           onClick={() => handleReview(0)}
-                          className="py-4 px-3 rounded-2xl border-2 border-red-200 hover:bg-red-50 transition-all text-left cursor-pointer"
+                          className="py-4 px-3 rounded-2xl border-2 border-error-200 hover:bg-error-50 transition-all text-left cursor-pointer"
                         >
                           <div className="flex items-center gap-1.5 mb-0.5">
-                            <XCircle className="w-4 h-4 text-red-500" />
+                            <XCircle className="w-4 h-4 text-error-500" />
                             <span className="font-bold text-gray-900 text-sm">Wrong</span>
                           </div>
                           <div className="text-xs text-gray-500">Completely forgot</div>
@@ -626,14 +626,14 @@ export default function Review() {
                         </button>
                         <button
                           onClick={() => handleReview(4)}
-                          className="py-4 px-3 rounded-2xl border-2 border-emerald-200 hover:bg-emerald-50 transition-all text-left cursor-pointer"
+                          className="py-4 px-3 rounded-2xl border-2 border-success-200 hover:bg-success-50 transition-all text-left cursor-pointer"
                         >
                           <div className="font-bold text-gray-900 text-sm mb-0.5">Easy</div>
                           <div className="text-xs text-gray-500">Quick recall</div>
                         </button>
                         <button
                           onClick={() => handleReview(5)}
-                          className="py-4 px-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white transition-all flex items-center gap-2 col-span-2 sm:col-span-1 cursor-pointer"
+                          className="py-4 px-3 rounded-2xl bg-primary-600 hover:bg-primary-700 text-white transition-all flex items-center gap-2 col-span-2 sm:col-span-1 cursor-pointer"
                         >
                           <CheckCircle className="w-4 h-4" />
                           <div className="text-left">
@@ -653,3 +653,5 @@ export default function Review() {
     </div>
   )
 }
+
+

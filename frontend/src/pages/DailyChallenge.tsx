@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { dailyChallengeApi } from '@/services/api'
@@ -68,7 +68,7 @@ export default function DailyChallenge() {
       setCompleted(true)
       const s = await dailyChallengeApi.getStats()
       setStats(s)
-      toast.success('+30 XP! Daily challenge selesai 🎉', { duration: 4000 })
+      toast.success('+30 XP! Daily challenge selesai ðŸŽ‰', { duration: 4000 })
     } catch (err: unknown) {
       const e = err as { response?: { data?: { detail?: string } } }
       toast.error(e.response?.data?.detail ?? 'Gagal menyelesaikan challenge')
@@ -81,7 +81,7 @@ export default function DailyChallenge() {
     if (!challenge?.story.content || isPlayingAudio) return
     setIsPlayingAudio(true)
     try {
-      const firstSentence = challenge.story.content.split(/[。！？]/)[0]
+      const firstSentence = challenge.story.content.split(/[ã€‚ï¼ï¼Ÿ]/)[0]
       await playTTS({ text: firstSentence })
     } catch {
       toast.error('Audio tidak tersedia')
@@ -90,7 +90,7 @@ export default function DailyChallenge() {
     }
   }
 
-  /* ── Skeleton ── */
+  /* â”€â”€ Skeleton â”€â”€ */
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto px-4 pb-16 space-y-5 pt-2">
@@ -139,14 +139,14 @@ export default function DailyChallenge() {
     )
   }
 
-  /* ── Error ── */
+  /* â”€â”€ Error â”€â”€ */
   if (error || !challenge) {
     return (
       <div className="max-w-xl mx-auto px-4 py-20 text-center space-y-4">
         <p className="text-gray-500">Gagal memuat daily challenge.</p>
         <button
           onClick={load}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-primary-600 border border-primary-200 rounded-xl hover:bg-primary-50 transition-colors"
         >
           <RefreshCw className="w-4 h-4" /> Coba lagi
         </button>
@@ -165,7 +165,7 @@ export default function DailyChallenge() {
   return (
     <div className="max-w-2xl mx-auto px-4 pb-16 space-y-5">
 
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="pt-2">
         <div className="flex items-start justify-between flex-wrap gap-3">
           <div>
@@ -182,7 +182,7 @@ export default function DailyChallenge() {
                 <Flame className="w-4 h-4" />
                 {stats.challenge_streak}d streak
               </div>
-              <div className="flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 px-3 py-1.5 rounded-full text-sm font-bold">
+              <div className="flex items-center gap-1.5 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 px-3 py-1.5 rounded-full text-sm font-bold">
                 <Star className="w-3.5 h-3.5" />
                 {stats.total_xp_earned} XP
               </div>
@@ -191,7 +191,7 @@ export default function DailyChallenge() {
         </div>
       </motion.div>
 
-      {/* ── Completion banner ── */}
+      {/* â”€â”€ Completion banner â”€â”€ */}
       <AnimatePresence>
         {completed && (
           <motion.div
@@ -199,14 +199,14 @@ export default function DailyChallenge() {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="flex items-center gap-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 rounded-2xl px-4 py-3"
+            className="flex items-center gap-3 bg-success-50 dark:bg-success-950/30 border border-success-200 dark:border-success-800/60 rounded-2xl px-4 py-3"
           >
-            <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+            <CheckCircle className="w-5 h-5 text-success-500 flex-shrink-0" />
             <div>
-              <p className="font-semibold text-emerald-800 dark:text-emerald-300 text-sm">
+              <p className="font-semibold text-success-800 dark:text-success-300 text-sm">
                 Challenge selesai hari ini!
               </p>
-              <p className="text-xs text-emerald-600 dark:text-emerald-400">
+              <p className="text-xs text-success-600 dark:text-success-400">
                 Kembali besok untuk story baru. Konsistensi adalah kunci.
               </p>
             </div>
@@ -214,7 +214,7 @@ export default function DailyChallenge() {
         )}
       </AnimatePresence>
 
-      {/* ── Story card ── */}
+      {/* â”€â”€ Story card â”€â”€ */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -247,7 +247,7 @@ export default function DailyChallenge() {
                     : 'bg-white/25 text-white hover:bg-white/40'
                 }`}
               >
-                {showPinyin ? 'Pinyin ✓' : 'Pinyin'}
+                {showPinyin ? 'Pinyin âœ“' : 'Pinyin'}
               </button>
             </div>
           </div>
@@ -263,7 +263,7 @@ export default function DailyChallenge() {
 
           {story.english_translation && (
             <details className="border-t border-gray-100 dark:border-gray-800 pt-3">
-              <summary className="text-xs text-indigo-500 cursor-pointer hover:text-indigo-700 font-semibold select-none">
+              <summary className="text-xs text-primary-500 cursor-pointer hover:text-primary-700 font-semibold select-none">
                 Tampilkan terjemahan
               </summary>
               <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 leading-relaxed italic">
@@ -274,7 +274,7 @@ export default function DailyChallenge() {
 
           <Link
             to={`/stories/${story.id}`}
-            className="inline-flex items-center gap-1.5 text-xs text-indigo-500 hover:text-indigo-700 dark:text-indigo-400 font-semibold transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-primary-500 hover:text-primary-700 dark:text-primary-400 font-semibold transition-colors"
           >
             <BookOpen className="w-3.5 h-3.5" />
             Buka di Story Reader
@@ -283,12 +283,12 @@ export default function DailyChallenge() {
         </div>
       </motion.div>
 
-      {/* ── CTA button ── */}
+      {/* â”€â”€ CTA button â”€â”€ */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
         {completed ? (
-          <div className="flex items-center justify-center gap-2 py-4 bg-emerald-600 dark:bg-emerald-700 rounded-2xl text-white font-bold shadow-lg shadow-emerald-500/20">
+          <div className="flex items-center justify-center gap-2 py-4 bg-success-600 dark:bg-success-700 rounded-2xl text-white font-bold shadow-lg shadow-success-500/20">
             <CheckCircle className="w-5 h-5" />
-            Selesai Hari Ini · +30 XP
+            Selesai Hari Ini Â· +30 XP
           </div>
         ) : (
           <button
@@ -297,14 +297,14 @@ export default function DailyChallenge() {
             className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-2xl shadow-lg shadow-amber-500/20 transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {completing
-              ? <><Loader2 className="w-5 h-5 animate-spin" /> Menyimpan…</>
-              : <><Zap className="w-5 h-5" /> Tandai Selesai · +30 XP</>
+              ? <><Loader2 className="w-5 h-5 animate-spin" /> Menyimpanâ€¦</>
+              : <><Zap className="w-5 h-5" /> Tandai Selesai Â· +30 XP</>
             }
           </button>
         )}
       </motion.div>
 
-      {/* ── Stats cards ── */}
+      {/* â”€â”€ Stats cards â”€â”€ */}
       {stats && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -314,8 +314,8 @@ export default function DailyChallenge() {
         >
           {[
             { label: 'Day Streak',  value: stats.challenge_streak,  Icon: Flame,        color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-950/30' },
-            { label: 'Completed',   value: stats.total_completions,  Icon: CheckCircle,  color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-950/30' },
-            { label: 'Total XP',    value: stats.total_xp_earned,    Icon: Star,         color: 'text-indigo-500', bg: 'bg-indigo-50 dark:bg-indigo-950/30' },
+            { label: 'Completed',   value: stats.total_completions,  Icon: CheckCircle,  color: 'text-success-500', bg: 'bg-success-50 dark:bg-success-950/30' },
+            { label: 'Total XP',    value: stats.total_xp_earned,    Icon: Star,         color: 'text-primary-500', bg: 'bg-primary-50 dark:bg-primary-950/30' },
           ].map(({ label, value, Icon, color, bg }) => (
             <div key={label} className={`${bg} rounded-2xl p-4 text-center`}>
               <Icon className={`w-5 h-5 ${color} mx-auto mb-1`} />
@@ -328,3 +328,5 @@ export default function DailyChallenge() {
     </div>
   )
 }
+
+

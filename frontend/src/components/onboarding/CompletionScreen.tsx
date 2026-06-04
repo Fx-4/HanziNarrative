@@ -23,10 +23,10 @@ const CompletionScreen = ({
   const navigate = useNavigate()
 
   const STATS = [
-    { Icon: Trophy,    label: 'Starting Level', value: `HSK ${determinedLevel}`,    bg: 'bg-indigo-600' },
+    { Icon: Trophy,    label: 'Starting Level', value: `HSK ${determinedLevel}`,    bg: 'bg-primary-600' },
     { Icon: Award,     label: 'XP Earned',       value: `${xpEarned} XP`,            bg: 'bg-violet-600', note: achievementUnlocked ? 'Achievement unlocked!' : undefined },
-    { Icon: TrendingUp,label: 'Player Level',    value: `Level ${currentLevel}`,     bg: 'bg-indigo-500', note: leveledUp ? 'Level Up!' : undefined },
-    { Icon: Target,    label: 'Words Ready',     value: `${initialWordsCount}`,      bg: 'bg-indigo-700', note: 'to learn' },
+    { Icon: TrendingUp,label: 'Player Level',    value: `Level ${currentLevel}`,     bg: 'bg-primary-500', note: leveledUp ? 'Level Up!' : undefined },
+    { Icon: Target,    label: 'Words Ready',     value: `${initialWordsCount}`,      bg: 'bg-primary-700', note: 'to learn' },
   ]
 
   const NEXT_STEPS = [
@@ -51,7 +51,7 @@ const CompletionScreen = ({
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', duration: 0.8 }}
-        className="w-24 h-24 rounded-3xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mb-6 shadow-2xl shadow-indigo-500/30"
+        className="w-24 h-24 rounded-3xl bg-gradient-to-br from-primary-500 to-violet-600 flex items-center justify-center mb-6 shadow-2xl shadow-primary-500/30"
       >
         <span className="text-white text-5xl font-bold font-chinese">学</span>
       </motion.div>
@@ -102,7 +102,7 @@ const CompletionScreen = ({
         <ul className="space-y-2">
           {NEXT_STEPS.map(step => (
             <li key={step} className="flex items-start gap-2 text-sm text-gray-600">
-              <Check className="w-4 h-4 text-indigo-500 shrink-0 mt-0.5" />
+              <Check className="w-4 h-4 text-primary-500 shrink-0 mt-0.5" />
               {step}
             </li>
           ))}
@@ -115,7 +115,7 @@ const CompletionScreen = ({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
         onClick={() => navigate('/dashboard')}
-        className="inline-flex items-center gap-2 px-10 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-xl shadow-indigo-500/25 transition-colors text-base"
+        className="inline-flex items-center gap-2 px-10 py-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl shadow-xl shadow-primary-500/25 transition-colors text-base"
       >
         Start Learning Now
         <ArrowRight className="w-4 h-4" />

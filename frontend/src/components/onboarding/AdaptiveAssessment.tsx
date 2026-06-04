@@ -167,7 +167,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
         <p className="text-sm text-gray-500">Loading assessment questions…</p>
       </div>
     )
@@ -176,13 +176,13 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
   if (loadError) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-        <AlertCircle className="w-10 h-10 text-red-400" />
+        <AlertCircle className="w-10 h-10 text-error-400" />
         <p className="text-sm text-gray-600 text-center max-w-xs">
           Could not load assessment questions. Please check your connection and try again.
         </p>
         <button
           onClick={loadQuestions}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
           Try Again
@@ -201,7 +201,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
         </p>
         <button
           onClick={retrySubmit}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
           Retry
@@ -225,7 +225,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
           key={totalXP}
           initial={{ scale: 1.3 }}
           animate={{ scale: 1 }}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 text-white rounded-full text-sm font-bold shadow-md"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-primary-600 text-white rounded-full text-sm font-bold shadow-md"
         >
           <Award className="w-3.5 h-3.5" />
           {totalXP} XP
@@ -235,7 +235,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
       {/* Progress bar */}
       <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mb-6">
         <motion.div
-          className="h-full bg-indigo-600 rounded-full"
+          className="h-full bg-primary-600 rounded-full"
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.3 }}
         />
@@ -243,7 +243,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
 
       {/* HSK level badge */}
       <div className="mb-4">
-        <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-semibold rounded-full border border-indigo-100">
+        <span className="px-3 py-1 bg-primary-50 text-primary-600 text-xs font-semibold rounded-full border border-primary-100">
           HSK {currentQuestion.hsk_level}
         </span>
       </div>
@@ -274,13 +274,13 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
 
               let cls = 'w-full px-4 py-3 text-left rounded-xl border-2 transition-all font-medium text-sm flex items-center justify-between '
               if (showFeedback) {
-                if (isCorrect)            cls += 'bg-emerald-50 border-emerald-400 text-emerald-900'
-                else if (isSelected)       cls += 'bg-red-50 border-red-400 text-red-900'
+                if (isCorrect)            cls += 'bg-success-50 border-success-400 text-success-900'
+                else if (isSelected)       cls += 'bg-error-50 border-error-400 text-error-900'
                 else                       cls += 'bg-white border-gray-200 text-gray-400'
               } else {
                 cls += isSelected
-                  ? 'bg-indigo-50 border-indigo-400 text-indigo-900'
-                  : 'bg-white border-gray-200 text-gray-800 hover:border-indigo-300 hover:bg-indigo-50'
+                  ? 'bg-primary-50 border-primary-400 text-primary-900'
+                  : 'bg-white border-gray-200 text-gray-800 hover:border-primary-300 hover:bg-primary-50'
               }
 
               return (
@@ -293,8 +293,8 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
                   whileTap={!showFeedback ? { scale: 0.99 } : {}}
                 >
                   <span>{option}</span>
-                  {showFeedback && isCorrect  && <Check className="w-4 h-4 text-emerald-600 shrink-0" />}
-                  {showFeedback && isSelected && !isCorrect && <X className="w-4 h-4 text-red-500 shrink-0" />}
+                  {showFeedback && isCorrect  && <Check className="w-4 h-4 text-success-600 shrink-0" />}
+                  {showFeedback && isSelected && !isCorrect && <X className="w-4 h-4 text-error-500 shrink-0" />}
                 </motion.button>
               )
             })}

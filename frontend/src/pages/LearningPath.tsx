@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CURRICULUM, UnitDef, SessionDef } from '@/data/curriculum'
@@ -13,7 +13,7 @@ import { Skeleton } from '@/components/ui/Skeleton'
 const HSK_LEVELS = [1, 2, 3, 4, 5, 6]
 
 const SESSION_TYPE_META = {
-  vocab:    { label: 'Vocabulary', icon: BookOpen, color: 'text-indigo-500' },
+  vocab:    { label: 'Vocabulary', icon: BookOpen, color: 'text-primary-500' },
   grammar:  { label: 'Grammar',    icon: Brain,    color: 'text-violet-500' },
   practice: { label: 'Practice',   icon: Dumbbell, color: 'text-orange-500' },
 }
@@ -76,17 +76,17 @@ export default function LearningPath() {
   return (
     <div className="max-w-2xl mx-auto px-4 pb-16 space-y-6">
 
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="pt-2">
         <h1 className="text-2xl font-extrabold text-gray-900 dark:text-gray-50">
-          📚 Kursus HSK
+          ðŸ“š Kursus HSK
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-          Belajar bertahap dari HSK 1 — teori, kosakata, dan latihan terintegrasi.
+          Belajar bertahap dari HSK 1 â€” teori, kosakata, dan latihan terintegrasi.
         </p>
       </motion.div>
 
-      {/* ── Stats bar ── */}
+      {/* â”€â”€ Stats bar â”€â”€ */}
       {stats && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -94,9 +94,9 @@ export default function LearningPath() {
           className="grid grid-cols-3 gap-3"
         >
           {[
-            { label: 'Sesi Selesai', value: stats.total_sessions, icon: CheckCircle, color: 'text-emerald-500' },
+            { label: 'Sesi Selesai', value: stats.total_sessions, icon: CheckCircle, color: 'text-success-500' },
             { label: 'Total XP',     value: stats.total_xp,       icon: Star,         color: 'text-amber-500' },
-            { label: 'Level Aktif',  value: `HSK ${activeLevel}`, icon: Trophy,       color: 'text-indigo-500', str: true },
+            { label: 'Level Aktif',  value: `HSK ${activeLevel}`, icon: Trophy,       color: 'text-primary-500', str: true },
           ].map(({ label, value, icon: Icon, color, str }) => (
             <div key={label} className="bg-white dark:bg-gray-900 rounded-2xl p-3 border border-gray-100 dark:border-gray-800 text-center shadow-sm">
               <Icon className={`w-4 h-4 ${color} mx-auto mb-1`} />
@@ -107,7 +107,7 @@ export default function LearningPath() {
         </motion.div>
       )}
 
-      {/* ── HSK level tabs ── */}
+      {/* â”€â”€ HSK level tabs â”€â”€ */}
       <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
         {HSK_LEVELS.map(lv => {
           const count = stats?.by_hsk_level?.[String(lv)] ?? 0
@@ -119,13 +119,13 @@ export default function LearningPath() {
               onClick={() => { setActiveLevel(lv); setExpandedUnit(null) }}
               className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
                 isActive
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
+                  ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
             >
               HSK {lv}
               {count > 0 && (
-                <span className={`ml-1.5 text-[10px] ${isActive ? 'text-indigo-200' : 'text-gray-400'}`}>
+                <span className={`ml-1.5 text-[10px] ${isActive ? 'text-primary-200' : 'text-gray-400'}`}>
                   {count}/{total}
                 </span>
               )}
@@ -134,7 +134,7 @@ export default function LearningPath() {
         })}
       </div>
 
-      {/* ── Skeleton ── */}
+      {/* â”€â”€ Skeleton â”€â”€ */}
       {loading && (
         <div className="space-y-3">
           {[0, 1, 2, 3].map(i => (
@@ -159,13 +159,13 @@ export default function LearningPath() {
       {error && (
         <div className="text-center py-10 space-y-3">
           <p className="text-sm text-gray-500">Gagal memuat progress.</p>
-          <button onClick={loadProgress} className="inline-flex items-center gap-2 text-sm text-indigo-600 border border-indigo-200 px-3 py-1.5 rounded-xl hover:bg-indigo-50 transition-colors">
+          <button onClick={loadProgress} className="inline-flex items-center gap-2 text-sm text-primary-600 border border-primary-200 px-3 py-1.5 rounded-xl hover:bg-primary-50 transition-colors">
             <RefreshCw className="w-3.5 h-3.5" /> Coba lagi
           </button>
         </div>
       )}
 
-      {/* ── Unit list ── */}
+      {/* â”€â”€ Unit list â”€â”€ */}
       {!loading && !error && (
         <div className="space-y-3">
           {units.map((unit, unitIdx) => {
@@ -193,7 +193,7 @@ export default function LearningPath() {
                 >
                   {/* Emoji + gradient badge */}
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${unit.color} flex items-center justify-center text-xl shadow-md flex-shrink-0`}>
-                    {isLocked ? '🔒' : unit.emoji}
+                    {isLocked ? 'ðŸ”’' : unit.emoji}
                   </div>
 
                   <div className="flex-1 min-w-0">
@@ -204,7 +204,7 @@ export default function LearningPath() {
                       <div className="flex items-center gap-2 mt-1.5">
                         <div className="flex-1 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-indigo-500 rounded-full transition-all duration-500"
+                            className="h-full bg-primary-500 rounded-full transition-all duration-500"
                             style={{ width: `${pct}%` }}
                           />
                         </div>
@@ -240,8 +240,8 @@ export default function LearningPath() {
                             <div key={session.id} className="flex items-center gap-3 px-4 py-3">
                               {/* Status icon */}
                               <div className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center">
-                                {status === 'completed' && <CheckCircle className="w-5 h-5 text-emerald-500" />}
-                                {status === 'available' && <PlayCircle className="w-5 h-5 text-indigo-500" />}
+                                {status === 'completed' && <CheckCircle className="w-5 h-5 text-success-500" />}
+                                {status === 'available' && <PlayCircle className="w-5 h-5 text-primary-500" />}
                                 {status === 'locked' && <Lock className="w-4 h-4 text-gray-300 dark:text-gray-600" />}
                               </div>
 
@@ -253,7 +253,7 @@ export default function LearningPath() {
                                 <div className="flex items-center gap-1.5 mt-0.5">
                                   <Icon className={`w-3 h-3 ${status === 'locked' ? 'text-gray-300' : meta.color}`} />
                                   <span className="text-[11px] text-gray-400">{meta.label}</span>
-                                  <span className="text-[11px] text-gray-300">·</span>
+                                  <span className="text-[11px] text-gray-300">Â·</span>
                                   <Zap className="w-3 h-3 text-amber-400" />
                                   <span className="text-[11px] text-gray-400">{session.xp} XP</span>
                                 </div>
@@ -263,7 +263,7 @@ export default function LearningPath() {
                               {status === 'available' && (
                                 <Link
                                   to={`/path/session/${session.id}`}
-                                  className="flex-shrink-0 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition-colors"
+                                  className="flex-shrink-0 px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold rounded-lg transition-colors"
                                 >
                                   Mulai
                                 </Link>
@@ -291,3 +291,4 @@ export default function LearningPath() {
     </div>
   )
 }
+

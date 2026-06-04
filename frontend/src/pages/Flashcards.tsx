@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { learningApi } from '@/services/api'
@@ -123,12 +123,12 @@ export default function Flashcards() {
       setCurrentIndex(prev => prev + 1)
       setIsFlipped(false)
     } else {
-      // Session complete — advance index past end to trigger complete screen
+      // Session complete â€” advance index past end to trigger complete screen
       setCurrentIndex(words.length)
       setIsFlipped(false)
     }
 
-    // Fire API call in background — don't block UI
+    // Fire API call in background â€” don't block UI
     learningApi.recordReview(currentWord.id, quality).catch(err => {
       console.error('Failed to record review:', err)
     })
@@ -136,7 +136,7 @@ export default function Flashcards() {
 
   const handleSwipe = (direction: 'left' | 'right') => {
     if (!isFlipped) {
-      toast('Flip the card first to see the answer!', { icon: '↻' })
+      toast('Flip the card first to see the answer!', { icon: 'â†»' })
       return
     }
 
@@ -180,7 +180,7 @@ export default function Flashcards() {
     })
   }
 
-  // ─── Settings Screen ───────────────────────────────────────────────────────
+  // â”€â”€â”€ Settings Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (!sessionStarted && showSettings) {
     return (
       <div className="min-h-screen py-6 sm:py-10 px-4 sm:px-6">
@@ -193,7 +193,7 @@ export default function Flashcards() {
           <div className="flex items-center gap-3 mb-6">
             <button
               onClick={() => navigate('/practice')}
-              className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-indigo-300 transition-all"
+              className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-primary-300 transition-all"
               aria-label="Go back"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -211,7 +211,7 @@ export default function Flashcards() {
           {/* Main card */}
           <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
             {/* Accent bar */}
-            <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
+            <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
 
             <div className="p-6 sm:p-8">
               {/* Study Mode section */}
@@ -225,18 +225,18 @@ export default function Flashcards() {
                     onClick={() => setStudyMode('review')}
                     className={`p-4 rounded-2xl border-2 text-center transition-all cursor-pointer ${
                       studyMode === 'review'
-                        ? 'border-indigo-500 bg-indigo-50'
-                        : 'border-gray-200 hover:border-indigo-200'
+                        ? 'border-primary-500 bg-primary-50'
+                        : 'border-gray-200 hover:border-primary-200'
                     }`}
                   >
                     <Brain
                       className={`w-6 h-6 mx-auto mb-2 ${
-                        studyMode === 'review' ? 'text-indigo-600' : 'text-gray-400'
+                        studyMode === 'review' ? 'text-primary-600' : 'text-gray-400'
                       }`}
                     />
                     <div
                       className={`text-sm font-semibold ${
-                        studyMode === 'review' ? 'text-indigo-700' : 'text-gray-700'
+                        studyMode === 'review' ? 'text-primary-700' : 'text-gray-700'
                       }`}
                     >
                       Review
@@ -307,7 +307,7 @@ export default function Flashcards() {
                         onClick={() => setSelectedHSK(level)}
                         className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all ${
                           selectedHSK === level
-                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+                            ? 'bg-primary-600 text-white shadow-md shadow-primary-200'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
@@ -319,20 +319,20 @@ export default function Flashcards() {
               )}
 
               {/* Info box */}
-              <div className="bg-indigo-50 rounded-2xl p-4 border border-indigo-100 mb-6">
-                <h3 className="text-sm font-bold text-indigo-800 mb-2">How it works</h3>
-                <ul className="text-sm text-indigo-700 space-y-1">
-                  <li>• Click to flip and see the answer</li>
-                  <li>• Swipe left (Again) or right (Easy)</li>
-                  <li>• Rate difficulty to improve spaced repetition</li>
-                  <li>• Track your progress in real-time</li>
+              <div className="bg-primary-50 rounded-2xl p-4 border border-primary-100 mb-6">
+                <h3 className="text-sm font-bold text-primary-800 mb-2">How it works</h3>
+                <ul className="text-sm text-primary-700 space-y-1">
+                  <li>â€¢ Click to flip and see the answer</li>
+                  <li>â€¢ Swipe left (Again) or right (Easy)</li>
+                  <li>â€¢ Rate difficulty to improve spaced repetition</li>
+                  <li>â€¢ Track your progress in real-time</li>
                 </ul>
               </div>
 
               {/* Start button */}
               <button
                 onClick={startSession}
-                className="w-full bg-indigo-600 text-white rounded-2xl py-4 font-bold text-lg hover:bg-indigo-700 transition-all flex items-center justify-center gap-2"
+                className="w-full bg-primary-600 text-white rounded-2xl py-4 font-bold text-lg hover:bg-primary-700 transition-all flex items-center justify-center gap-2"
               >
                 <Brain className="w-5 h-5" />
                 Start Study Session
@@ -344,7 +344,7 @@ export default function Flashcards() {
     )
   }
 
-  // ─── Loading State ─────────────────────────────────────────────────────────
+  // â”€â”€â”€ Loading State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -353,12 +353,12 @@ export default function Flashcards() {
     )
   }
 
-  // ─── No Words State ────────────────────────────────────────────────────────
+  // â”€â”€â”€ No Words State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (words.length === 0) {
     return (
       <div className="min-h-screen py-6 sm:py-10 px-4 sm:px-6 flex items-center justify-center">
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden max-w-md w-full">
-          <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
+          <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
           <div className="p-8 text-center">
             <Brain className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h2 className="text-xl font-extrabold text-gray-900 mb-2">No Words Available</h2>
@@ -367,7 +367,7 @@ export default function Flashcards() {
             </p>
             <button
               onClick={resetSession}
-              className="bg-indigo-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-indigo-700 transition-all"
+              className="bg-primary-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-primary-700 transition-all"
             >
               Back to Settings
             </button>
@@ -381,7 +381,7 @@ export default function Flashcards() {
   const progress = ((currentIndex + 1) / words.length) * 100
   const isSessionComplete = currentIndex >= words.length
 
-  // ─── Session Complete Screen ───────────────────────────────────────────────
+  // â”€â”€â”€ Session Complete Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (isSessionComplete) {
     const accuracy = sessionStats.total > 0
       ? Math.round((sessionStats.correct / sessionStats.total) * 100)
@@ -396,7 +396,7 @@ export default function Flashcards() {
         >
           <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
             {/* Accent bar */}
-            <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
+            <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
 
             <div className="p-8 sm:p-12 text-center">
               <Trophy className="w-16 h-16 sm:w-20 sm:h-20 text-yellow-500 mx-auto mb-4" />
@@ -409,11 +409,11 @@ export default function Flashcards() {
 
               {/* Stat tiles */}
               <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-8 max-w-sm mx-auto">
-                <div className="bg-indigo-600 rounded-2xl p-4 text-white text-center">
+                <div className="bg-primary-600 rounded-2xl p-4 text-white text-center">
                   <div className="text-2xl sm:text-3xl font-bold">{sessionStats.total}</div>
                   <div className="text-xs sm:text-sm opacity-90 mt-0.5">Total Cards</div>
                 </div>
-                <div className="bg-emerald-500 rounded-2xl p-4 text-white text-center">
+                <div className="bg-success-500 rounded-2xl p-4 text-white text-center">
                   <div className="text-2xl sm:text-3xl font-bold">{sessionStats.correct}</div>
                   <div className="text-xs sm:text-sm opacity-90 mt-0.5">Correct</div>
                 </div>
@@ -433,13 +433,13 @@ export default function Flashcards() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={resetSession}
-                  className="w-full sm:w-auto flex-1 border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:border-indigo-300 transition-all"
+                  className="w-full sm:w-auto flex-1 border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:border-primary-300 transition-all"
                 >
                   New Session
                 </button>
                 <button
                   onClick={() => navigate('/dashboard')}
-                  className="w-full sm:w-auto flex-1 bg-indigo-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-indigo-700 transition-all"
+                  className="w-full sm:w-auto flex-1 bg-primary-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-primary-700 transition-all"
                 >
                   View Progress
                 </button>
@@ -451,7 +451,7 @@ export default function Flashcards() {
     )
   }
 
-  // ─── Active Session ────────────────────────────────────────────────────────
+  // â”€â”€â”€ Active Session â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   return (
     <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 min-h-screen">
       {/* Header area */}
@@ -461,7 +461,7 @@ export default function Flashcards() {
           <div className="flex items-center gap-3">
             <button
               onClick={resetSession}
-              className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-indigo-300 transition-all"
+              className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-primary-300 transition-all"
               aria-label="Back to settings"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -477,7 +477,7 @@ export default function Flashcards() {
           </div>
           <button
             onClick={shuffleWords}
-            className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-indigo-300 transition-all"
+            className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-primary-300 transition-all"
             aria-label="Shuffle cards"
           >
             <Shuffle className="w-4 h-4" />
@@ -489,7 +489,7 @@ export default function Flashcards() {
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
-            className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full"
+            className="h-full bg-gradient-to-r from-primary-500 to-violet-500 rounded-full"
             transition={{ duration: 0.3 }}
           />
         </div>
@@ -498,7 +498,7 @@ export default function Flashcards() {
         <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center">
             <div className="flex items-center justify-center gap-1 sm:gap-2 mb-1">
-              <CheckCircle className="w-4 h-4 text-emerald-500" />
+              <CheckCircle className="w-4 h-4 text-success-500" />
               <span className="text-lg sm:text-xl font-bold text-gray-900">
                 {sessionStats.correct}
               </span>
@@ -507,7 +507,7 @@ export default function Flashcards() {
           </div>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center">
             <div className="flex items-center justify-center gap-1 sm:gap-2 mb-1">
-              <XCircle className="w-4 h-4 text-red-400" />
+              <XCircle className="w-4 h-4 text-error-400" />
               <span className="text-lg sm:text-xl font-bold text-gray-900">
                 {sessionStats.incorrect}
               </span>
@@ -516,7 +516,7 @@ export default function Flashcards() {
           </div>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center">
             <div className="flex items-center justify-center gap-1 sm:gap-2 mb-1">
-              <Clock className="w-4 h-4 text-indigo-400" />
+              <Clock className="w-4 h-4 text-primary-400" />
               <span className="text-lg sm:text-xl font-bold text-gray-900">
                 {sessionStats.averageTime}s
               </span>
@@ -546,15 +546,15 @@ export default function Flashcards() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Swipe buttons – shown after flip */}
+        {/* Swipe buttons â€“ shown after flip */}
         {isFlipped && (
           <div className="flex justify-center gap-3 mt-6">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <button
                 onClick={() => handleSwipe('left')}
-                className="border-2 border-red-200 text-gray-700 rounded-2xl px-6 sm:px-8 py-3 font-semibold hover:bg-red-50 transition-all flex items-center gap-2"
+                className="border-2 border-error-200 text-gray-700 rounded-2xl px-6 sm:px-8 py-3 font-semibold hover:bg-error-50 transition-all flex items-center gap-2"
               >
-                <XCircle className="w-5 h-5 text-red-400" />
+                <XCircle className="w-5 h-5 text-error-400" />
                 Again
               </button>
             </motion.div>
@@ -562,7 +562,7 @@ export default function Flashcards() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <button
                 onClick={() => handleSwipe('right')}
-                className="bg-emerald-500 text-white rounded-2xl px-6 sm:px-8 py-3 font-semibold hover:bg-emerald-600 transition-all flex items-center gap-2"
+                className="bg-success-500 text-white rounded-2xl px-6 sm:px-8 py-3 font-semibold hover:bg-success-600 transition-all flex items-center gap-2"
               >
                 <CheckCircle className="w-5 h-5" />
                 Easy
@@ -571,7 +571,7 @@ export default function Flashcards() {
           </div>
         )}
 
-        {/* Detailed rating card – shown after flip */}
+        {/* Detailed rating card â€“ shown after flip */}
         {isFlipped && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -584,7 +584,7 @@ export default function Flashcards() {
             <div className="grid grid-cols-3 gap-2">
               <button
                 onClick={() => recordReview(1)}
-                className="rounded-xl py-3 text-sm font-semibold transition-all bg-red-50 text-red-600 hover:bg-red-100 border border-red-100"
+                className="rounded-xl py-3 text-sm font-semibold transition-all bg-error-50 text-error-600 hover:bg-error-100 border border-error-100"
               >
                 Hard
               </button>
@@ -596,7 +596,7 @@ export default function Flashcards() {
               </button>
               <button
                 onClick={() => recordReview(5)}
-                className="rounded-xl py-3 text-sm font-semibold transition-all bg-indigo-600 text-white hover:bg-indigo-700"
+                className="rounded-xl py-3 text-sm font-semibold transition-all bg-primary-600 text-white hover:bg-primary-700"
               >
                 Perfect
               </button>
@@ -604,7 +604,7 @@ export default function Flashcards() {
           </motion.div>
         )}
 
-        {/* Instruction text – before flip */}
+        {/* Instruction text â€“ before flip */}
         {!isFlipped && (
           <p className="text-center text-sm text-gray-400 mt-6">
             Click card to flip &bull; Swipe left (Again) or right (Easy)
@@ -614,3 +614,4 @@ export default function Flashcards() {
     </div>
   )
 }
+

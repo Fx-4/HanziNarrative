@@ -415,8 +415,8 @@ export default function SpeakingPractice() {
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <CheckCircle className="w-4 h-4 text-green-600" />
+                                    <div className="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <CheckCircle className="w-4 h-4 text-success-600" />
                                     </div>
                                     <div>
                                         <p className="font-medium text-gray-900">3. Check</p>
@@ -607,7 +607,7 @@ export default function SpeakingPractice() {
                                         <button
                                             onClick={isRecording ? stopRecording : startRecording}
                                             className={`w-24 h-24 rounded-full flex items-center justify-center cursor-pointer transition-all shadow-lg mx-auto ${isRecording
-                                                ? 'bg-red-500 hover:bg-red-600 animate-pulse'
+                                                ? 'bg-error-500 hover:bg-error-600 animate-pulse'
                                                 : isVocabMode
                                                     ? 'bg-gradient-to-br from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700'
                                                     : 'bg-gradient-to-br from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700'
@@ -628,11 +628,11 @@ export default function SpeakingPractice() {
                         ) : (
                             /* Results */
                             <div className="space-y-4">
-                                <div className={`rounded-2xl p-5 ${result?.is_correct ? 'bg-green-50 border border-green-200' : 'bg-orange-50 border border-orange-200'}`}>
+                                <div className={`rounded-2xl p-5 ${result?.is_correct ? 'bg-success-50 border border-green-200' : 'bg-orange-50 border border-orange-200'}`}>
 
                                     {/* Score circle */}
                                     <div className="flex justify-center mb-3">
-                                        <div className={`w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold ${result?.is_correct ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
+                                        <div className={`w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold ${result?.is_correct ? 'bg-success-100 text-success-700' : 'bg-orange-100 text-orange-700'}`}>
                                             {result?.accuracy_score}%
                                         </div>
                                     </div>
@@ -640,7 +640,7 @@ export default function SpeakingPractice() {
                                     {/* Vocabulary + Tone breakdown for vocab mode */}
                                     {isVocabMode && (
                                         <div className="flex justify-center gap-4 mb-3">
-                                            <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold ${result?.is_correct ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                            <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold ${result?.is_correct ? 'bg-success-100 text-success-700' : 'bg-error-100 text-error-700'}`}>
                                                 {result?.is_correct ? '✅' : '❌'}
                                                 Vocabulary: {result?.is_correct ? 'Correct' : 'Wrong'}
                                             </div>

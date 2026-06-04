@@ -148,8 +148,8 @@ const Onboarding = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-indigo-50 via-white to-violet-50 gap-3">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-primary-50 via-white to-violet-50 gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
         <p className="text-sm text-gray-500">Loading your profile…</p>
       </div>
     )
@@ -161,13 +161,13 @@ const Onboarding = () => {
   const showBackButton = currentStep > 1 && currentStep !== 4 && currentStep !== 6
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-violet-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-violet-50 py-8">
       <div className="container mx-auto px-4 max-w-4xl">
 
         {/* Logo + Brand */}
         {currentStep < 6 && (
           <div className="flex items-center justify-center gap-2.5 mb-8">
-            <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-primary-600 flex items-center justify-center">
               <span className="text-white text-sm font-bold font-chinese">汉</span>
             </div>
             <span className="text-sm font-bold text-gray-500 tracking-tight">HanziNarrative</span>

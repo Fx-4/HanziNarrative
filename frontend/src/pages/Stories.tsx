@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { storiesApi } from '@/services/api'
@@ -52,7 +52,7 @@ export default function Stories() {
     }
   }
 
-  // Called by StoryGenerator when a story finishes generating — adds it to the
+  // Called by StoryGenerator when a story finishes generating â€” adds it to the
   // top of the list instantly without re-fetching the full list.
   const handleStoryGenerated = (partial: {
     id: number
@@ -80,7 +80,7 @@ export default function Stories() {
     })
   }
 
-  // Client-side filter — no extra API call on every keystroke
+  // Client-side filter â€” no extra API call on every keystroke
   const filteredStories = stories
     .filter(s =>
       !searchQuery.trim() ||
@@ -112,7 +112,7 @@ export default function Stories() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1 }}
       >
-        <BookOpen className="w-8 h-8 sm:w-10 sm:h-10 text-indigo-600 dark:text-indigo-400" />
+        <BookOpen className="w-8 h-8 sm:w-10 sm:h-10 text-primary-600 dark:text-primary-400" />
         Interactive Stories
       </motion.h1>
 
@@ -128,7 +128,7 @@ export default function Stories() {
             onClick={() => setActiveTab('browse')}
             className={`pb-3 sm:pb-4 px-3 sm:px-4 text-sm sm:text-base font-medium transition-colors border-b-2 whitespace-nowrap ${
               activeTab === 'browse'
-                ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
                 : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
             }`}
           >
@@ -141,7 +141,7 @@ export default function Stories() {
             onClick={() => setActiveTab('generate')}
             className={`pb-3 sm:pb-4 px-3 sm:px-4 text-sm sm:text-base font-medium transition-colors border-b-2 whitespace-nowrap ${
               activeTab === 'generate'
-                ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
                 : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
             }`}
           >
@@ -181,7 +181,7 @@ export default function Stories() {
                     onClick={() => setSelectedLevel(level.value)}
                     className={`px-3 py-1.5 rounded-xl text-sm font-semibold cursor-pointer transition-colors ${
                       selectedLevel === level.value
-                        ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                        ? 'bg-primary-600 hover:bg-primary-700 text-white'
                         : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                     }`}
                   >
@@ -198,15 +198,15 @@ export default function Stories() {
             <div className="flex flex-wrap gap-2 mb-4">
               {([
                 { value: 'all', label: 'All Stories' },
-                { value: 'curated', label: '📚 Curated' },
-                { value: 'ai_generated', label: '✨ AI Generated' },
+                { value: 'curated', label: 'ðŸ“š Curated' },
+                { value: 'ai_generated', label: 'âœ¨ AI Generated' },
               ] as const).map((cat) => (
                 <button
                   key={cat.value}
                   onClick={() => setCategoryFilter(cat.value)}
                   className={`px-3 py-1.5 rounded-xl text-sm font-semibold cursor-pointer transition-colors ${
                     categoryFilter === cat.value
-                      ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                      ? 'bg-primary-600 hover:bg-primary-700 text-white'
                       : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                   }`}
                 >
@@ -215,7 +215,7 @@ export default function Stories() {
               ))}
             </div>
 
-            {/* Client-side search — filters already-loaded stories with no extra API call */}
+            {/* Client-side search â€” filters already-loaded stories with no extra API call */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
               <input
@@ -225,7 +225,7 @@ export default function Stories() {
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search stories by title..."
-                className="w-full pl-9 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                className="w-full pl-9 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
               />
             </div>
           </motion.div>
@@ -269,19 +269,19 @@ export default function Stories() {
                         <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex-1 mr-2">
                           {story.title}
                         </h3>
-                        <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400 flex-shrink-0">
+                        <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-100 dark:bg-primary-950/30 text-primary-700 dark:text-primary-400 flex-shrink-0">
                           HSK {story.hsk_level}
                         </span>
                       </div>
                       {/* Category badge */}
                       <div className="mb-3">
                         {(story.category ?? 'curated') === 'ai_generated' ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300">
-                            ✨ AI Generated
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300">
+                            âœ¨ AI Generated
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
-                            📚 Curated
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-success-100 dark:bg-success-950/40 text-success-700 dark:text-success-300">
+                            ðŸ“š Curated
                           </span>
                         )}
                       </div>
@@ -316,3 +316,4 @@ export default function Stories() {
     </motion.div>
   )
 }
+

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+﻿import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { dictationApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
@@ -121,7 +121,7 @@ export default function Dictation() {
             const userChar = userText[i] || ''
             const correctChar = correctText[i] || ''
             result.push({
-                char: userChar || '·',
+                char: userChar || 'Â·',
                 correct: userChar === correctChar,
                 expected: correctChar,
             })
@@ -147,11 +147,11 @@ export default function Dictation() {
         if (accuracy >= 80) {
             setScore(prev => prev + 1)
             setStreak(prev => prev + 1)
-            if (accuracy === 100) toast.success('Perfect! 完美！')
+            if (accuracy === 100) toast.success('Perfect! å®Œç¾Žï¼')
             else toast.success(`Great! ${accuracy}% accurate!`)
         } else {
             setStreak(0)
-            toast(`${accuracy}% — keep practicing!`, { icon: '✎' })
+            toast(`${accuracy}% â€” keep practicing!`, { icon: 'âœŽ' })
         }
     }
 
@@ -192,7 +192,7 @@ export default function Dictation() {
                                 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900"
                                 wordDelay={0.08}
                             >
-                                Dictation 听写
+                                Dictation å¬å†™
                             </BlurText>
                         </div>
                         <p className="text-base sm:text-lg text-gray-600">
@@ -280,7 +280,7 @@ export default function Dictation() {
                         transition={{ delay: 0.3 }}
                         className="mt-8"
                     >
-                        <div className="bg-gradient-to-r from-cyan-50 to-indigo-50 rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
+                        <div className="bg-gradient-to-r from-cyan-50 to-primary-50 rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
                             <h4 className="font-semibold text-gray-900 mb-3">How it works</h4>
                             <div className="grid sm:grid-cols-3 gap-4">
                                 <div className="flex items-start gap-3">
@@ -302,8 +302,8 @@ export default function Dictation() {
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <CheckCircle className="w-4 h-4 text-green-600" />
+                                    <div className="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <CheckCircle className="w-4 h-4 text-success-600" />
                                     </div>
                                     <div>
                                         <p className="font-medium text-gray-900">3. Check</p>
@@ -350,7 +350,7 @@ export default function Dictation() {
                         onClick={() => setSessionStarted(false)}
                         className="text-gray-600 hover:text-gray-900 font-medium cursor-pointer"
                     >
-                        ← Back
+                        â† Back
                     </button>
                     <div className="flex items-center gap-3">
                         <div className="bg-white rounded-xl shadow-sm border px-3 py-1.5 flex items-center gap-1.5">
@@ -392,7 +392,7 @@ export default function Dictation() {
                                 <button
                                     onClick={isPlaying ? stopAudio : playAudio}
                                     className={`w-20 h-20 rounded-full flex items-center justify-center cursor-pointer transition-all shadow-lg ${isPlaying
-                                        ? 'bg-red-500 hover:bg-red-600 animate-pulse'
+                                        ? 'bg-error-500 hover:bg-error-600 animate-pulse'
                                         : 'bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700'
                                         }`}
                                 >
@@ -477,8 +477,8 @@ export default function Dictation() {
                                             <span
                                                 key={i}
                                                 className={`text-2xl font-chinese px-1 py-0.5 rounded ${item.correct
-                                                    ? 'text-green-700 bg-green-100'
-                                                    : 'text-red-700 bg-red-100'
+                                                    ? 'text-success-700 bg-success-100'
+                                                    : 'text-error-700 bg-error-100'
                                                     }`}
                                                 title={item.correct ? 'Correct!' : `Expected: ${item.expected}`}
                                             >
@@ -525,3 +525,4 @@ export default function Dictation() {
         </div>
     )
 }
+

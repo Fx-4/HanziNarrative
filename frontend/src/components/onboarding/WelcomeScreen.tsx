@@ -37,7 +37,7 @@ const WelcomeScreen = ({ onNext }: WelcomeScreenProps) => {
         initial={{ scale: 0.6, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', duration: 0.7 }}
-        className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-xl shadow-indigo-500/25 mb-8"
+        className="w-20 h-20 rounded-3xl bg-gradient-to-br from-primary-500 to-violet-600 flex items-center justify-center shadow-xl shadow-primary-500/25 mb-8"
       >
         <span className="text-white text-4xl font-bold font-chinese">学</span>
       </motion.div>
@@ -50,7 +50,7 @@ const WelcomeScreen = ({ onNext }: WelcomeScreenProps) => {
         className="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900 mb-4"
       >
         Welcome to{' '}
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-violet-600">
           HanziNarrative
         </span>
       </motion.h1>
@@ -94,7 +94,7 @@ const WelcomeScreen = ({ onNext }: WelcomeScreenProps) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.45 }}
         onClick={onNext}
-        className="inline-flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/25 transition-colors text-base"
+        className="inline-flex items-center gap-2 px-8 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/25 transition-colors text-base"
       >
         Let's Get Started
         <ArrowRight className="w-4 h-4" />

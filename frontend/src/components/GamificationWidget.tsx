@@ -53,7 +53,7 @@ export default function GamificationWidget() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-3 sm:mb-4"
       >
-        <div className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-2xl p-3 sm:p-4">
+        <div className="bg-gradient-to-r from-primary-600 to-violet-600 text-white rounded-2xl p-3 sm:p-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
@@ -100,7 +100,7 @@ export default function GamificationWidget() {
           <div className="text-[10px] sm:text-sm text-gray-500 leading-tight">Words</div>
         </div>
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center flex flex-col items-center justify-center aspect-square">
-          <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-500 mb-1 sm:mb-2 flex-shrink-0" />
+          <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-primary-500 mb-1 sm:mb-2 flex-shrink-0" />
           <div className="text-sm sm:text-xl font-bold">{stats.accuracy_rate.toFixed(0)}%</div>
           <div className="text-[10px] sm:text-sm text-gray-500 leading-tight">Accuracy</div>
         </div>

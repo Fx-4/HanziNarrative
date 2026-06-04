@@ -66,10 +66,10 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
             type="range" min="5" max="60" step="5"
             value={goals.daily_time_minutes}
             onChange={(e) => setGoals({ ...goals, daily_time_minutes: parseInt(e.target.value) })}
-            className="w-full h-1.5 accent-indigo-600 rounded-full cursor-pointer"
+            className="w-full h-1.5 accent-primary-600 rounded-full cursor-pointer"
           />
           <div className="mt-3 text-center">
-            <span className="text-2xl font-extrabold text-indigo-600">{goals.daily_time_minutes}</span>
+            <span className="text-2xl font-extrabold text-primary-600">{goals.daily_time_minutes}</span>
             <span className="ml-1.5 text-sm text-gray-500">min / day</span>
           </div>
         </motion.div>
@@ -91,10 +91,10 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
             type="range" min="5" max="50" step="5"
             value={goals.daily_words}
             onChange={(e) => setGoals({ ...goals, daily_words: parseInt(e.target.value) })}
-            className="w-full h-1.5 accent-indigo-600 rounded-full cursor-pointer"
+            className="w-full h-1.5 accent-primary-600 rounded-full cursor-pointer"
           />
           <div className="mt-3 text-center">
-            <span className="text-2xl font-extrabold text-indigo-600">{goals.daily_words}</span>
+            <span className="text-2xl font-extrabold text-primary-600">{goals.daily_words}</span>
             <span className="ml-1.5 text-sm text-gray-500">words / day</span>
           </div>
         </motion.div>
@@ -119,7 +119,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
                 onClick={() => setGoals({ ...goals, target_hsk_level: level })}
                 className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${
                   goals.target_hsk_level === level
-                    ? 'bg-indigo-600 text-white shadow-md scale-105'
+                    ? 'bg-primary-600 text-white shadow-md scale-105'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
@@ -152,7 +152,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
                 onClick={() => setGoals({ ...goals, weekly_xp: xp })}
                 className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
                   goals.weekly_xp === xp
-                    ? 'bg-indigo-600 text-white shadow-md scale-105'
+                    ? 'bg-primary-600 text-white shadow-md scale-105'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
@@ -172,7 +172,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.35 }}
         onClick={() => onNext(goals)}
-        className="mt-8 inline-flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/20 transition-colors"
+        className="mt-8 inline-flex items-center gap-2 px-8 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/20 transition-colors"
       >
         Continue
         <ArrowRight className="w-4 h-4" />

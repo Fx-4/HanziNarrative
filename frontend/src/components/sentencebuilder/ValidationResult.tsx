@@ -21,7 +21,7 @@ export default function ValidationResult({
     <div className={`
       rounded-2xl p-6 border-2 space-y-4
       ${isCorrect
-        ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-300'
+        ? 'bg-gradient-to-br from-success-50 to-success-50 border-success-300'
         : 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-300'
       }
     `}>
@@ -29,12 +29,12 @@ export default function ValidationResult({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {isCorrect ? (
-            <CheckCircle className="w-8 h-8 text-green-600" />
+            <CheckCircle className="w-8 h-8 text-success-600" />
           ) : (
             <XCircle className="w-8 h-8 text-yellow-600" />
           )}
           <div>
-            <h3 className={`text-xl font-bold ${isCorrect ? 'text-green-700' : 'text-yellow-700'}`}>
+            <h3 className={`text-xl font-bold ${isCorrect ? 'text-success-700' : 'text-yellow-700'}`}>
               {isCorrect ? 'Excellent! 很好！' : 'Good Try! 再试试！'}
             </h3>
             <p className="text-sm text-gray-600">
@@ -46,7 +46,7 @@ export default function ValidationResult({
         {/* Score Badge */}
         <div className={`
           px-4 py-2 rounded-full font-bold text-lg
-          ${score >= 80 ? 'bg-green-500 text-white' :
+          ${score >= 80 ? 'bg-success-500 text-white' :
             score >= 60 ? 'bg-yellow-500 text-white' :
             'bg-orange-500 text-white'}
         `}>
@@ -87,15 +87,15 @@ export default function ValidationResult({
 
       {/* Grammar Issues */}
       {grammarIssues.length > 0 && (
-        <div className="bg-white/70 rounded-xl p-4 border border-red-200">
+        <div className="bg-white/70 rounded-xl p-4 border border-error-200">
           <div className="flex items-start gap-2">
-            <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+            <AlertCircle className="w-5 h-5 text-error-600 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
               <h4 className="font-semibold text-gray-800 mb-2">Grammar Issues / 语法问题</h4>
               <ul className="space-y-1">
                 {grammarIssues.map((issue, index) => (
                   <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
-                    <span className="text-red-600 font-bold">•</span>
+                    <span className="text-error-600 font-bold">•</span>
                     <span>{issue}</span>
                   </li>
                 ))}

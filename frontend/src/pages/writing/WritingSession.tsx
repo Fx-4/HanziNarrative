@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion'
+﻿import { motion, AnimatePresence } from 'framer-motion'
 import { HanziWord, WritingProgress, AttemptResult } from '@/types'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import {
@@ -68,7 +68,7 @@ export default function WritingSession({
             onClick={onBack}
             className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 font-medium cursor-pointer flex items-center gap-1 transition-colors"
           >
-            ← Back to Modes
+            â† Back to Modes
           </button>
         </div>
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden p-6 sm:p-8 text-center">
@@ -96,7 +96,7 @@ export default function WritingSession({
             onClick={onBack}
             className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 font-medium cursor-pointer flex items-center gap-1 transition-colors"
           >
-            ← Back to Modes
+            â† Back to Modes
           </button>
 
           <div className="flex flex-wrap items-center gap-2 sm:gap-4">
@@ -104,7 +104,7 @@ export default function WritingSession({
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-100 dark:border-gray-700 overflow-hidden px-3 py-2 sm:px-4">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 dark:text-orange-400" />
-                  <span className={`text-base sm:text-lg font-bold ${timeRemaining < 60 ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-gray-100'}`}>
+                  <span className={`text-base sm:text-lg font-bold ${timeRemaining < 60 ? 'text-error-600 dark:text-error-400' : 'text-gray-900 dark:text-gray-100'}`}>
                     {formatTime(timeRemaining)}
                   </span>
                 </div>
@@ -113,7 +113,7 @@ export default function WritingSession({
 
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-100 dark:border-gray-700 overflow-hidden px-3 py-2 sm:px-4">
               <div className="flex items-center gap-2">
-                <Target className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 dark:text-indigo-400" />
+                <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 dark:text-primary-400" />
                 <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
                   {currentCharacterIndex + 1} / {characters.length}
                 </span>
@@ -136,7 +136,7 @@ export default function WritingSession({
         {/* Progress bar */}
         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
           <motion.div
-            className="bg-gradient-to-r from-indigo-500 to-indigo-600 h-3 rounded-full"
+            className="bg-gradient-to-r from-primary-500 to-primary-600 h-3 rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${((currentCharacterIndex + 1) / characters.length) * 100}%` }}
             transition={{ duration: 0.3 }}
@@ -144,7 +144,7 @@ export default function WritingSession({
         </div>
       </div>
 
-      {/* Character Grid — compact top panel on mobile/tablet, sidebar on desktop */}
+      {/* Character Grid â€” compact top panel on mobile/tablet, sidebar on desktop */}
       {mode === 'practice' && (
         <div className="mb-4 lg:hidden">
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
@@ -268,7 +268,7 @@ export default function WritingSession({
                                   className="transition-all duration-1000 ease-linear"
                                 />
                               </svg>
-                              <span className="absolute inset-0 flex items-center justify-center text-xl sm:text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                              <span className="absolute inset-0 flex items-center justify-center text-xl sm:text-2xl font-bold text-primary-600 dark:text-primary-400">
                                 {countdown ?? 5}
                               </span>
                             </div>
@@ -286,7 +286,7 @@ export default function WritingSession({
                             </button>
                             <button
                               onClick={onNextCharacter}
-                              className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-3 sm:px-4 py-3 font-semibold cursor-pointer flex items-center justify-center gap-2 text-sm sm:text-base transition-colors"
+                              className="flex-1 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-3 sm:px-4 py-3 font-semibold cursor-pointer flex items-center justify-center gap-2 text-sm sm:text-base transition-colors"
                             >
                               {currentCharacterIndex < characters.length - 1 ? (
                                 <>
@@ -314,3 +314,4 @@ export default function WritingSession({
     </div>
   )
 }
+

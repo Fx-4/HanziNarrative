@@ -153,7 +153,7 @@ export default function StrokeOrderAnimation({
         {showPlay && (
           <button
             onClick={handlePlay}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center gap-1.5 text-sm"
+            className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center gap-1.5 text-sm"
           >
             <Play className="w-4 h-4" />
             Play
@@ -173,7 +173,7 @@ export default function StrokeOrderAnimation({
         {showResume && (
           <button
             onClick={handleResume}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center gap-1.5 text-sm"
+            className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors flex items-center gap-1.5 text-sm"
           >
             <Play className="w-4 h-4" />
             Resume
@@ -191,7 +191,7 @@ export default function StrokeOrderAnimation({
 
       {/* subtle indicator while looping */}
       {isPlaying && loop && (
-        <p className="text-xs text-indigo-400 dark:text-indigo-500 animate-pulse">
+        <p className="text-xs text-primary-400 dark:text-primary-500 animate-pulse">
           Animasi berjalan otomatis…
         </p>
       )}

@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+﻿import { motion } from 'framer-motion'
 import type { TypingStats, TypingMode } from '@/types'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import {
@@ -58,28 +58,28 @@ export default function TypingModeSelection({
         className="mb-8"
       >
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-          <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
+          <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
           <div className="p-4 sm:p-6">
             <div className="flex items-center gap-2 mb-4">
-              <BarChart3 className="w-5 h-5 text-indigo-600" />
+              <BarChart3 className="w-5 h-5 text-primary-600" />
               <h3 className="text-lg font-semibold text-gray-800">Your Progress (HSK {hskLevel})</h3>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-              <div className="bg-emerald-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
+              <div className="bg-success-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
                 <div className="flex items-center gap-2 mb-1">
-                  <Award className="w-4 h-4 text-emerald-200" />
-                  <p className="text-xs text-emerald-100 font-medium">Mastered</p>
+                  <Award className="w-4 h-4 text-success-200" />
+                  <p className="text-xs text-success-100 font-medium">Mastered</p>
                 </div>
                 <p className="text-2xl font-bold text-white">
                   <CountUp to={stats.mastered_words} duration={1.2} />
                 </p>
               </div>
 
-              <div className="bg-indigo-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
+              <div className="bg-primary-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
                 <div className="flex items-center gap-2 mb-1">
-                  <TrendingUp className="w-4 h-4 text-indigo-200" />
-                  <p className="text-xs text-indigo-100 font-medium">Accuracy</p>
+                  <TrendingUp className="w-4 h-4 text-primary-200" />
+                  <p className="text-xs text-primary-100 font-medium">Accuracy</p>
                 </div>
                 <p className="text-2xl font-bold text-white">
                   <CountUp to={stats.average_accuracy} duration={1.2} decimals={0} suffix="%" />
@@ -120,7 +120,7 @@ export default function TypingModeSelection({
         className="text-center mb-10 sm:mb-12"
       >
         <div className="flex items-center justify-center gap-3 mb-4">
-          <Keyboard className="w-8 h-8 sm:w-10 sm:h-10 text-indigo-600" />
+          <Keyboard className="w-8 h-8 sm:w-10 sm:h-10 text-primary-600" />
           <BlurText
             as="h1"
             className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900"
@@ -155,14 +155,14 @@ export default function TypingModeSelection({
                 <div className="flex flex-wrap gap-3">
                   <button
                     onClick={() => onNavigate('/login')}
-                    className="inline-flex items-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-5 py-2.5 sm:px-6 sm:py-3 font-semibold cursor-pointer text-sm sm:text-base transition-colors"
+                    className="inline-flex items-center bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-5 py-2.5 sm:px-6 sm:py-3 font-semibold cursor-pointer text-sm sm:text-base transition-colors"
                   >
                     <LogIn className="w-4 h-4 mr-2" />
                     Login
                   </button>
                   <button
                     onClick={() => onNavigate('/register')}
-                    className="inline-flex items-center border border-indigo-600 text-indigo-600 hover:bg-indigo-50 rounded-2xl px-5 py-2.5 sm:px-6 sm:py-3 font-semibold cursor-pointer text-sm sm:text-base transition-colors"
+                    className="inline-flex items-center border border-primary-600 text-primary-600 hover:bg-primary-50 rounded-2xl px-5 py-2.5 sm:px-6 sm:py-3 font-semibold cursor-pointer text-sm sm:text-base transition-colors"
                   >
                     Create Account
                   </button>
@@ -187,7 +187,7 @@ export default function TypingModeSelection({
                 onClick={() => onHskLevelChange(level)}
                 className={`rounded-2xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${
                   hskLevel === level
-                    ? 'bg-indigo-600 text-white shadow-md'
+                    ? 'bg-primary-600 text-white shadow-md'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -222,7 +222,7 @@ export default function TypingModeSelection({
                 <p className="text-sm sm:text-base text-gray-600 mb-4">
                   See Chinese character, type correct pinyin spelling. Perfect for learning romanization.
                 </p>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-700">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-700">
                   Learn spelling
                 </span>
               </div>
@@ -295,10 +295,10 @@ export default function TypingModeSelection({
         transition={{ delay: 0.5 }}
         className="mt-6 sm:mt-8"
       >
-        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-3xl shadow-xl border border-indigo-100 overflow-hidden p-4 sm:p-6">
+        <div className="bg-gradient-to-r from-primary-50 to-blue-50 rounded-3xl shadow-xl border border-primary-100 overflow-hidden p-4 sm:p-6">
           <div className="flex items-start gap-3 sm:gap-4">
             <div className="p-2 sm:p-3 bg-white rounded-lg shadow-sm shrink-0">
-              <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" />
+              <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600" />
             </div>
             <div>
               <h4 className="font-semibold mb-2 text-gray-800">Typing Tips</h4>
@@ -315,3 +315,4 @@ export default function TypingModeSelection({
     </div>
   )
 }
+

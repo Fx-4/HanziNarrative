@@ -212,7 +212,7 @@ export function PinyinText({
             )}
             <span
               style={hanziStyle}
-              className={onCharClick ? 'hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors' : ''}
+              className={onCharClick ? 'hover:text-primary-600 hover:bg-primary-50 rounded transition-colors' : ''}
             >
               {unit.hanzi}
             </span>

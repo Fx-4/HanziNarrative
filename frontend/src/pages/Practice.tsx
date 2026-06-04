@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { learningApi } from '@/services/api'
 import { HanziWord } from '@/types'
@@ -198,7 +198,7 @@ export default function Practice() {
                 onClick={() => setHskLevel(level)}
                 className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all cursor-pointer ${
                   hskLevel === level
-                    ? 'bg-indigo-600 text-white shadow-md'
+                    ? 'bg-primary-600 text-white shadow-md'
                     : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
               >
@@ -216,11 +216,11 @@ export default function Practice() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           onClick={() => handleModeSelect('learn')}
-          className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-6 sm:p-8 text-center cursor-pointer hover:shadow-2xl hover:border-indigo-200 dark:hover:border-indigo-700 transition-all group overflow-hidden"
+          className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-6 sm:p-8 text-center cursor-pointer hover:shadow-2xl hover:border-primary-200 dark:hover:border-primary-700 transition-all group overflow-hidden"
         >
-          <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600 -mx-6 sm:-mx-8 -mt-6 sm:-mt-8 mb-6 sm:mb-8" />
+          <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600 -mx-6 sm:-mx-8 -mt-6 sm:-mt-8 mb-6 sm:mb-8" />
           <div className="mb-4 sm:mb-6">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-indigo-500 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-primary-500 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
               <BookOpen className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
             </div>
           </div>
@@ -228,7 +228,7 @@ export default function Practice() {
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-3 sm:mb-4">
             Study new words with flashcards. See the character, pinyin, and meaning.
           </p>
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-primary-100 dark:bg-primary-950/30 text-primary-700 dark:text-primary-400">
             Beginner Friendly
           </span>
         </motion.div>
@@ -238,7 +238,7 @@ export default function Practice() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           onClick={() => handleModeSelect('review')}
-          className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-6 sm:p-8 text-center cursor-pointer hover:shadow-2xl hover:border-indigo-200 dark:hover:border-indigo-700 transition-all group overflow-hidden"
+          className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-6 sm:p-8 text-center cursor-pointer hover:shadow-2xl hover:border-primary-200 dark:hover:border-primary-700 transition-all group overflow-hidden"
         >
           <div className="h-1.5 bg-gradient-to-r from-violet-500 via-purple-500 to-violet-600 -mx-6 sm:-mx-8 -mt-6 sm:-mt-8 mb-6 sm:mb-8" />
           <div className="mb-4 sm:mb-6">
@@ -250,7 +250,7 @@ export default function Practice() {
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-3 sm:mb-4">
             Test yourself without seeing the answer first. Hide the meaning until you're ready!
           </p>
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-primary-100 dark:bg-primary-950/30 text-primary-700 dark:text-primary-400">
             Active Recall
           </span>
         </motion.div>
@@ -260,11 +260,11 @@ export default function Practice() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
           onClick={() => handleModeSelect('test')}
-          className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-6 sm:p-8 text-center cursor-pointer hover:shadow-2xl hover:border-indigo-200 dark:hover:border-indigo-700 transition-all group overflow-hidden"
+          className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-6 sm:p-8 text-center cursor-pointer hover:shadow-2xl hover:border-primary-200 dark:hover:border-primary-700 transition-all group overflow-hidden"
         >
-          <div className="h-1.5 bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-600 -mx-6 sm:-mx-8 -mt-6 sm:-mt-8 mb-6 sm:mb-8" />
+          <div className="h-1.5 bg-gradient-to-r from-purple-500 via-primary-500 to-purple-600 -mx-6 sm:-mx-8 -mt-6 sm:-mt-8 mb-6 sm:mb-8" />
           <div className="mb-4 sm:mb-6">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-purple-500 to-primary-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
               <Target className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
             </div>
           </div>
@@ -272,7 +272,7 @@ export default function Practice() {
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-3 sm:mb-4">
             Quiz yourself with multiple choice questions. Track your score!
           </p>
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-primary-100 dark:bg-primary-950/30 text-primary-700 dark:text-primary-400">
             Challenge
           </span>
         </motion.div>
@@ -320,3 +320,4 @@ export default function Practice() {
     </div>
   )
 }
+

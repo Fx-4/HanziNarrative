@@ -48,16 +48,16 @@ export default function WritingFeedback({
   const improvement = previousAccuracy !== undefined ? accuracy - previousAccuracy : 0
 
   const cardColorClasses = {
-    emerald: 'bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-300',
-    green: 'bg-gradient-to-br from-green-50 to-lime-50 border-green-300',
+    emerald: 'bg-gradient-to-br from-success-50 to-success-50 border-success-300',
+    green: 'bg-gradient-to-br from-success-50 to-success-50 border-success-300',
     blue: 'bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-300',
     yellow: 'bg-gradient-to-br from-yellow-50 to-amber-50 border-yellow-300',
     orange: 'bg-gradient-to-br from-orange-50 to-red-50 border-orange-300'
   }
 
   const iconColorClasses = {
-    emerald: 'text-emerald-600 bg-emerald-100',
-    green: 'text-green-600 bg-green-100',
+    emerald: 'text-success-600 bg-success-100',
+    green: 'text-success-600 bg-success-100',
     blue: 'text-blue-600 bg-blue-100',
     yellow: 'text-yellow-600 bg-yellow-100',
     orange: 'text-orange-600 bg-orange-100'
@@ -158,7 +158,7 @@ export default function WritingFeedback({
           {improvement !== 0 && (
             <div>
               <div className="text-xs text-gray-600 mb-1">Improvement</div>
-              <div className={`text-xl font-bold ${improvement > 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <div className={`text-xl font-bold ${improvement > 0 ? 'text-success-600' : 'text-error-600'}`}>
                 {improvement > 0 ? '+' : ''}{improvement}%
               </div>
             </div>

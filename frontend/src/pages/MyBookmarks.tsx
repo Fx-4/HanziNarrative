@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { storiesApi } from '@/services/api'
@@ -106,7 +106,7 @@ export default function MyBookmarks() {
             {bookmarks.length === 0 && (
               <Link
                 to="/stories"
-                className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-6 py-3 font-semibold transition-colors"
+                className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-6 py-3 font-semibold transition-colors"
               >
                 <BookOpen className="w-5 h-5" />
                 Browse Stories
@@ -130,7 +130,7 @@ export default function MyBookmarks() {
                     <h3 className="text-xl font-bold text-gray-900 flex-1 mr-2">
                       {story.title}
                     </h3>
-                    <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 flex-shrink-0">
+                    <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-100 text-primary-700 flex-shrink-0">
                       HSK {story.hsk_level}
                     </span>
                   </div>
@@ -150,3 +150,4 @@ export default function MyBookmarks() {
     </motion.div>
   )
 }
+

@@ -23,7 +23,7 @@ export function LoadingSpinner({ size = "md", className, label }: LoadingSpinner
     return (
       <div className={cn("flex items-center justify-center", className)}>
         <motion.div
-          className="rounded-full border-2 border-indigo-200 dark:border-indigo-800 border-t-indigo-600 dark:border-t-indigo-400"
+          className="rounded-full border-2 border-primary-200 dark:border-primary-800 border-t-primary-600 dark:border-t-primary-400"
           style={{ width: 18, height: 18 }}
           animate={{ rotate: 360 }}
           transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
@@ -79,7 +79,7 @@ export function LoadingSpinner({ size = "md", className, label }: LoadingSpinner
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         >
           <span className={cn(
-            "font-chinese bg-gradient-to-br from-indigo-600 to-violet-600 bg-clip-text text-transparent font-bold select-none",
+            "font-chinese bg-gradient-to-br from-primary-600 to-violet-600 bg-clip-text text-transparent font-bold select-none",
             size === "lg" ? "text-3xl" : "text-xl"
           )}>
             字
@@ -107,7 +107,7 @@ export function LoadingDots({ className }: { className?: string }) {
       {[0, 1, 2].map((index) => (
         <motion.div
           key={index}
-          className="h-2.5 w-2.5 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500"
+          className="h-2.5 w-2.5 rounded-full bg-gradient-to-br from-primary-500 to-violet-500"
           animate={{
             y: [0, -8, 0],
             scale: [1, 1.2, 1],
@@ -129,7 +129,7 @@ export function LoadingPulse({ className }: { className?: string }) {
   return (
     <motion.div
       className={cn(
-        "text-sm font-medium bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent",
+        "text-sm font-medium bg-gradient-to-r from-primary-600 to-violet-600 bg-clip-text text-transparent",
         className
       )}
       animate={{ opacity: [0.4, 1, 0.4] }}

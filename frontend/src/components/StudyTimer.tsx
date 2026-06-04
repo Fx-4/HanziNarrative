@@ -143,9 +143,9 @@ export default function StudyTimer() {
   const getSessionColor = () => {
     switch (sessionType) {
       case 'focus':
-        return 'from-indigo-500 to-violet-600'
+        return 'from-primary-500 to-violet-600'
       case 'short-break':
-        return 'from-emerald-500 to-green-600'
+        return 'from-success-500 to-success-600'
       case 'long-break':
         return 'from-blue-500 to-cyan-600'
     }
@@ -212,7 +212,7 @@ export default function StudyTimer() {
                 cx="96"
                 cy="96"
                 r="88"
-                className={`stroke-current ${sessionType === 'focus' ? 'text-indigo-600' : sessionType === 'short-break' ? 'text-emerald-500' : 'text-blue-500'}`}
+                className={`stroke-current ${sessionType === 'focus' ? 'text-primary-600' : sessionType === 'short-break' ? 'text-success-500' : 'text-blue-500'}`}
                 strokeWidth="6"
                 fill="none"
                 strokeLinecap="round"
@@ -263,7 +263,7 @@ export default function StudyTimer() {
         <div className="mt-3 pt-3 border-t border-gray-100">
           <div className="flex items-center justify-between text-xs sm:text-sm">
             <span className="text-gray-500">Total today:</span>
-            <span className="font-bold text-indigo-600">
+            <span className="font-bold text-primary-600">
               {formatStudyTime(totalStudyTime)}
             </span>
           </div>

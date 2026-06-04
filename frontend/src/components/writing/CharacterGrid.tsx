@@ -60,17 +60,17 @@ export default function CharacterGrid({
   const filteredCharacters = getFilteredCharacters()
 
   const getAccuracyColor = (accuracy: number) => {
-    if (accuracy >= 90) return 'text-green-600'
+    if (accuracy >= 90) return 'text-success-600'
     if (accuracy >= 70) return 'text-blue-600'
     if (accuracy >= 50) return 'text-yellow-600'
     return 'text-orange-600'
   }
 
   const filters = [
-    { key: 'all' as const,      label: `All (${characters.length})`, icon: null,      activeClass: 'bg-indigo-600 text-white', inactiveClass: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
+    { key: 'all' as const,      label: `All (${characters.length})`, icon: null,      activeClass: 'bg-primary-600 text-white', inactiveClass: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
     { key: 'new' as const,      label: 'New',                        icon: Sparkles,  activeClass: 'bg-purple-600 text-white',  inactiveClass: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
     { key: 'learning' as const, label: 'Learning',                   icon: TrendingUp,activeClass: 'bg-blue-600 text-white',    inactiveClass: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
-    { key: 'mastered' as const, label: 'Mastered',                   icon: Award,     activeClass: 'bg-green-600 text-white',   inactiveClass: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
+    { key: 'mastered' as const, label: 'Mastered',                   icon: Award,     activeClass: 'bg-success-600 text-white', inactiveClass: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
   ]
 
   return (
@@ -120,8 +120,8 @@ export default function CharacterGrid({
                   className={`relative rounded-xl border-2 p-2 text-center overflow-hidden
                     transition-all duration-200 hover:shadow-md active:scale-95
                     ${isSelected
-                      ? 'border-indigo-500 bg-indigo-50 shadow-md'
-                      : 'border-gray-200 bg-white hover:border-indigo-300'
+                      ? 'border-primary-500 bg-primary-50 shadow-md'
+                      : 'border-gray-200 bg-white hover:border-primary-300'
                     }`}
                 >
                   {/* Mastery icon top-right */}
@@ -135,7 +135,7 @@ export default function CharacterGrid({
                   </div>
 
                   {/* Pinyin */}
-                  <div className="text-[11px] text-indigo-600 font-semibold leading-none mb-0.5">
+                  <div className="text-[11px] text-primary-600 font-semibold leading-none mb-0.5">
                     {character.pinyin}
                   </div>
 
@@ -156,7 +156,7 @@ export default function CharacterGrid({
                       <div className="w-full bg-gray-200 rounded-full h-1">
                         <div
                           className={`h-1 rounded-full transition-all duration-300 ${
-                            charProgress.mastery_level >= 80 ? 'bg-green-500'
+                            charProgress.mastery_level >= 80 ? 'bg-success-500'
                             : charProgress.mastery_level >= 50 ? 'bg-blue-500'
                             : 'bg-yellow-500'
                           }`}
@@ -166,7 +166,7 @@ export default function CharacterGrid({
                     </div>
                   ) : (
                     <div className="mt-1.5 pt-1.5 border-t border-gray-200">
-                      <span className="inline-flex px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-indigo-100 text-indigo-700">New</span>
+                      <span className="inline-flex px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-primary-100 text-primary-700">New</span>
                     </div>
                   )}
                 </div>
@@ -189,7 +189,7 @@ export default function CharacterGrid({
           </p>
           <button
             onClick={() => setFilter('all')}
-            className="mt-2 text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+            className="mt-2 text-xs text-primary-600 hover:text-primary-700 font-medium"
           >
             View all →
           </button>

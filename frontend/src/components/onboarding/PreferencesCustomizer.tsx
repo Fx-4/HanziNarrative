@@ -78,11 +78,11 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
                 onClick={() => setPrefs({ ...prefs, difficulty_preference: id })}
                 className={`p-4 rounded-xl border-2 transition-all text-center ${
                   prefs.difficulty_preference === id
-                    ? 'bg-indigo-50 border-indigo-300 shadow-sm'
+                    ? 'bg-primary-50 border-primary-300 shadow-sm'
                     : 'bg-white border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <p className={`font-semibold text-sm ${prefs.difficulty_preference === id ? 'text-indigo-700' : 'text-gray-900'}`}>{label}</p>
+                <p className={`font-semibold text-sm ${prefs.difficulty_preference === id ? 'text-primary-700' : 'text-gray-900'}`}>{label}</p>
                 <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
               </button>
             ))}
@@ -104,7 +104,7 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
             </div>
             <button
               onClick={() => setPrefs({ ...prefs, show_pinyin_by_default: !prefs.show_pinyin_by_default })}
-              className={`relative w-12 h-6 rounded-full transition-colors shrink-0 ${prefs.show_pinyin_by_default ? 'bg-indigo-600' : 'bg-gray-300'}`}
+              className={`relative w-12 h-6 rounded-full transition-colors shrink-0 ${prefs.show_pinyin_by_default ? 'bg-primary-600' : 'bg-gray-300'}`}
             >
               <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${prefs.show_pinyin_by_default ? 'translate-x-6' : 'translate-x-0.5'}`} />
             </button>
@@ -122,7 +122,7 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
               </div>
               <button
                 onClick={() => setPrefs({ ...prefs, reminder_enabled: !prefs.reminder_enabled })}
-                className={`relative w-12 h-6 rounded-full transition-colors shrink-0 ${prefs.reminder_enabled ? 'bg-indigo-600' : 'bg-gray-300'}`}
+                className={`relative w-12 h-6 rounded-full transition-colors shrink-0 ${prefs.reminder_enabled ? 'bg-primary-600' : 'bg-gray-300'}`}
               >
                 <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${prefs.reminder_enabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
               </button>
@@ -139,7 +139,7 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
                   type="time"
                   value={prefs.reminder_time}
                   onChange={(e) => setPrefs({ ...prefs, reminder_time: e.target.value })}
-                  className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:border-indigo-400 focus:outline-none bg-white"
+                  className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:border-primary-400 focus:outline-none bg-white"
                 />
               </motion.div>
             )}
@@ -153,7 +153,7 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
         onClick={() => onNext(prefs)}
-        className="mt-8 inline-flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/20 transition-colors"
+        className="mt-8 inline-flex items-center gap-2 px-8 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/20 transition-colors"
       >
         Complete Setup
         <ArrowRight className="w-4 h-4" />

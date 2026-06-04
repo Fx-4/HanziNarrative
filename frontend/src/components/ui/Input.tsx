@@ -16,7 +16,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       "w-full px-3 py-2 border rounded-lg transition-all duration-200",
       "focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent",
       error
-        ? "border-red-500 focus:ring-red-500"
+        ? "border-error-500 focus:ring-error-500"
         : "border-gray-300",
       className
     )
@@ -48,7 +48,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {inputElement}
         {error && (
           <motion.p
-            className="mt-1 text-sm text-red-600"
+            className="mt-1 text-sm text-error-600"
             initial={animated ? { opacity: 0, y: -10 } : {}}
             animate={animated ? { opacity: 1, y: 0 } : {}}
           >

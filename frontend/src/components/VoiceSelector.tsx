@@ -100,7 +100,7 @@ export default function VoiceSelector({ compact = false }: VoiceSelectorProps) {
                 onClick={() => { setVoiceGender(g); setGender(g) }}
                 className={`relative px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                   active
-                    ? 'text-indigo-700 dark:text-indigo-300'
+                    ? 'text-primary-700 dark:text-primary-300'
                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                 }`}
               >
@@ -133,7 +133,7 @@ export default function VoiceSelector({ compact = false }: VoiceSelectorProps) {
                 onClick={() => { setSpeakingSpeed(s); setSpeed(s) }}
                 className={`relative px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                   active
-                    ? 'text-indigo-700 dark:text-indigo-300'
+                    ? 'text-primary-700 dark:text-primary-300'
                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                 }`}
               >

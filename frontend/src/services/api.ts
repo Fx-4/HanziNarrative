@@ -478,6 +478,12 @@ export const learningApi = {
     const response = await api.get('/learning/review-count')
     return response.data
   },
+
+  // Seed words from a completed LearningSession into the SRS queue
+  seedWords: async (simplifiedChars: string[]) => {
+    const response = await api.post('/learning/seed', { simplified_chars: simplifiedChars })
+    return response.data
+  },
 }
 
 // Quiz API

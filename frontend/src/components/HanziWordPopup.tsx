@@ -89,20 +89,20 @@ function calcPosition(x: number, y: number) {
    Category pill styling
 ───────────────────────────────────── */
 const categoryColors: Record<string, string> = {
-  noun:        'bg-emerald-50 text-emerald-700',
+  noun:        'bg-success-50 text-success-700',
   verb:        'bg-blue-50 text-blue-700',
   adjective:   'bg-purple-50 text-purple-700',
   adverb:      'bg-orange-50 text-orange-700',
   pronoun:     'bg-pink-50 text-pink-700',
   particle:    'bg-gray-100 text-gray-600',
-  preposition: 'bg-indigo-50 text-indigo-700',
+  preposition: 'bg-primary-50 text-primary-700',
   conjunction: 'bg-teal-50 text-teal-700',
   number:      'bg-amber-50 text-amber-700',
 }
 
 function getCategoryColor(cat?: string) {
   if (!cat) return 'bg-gray-100 text-gray-600'
-  return categoryColors[cat.toLowerCase()] ?? 'bg-indigo-50 text-indigo-700'
+  return categoryColors[cat.toLowerCase()] ?? 'bg-primary-50 text-primary-700'
 }
 
 /* ─────────────────────────────────────
@@ -191,7 +191,7 @@ export default function HanziWordPopup({
           {/* ── Row 2: Pinyin + audio + English ── */}
           <div className="px-4 pt-2 pb-3">
             <div className="flex items-center gap-1.5 mb-1">
-              <span className="text-lg font-semibold text-indigo-600 tracking-wide">
+              <span className="text-lg font-semibold text-primary-600 tracking-wide">
                 {word.pinyin}
               </span>
               <AudioButton
@@ -240,9 +240,9 @@ export default function HanziWordPopup({
               </>
             ) : (
               /* No image: big character on gradient bg */
-              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-indigo-50 to-indigo-100/50">
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100/50">
                 <span
-                  className="text-[80px] font-bold text-indigo-200 select-none leading-none"
+                  className="text-[80px] font-bold text-primary-200 select-none leading-none"
                   style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
                 >
                   {word.simplified}
@@ -254,7 +254,7 @@ export default function HanziWordPopup({
           {/* ── Row 4: Meta pills ── */}
           <div className="px-4 pb-3 flex flex-wrap gap-1.5">
             {/* HSK level */}
-            <span className="inline-flex items-center text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">
+            <span className="inline-flex items-center text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary-100 text-primary-700">
               HSK {word.hsk_level}
             </span>
             {/* Category */}

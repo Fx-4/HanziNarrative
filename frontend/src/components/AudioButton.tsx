@@ -41,16 +41,16 @@ export const AudioButton: FC<AudioButtonProps> = ({
 
   const variantMap = {
     primary: {
-      idle:     'bg-indigo-600 text-white hover:bg-indigo-700 shadow-md shadow-indigo-500/30',
-      speaking: 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/40',
+      idle:     'bg-primary-600 text-white hover:bg-primary-700 shadow-md shadow-primary-500/30',
+      speaking: 'bg-primary-500 text-white shadow-lg shadow-primary-500/40',
     },
     secondary: {
       idle:     'bg-gray-100 text-gray-700 hover:bg-gray-200',
-      speaking: 'bg-indigo-100 text-indigo-600',
+      speaking: 'bg-primary-100 text-primary-600',
     },
     ghost: {
-      idle:     'text-gray-500 hover:bg-indigo-50 hover:text-indigo-600',
-      speaking: 'bg-indigo-50 text-indigo-600',
+      idle:     'text-gray-500 hover:bg-primary-50 hover:text-primary-600',
+      speaking: 'bg-primary-50 text-primary-600',
     },
   }
 
@@ -62,7 +62,7 @@ export const AudioButton: FC<AudioButtonProps> = ({
       className={`
         relative flex items-center justify-center rounded-xl
         transition-colors duration-200
-        focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-1
+        focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-1
         ${s.btn}
         ${isSpeaking ? colors.speaking : colors.idle}
         ${className}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { storiesApi, dailyChallengeApi } from '@/services/api'
@@ -82,7 +82,7 @@ export default function StoryChallenge() {
                 const words = await storiesApi.getStoryWords(storyId)
                 vocab = words.map((w: { simplified: string; pinyin: string; english: string }) => ({ simplified: w.simplified, pinyin: w.pinyin, english: w.english }))
             } catch {
-                // No associated words — extract 2-char substrings from content as fallback
+                // No associated words â€” extract 2-char substrings from content as fallback
             }
 
             // If no words, create simple ones from story content
@@ -210,7 +210,7 @@ export default function StoryChallenge() {
                             key={`word-${i}`}
                             onClick={() => !isUnlocked && openWritingChallenge(word)}
                             className={`inline-block mx-0.5 transition-all ${isUnlocked
-                                ? 'text-green-700 font-bold bg-green-50 px-1 rounded'
+                                ? 'text-success-700 font-bold bg-success-50 px-1 rounded'
                                 : 'bg-amber-100 hover:bg-amber-200 text-amber-800 px-1 rounded cursor-pointer border-b-2 border-amber-300 border-dashed'
                                 }`}
                             title={isUnlocked ? 'Unlocked!' : 'Click to write and unlock'}
@@ -259,7 +259,7 @@ export default function StoryChallenge() {
                     toast.success('Daily Challenge completed! +30 XP')
                 })
                 .catch(() => {
-                    // Already completed or error — ignore
+                    // Already completed or error â€” ignore
                 })
         }
     }, [allUnlocked, isDailyChallenge, dailyChallengeCompleted])
@@ -396,8 +396,8 @@ export default function StoryChallenge() {
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <Unlock className="w-4 h-4 text-green-600" />
+                                    <div className="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <Unlock className="w-4 h-4 text-success-600" />
                                     </div>
                                     <div>
                                         <p className="font-medium text-gray-900">3. Unlock</p>
@@ -422,7 +422,7 @@ export default function StoryChallenge() {
                         onClick={() => setSelectedStory(null)}
                         className="text-gray-600 hover:text-gray-900 font-medium cursor-pointer"
                     >
-                        ← Back
+                        â† Back
                     </button>
                     <div className="flex items-center gap-3">
                         <button
@@ -486,7 +486,7 @@ export default function StoryChallenge() {
                                                 onClick={() => !isUnlocked && openWritingChallenge(word)}
                                                 disabled={isUnlocked}
                                                 className={`rounded-xl px-3 py-1.5 text-sm font-medium cursor-pointer transition-all ${isUnlocked
-                                                    ? 'bg-green-50 text-green-700 border border-green-200'
+                                                    ? 'bg-success-50 text-success-700 border border-green-200'
                                                     : 'bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200'
                                                     }`}
                                             >
@@ -516,7 +516,7 @@ export default function StoryChallenge() {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                         >
-                            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-3xl shadow-xl border border-green-200 p-6 text-center">
+                            <div className="bg-gradient-to-r from-success-50 to-emerald-50 rounded-3xl shadow-xl border border-green-200 p-6 text-center">
                                 <Trophy className="w-12 h-12 text-amber-500 mx-auto mb-3" />
                                 <h3 className="text-xl font-bold text-gray-900 mb-2">Story Unlocked!</h3>
                                 <p className="text-gray-600 mb-1">You wrote all {hiddenWords.size} hidden words correctly!</p>
@@ -587,3 +587,4 @@ export default function StoryChallenge() {
         </div>
     )
 }
+

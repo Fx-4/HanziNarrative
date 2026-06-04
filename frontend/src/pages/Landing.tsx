@@ -57,9 +57,9 @@ const FEATURES = [
     icon: Brain,
     title: 'Spaced Repetition',
     desc: 'Our SRS algorithm surfaces forgotten words at exactly the right moment — so you remember more with less review time.',
-    color: 'text-emerald-600',
-    bg: 'bg-emerald-50',
-    border: 'border-emerald-100',
+    color: 'text-success-600',
+    bg: 'bg-success-50',
+    border: 'border-success-100',
   },
   {
     icon: Trophy,
@@ -100,8 +100,8 @@ const WHY_PILLARS = [
     icon: Target,
     title: 'Calibrated to your level',
     desc: 'Every AI story uses only vocabulary you\'re learning — so it\'s always challenging but never overwhelming.',
-    color: 'text-indigo-600',
-    bg: 'bg-indigo-100',
+    color: 'text-primary-600',
+    bg: 'bg-primary-100',
   },
   {
     icon: PenTool,
@@ -153,7 +153,7 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2 sm:gap-2.5">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-sm shadow-indigo-500/30">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary-600 flex items-center justify-center shadow-sm shadow-primary-500/30">
               <span className="text-white text-sm sm:text-base font-bold font-chinese">汉</span>
             </div>
             <span className="text-base sm:text-lg font-bold tracking-tight text-gray-900">HanziNarrative</span>
@@ -177,7 +177,7 @@ export default function Landing() {
             </Link>
             <Link
               to="/register"
-              className="inline-flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-sm shadow-indigo-500/20 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-sm shadow-primary-500/20 transition-colors whitespace-nowrap"
             >
               Get started free
               <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
@@ -189,12 +189,12 @@ export default function Landing() {
       {/* ══════════════════════════════════════════════════════════════════════
           HERO
       ══════════════════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary-50 via-white to-violet-50">
         {/* Floating background characters — hidden on mobile to prevent layout issues */}
         {FLOATS.map((f, i) => (
           <motion.span
             key={i}
-            className="absolute select-none pointer-events-none font-chinese font-bold text-indigo-900 hidden sm:block"
+            className="absolute select-none pointer-events-none font-chinese font-bold text-primary-900 hidden sm:block"
             style={{ top: f.top, left: f.left, fontSize: f.size, opacity: f.op }}
             animate={{ y: [0, -18, 0] }}
             transition={{ duration: f.dur, delay: f.del, repeat: Infinity, ease: 'easeInOut' }}
@@ -210,7 +210,7 @@ export default function Landing() {
             <div>
               {/* Badge */}
               <motion.div
-                className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-indigo-100 border border-indigo-200 text-indigo-700 text-xs sm:text-sm font-medium mb-5 sm:mb-7"
+                className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-primary-100 border border-primary-200 text-primary-700 text-xs sm:text-sm font-medium mb-5 sm:mb-7"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -228,7 +228,7 @@ export default function Landing() {
               >
                 Master Chinese
                 <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-violet-600">
                   through stories
                 </span>
               </motion.h1>
@@ -253,7 +253,7 @@ export default function Landing() {
               >
                 <Link
                   to="/register"
-                  className="inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3 sm:py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/25 transition-colors text-sm sm:text-base"
+                  className="inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3 sm:py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/25 transition-colors text-sm sm:text-base"
                 >
                   Start learning for free
                   <ArrowRight className="w-4 h-4" />
@@ -287,12 +287,12 @@ export default function Landing() {
             >
               <div className="relative">
                 {/* Glow */}
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-violet-500/20 rounded-3xl blur-3xl transform scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-violet-500/20 rounded-3xl blur-3xl transform scale-110" />
 
                 {/* Main card */}
-                <div className="relative bg-white rounded-2xl border border-gray-200 shadow-xl shadow-indigo-100 overflow-hidden">
+                <div className="relative bg-white rounded-2xl border border-gray-200 shadow-xl shadow-primary-100 overflow-hidden">
                   {/* Card header */}
-                  <div className="bg-gradient-to-r from-indigo-600 to-violet-600 px-5 md:px-6 py-4">
+                  <div className="bg-gradient-to-r from-primary-600 to-violet-600 px-5 md:px-6 py-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-white/70 text-xs font-medium mb-0.5">HSK 2 · AI Story</div>
@@ -316,11 +316,11 @@ export default function Landing() {
                           <span key={i} className="text-xl md:text-2xl text-gray-700 font-chinese">。</span>
                         ) : word.highlight ? (
                           <div key={i} className="group relative inline-flex flex-col items-center">
-                            <span className="text-xs text-indigo-500 font-medium mb-0.5">{word.pinyin}</span>
-                            <span className="px-1.5 md:px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded-lg text-xl md:text-2xl font-chinese font-medium cursor-pointer hover:bg-indigo-200 transition-colors">
+                            <span className="text-xs text-primary-500 font-medium mb-0.5">{word.pinyin}</span>
+                            <span className="px-1.5 md:px-2 py-0.5 bg-primary-100 text-primary-800 rounded-lg text-xl md:text-2xl font-chinese font-medium cursor-pointer hover:bg-primary-200 transition-colors">
                               {word.text}
                             </span>
-                            <span className="text-xs text-indigo-400 mt-0.5">{word.meaning}</span>
+                            <span className="text-xs text-primary-400 mt-0.5">{word.meaning}</span>
                           </div>
                         ) : (
                           <div key={i} className="inline-flex flex-col items-center">
@@ -351,7 +351,7 @@ export default function Landing() {
                     </div>
 
                     {/* Quiz hint */}
-                    <div className="mt-3 md:mt-4 flex items-center gap-2 text-xs text-indigo-500 font-medium">
+                    <div className="mt-3 md:mt-4 flex items-center gap-2 text-xs text-primary-500 font-medium">
                       <Target className="w-3.5 h-3.5" />
                       Quiz unlocks after you finish the story
                     </div>
@@ -375,16 +375,16 @@ export default function Landing() {
 
                 {/* Floating badge: accuracy */}
                 <motion.div
-                  className="absolute -top-4 -right-4 bg-white border border-emerald-200 rounded-xl px-3 md:px-4 py-2 md:py-2.5 shadow-lg flex items-center gap-2"
+                  className="absolute -top-4 -right-4 bg-white border border-success-200 rounded-xl px-3 md:px-4 py-2 md:py-2.5 shadow-lg flex items-center gap-2"
                   animate={{ y: [0, -6, 0] }}
                   transition={{ duration: 3.5, delay: 1, repeat: Infinity, ease: 'easeInOut' }}
                 >
-                  <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-emerald-100 flex items-center justify-center">
-                    <Zap className="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-600" />
+                  <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-success-100 flex items-center justify-center">
+                    <Zap className="w-3.5 h-3.5 md:w-4 md:h-4 text-success-600" />
                   </div>
                   <div>
                     <div className="text-xs text-gray-500">Quiz score</div>
-                    <div className="text-xs md:text-sm font-bold text-emerald-600">92% correct</div>
+                    <div className="text-xs md:text-sm font-bold text-success-600">92% correct</div>
                   </div>
                 </motion.div>
               </div>
@@ -401,7 +401,7 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 text-center">
           {STATS.map((s) => (
             <div key={s.label}>
-              <div className="text-2xl sm:text-3xl font-extrabold text-indigo-600">{s.value}</div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-primary-600">{s.value}</div>
               <div className="text-xs sm:text-sm text-gray-500 mt-1">{s.label}</div>
             </div>
           ))}
@@ -470,16 +470,16 @@ export default function Landing() {
                 ].map((row) => (
                   <div
                     key={row.method}
-                    className={`grid grid-cols-3 text-xs sm:text-sm border-b border-gray-100 last:border-0 ${row.highlight ? 'bg-indigo-50' : ''}`}
+                    className={`grid grid-cols-3 text-xs sm:text-sm border-b border-gray-100 last:border-0 ${row.highlight ? 'bg-primary-50' : ''}`}
                   >
-                    <div className={`px-4 sm:px-6 py-3 sm:py-4 font-medium ${row.highlight ? 'text-indigo-700' : 'text-gray-700'}`}>
+                    <div className={`px-4 sm:px-6 py-3 sm:py-4 font-medium ${row.highlight ? 'text-primary-700' : 'text-gray-700'}`}>
                       {row.highlight && <span className="mr-1.5">★</span>}
                       {row.method}
                     </div>
-                    <div className={`px-4 sm:px-6 py-3 sm:py-4 text-center font-semibold ${row.highlight ? 'text-indigo-600' : 'text-gray-500'}`}>
+                    <div className={`px-4 sm:px-6 py-3 sm:py-4 text-center font-semibold ${row.highlight ? 'text-primary-600' : 'text-gray-500'}`}>
                       {row.w1}
                     </div>
-                    <div className={`px-4 sm:px-6 py-3 sm:py-4 text-center font-semibold ${row.highlight ? 'text-indigo-600' : 'text-gray-500'}`}>
+                    <div className={`px-4 sm:px-6 py-3 sm:py-4 text-center font-semibold ${row.highlight ? 'text-primary-600' : 'text-gray-500'}`}>
                       {row.m1}
                     </div>
                   </div>
@@ -556,7 +556,7 @@ export default function Landing() {
               viewport={{ once: true }}
               transition={{ duration: 0.4 }}
             >
-              <span className="inline-block px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold mb-4">
+              <span className="inline-block px-3 py-1 rounded-full bg-success-100 text-success-700 text-xs font-semibold mb-4">
                 Free forever
               </span>
               <div className="flex items-baseline gap-1 mb-5 sm:mb-6">
@@ -566,14 +566,14 @@ export default function Landing() {
               <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
                 {FREE_FEATURES.map((f) => (
                   <li key={f} className="flex items-start gap-2 sm:gap-2.5 text-xs sm:text-sm text-gray-700">
-                    <CheckCircle className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-success-500 mt-0.5 shrink-0" />
                     {f}
                   </li>
                 ))}
               </ul>
               <Link
                 to="/register"
-                className="block w-full text-center py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors text-sm sm:text-base"
+                className="block w-full text-center py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-colors text-sm sm:text-base"
               >
                 Get started free
               </Link>
@@ -581,21 +581,21 @@ export default function Landing() {
 
             {/* Premium */}
             <motion.div
-              className="rounded-2xl border-2 border-indigo-400 bg-white p-6 sm:p-8 shadow-lg shadow-indigo-100 relative overflow-hidden"
+              className="rounded-2xl border-2 border-primary-400 bg-white p-6 sm:p-8 shadow-lg shadow-primary-100 relative overflow-hidden"
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4 }}
             >
               {/* Gradient accent */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-indigo-50 to-transparent" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary-50 to-transparent" />
 
               <div className="absolute top-4 right-4 flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 rounded-full bg-amber-100 border border-amber-200 text-amber-700 text-xs font-semibold">
                 <Star className="w-3 h-3" />
                 Coming soon
               </div>
 
-              <span className="inline-block px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold mb-4">
+              <span className="inline-block px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-xs font-semibold mb-4">
                 Premium
               </span>
               <div className="flex items-baseline gap-1 mb-5 sm:mb-6">
@@ -605,7 +605,7 @@ export default function Landing() {
               <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
                 {PREMIUM_FEATURES.map((f) => (
                   <li key={f} className="flex items-start gap-2 sm:gap-2.5 text-xs sm:text-sm text-gray-700">
-                    <Lock className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" />
+                    <Lock className="w-4 h-4 text-primary-400 mt-0.5 shrink-0" />
                     {f}
                   </li>
                 ))}
@@ -624,7 +624,7 @@ export default function Landing() {
       {/* ══════════════════════════════════════════════════════════════════════
           FINAL CTA
       ══════════════════════════════════════════════════════════════════════ */}
-      <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-br from-indigo-600 to-violet-700 relative overflow-hidden">
+      <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-br from-primary-600 to-violet-700 relative overflow-hidden">
         {/* BG decoration */}
         <div className="absolute inset-0 opacity-10 hidden sm:block">
           {['汉', '字', '学', '习', '中', '文'].map((c, i) => (
@@ -656,14 +656,14 @@ export default function Landing() {
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white mb-3 sm:mb-4">
             Ready to start your journey?
           </h2>
-          <p className="text-indigo-200 text-base sm:text-lg mb-8 sm:mb-10">
+          <p className="text-primary-200 text-base sm:text-lg mb-8 sm:mb-10">
             Join learners mastering Chinese through stories. Free, no card needed.
           </p>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4">
             <Link
               to="/register"
-              className="inline-flex items-center justify-center gap-2 px-8 sm:px-10 py-3.5 sm:py-4 bg-white hover:bg-gray-50 text-indigo-700 font-semibold rounded-xl shadow-lg transition-colors text-sm sm:text-base"
+              className="inline-flex items-center justify-center gap-2 px-8 sm:px-10 py-3.5 sm:py-4 bg-white hover:bg-gray-50 text-primary-700 font-semibold rounded-xl shadow-lg transition-colors text-sm sm:text-base"
             >
               Start learning for free
               <ArrowRight className="w-4 h-4" />
@@ -684,7 +684,7 @@ export default function Landing() {
       <footer className="border-t border-gray-100 py-6 sm:py-8 px-4 sm:px-6 bg-white">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-xs sm:text-sm text-gray-400">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-indigo-600 flex items-center justify-center">
+            <div className="w-6 h-6 rounded-md bg-primary-600 flex items-center justify-center">
               <span className="text-white text-xs font-bold font-chinese">汉</span>
             </div>
             <span className="font-semibold text-gray-600">HanziNarrative</span>

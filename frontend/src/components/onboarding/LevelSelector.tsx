@@ -32,14 +32,14 @@ const LevelSelector = ({ onTakeAssessment, onSkipAssessment }: LevelSelectorProp
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.15 }}
           onClick={onTakeAssessment}
-          className="group relative p-6 bg-indigo-50 border-2 border-indigo-200 rounded-2xl text-left hover:border-indigo-400 hover:shadow-lg transition-all"
+          className="group relative p-6 bg-primary-50 border-2 border-primary-200 rounded-2xl text-left hover:border-primary-400 hover:shadow-lg transition-all"
         >
           {/* Recommended badge */}
-          <div className="absolute -top-3 left-5 px-3 py-0.5 bg-indigo-600 text-white text-xs font-semibold rounded-full shadow">
+          <div className="absolute -top-3 left-5 px-3 py-0.5 bg-primary-600 text-white text-xs font-semibold rounded-full shadow">
             Recommended
           </div>
 
-          <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-105 transition-transform shadow-md shadow-indigo-500/25">
+          <div className="w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-105 transition-transform shadow-md shadow-primary-500/25">
             <GraduationCap className="w-6 h-6 text-white" />
           </div>
 
@@ -49,13 +49,13 @@ const LevelSelector = ({ onTakeAssessment, onSkipAssessment }: LevelSelectorProp
           <ul className="space-y-1.5 text-sm text-gray-700">
             {['Personalized placement', 'Adaptive difficulty', 'Earn XP while testing', 'Start at your true level'].map(b => (
               <li key={b} className="flex items-center gap-2">
-                <Check className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                <Check className="w-3.5 h-3.5 text-primary-500 shrink-0" />
                 {b}
               </li>
             ))}
           </ul>
 
-          <div className="mt-5 px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg text-center group-hover:bg-indigo-700 transition-colors">
+          <div className="mt-5 px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-lg text-center group-hover:bg-primary-700 transition-colors">
             Start Test
           </div>
         </motion.button>

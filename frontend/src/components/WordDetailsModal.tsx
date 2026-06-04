@@ -101,13 +101,13 @@ const hskLabel: Record<number, string> = {
 }
 
 const categoryColors: Record<string, string> = {
-  noun:        'bg-emerald-50 text-emerald-700 border-emerald-200',
+  noun:        'bg-success-50 text-success-700 border-success-200',
   verb:        'bg-blue-50 text-blue-700 border-blue-200',
   adjective:   'bg-purple-50 text-purple-700 border-purple-200',
   adverb:      'bg-orange-50 text-orange-700 border-orange-200',
   pronoun:     'bg-pink-50 text-pink-700 border-pink-200',
   particle:    'bg-gray-50 text-gray-600 border-gray-200',
-  preposition: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+  preposition: 'bg-primary-50 text-primary-700 border-primary-200',
   conjunction: 'bg-teal-50 text-teal-700 border-teal-200',
   number:      'bg-amber-50 text-amber-700 border-amber-200',
 }
@@ -116,7 +116,7 @@ function getCatStyle(cat?: string) {
   if (!cat) return ''
   return (
     categoryColors[cat.toLowerCase()] ??
-    'bg-indigo-50 text-indigo-700 border-indigo-200'
+    'bg-primary-50 text-primary-700 border-primary-200'
   )
 }
 
@@ -386,12 +386,12 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
 
                     {/* Traditional form */}
                     {word.traditional && word.traditional !== word.simplified && (
-                      <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-100">
-                        <p className="text-[10px] text-indigo-600 font-semibold uppercase tracking-widest mb-1">
+                      <div className="p-3 rounded-xl bg-primary-50 border border-primary-100">
+                        <p className="text-[10px] text-primary-600 font-semibold uppercase tracking-widest mb-1">
                           Traditional
                         </p>
                         <p
-                          className="text-2xl font-bold text-indigo-800 leading-none"
+                          className="text-2xl font-bold text-primary-800 leading-none"
                           style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
                         >
                           {word.traditional}

@@ -286,7 +286,7 @@ export default function WritingCanvas({
           <div className="flex items-center gap-3">
             <span className="text-4xl sm:text-5xl font-chinese">{character.simplified}</span>
             <div>
-              <div className="text-base sm:text-xl text-indigo-600 dark:text-indigo-400 font-semibold">
+              <div className="text-base sm:text-xl text-primary-600 dark:text-primary-400 font-semibold">
                 {character.pinyin}
               </div>
               <div className="text-sm sm:text-base text-gray-700 dark:text-gray-300">{character.english}</div>
@@ -310,7 +310,7 @@ export default function WritingCanvas({
         <div className="mt-3">
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
             <motion.div
-              className="bg-gradient-to-r from-indigo-500 to-indigo-600 h-2 rounded-full"
+              className="bg-gradient-to-r from-primary-500 to-primary-600 h-2 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.3 }}
@@ -348,8 +348,8 @@ export default function WritingCanvas({
               disabled={isAnimating}
               className={`flex-1 sm:flex-none rounded-xl px-3 sm:px-4 py-2.5 font-semibold cursor-pointer transition-colors flex items-center justify-center gap-2 text-sm ${
                 isAnimating
-                  ? 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400'
-                  : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                  ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400'
+                  : 'bg-primary-600 hover:bg-primary-700 text-white'
               }`}
             >
               <Play className="w-4 h-4" />
@@ -393,13 +393,13 @@ export default function WritingCanvas({
             exit={{ opacity: 0, y: -20, scale: 0.9 }}
           >
             <div className={`rounded-2xl shadow-sm p-4 sm:p-5 ${accuracy >= 80
-              ? 'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border border-green-200 dark:border-green-800'
+              ? 'bg-gradient-to-r from-success-50 to-success-50 dark:from-success-950/30 dark:to-success-950/30 border border-success-200 dark:border-success-800'
               : 'bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-950/30 dark:to-orange-950/30 border border-yellow-200 dark:border-yellow-800'
               }`}>
               <div className="flex items-center gap-3">
                 {accuracy >= 80 ? (
-                  <div className="p-2.5 bg-green-100 dark:bg-green-900/50 rounded-full flex-shrink-0">
-                    <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
+                  <div className="p-2.5 bg-success-100 dark:bg-success-900/50 rounded-full flex-shrink-0">
+                    <CheckCircle className="w-6 h-6 text-success-600 dark:text-success-400" />
                   </div>
                 ) : accuracy >= 60 ? (
                   <div className="p-2.5 bg-yellow-100 dark:bg-yellow-900/50 rounded-full flex-shrink-0">

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+﻿import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getSession, getUnitWords, Word, GrammarPoint, FillBlank } from '@/data/curriculum'
@@ -11,7 +11,7 @@ import {
 import { Skeleton } from '@/components/ui/Skeleton'
 import toast from 'react-hot-toast'
 
-// ── Step types ────────────────────────────────────────────────────────────────
+// â”€â”€ Step types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type StepIntro = { kind: 'intro'; word: Word }
 type StepGrammar = { kind: 'grammar'; point: GrammarPoint }
@@ -20,7 +20,7 @@ type StepMatch = { kind: 'match'; pairs: { zh: string; en: string }[] }
 type StepFill = { kind: 'fill'; fb: FillBlank }
 type Step = StepIntro | StepGrammar | StepMCQ | StepMatch | StepFill
 
-// ── Exercise generation ────────────────────────────────────────────────────────
+// â”€â”€ Exercise generation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5)
@@ -79,7 +79,7 @@ function generateSteps(
   return steps
 }
 
-// ── Sub-components ────────────────────────────────────────────────────────────
+// â”€â”€ Sub-components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function IntroCard({ step, onNext }: { step: StepIntro; onNext: () => void }) {
   const [playing, setPlaying] = useState(false)
@@ -95,14 +95,14 @@ function IntroCard({ step, onNext }: { step: StepIntro; onNext: () => void }) {
       className="flex flex-col items-center text-center gap-5 py-6"
     >
       <button onClick={play} disabled={playing}
-        className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 flex items-center justify-center hover:bg-indigo-100 transition-colors disabled:opacity-60"
+        className="w-16 h-16 rounded-2xl bg-primary-50 dark:bg-primary-950/40 flex items-center justify-center hover:bg-primary-100 transition-colors disabled:opacity-60"
       >
-        {playing ? <Loader2 className="w-5 h-5 text-indigo-500 animate-spin" /> : <Volume2 className="w-5 h-5 text-indigo-500" />}
+        {playing ? <Loader2 className="w-5 h-5 text-primary-500 animate-spin" /> : <Volume2 className="w-5 h-5 text-primary-500" />}
       </button>
 
       <div>
         <p className="font-chinese text-7xl font-bold text-gray-900 dark:text-gray-50">{step.word.zh}</p>
-        <p className="text-indigo-500 text-lg mt-2">{step.word.py}</p>
+        <p className="text-primary-500 text-lg mt-2">{step.word.py}</p>
         <p className="text-gray-600 dark:text-gray-300 text-xl font-semibold mt-1">{step.word.en}</p>
         {step.word.note && (
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 max-w-xs mx-auto italic">{step.word.note}</p>
@@ -110,7 +110,7 @@ function IntroCard({ step, onNext }: { step: StepIntro; onNext: () => void }) {
       </div>
 
       <button onClick={onNext}
-        className="mt-2 w-full max-w-xs py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors"
+        className="mt-2 w-full max-w-xs py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors"
       >
         Continue <ChevronRight className="w-4 h-4" />
       </button>
@@ -171,17 +171,17 @@ function MCQCard({ step, onCorrect, onWrong }: { step: StepMCQ; onCorrect: () =>
           const isSelected = selected === i
           const isCorrect = i === step.correct
           let cls = 'border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200'
-          if (isSelected && isCorrect) cls = 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
-          else if (isSelected && !isCorrect) cls = 'border-red-400 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300'
-          else if (selected !== null && isCorrect) cls = 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700'
+          if (isSelected && isCorrect) cls = 'border-success-500 bg-success-50 dark:bg-success-950/40 text-success-700 dark:text-success-300'
+          else if (isSelected && !isCorrect) cls = 'border-error-400 bg-error-50 dark:bg-error-950/40 text-error-700 dark:text-error-300'
+          else if (selected !== null && isCorrect) cls = 'border-success-500 bg-success-50 dark:bg-success-950/40 text-success-700'
 
           return (
             <button key={i} onClick={() => pick(i)}
               className={`w-full py-3 px-4 rounded-xl font-semibold text-sm flex items-center justify-between transition-all ${cls}`}
             >
               <span className="font-chinese text-lg">{opt}</span>
-              {selected !== null && isCorrect && <CheckCircle className="w-4 h-4 text-emerald-500" />}
-              {isSelected && !isCorrect && <X className="w-4 h-4 text-red-500" />}
+              {selected !== null && isCorrect && <CheckCircle className="w-4 h-4 text-success-500" />}
+              {isSelected && !isCorrect && <X className="w-4 h-4 text-error-500" />}
             </button>
           )
         })}
@@ -216,10 +216,10 @@ function MatchCard({ step, onNext }: { step: StepMatch; onNext: () => void }) {
   const btnCls = (val: string, side: 'l' | 'r') => {
     const zhKey = side === 'l' ? val : step.pairs.find(p => p.en === val)?.zh ?? ''
     const enKey = side === 'r' ? val : step.pairs.find(p => p.zh === val)?.en ?? ''
-    if (matched.has(val)) return 'border-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 opacity-60'
-    if (flash === zhKey || flash === enKey) return 'border-red-400 bg-red-50 dark:bg-red-950/30 text-red-600'
-    if (side === 'l' && leftSel === val) return 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300'
-    return 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:border-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/30'
+    if (matched.has(val)) return 'border-success-400 bg-success-50 dark:bg-success-950/40 text-success-700 dark:text-success-300 opacity-60'
+    if (flash === zhKey || flash === enKey) return 'border-error-400 bg-error-50 dark:bg-error-950/30 text-error-600'
+    if (side === 'l' && leftSel === val) return 'border-primary-500 bg-primary-50 dark:bg-primary-950/50 text-primary-700 dark:text-primary-300'
+    return 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:border-primary-300 hover:bg-primary-50 dark:hover:bg-primary-950/30'
   }
 
   return (
@@ -269,11 +269,11 @@ function FillCard({ step, onCorrect, onWrong }: { step: StepFill; onCorrect: () 
     else setTimeout(onWrong, 900)
   }
 
-  const highlighted = fb.sentence_zh.replace('___', '＿＿＿')
+  const highlighted = fb.sentence_zh.replace('___', 'ï¼¿ï¼¿ï¼¿')
 
   return (
     <motion.div key={fb.sentence_zh} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
-      <div className="bg-indigo-50 dark:bg-indigo-950/30 rounded-2xl p-4 text-center space-y-1">
+      <div className="bg-primary-50 dark:bg-primary-950/30 rounded-2xl p-4 text-center space-y-1">
         <p className="font-chinese text-2xl font-bold text-gray-900 dark:text-gray-100">{highlighted}</p>
         <p className="text-xs text-gray-400 italic">{fb.sentence_en}</p>
       </div>
@@ -283,9 +283,9 @@ function FillCard({ step, onCorrect, onWrong }: { step: StepFill; onCorrect: () 
           const isSel = selected === i
           const isCorr = i === fb.correct
           let cls = 'border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200'
-          if (isSel && isCorr) cls = 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700'
-          else if (isSel && !isCorr) cls = 'border-red-400 bg-red-50 dark:bg-red-950/40 text-red-700'
-          else if (selected !== null && isCorr) cls = 'border-emerald-500 bg-emerald-50 text-emerald-700'
+          if (isSel && isCorr) cls = 'border-success-500 bg-success-50 dark:bg-success-950/40 text-success-700'
+          else if (isSel && !isCorr) cls = 'border-error-400 bg-error-50 dark:bg-error-950/40 text-error-700'
+          else if (selected !== null && isCorr) cls = 'border-success-500 bg-success-50 text-success-700'
           return (
             <button key={i} onClick={() => pick(i)}
               className={`py-3 rounded-xl font-chinese text-xl font-bold transition-all ${cls}`}
@@ -297,7 +297,7 @@ function FillCard({ step, onCorrect, onWrong }: { step: StepFill; onCorrect: () 
   )
 }
 
-// ── Main Session Player ───────────────────────────────────────────────────────
+// â”€â”€ Main Session Player â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function LearningSession() {
   const { sessionId } = useParams<{ sessionId: string }>()
@@ -408,7 +408,7 @@ export default function LearningSession() {
   const sessionMeta = found?.session
   const unitMeta = found?.unit
 
-  // ── Completion screen ──
+  // â”€â”€ Completion screen â”€â”€
   if (done) {
     const total = correct + wrong
     const score = total > 0 ? Math.round((correct / total) * 100) : 100
@@ -436,7 +436,7 @@ export default function LearningSession() {
 
           <div>
             <h2 className="text-2xl font-extrabold text-gray-900 dark:text-gray-50">
-              {score >= 90 ? 'Sempurna! 🎉' : score >= 70 ? 'Bagus! 👍' : 'Selesai! 💪'}
+              {score >= 90 ? 'Sempurna! ðŸŽ‰' : score >= 70 ? 'Bagus! ðŸ‘' : 'Selesai! ðŸ’ª'}
             </h2>
             <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{sessionMeta?.title}</p>
           </div>
@@ -444,9 +444,9 @@ export default function LearningSession() {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-3">
             {[
-              { label: 'Skor',   value: `${score}%`,   color: score >= 70 ? 'text-emerald-600' : 'text-orange-600' },
-              { label: 'Benar', value: correct,         color: 'text-emerald-600' },
-              { label: 'Salah', value: wrong,           color: wrong > 0 ? 'text-red-500' : 'text-gray-400' },
+              { label: 'Skor',   value: `${score}%`,   color: score >= 70 ? 'text-success-600' : 'text-orange-600' },
+              { label: 'Benar', value: correct,         color: 'text-success-600' },
+              { label: 'Salah', value: wrong,           color: wrong > 0 ? 'text-error-500' : 'text-gray-400' },
             ].map(({ label, value, color }) => (
               <div key={label} className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-3 text-center">
                 <p className={`text-2xl font-extrabold ${color}`}>{value}</p>
@@ -468,15 +468,15 @@ export default function LearningSession() {
             </motion.div>
           )}
           {!isNew && (
-            <p className="text-xs text-gray-400">Session reviewed — no extra XP for repeats.</p>
+            <p className="text-xs text-gray-400">Session reviewed â€” no extra XP for repeats.</p>
           )}
 
-          {saving && <Loader2 className="w-5 h-5 animate-spin text-indigo-500 mx-auto" />}
+          {saving && <Loader2 className="w-5 h-5 animate-spin text-primary-500 mx-auto" />}
 
           <div className="flex flex-col gap-2">
             <button
               onClick={() => navigate('/path')}
-              className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors"
+              className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors"
             >
               <Trophy className="w-4 h-4" /> Kembali ke Kursus
             </button>
@@ -492,7 +492,7 @@ export default function LearningSession() {
     )
   }
 
-  // ── Active session ──
+  // â”€â”€ Active session â”€â”€
   const progress = steps.length > 0 ? (currentIdx / steps.length) * 100 : 0
   const step = steps[currentIdx]
 
@@ -506,7 +506,7 @@ export default function LearningSession() {
         {/* Progress bar */}
         <div className="flex-1 h-3 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-indigo-500 rounded-full"
+            className="h-full bg-primary-500 rounded-full"
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.3 }}
           />
@@ -516,8 +516,8 @@ export default function LearningSession() {
         </span>
       </div>
 
-      <div className="text-xs text-indigo-500 font-bold uppercase tracking-widest text-center mb-4">
-        {unitMeta?.subtitle} · {sessionMeta?.title}
+      <div className="text-xs text-primary-500 font-bold uppercase tracking-widest text-center mb-4">
+        {unitMeta?.subtitle} Â· {sessionMeta?.title}
       </div>
 
       {/* Exercise */}
@@ -533,3 +533,4 @@ export default function LearningSession() {
     </div>
   )
 }
+

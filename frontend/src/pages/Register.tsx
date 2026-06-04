@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { authApi } from '@/services/api'
 import { useAuthStore } from '@/store/authStore'
@@ -6,9 +6,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight, BookOpen, Sparkles, Trophy } from 'lucide-react'
 
 // ---------------------------------------------------------------------------
-// Floating character config — positions are fixed to avoid layout thrash
+// Floating character config â€” positions are fixed to avoid layout thrash
 // ---------------------------------------------------------------------------
-const FLOATING_CHARS = ['汉', '字', '学', '习', '中', '文', '语', '言', '故', '事', '你', '好']
+const FLOATING_CHARS = ['æ±‰', 'å­—', 'å­¦', 'ä¹ ', 'ä¸­', 'æ–‡', 'è¯­', 'è¨€', 'æ•…', 'äº‹', 'ä½ ', 'å¥½']
 
 interface FloatItem {
   char: string
@@ -53,9 +53,9 @@ interface StrengthResult {
 
 function getPasswordStrength(pwd: string): StrengthResult {
   if (pwd.length === 0) return { width: '0%',   colorClass: 'bg-gray-200', label: '' }
-  if (pwd.length < 6)   return { width: '33%',  colorClass: 'bg-red-500',    label: 'Weak' }
+  if (pwd.length < 6)   return { width: '33%',  colorClass: 'bg-error-500',    label: 'Weak' }
   if (pwd.length <= 10) return { width: '66%',  colorClass: 'bg-yellow-500', label: 'Fair' }
-  return                       { width: '100%', colorClass: 'bg-green-500',  label: 'Strong' }
+  return                       { width: '100%', colorClass: 'bg-success-500',  label: 'Strong' }
 }
 
 // ---------------------------------------------------------------------------
@@ -101,9 +101,9 @@ export default function Register() {
   return (
     <div className="min-h-screen flex bg-white dark:bg-gray-950">
       {/* ================================================================
-          LEFT DECORATIVE PANEL — hidden on mobile
+          LEFT DECORATIVE PANEL â€” hidden on mobile
       ================================================================ */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-emerald-600 via-teal-700 to-indigo-900 flex-col items-center justify-center px-12">
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-success-600 via-teal-700 to-primary-900 flex-col items-center justify-center px-12">
         {/* Floating Chinese characters */}
         {FLOAT_CONFIG.map((item, i) => (
           <motion.span
@@ -128,7 +128,7 @@ export default function Register() {
         ))}
 
         {/* Radial gradient overlay at bottom */}
-        <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/60 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-primary-900/60 via-transparent to-transparent pointer-events-none" />
 
         {/* Brand content */}
         <motion.div
@@ -144,13 +144,13 @@ export default function Register() {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 260, damping: 22, delay: 0.15 }}
           >
-            <span className="text-white text-5xl font-bold font-chinese">学</span>
+            <span className="text-white text-5xl font-bold font-chinese">å­¦</span>
           </motion.div>
 
           <h1 className="text-5xl font-extrabold text-white tracking-tight mb-3">
             Start Learning
           </h1>
-          <p className="text-emerald-100 text-lg font-medium mb-10">
+          <p className="text-success-100 text-lg font-medium mb-10">
             Begin your HSK journey today
           </p>
 
@@ -183,7 +183,7 @@ export default function Register() {
             transition={{ delay: 0.65 }}
           >
             <div className="h-px w-16 bg-white/30" />
-            <span className="text-white/50 text-sm tracking-widest uppercase">Free · No credit card</span>
+            <span className="text-white/50 text-sm tracking-widest uppercase">Free Â· No credit card</span>
             <div className="h-px w-16 bg-white/30" />
           </motion.div>
         </motion.div>
@@ -206,8 +206,8 @@ export default function Register() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center shadow-md">
-              <span className="text-white text-lg font-bold font-chinese">学</span>
+            <div className="w-10 h-10 rounded-xl bg-success-600 flex items-center justify-center shadow-md">
+              <span className="text-white text-lg font-bold font-chinese">å­¦</span>
             </div>
             <span className="text-xl font-bold text-gray-900 dark:text-gray-100">HanziNarrative</span>
           </motion.div>
@@ -238,7 +238,7 @@ export default function Register() {
                   exit={{ opacity: 0, height: 0 }}
                   className="overflow-hidden"
                 >
-                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-xl text-sm">
+                  <div className="bg-error-50 dark:bg-error-900/20 border border-error-200 dark:border-error-800 text-error-700 dark:text-error-400 px-4 py-3 rounded-xl text-sm">
                     {error}
                   </div>
                 </motion.div>
@@ -266,7 +266,7 @@ export default function Register() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Choose a username"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 />
               </div>
             </motion.div>
@@ -292,7 +292,7 @@ export default function Register() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 />
               </div>
             </motion.div>
@@ -318,7 +318,7 @@ export default function Register() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Create a password"
-                  className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
@@ -378,7 +378,7 @@ export default function Register() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Repeat your password"
-                  className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
@@ -396,8 +396,8 @@ export default function Register() {
                   <motion.p
                     className={`mt-1.5 text-xs ${
                       password === confirmPassword
-                        ? 'text-green-600 dark:text-green-400'
-                        : 'text-red-500 dark:text-red-400'
+                        ? 'text-success-600 dark:text-success-400'
+                        : 'text-error-500 dark:text-error-400'
                     }`}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -419,14 +419,14 @@ export default function Register() {
               <motion.button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-md shadow-indigo-500/25 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-md shadow-primary-500/25 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors"
                 whileHover={{ scale: loading ? 1 : 1.01 }}
                 whileTap={{ scale: loading ? 1 : 0.98 }}
               >
                 {loading ? (
                   <>
                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Creating account…
+                    Creating accountâ€¦
                   </>
                 ) : (
                   <>
@@ -447,7 +447,7 @@ export default function Register() {
               Already have an account?{' '}
               <Link
                 to="/login"
-                className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-semibold transition-colors"
+                className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold transition-colors"
               >
                 Sign in
               </Link>
@@ -458,3 +458,4 @@ export default function Register() {
     </div>
   )
 }
+

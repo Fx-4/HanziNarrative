@@ -24,7 +24,7 @@ export default function FlashcardFront({ word }: FlashcardFrontProps) {
       >
         {/* Chinese Character */}
         <motion.h3
-          className="text-5xl sm:text-6xl md:text-7xl font-bold mb-2 text-indigo-900"
+          className="text-5xl sm:text-6xl md:text-7xl font-bold mb-2 text-primary-900"
           style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
           whileHover={{ scale: 1.05 }}
         >
@@ -47,13 +47,13 @@ export default function FlashcardFront({ word }: FlashcardFrontProps) {
           animate={{ y: [0, -4, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <div className="w-6 h-6 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center">
-            <svg className="w-3 h-3 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-6 h-6 rounded-full bg-primary-100 border border-primary-200 flex items-center justify-center">
+            <svg className="w-3 h-3 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
           </div>
-          <span className="text-xs text-indigo-400 font-medium">Tap to reveal</span>
+          <span className="text-xs text-primary-400 font-medium">Tap to reveal</span>
         </motion.div>
       </motion.div>
     </motion.div>

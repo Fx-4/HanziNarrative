@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HanziWord } from '@/types'
 import { vocabularyApi } from '@/services/api'
@@ -85,7 +85,7 @@ export default function StrokeOrderLookup() {
                 value={inputValue}
                 onChange={e => { setInputValue(e.target.value); setError(null) }}
                 onKeyDown={handleKeyDown}
-                placeholder="Ketik hanzi, misal: 你好学"
+                placeholder="Ketik hanzi, misal: ä½ å¥½å­¦"
                 className="w-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-3 text-xl font-chinese text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 pr-10"
               />
               {inputValue && (
@@ -107,7 +107,7 @@ export default function StrokeOrderLookup() {
           </div>
 
           {error && (
-            <p className="mt-2 text-sm text-red-500">{error}</p>
+            <p className="mt-2 text-sm text-error-500">{error}</p>
           )}
 
           {/* Character selector when input has multiple chars */}
@@ -156,7 +156,7 @@ export default function StrokeOrderLookup() {
                     <div className="w-full rounded-2xl border border-teal-100 dark:border-teal-900/40 bg-teal-50/50 dark:bg-teal-950/20 p-4 space-y-2">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-lg font-bold text-teal-700 dark:text-teal-400 font-chinese">{wordInfo.pinyin}</span>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300">
                           HSK {wordInfo.hsk_level}
                         </span>
                         {wordInfo.strokes && (
@@ -193,3 +193,4 @@ export default function StrokeOrderLookup() {
     </motion.div>
   )
 }
+

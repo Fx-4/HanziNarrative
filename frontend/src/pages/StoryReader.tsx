@@ -435,7 +435,7 @@ export default function StoryReader() {
           >
             <div className="flex justify-between items-center mb-6 sticky top-0 bg-white pb-4 border-b">
               <div className="flex items-center gap-2">
-                <BookMarked className="w-5 h-5 text-indigo-600" />
+                <BookMarked className="w-5 h-5 text-primary-600" />
                 <h3 className="text-lg font-bold">Vocabulary List</h3>
               </div>
               <button
@@ -463,8 +463,8 @@ export default function StoryReader() {
                     onClick={() => setSelectedChar(isExpanded ? null : char)}
                     className={`p-4 rounded-2xl cursor-pointer transition-all border-2 ${
                       isExpanded
-                        ? 'bg-indigo-100 border-indigo-500 shadow-lg'
-                        : 'bg-gradient-to-r from-gray-50 to-indigo-50 hover:from-indigo-100 hover:to-purple-100 border-gray-200 hover:border-indigo-300'
+                        ? 'bg-primary-100 border-primary-500 shadow-lg'
+                        : 'bg-gradient-to-r from-gray-50 to-primary-50 hover:from-primary-100 hover:to-purple-100 border-gray-200 hover:border-primary-300'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -472,11 +472,11 @@ export default function StoryReader() {
                         <span className="text-4xl font-bold text-gray-900">
                           {char}
                         </span>
-                        <span className="text-lg text-indigo-600 font-semibold">
+                        <span className="text-lg text-primary-600 font-semibold">
                           {charPinyin}
                         </span>
                       </div>
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-primary-100 text-primary-700">
                         #{idx + 1}
                       </span>
                     </div>
@@ -489,7 +489,7 @@ export default function StoryReader() {
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        className="mt-4 pt-4 border-t border-indigo-300"
+                        className="mt-4 pt-4 border-t border-primary-300"
                       >
                         <div className="space-y-3">
                           <div>
@@ -498,7 +498,7 @@ export default function StoryReader() {
                           </div>
                           <div>
                             <p className="text-xs font-semibold text-gray-600 mb-1">Pinyin:</p>
-                            <p className="text-base text-indigo-700">{charPinyin}</p>
+                            <p className="text-base text-primary-700">{charPinyin}</p>
                           </div>
                           <div>
                             <p className="text-xs font-semibold text-gray-600 mb-1">Meaning:</p>
@@ -514,7 +514,7 @@ export default function StoryReader() {
                                 navigate(`/vocabulary?search=${char}`)
                                 toast.success('Opening vocabulary page...')
                               }}
-                              className="w-full bg-gray-100 hover:bg-indigo-50 text-gray-700 hover:text-indigo-700 rounded-2xl px-4 py-2 font-semibold cursor-pointer transition-colors text-sm"
+                              className="w-full bg-gray-100 hover:bg-primary-50 text-gray-700 hover:text-primary-700 rounded-2xl px-4 py-2 font-semibold cursor-pointer transition-colors text-sm"
                             >
                               View in Vocabulary
                             </button>
@@ -569,9 +569,9 @@ export default function StoryReader() {
                         disabled={showResults}
                         className={`w-full text-left p-3 rounded-xl border-2 transition-all ${
                           showAnswer && isCorrect
-                            ? 'border-green-500 bg-green-50'
+                            ? 'border-green-500 bg-success-50'
                             : showAnswer && isSelected && !isCorrect
-                            ? 'border-red-500 bg-red-50'
+                            ? 'border-error-500 bg-error-50'
                             : isSelected
                             ? 'border-purple-500 bg-purple-50'
                             : 'border-gray-200 hover:border-purple-300 hover:bg-gray-50'
@@ -581,9 +581,9 @@ export default function StoryReader() {
                           <div
                             className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${
                               showAnswer && isCorrect
-                                ? 'border-green-500 bg-green-500'
+                                ? 'border-green-500 bg-success-500'
                                 : showAnswer && isSelected && !isCorrect
-                                ? 'border-red-500 bg-red-500'
+                                ? 'border-error-500 bg-error-500'
                                 : isSelected
                                 ? 'border-purple-500 bg-purple-500'
                                 : 'border-gray-300'
@@ -626,7 +626,7 @@ export default function StoryReader() {
           {!showResults && (
             <button
               onClick={handleSubmitQuiz}
-              className="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors"
+              className="mt-6 w-full bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors"
             >
               Submit Quiz
             </button>
@@ -639,7 +639,7 @@ export default function StoryReader() {
                   setQuizAnswers([])
                   setShowResults(false)
                 }}
-                className="bg-gray-100 hover:bg-indigo-50 text-gray-700 hover:text-indigo-700 rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors"
+                className="bg-gray-100 hover:bg-primary-50 text-gray-700 hover:text-primary-700 rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors"
               >
                 Retry Quiz
               </button>
@@ -664,7 +664,7 @@ export default function StoryReader() {
         <p className="text-gray-600 text-lg">Story not found</p>
         <button
           onClick={() => navigate('/stories')}
-          className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors"
+          className="mt-4 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors"
         >
           Back to Stories
         </button>
@@ -684,7 +684,7 @@ export default function StoryReader() {
         <div className="flex items-center justify-between mb-4 gap-2">
           <button
             onClick={() => navigate('/stories')}
-            className="flex items-center gap-1.5 text-gray-600 hover:text-indigo-600 font-medium px-3 py-2 rounded-2xl hover:bg-indigo-50 cursor-pointer transition-colors text-sm sm:text-base"
+            className="flex items-center gap-1.5 text-gray-600 hover:text-primary-600 font-medium px-3 py-2 rounded-2xl hover:bg-primary-50 cursor-pointer transition-colors text-sm sm:text-base"
           >
             <ArrowLeft className="w-4 h-4 shrink-0" />
             <span className="hidden sm:inline">Back to Stories</span>
@@ -693,7 +693,7 @@ export default function StoryReader() {
 
           <button
             onClick={handleDeleteStory}
-            className="flex items-center gap-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 font-medium px-3 py-2 rounded-2xl cursor-pointer transition-colors text-sm sm:text-base"
+            className="flex items-center gap-1.5 text-error-600 hover:text-error-700 hover:bg-error-50 font-medium px-3 py-2 rounded-2xl cursor-pointer transition-colors text-sm sm:text-base"
           >
             <Trash2 className="w-4 h-4 shrink-0" />
             <span className="hidden sm:inline">Delete Story</span>
@@ -712,15 +712,15 @@ export default function StoryReader() {
             </p>
           )}
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-700">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-primary-100 text-primary-700">
               HSK {story.hsk_level}
             </span>
             {(story.category ?? 'curated') === 'ai_generated' ? (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-700">
                 ✨ AI Generated
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700">
                 📚 Curated
               </span>
             )}
@@ -728,14 +728,14 @@ export default function StoryReader() {
         </div>
 
         {/* Interactive Controls */}
-        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6">
+        <div className="bg-gradient-to-r from-primary-50 to-purple-50 rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6">
           <div className="flex flex-wrap gap-2 sm:gap-3">
             <button
               onClick={() => setShowPinyin(!showPinyin)}
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
                 showPinyin
-                  ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                  : 'bg-white hover:bg-indigo-50 text-gray-700 hover:text-indigo-700 border border-gray-200'
+                  ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                  : 'bg-white hover:bg-primary-50 text-gray-700 hover:text-primary-700 border border-gray-200'
               }`}
             >
               <Type className="w-4 h-4 shrink-0" />
@@ -746,8 +746,8 @@ export default function StoryReader() {
               onClick={() => setShowTranslation(!showTranslation)}
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
                 showTranslation
-                  ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                  : 'bg-white hover:bg-indigo-50 text-gray-700 hover:text-indigo-700 border border-gray-200'
+                  ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                  : 'bg-white hover:bg-primary-50 text-gray-700 hover:text-primary-700 border border-gray-200'
               }`}
             >
               {showTranslation
@@ -760,8 +760,8 @@ export default function StoryReader() {
               onClick={handleReadAloud}
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
                 isReading
-                  ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                  : 'bg-white hover:bg-indigo-50 text-gray-700 hover:text-indigo-700 border border-gray-200'
+                  ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                  : 'bg-white hover:bg-primary-50 text-gray-700 hover:text-primary-700 border border-gray-200'
               }`}
             >
               {isReading
@@ -774,8 +774,8 @@ export default function StoryReader() {
               onClick={() => setShowVocabulary(!showVocabulary)}
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
                 showVocabulary
-                  ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                  : 'bg-white hover:bg-indigo-50 text-gray-700 hover:text-indigo-700 border border-gray-200'
+                  ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                  : 'bg-white hover:bg-primary-50 text-gray-700 hover:text-primary-700 border border-gray-200'
               }`}
             >
               <BookMarked className="w-4 h-4 shrink-0" />
@@ -792,8 +792,8 @@ export default function StoryReader() {
               disabled={loadingQuiz}
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm disabled:opacity-60 disabled:cursor-not-allowed ${
                 showQuiz
-                  ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                  : 'bg-white hover:bg-indigo-50 text-gray-700 hover:text-indigo-700 border border-gray-200'
+                  ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                  : 'bg-white hover:bg-primary-50 text-gray-700 hover:text-primary-700 border border-gray-200'
               }`}
             >
               <HelpCircle className="w-4 h-4 shrink-0" />
@@ -824,7 +824,7 @@ export default function StoryReader() {
       >
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-6">
           {/* Accent bar */}
-          <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
+          <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
           <div className="p-4 sm:p-6 md:p-8">
             <div className="flex items-center gap-2 text-gray-500 mb-6">
               <BookOpen className="w-5 h-5 shrink-0" />

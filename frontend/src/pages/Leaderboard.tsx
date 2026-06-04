@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Trophy, Medal, TrendingUp, Zap, Target, Award,
@@ -37,8 +37,8 @@ type PeriodType = 'all_time' | 'weekly'
 const METRICS = [
   { id: 'total_xp'             as MetricType, label: 'XP',       Icon: Trophy, color: 'from-violet-500 to-purple-600',  ring: 'ring-violet-400' },
   { id: 'current_streak'       as MetricType, label: 'Streak',   Icon: Zap,    color: 'from-orange-400 to-rose-500',    ring: 'ring-orange-400' },
-  { id: 'accuracy_rate'        as MetricType, label: 'Accuracy', Icon: Target, color: 'from-emerald-400 to-teal-500',   ring: 'ring-emerald-400' },
-  { id: 'total_words_reviewed' as MetricType, label: 'Words',    Icon: Award,  color: 'from-indigo-500 to-blue-600',    ring: 'ring-indigo-400' },
+  { id: 'accuracy_rate'        as MetricType, label: 'Accuracy', Icon: Target, color: 'from-success-400 to-teal-500',   ring: 'ring-success-400' },
+  { id: 'total_words_reviewed' as MetricType, label: 'Words',    Icon: Award,  color: 'from-primary-500 to-blue-600',    ring: 'ring-primary-400' },
 ]
 
 const PERIODS: { id: PeriodType; label: string; Icon: React.ElementType }[] = [
@@ -82,10 +82,10 @@ function getMetricValue(entry: LeaderboardEntry, metric: MetricType | 'words_thi
 function Avatar({ entry, size = 'md' }: { entry: LeaderboardEntry; size?: 'sm' | 'md' | 'lg' }) {
   const sizes = { sm: 'w-9 h-9 text-sm', md: 'w-12 h-12 text-base', lg: 'w-16 h-16 text-xl' }
   return (
-    <div className={`${sizes[size]} rounded-2xl bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center overflow-hidden shrink-0 shadow-sm`}>
+    <div className={`${sizes[size]} rounded-2xl bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center overflow-hidden shrink-0 shadow-sm`}>
       {entry.profile_picture
         ? <img src={entry.profile_picture} alt={entry.username} className="w-full h-full object-cover" />
-        : <span className="font-bold text-indigo-600 dark:text-indigo-400">{entry.username.charAt(0).toUpperCase()}</span>
+        : <span className="font-bold text-primary-600 dark:text-primary-400">{entry.username.charAt(0).toUpperCase()}</span>
       }
     </div>
   )
@@ -114,10 +114,10 @@ function PodiumCard({
       transition={{ delay }}
       className={`flex flex-col items-center gap-2 ${rank === 1 ? 'scale-105' : ''}`}
     >
-      <div className={`${rank === 1 ? 'w-16 h-16' : 'w-12 h-12'} rounded-2xl overflow-hidden ring-2 ${isMe ? 'ring-indigo-400' : c.ringColor} shadow-lg bg-white dark:bg-gray-800 flex items-center justify-center`}>
+      <div className={`${rank === 1 ? 'w-16 h-16' : 'w-12 h-12'} rounded-2xl overflow-hidden ring-2 ${isMe ? 'ring-primary-400' : c.ringColor} shadow-lg bg-white dark:bg-gray-800 flex items-center justify-center`}>
         {entry.profile_picture
           ? <img src={entry.profile_picture} alt={entry.username} className="w-full h-full object-cover" />
-          : <span className={`font-bold ${rank === 1 ? 'text-2xl' : 'text-lg'} text-indigo-600 dark:text-indigo-400`}>{entry.username.charAt(0).toUpperCase()}</span>
+          : <span className={`font-bold ${rank === 1 ? 'text-2xl' : 'text-lg'} text-primary-600 dark:text-primary-400`}>{entry.username.charAt(0).toUpperCase()}</span>
         }
       </div>
       <div className={`w-7 h-7 rounded-xl bg-gradient-to-br ${c.badgeGrad} flex items-center justify-center shadow-md`}>
@@ -125,9 +125,9 @@ function PodiumCard({
       </div>
       <p className={`${rank === 1 ? 'text-sm font-extrabold' : 'text-xs font-semibold'} text-gray-800 dark:text-gray-200 text-center max-w-[72px] truncate`}>
         {entry.full_name || entry.username}
-        {isMe && <span className="block text-[10px] text-indigo-500">You</span>}
+        {isMe && <span className="block text-[10px] text-primary-500">You</span>}
       </p>
-      <p className={`text-xs font-bold ${rank === 1 ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400'}`}>
+      <p className={`text-xs font-bold ${rank === 1 ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400'}`}>
         {getMetricValue(entry, metric)}
       </p>
     </motion.div>
@@ -236,21 +236,21 @@ export default function Leaderboard() {
     const end = new Date(start)
     end.setDate(end.getDate() + 6)
     const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    return `${fmt(start)} – ${fmt(end)}`
+    return `${fmt(start)} â€“ ${fmt(end)}`
   })()
 
   return (
     <div className="max-w-3xl mx-auto px-4 pb-16 space-y-5">
 
-      {/* ── Header ──────────────────────────────────────────────────────── */}
+      {/* â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden"
       >
-        <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-600" />
+        <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-purple-600" />
         <div className="px-6 py-5 flex items-center gap-4">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 shrink-0">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary-500 to-violet-600 flex items-center justify-center shadow-lg shadow-primary-500/20 shrink-0">
             <Trophy className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
@@ -260,7 +260,7 @@ export default function Leaderboard() {
         </div>
       </motion.div>
 
-      {/* ── Period Tabs ──────────────────────────────────────────────────── */}
+      {/* â”€â”€ Period Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -273,20 +273,20 @@ export default function Leaderboard() {
             onClick={() => setPeriod(id)}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all ${
               period === id
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
+                ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
                 : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'
             }`}
           >
             <Icon className="w-4 h-4" />
             {label}
             {id === 'weekly' && period === 'weekly' && data && (
-              <span className="text-xs opacity-70 hidden sm:inline">· {weekLabel}</span>
+              <span className="text-xs opacity-70 hidden sm:inline">Â· {weekLabel}</span>
             )}
           </button>
         ))}
       </motion.div>
 
-      {/* ── Metric Selector (all_time only) ─────────────────────────────── */}
+      {/* â”€â”€ Metric Selector (all_time only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <AnimatePresence mode="wait">
         {period === 'all_time' && (
           <motion.div
@@ -306,7 +306,7 @@ export default function Leaderboard() {
                   className={`rounded-2xl p-3 text-center transition-all ${
                     active
                       ? `bg-gradient-to-br ${color} text-white shadow-lg ring-2 ${ring} ring-offset-1`
-                      : 'bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-gray-600 dark:text-gray-400 hover:border-indigo-200 dark:hover:border-indigo-700 hover:text-indigo-600 dark:hover:text-indigo-400'
+                      : 'bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-gray-600 dark:text-gray-400 hover:border-primary-200 dark:hover:border-primary-700 hover:text-primary-600 dark:hover:text-primary-400'
                   }`}
                 >
                   <Icon className="w-5 h-5 mx-auto mb-1" />
@@ -324,14 +324,14 @@ export default function Leaderboard() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="flex items-center gap-3 bg-indigo-50 dark:bg-indigo-950/30 rounded-2xl px-4 py-3 border border-indigo-100 dark:border-indigo-900/50 overflow-hidden"
+            className="flex items-center gap-3 bg-primary-50 dark:bg-primary-950/30 rounded-2xl px-4 py-3 border border-primary-100 dark:border-primary-900/50 overflow-hidden"
           >
-            <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-primary-600 flex items-center justify-center shrink-0">
               <BookOpen className="w-4 h-4 text-white" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-indigo-800 dark:text-indigo-300">Words Reviewed This Week</p>
-              <p className="text-xs text-indigo-500 dark:text-indigo-400 flex items-center gap-1">
+              <p className="text-sm font-semibold text-primary-800 dark:text-primary-300">Words Reviewed This Week</p>
+              <p className="text-xs text-primary-500 dark:text-primary-400 flex items-center gap-1">
                 <Clock className="w-3 h-3" /> Resets every Monday
               </p>
             </div>
@@ -339,7 +339,7 @@ export default function Leaderboard() {
         )}
       </AnimatePresence>
 
-      {/* ── Your Rank Banner ────────────────────────────────────────────── */}
+      {/* â”€â”€ Your Rank Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {data && !loading && (
         <motion.div
           key={`rank-${period}-${selectedMetric}`}
@@ -373,18 +373,18 @@ export default function Leaderboard() {
         </motion.div>
       )}
 
-      {/* ── Leaderboard List ────────────────────────────────────────────── */}
+      {/* â”€â”€ Leaderboard List â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {loading ? (
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-12 flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-          <p className="text-sm text-gray-400">{loadingMessage || 'Loading leaderboard…'}</p>
+          <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
+          <p className="text-sm text-gray-400">{loadingMessage || 'Loading leaderboardâ€¦'}</p>
         </div>
       ) : error ? (
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-10 text-center">
-          <p className="text-sm text-red-500 mb-4">{error}</p>
+          <p className="text-sm text-error-500 mb-4">{error}</p>
           <button
             onClick={fetchLeaderboard}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors"
           >
             <RotateCcw className="w-4 h-4" /> Try Again
           </button>
@@ -398,7 +398,7 @@ export default function Leaderboard() {
           className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden"
         >
           {/* Podium (top 3) */}
-          <div className="bg-gradient-to-br from-indigo-50 via-violet-50 to-purple-50 dark:from-indigo-950/20 dark:via-violet-950/20 dark:to-purple-950/20 border-b border-indigo-100 dark:border-indigo-900/30 px-6 py-6">
+          <div className="bg-gradient-to-br from-primary-50 via-violet-50 to-purple-50 dark:from-primary-950/20 dark:via-violet-950/20 dark:to-purple-950/20 border-b border-primary-100 dark:border-primary-900/30 px-6 py-6">
             <div className="flex items-end justify-center gap-4">
               {/* 2nd */}
               {data.leaderboard[1] && (
@@ -429,7 +429,7 @@ export default function Leaderboard() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 + i * 0.025 }}
                   className={`flex items-center gap-3 px-5 py-3.5 transition-colors ${
-                    isMe ? 'bg-indigo-50 dark:bg-indigo-950/20' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                    isMe ? 'bg-primary-50 dark:bg-primary-950/20' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'
                   }`}
                 >
                   {getRankBadge(entry.rank)}
@@ -437,11 +437,11 @@ export default function Leaderboard() {
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm text-gray-900 dark:text-gray-100 truncate">
                       {entry.full_name || entry.username}
-                      {isMe && <span className="ml-2 text-xs text-indigo-500 font-semibold">(You)</span>}
+                      {isMe && <span className="ml-2 text-xs text-primary-500 font-semibold">(You)</span>}
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500">Lv {entry.level}</p>
                   </div>
-                  <p className={`text-sm font-extrabold ${isMe ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                  <p className={`text-sm font-extrabold ${isMe ? 'text-primary-600 dark:text-primary-400' : 'text-gray-700 dark:text-gray-300'}`}>
                     {getMetricValue(entry, displayMetric)}
                   </p>
                 </motion.div>
@@ -453,8 +453,8 @@ export default function Leaderboard() {
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-12 text-center">
           {period === 'weekly' ? (
             <>
-              <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 flex items-center justify-center mx-auto mb-4">
-                <Calendar className="w-7 h-7 text-indigo-400" />
+              <div className="w-14 h-14 rounded-2xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center mx-auto mb-4">
+                <Calendar className="w-7 h-7 text-primary-400" />
               </div>
               <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">No activity yet this week</p>
               <p className="text-xs text-gray-400">Be the first to practice and claim #1!</p>
@@ -468,3 +468,5 @@ export default function Leaderboard() {
     </div>
   )
 }
+
+

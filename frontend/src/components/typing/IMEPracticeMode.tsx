@@ -141,7 +141,7 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
         <p className="text-gray-600">No words available for this HSK level.</p>
         <button
           onClick={onBack}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors mt-4"
+          className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors mt-4"
         >
           Go Back
         </button>
@@ -184,7 +184,7 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
             value={inputValue}
             onChange={handleInputChange}
             placeholder="Type pinyin..."
-            className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-indigo-500 focus:outline-none transition-colors"
+            className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-primary-500 focus:outline-none transition-colors"
             disabled={showFeedback}
             autoComplete="off"
           />
@@ -204,7 +204,7 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: index * 0.05 }}
                     onClick={() => handleCandidateSelect(candidate)}
-                    className="text-4xl font-chinese h-20 bg-white border-2 border-gray-300 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all active:scale-95 cursor-pointer"
+                    className="text-4xl font-chinese h-20 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-all active:scale-95 cursor-pointer"
                   >
                     {candidate}
                   </motion.button>
@@ -221,21 +221,21 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
             >
               <div className={`p-6 rounded-lg ${
                 isCorrect
-                  ? 'bg-green-50 border-2 border-green-200'
-                  : 'bg-red-50 border-2 border-red-200'
+                  ? 'bg-success-50 border-2 border-success-200'
+                  : 'bg-error-50 border-2 border-error-200'
               }`}>
                 <div className="flex items-center justify-center gap-3 mb-4">
                   {isCorrect ? (
                     <>
-                      <CheckCircle className="w-8 h-8 text-green-600" />
-                      <span className="text-2xl font-semibold text-green-900">
+                      <CheckCircle className="w-8 h-8 text-success-600" />
+                      <span className="text-2xl font-semibold text-success-900">
                         {attempts === 1 ? 'Perfect!' : 'Correct!'}
                       </span>
                     </>
                   ) : (
                     <>
-                      <XCircle className="w-8 h-8 text-red-600" />
-                      <span className="text-2xl font-semibold text-red-900">Incorrect</span>
+                      <XCircle className="w-8 h-8 text-error-600" />
+                      <span className="text-2xl font-semibold text-error-900">Incorrect</span>
                     </>
                   )}
                 </div>
@@ -248,7 +248,7 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
               </div>
               <button
                 onClick={handleNext}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-3 font-semibold cursor-pointer transition-colors w-full mt-4 flex items-center justify-center text-lg"
+                className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-3 font-semibold cursor-pointer transition-colors w-full mt-4 flex items-center justify-center text-lg"
               >
                 {currentIndex < words.length - 1 ? (
                   <>
@@ -275,7 +275,7 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div
-            className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+            className="bg-primary-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${((currentIndex + (showFeedback ? 1 : 0)) / words.length) * 100}%` }}
           />
         </div>

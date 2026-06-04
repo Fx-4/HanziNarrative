@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+﻿import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -13,7 +13,7 @@ import {
 import { adminApi } from '@/services/api'
 import { useAuthStore } from '@/store/authStore'
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+// â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface SystemStats {
   total_users: number
@@ -62,7 +62,7 @@ type Tab = 'overview' | 'users' | 'stories' | 'ai-usage' | 'trash'
 
 const HSK_COLORS = ['#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
 
-// ── Small helpers ──────────────────────────────────────────────────────────────
+// â”€â”€ Small helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function StatCard({ label, value, sub, color }: {
   label: string
@@ -85,10 +85,10 @@ function StatCard({ label, value, sub, color }: {
 
 function Badge({ children, variant }: { children: React.ReactNode; variant: 'success' | 'muted' | 'warn' | 'info' }) {
   const cls = {
-    success: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400',
+    success: 'bg-success-100 text-success-700 dark:bg-success-900/40 dark:text-success-400',
     muted: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
     warn: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
-    info: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-400',
+    info: 'bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-400',
   }[variant]
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${cls}`}>
@@ -144,7 +144,7 @@ function ConfirmModal({ message, onConfirm, onCancel }: {
         className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-sm w-full shadow-2xl"
       >
         <div className="flex items-center gap-3 mb-4">
-          <AlertTriangle className="w-6 h-6 text-red-500 shrink-0" />
+          <AlertTriangle className="w-6 h-6 text-error-500 shrink-0" />
           <p className="text-gray-900 dark:text-gray-100 font-medium">{message}</p>
         </div>
         <div className="flex gap-3 justify-end">
@@ -156,7 +156,7 @@ function ConfirmModal({ message, onConfirm, onCancel }: {
           </button>
           <button
             onClick={onConfirm}
-            className="px-4 py-2 rounded-xl text-sm font-medium bg-red-600 text-white hover:bg-red-700 cursor-pointer transition-colors"
+            className="px-4 py-2 rounded-xl text-sm font-medium bg-error-600 text-white hover:bg-error-700 cursor-pointer transition-colors"
           >
             Delete
           </button>
@@ -166,7 +166,7 @@ function ConfirmModal({ message, onConfirm, onCancel }: {
   )
 }
 
-// ── Tab: Overview ──────────────────────────────────────────────────────────────
+// â”€â”€ Tab: Overview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function OverviewTab() {
   const [stats, setStats] = useState<SystemStats | null>(null)
@@ -190,15 +190,15 @@ function OverviewTab() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-48">
-      <Loader2 className="w-6 h-6 animate-spin text-indigo-500" />
+      <Loader2 className="w-6 h-6 animate-spin text-primary-500" />
     </div>
   )
 
   if (error) return (
     <div className="flex flex-col items-center gap-3 h-48 justify-center text-gray-500">
-      <AlertTriangle className="w-6 h-6 text-red-400" />
+      <AlertTriangle className="w-6 h-6 text-error-400" />
       <p>{error}</p>
-      <button onClick={load} className="text-sm text-indigo-500 hover:underline cursor-pointer">Retry</button>
+      <button onClick={load} className="text-sm text-primary-500 hover:underline cursor-pointer">Retry</button>
     </div>
   )
 
@@ -216,8 +216,8 @@ function OverviewTab() {
     <div className="space-y-6">
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-        <StatCard label="Total Users" value={stats.total_users} color="text-indigo-600 dark:text-indigo-400" />
-        <StatCard label="Total Stories" value={stats.total_stories} sub={`${stats.published_stories} published`} color="text-emerald-600 dark:text-emerald-400" />
+        <StatCard label="Total Users" value={stats.total_users} color="text-primary-600 dark:text-primary-400" />
+        <StatCard label="Total Stories" value={stats.total_stories} sub={`${stats.published_stories} published`} color="text-success-600 dark:text-success-400" />
         <StatCard label="AI Requests" value={stats.total_ai_requests} color="text-violet-600 dark:text-violet-400" />
         <StatCard label="Vocabulary" value={stats.total_vocabulary} color="text-cyan-600 dark:text-cyan-400" />
         <StatCard label="New Users" value={stats.new_users_today} sub={`${stats.new_users_this_week} this week`} color="text-amber-600 dark:text-amber-400" />
@@ -228,7 +228,7 @@ function OverviewTab() {
         {/* Stories by HSK Level */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 shadow-sm">
           <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-indigo-500" />
+            <BookOpen className="w-4 h-4 text-primary-500" />
             Stories by HSK Level
           </h3>
           {hskChartData.length === 0 ? (
@@ -283,7 +283,7 @@ function OverviewTab() {
   )
 }
 
-// ── Tab: Users ─────────────────────────────────────────────────────────────────
+// â”€â”€ Tab: Users â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function UsersTab({ currentUserId }: { currentUserId: number }) {
   const [users, setUsers] = useState<AdminUser[]>([])
@@ -346,13 +346,13 @@ function UsersTab({ currentUserId }: { currentUserId: number }) {
           <input
             value={searchInput}
             onChange={e => setSearchInput(e.target.value)}
-            placeholder="Search username, email…"
-            className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Search username, emailâ€¦"
+            className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
         </div>
         <button
           type="submit"
-          className="px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer transition-colors"
+          className="px-4 py-2 rounded-xl text-sm font-medium bg-primary-600 text-white hover:bg-primary-700 cursor-pointer transition-colors"
         >
           Search
         </button>
@@ -420,7 +420,7 @@ function UsersTab({ currentUserId }: { currentUserId: number }) {
                             onClick={() => handleToggleAdmin(user)}
                             disabled={actionUserId === user.id}
                             title={user.is_admin ? 'Revoke admin' : 'Grant admin'}
-                            className="p-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-indigo-500 cursor-pointer transition-colors disabled:opacity-50"
+                            className="p-1.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/30 text-primary-500 cursor-pointer transition-colors disabled:opacity-50"
                           >
                             {actionUserId === user.id
                               ? <Loader2 className="w-4 h-4 animate-spin" />
@@ -432,7 +432,7 @@ function UsersTab({ currentUserId }: { currentUserId: number }) {
                             onClick={() => setConfirmDelete(user)}
                             disabled={actionUserId === user.id}
                             title="Delete user"
-                            className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 cursor-pointer transition-colors disabled:opacity-50"
+                            className="p-1.5 rounded-lg hover:bg-error-50 dark:hover:bg-error-900/30 text-error-500 cursor-pointer transition-colors disabled:opacity-50"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -463,7 +463,7 @@ function UsersTab({ currentUserId }: { currentUserId: number }) {
   )
 }
 
-// ── Tab: Stories ───────────────────────────────────────────────────────────────
+// â”€â”€ Tab: Stories â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function StoriesTab() {
   const [stories, setStories] = useState<AdminStory[]>([])
@@ -528,13 +528,13 @@ function StoriesTab() {
             <input
               value={searchInput}
               onChange={e => setSearchInput(e.target.value)}
-              placeholder="Search story title…"
-              className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Search story titleâ€¦"
+              className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
           <button
             type="submit"
-            className="px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer transition-colors"
+            className="px-4 py-2 rounded-xl text-sm font-medium bg-primary-600 text-white hover:bg-primary-700 cursor-pointer transition-colors"
           >
             Search
           </button>
@@ -542,7 +542,7 @@ function StoriesTab() {
         <select
           value={hskFilter ?? ''}
           onChange={e => { setHskFilter(e.target.value ? Number(e.target.value) : undefined); setPage(1) }}
-          className="px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+          className="px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
         >
           <option value="">All HSK</option>
           {[1, 2, 3, 4, 5, 6].map(l => <option key={l} value={l}>HSK {l}</option>)}
@@ -611,7 +611,7 @@ function StoriesTab() {
                         onClick={() => handleTogglePublish(story)}
                         disabled={actionId === story.id}
                         title={story.is_published ? 'Unpublish' : 'Publish'}
-                        className="p-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 text-emerald-600 cursor-pointer transition-colors disabled:opacity-50"
+                        className="p-1.5 rounded-lg hover:bg-success-50 dark:hover:bg-success-900/30 text-success-600 cursor-pointer transition-colors disabled:opacity-50"
                       >
                         {actionId === story.id
                           ? <Loader2 className="w-4 h-4 animate-spin" />
@@ -623,7 +623,7 @@ function StoriesTab() {
                         onClick={() => setConfirmDelete(story)}
                         disabled={actionId === story.id}
                         title="Delete story"
-                        className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 cursor-pointer transition-colors disabled:opacity-50"
+                        className="p-1.5 rounded-lg hover:bg-error-50 dark:hover:bg-error-900/30 text-error-500 cursor-pointer transition-colors disabled:opacity-50"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -652,7 +652,7 @@ function StoriesTab() {
   )
 }
 
-// ── Tab: AI Usage ──────────────────────────────────────────────────────────────
+// â”€â”€ Tab: AI Usage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function AIUsageTab() {
   const [entries, setEntries] = useState<AIEntry[]>([])
@@ -710,7 +710,7 @@ function AIUsageTab() {
                   </td>
                   <td className="px-4 py-3 font-mono text-gray-600 dark:text-gray-400">{entry.tokens_used.toLocaleString()}</td>
                   <td className="px-4 py-3 text-gray-400 text-xs hidden md:table-cell">
-                    {entry.timestamp ? new Date(entry.timestamp).toLocaleString() : '—'}
+                    {entry.timestamp ? new Date(entry.timestamp).toLocaleString() : 'â€”'}
                   </td>
                 </tr>
               ))}
@@ -725,7 +725,7 @@ function AIUsageTab() {
   )
 }
 
-// ── Tab: Trash ─────────────────────────────────────────────────────────────────
+// â”€â”€ Tab: Trash â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const TRASH_RETENTION_DAYS = 30
 
@@ -865,11 +865,11 @@ function TrashTab({ currentUserId }: { currentUserId: number }) {
             <input
               value={searchInput}
               onChange={e => setSearchInput(e.target.value)}
-              placeholder={subTab === 'users' ? 'Search username, email…' : 'Search story title…'}
-              className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder={subTab === 'users' ? 'Search username, emailâ€¦' : 'Search story titleâ€¦'}
+              className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
-          <button type="submit" className="px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer transition-colors">
+          <button type="submit" className="px-4 py-2 rounded-xl text-sm font-medium bg-primary-600 text-white hover:bg-primary-700 cursor-pointer transition-colors">
             Search
           </button>
         </form>
@@ -877,7 +877,7 @@ function TrashTab({ currentUserId }: { currentUserId: number }) {
         <button
           onClick={handlePurge}
           disabled={purging}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 cursor-pointer transition-colors disabled:opacity-50"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium bg-error-50 dark:bg-error-900/20 text-error-600 dark:text-error-400 hover:bg-error-100 dark:hover:bg-error-900/30 cursor-pointer transition-colors disabled:opacity-50"
         >
           {purging ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
           Purge Expired
@@ -921,10 +921,10 @@ function TrashTab({ currentUserId }: { currentUserId: number }) {
                       </td>
                       <td className="px-4 py-3 text-gray-600 dark:text-gray-400 hidden md:table-cell">{user.email}</td>
                       <td className="px-4 py-3 text-gray-400 text-xs">
-                        {user.soft_deleted_at ? new Date(user.soft_deleted_at).toLocaleDateString() : '—'}
+                        {user.soft_deleted_at ? new Date(user.soft_deleted_at).toLocaleDateString() : 'â€”'}
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`text-xs font-medium ${left <= 3 ? 'text-red-500' : left <= 7 ? 'text-amber-500' : 'text-gray-400'}`}>
+                        <span className={`text-xs font-medium ${left <= 3 ? 'text-error-500' : left <= 7 ? 'text-amber-500' : 'text-gray-400'}`}>
                           {left}d left
                         </span>
                       </td>
@@ -934,7 +934,7 @@ function TrashTab({ currentUserId }: { currentUserId: number }) {
                             onClick={() => handleRestoreUser(user)}
                             disabled={actionId === user.id}
                             title="Restore"
-                            className="p-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 text-emerald-600 cursor-pointer transition-colors disabled:opacity-50"
+                            className="p-1.5 rounded-lg hover:bg-success-50 dark:hover:bg-success-900/30 text-success-600 cursor-pointer transition-colors disabled:opacity-50"
                           >
                             {actionId === user.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
                           </button>
@@ -943,7 +943,7 @@ function TrashTab({ currentUserId }: { currentUserId: number }) {
                               onClick={() => setConfirmPerm({ type: 'user', item: user })}
                               disabled={actionId === user.id}
                               title="Delete permanently"
-                              className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 cursor-pointer transition-colors disabled:opacity-50"
+                              className="p-1.5 rounded-lg hover:bg-error-50 dark:hover:bg-error-900/30 text-error-500 cursor-pointer transition-colors disabled:opacity-50"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -1000,10 +1000,10 @@ function TrashTab({ currentUserId }: { currentUserId: number }) {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-gray-400 text-xs">
-                        {story.soft_deleted_at ? new Date(story.soft_deleted_at).toLocaleDateString() : '—'}
+                        {story.soft_deleted_at ? new Date(story.soft_deleted_at).toLocaleDateString() : 'â€”'}
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`text-xs font-medium ${left <= 3 ? 'text-red-500' : left <= 7 ? 'text-amber-500' : 'text-gray-400'}`}>
+                        <span className={`text-xs font-medium ${left <= 3 ? 'text-error-500' : left <= 7 ? 'text-amber-500' : 'text-gray-400'}`}>
                           {left}d left
                         </span>
                       </td>
@@ -1013,7 +1013,7 @@ function TrashTab({ currentUserId }: { currentUserId: number }) {
                             onClick={() => handleRestoreStory(story)}
                             disabled={actionId === story.id}
                             title="Restore"
-                            className="p-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 text-emerald-600 cursor-pointer transition-colors disabled:opacity-50"
+                            className="p-1.5 rounded-lg hover:bg-success-50 dark:hover:bg-success-900/30 text-success-600 cursor-pointer transition-colors disabled:opacity-50"
                           >
                             {actionId === story.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
                           </button>
@@ -1021,7 +1021,7 @@ function TrashTab({ currentUserId }: { currentUserId: number }) {
                             onClick={() => setConfirmPerm({ type: 'story', item: story })}
                             disabled={actionId === story.id}
                             title="Delete permanently"
-                            className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 cursor-pointer transition-colors disabled:opacity-50"
+                            className="p-1.5 rounded-lg hover:bg-error-50 dark:hover:bg-error-900/30 text-error-500 cursor-pointer transition-colors disabled:opacity-50"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -1056,7 +1056,7 @@ function TrashTab({ currentUserId }: { currentUserId: number }) {
   )
 }
 
-// ── Main Admin Page ────────────────────────────────────────────────────────────
+// â”€â”€ Main Admin Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const NAV_ITEMS: { tab: Tab; label: string; icon: React.ElementType }[] = [
   { tab: 'overview', label: 'Overview', icon: LayoutDashboard },
@@ -1089,15 +1089,15 @@ export default function Admin() {
           {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
         <div className="flex items-center gap-2">
-          <Shield className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+          <Shield className="w-6 h-6 text-primary-600 dark:text-primary-400" />
           <span className="font-bold text-gray-900 dark:text-gray-100 text-lg">Admin Panel</span>
-          <span className="hidden sm:inline text-gray-300 dark:text-gray-600">—</span>
+          <span className="hidden sm:inline text-gray-300 dark:text-gray-600">â€”</span>
           <span className="hidden sm:inline text-sm text-gray-400">HanziNarrative</span>
         </div>
         <div className="ml-auto flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            <div className="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
-              <span className="text-xs font-bold text-indigo-700 dark:text-indigo-300">
+            <div className="w-7 h-7 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
+              <span className="text-xs font-bold text-primary-700 dark:text-primary-300">
                 {user?.username?.[0]?.toUpperCase() ?? 'A'}
               </span>
             </div>
@@ -1112,7 +1112,7 @@ export default function Admin() {
           </button>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20 cursor-pointer transition-colors"
           >
             <LogOut className="w-4 h-4" />
             <span className="hidden sm:inline">Logout</span>
@@ -1150,7 +1150,7 @@ export default function Admin() {
               className={`
                 flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer transition-colors w-full text-left
                 ${activeTab === tab
-                  ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300'
+                  ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}
               `}
             >
@@ -1175,7 +1175,7 @@ export default function Admin() {
               <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 {(() => {
                   const item = NAV_ITEMS.find(n => n.tab === activeTab)
-                  return item ? <><item.icon className="w-5 h-5 text-indigo-500" />{item.label}</> : null
+                  return item ? <><item.icon className="w-5 h-5 text-primary-500" />{item.label}</> : null
                 })()}
               </h1>
             </div>
@@ -1210,3 +1210,4 @@ export default function Admin() {
     </div>
   )
 }
+

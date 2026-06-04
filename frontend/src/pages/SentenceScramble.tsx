@@ -178,7 +178,7 @@ export default function FillBlank() {
                                     <div><p className="font-medium text-gray-900">Choose</p><p className="text-sm text-gray-600 dark:text-gray-400">Pick the missing word from 4 options</p></div>
                                 </div>
                                 <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0"><CheckCircle className="w-4 h-4 text-green-600" /></div>
+                                    <div className="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center flex-shrink-0"><CheckCircle className="w-4 h-4 text-success-600" /></div>
                                     <div><p className="font-medium text-gray-900">Learn</p><p className="text-sm text-gray-600 dark:text-gray-400">Build reading comprehension skills</p></div>
                                 </div>
                             </div>
@@ -259,11 +259,11 @@ export default function FillBlank() {
                                             {part}
                                             {i < arr.length - 1 && (
                                                 <span className={`inline-block min-w-[3em] mx-1 border-b-4 ${selected !== null
-                                                    ? selected === q.correctIndex ? 'border-green-400' : 'border-red-400'
+                                                    ? selected === q.correctIndex ? 'border-green-400' : 'border-error-400'
                                                     : 'border-amber-300'
                                                     } text-center`}>
                                                     {selected !== null ? (
-                                                        <span className="text-green-700 font-bold">{q.blankWord}</span>
+                                                        <span className="text-success-700 font-bold">{q.blankWord}</span>
                                                     ) : (
                                                         <span className="text-amber-400 text-lg">?</span>
                                                     )}
@@ -278,16 +278,16 @@ export default function FillBlank() {
                                 {q.options.map((opt, i) => {
                                     let btnClass = 'bg-gray-50 dark:bg-gray-800 hover:bg-amber-50 dark:hover:bg-amber-950/30 border-2 border-gray-100 dark:border-gray-700 hover:border-amber-300 text-gray-800 dark:text-gray-200'
                                     if (selected !== null) {
-                                        if (i === q.correctIndex) btnClass = 'bg-green-50 border-2 border-green-400 text-green-800'
-                                        else if (i === selected) btnClass = 'bg-red-50 border-2 border-red-400 text-red-800'
+                                        if (i === q.correctIndex) btnClass = 'bg-success-50 border-2 border-green-400 text-success-800'
+                                        else if (i === selected) btnClass = 'bg-error-50 border-2 border-error-400 text-error-800'
                                         else btnClass = 'bg-gray-50 border-2 border-gray-100 text-gray-400'
                                     }
                                     return (
                                         <button key={i} onClick={() => handleAnswer(i)} disabled={selected !== null}
                                             className={`rounded-2xl p-4 font-medium cursor-pointer transition-all text-center ${btnClass} disabled:cursor-default`}>
                                             <span className="text-2xl font-chinese">{opt}</span>
-                                            {selected !== null && i === q.correctIndex && <CheckCircle className="w-4 h-4 text-green-600 mx-auto mt-1" />}
-                                            {selected !== null && i === selected && i !== q.correctIndex && <XCircle className="w-4 h-4 text-red-500 mx-auto mt-1" />}
+                                            {selected !== null && i === q.correctIndex && <CheckCircle className="w-4 h-4 text-success-600 mx-auto mt-1" />}
+                                            {selected !== null && i === selected && i !== q.correctIndex && <XCircle className="w-4 h-4 text-error-500 mx-auto mt-1" />}
                                         </button>
                                     )
                                 })}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+﻿import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { vocabularyApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
@@ -208,7 +208,7 @@ export default function MatchingGame() {
                 <div className="flex items-center justify-between mb-4">
                     <button onClick={() => { if (timerRef.current) clearInterval(timerRef.current); setGameStarted(false); setGameFinished(false) }}
                         className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 font-medium cursor-pointer">
-                        ← Back
+                        â† Back
                     </button>
                     <div className="flex items-center gap-3">
                         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 px-3 py-1.5 flex items-center gap-1.5">
@@ -231,7 +231,7 @@ export default function MatchingGame() {
                                     key={card.id}
                                     onClick={() => handleCardClick(card.id)}
                                     whileTap={{ scale: 0.95 }}
-                                    className={`aspect-square rounded-xl sm:rounded-2xl font-medium cursor-pointer transition-all text-center flex items-center justify-center p-2 ${card.matched ? 'bg-green-100 border-2 border-green-300 text-green-800'
+                                    className={`aspect-square rounded-xl sm:rounded-2xl font-medium cursor-pointer transition-all text-center flex items-center justify-center p-2 ${card.matched ? 'bg-success-100 border-2 border-success-300 text-success-800'
                                         : card.flipped ? 'bg-rose-100 border-2 border-rose-300 text-rose-800'
                                             : 'bg-gray-100 dark:bg-gray-800 hover:bg-rose-50 dark:hover:bg-rose-950/30 border-2 border-gray-200 dark:border-gray-700 hover:border-rose-200 text-transparent'
                                         }`}>
@@ -247,3 +247,5 @@ export default function MatchingGame() {
         </div>
     )
 }
+
+

@@ -333,7 +333,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             className={`relative rounded-2xl p-4 border-2 transition-all cursor-pointer text-left ${
               !isAdvanced
                 ? 'border-success-500 bg-success-50 dark:bg-success-900/20 shadow-md'
-                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-success-300 dark:hover:border-success-700'
+                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-card hover:border-success-300 dark:hover:border-success-700'
             }`}
           >
             <div className="flex items-center gap-2 mb-1.5">
@@ -356,7 +356,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             className={`relative rounded-2xl p-4 border-2 transition-all cursor-pointer text-left ${
               isAdvanced
                 ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30 shadow-md'
-                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-primary-300 dark:hover:border-primary-700'
+                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-card hover:border-primary-300 dark:hover:border-primary-700'
             }`}
           >
             <div className="flex items-center gap-2 mb-1.5">
@@ -473,7 +473,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                 value={topic}
                 onChange={e => setTopic(e.target.value)}
                 placeholder="e.g., daily life, school, travel, food..."
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-surface-card text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
               />
             </div>
 
@@ -635,7 +635,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                         value={characterNames}
                         onChange={e => setCharacterNames(e.target.value)}
                         placeholder="e.g., 小明, 小红, 王老师 (comma separated)"
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-surface-card text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
                       />
                     </div>
 
@@ -650,7 +650,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                         value={targetVocabulary}
                         onChange={e => setTargetVocabulary(e.target.value)}
                         placeholder="Words to include: 学习, 朋友, 高兴 (comma separated)"
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-surface-card text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
                       />
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         The AI will try to use these words in the story
@@ -705,7 +705,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
               className={`w-full flex items-center justify-center rounded-xl px-6 py-3 font-semibold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-white ${
                 isAdvanced
                   ? 'bg-gradient-to-r from-primary-600 to-violet-600 hover:from-primary-700 hover:to-violet-700'
-                  : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700'
+                  : 'bg-gradient-to-r from-success-600 to-teal-600 hover:from-success-700 hover:to-teal-700'
               }`}
             >
               {loading ? (

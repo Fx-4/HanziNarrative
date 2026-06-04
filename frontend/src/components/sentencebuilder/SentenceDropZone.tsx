@@ -29,7 +29,7 @@ export default function SentenceDropZone({ words, onRemoveWord }: SentenceDropZo
         {words.length > 0 && (
           <button
             onClick={() => words.forEach(w => onRemoveWord(w.id))}
-            className="text-sm text-red-500 hover:text-red-700 transition-colors"
+            className="text-sm text-error-500 hover:text-error-700 transition-colors"
           >
             Clear All
           </button>
@@ -74,7 +74,7 @@ export default function SentenceDropZone({ words, onRemoveWord }: SentenceDropZo
                   <button
                     onClick={() => onRemoveWord(word.id)}
                     className="absolute -top-2 -right-2 w-6 h-6
-                             bg-red-500 hover:bg-red-600 text-white
+                             bg-error-500 hover:bg-error-600 text-white
                              rounded-full opacity-0 group-hover:opacity-100
                              transition-opacity duration-200
                              flex items-center justify-center

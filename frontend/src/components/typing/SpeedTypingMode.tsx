@@ -131,7 +131,7 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
         <p className="text-gray-600">No words available for this HSK level.</p>
         <button
           onClick={onBack}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors mt-4"
+          className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors mt-4"
         >
           Go Back
         </button>
@@ -172,10 +172,10 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6">
-                <TrendingUp className="w-8 h-8 mx-auto mb-2 text-green-600" />
-                <p className="text-sm text-green-700 font-medium mb-1">Accuracy</p>
-                <p className="text-3xl font-bold text-green-900">
+              <div className="bg-gradient-to-br from-success-50 to-success-100 rounded-lg p-6">
+                <TrendingUp className="w-8 h-8 mx-auto mb-2 text-success-600" />
+                <p className="text-sm text-success-700 font-medium mb-1">Accuracy</p>
+                <p className="text-3xl font-bold text-success-900">
                   {Math.round(stats.accuracy)}%
                 </p>
               </div>
@@ -184,7 +184,7 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
             <div className="flex gap-3 justify-center">
               <button
                 onClick={onBack}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-3 font-semibold cursor-pointer transition-colors text-lg"
+                className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-3 font-semibold cursor-pointer transition-colors text-lg"
               >
                 Back to Modes
               </button>
@@ -239,11 +239,11 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
             value={inputValue}
             onChange={handleInputChange}
             placeholder="Type as fast as you can..."
-            className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-indigo-500 focus:outline-none transition-colors"
+            className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-primary-500 focus:outline-none transition-colors"
             autoComplete="off"
           />
           <p className="text-sm text-gray-600 mt-2 text-center">
-            Target: <span className="font-semibold text-indigo-600">{currentWord.pinyin}</span>
+            Target: <span className="font-semibold text-primary-600">{currentWord.pinyin}</span>
           </p>
         </div>
 
@@ -266,7 +266,7 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div
-            className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+            className="bg-primary-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${((currentIndex + 1) / words.length) * 100}%` }}
           />
         </div>

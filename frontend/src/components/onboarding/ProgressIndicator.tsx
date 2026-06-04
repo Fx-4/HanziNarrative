@@ -56,9 +56,9 @@ const ProgressIndicator = ({
                 <div
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${
                     isCompleted
-                      ? 'bg-indigo-100 text-indigo-600'
+                      ? 'bg-primary-100 text-primary-600'
                       : isCurrent
-                      ? 'bg-indigo-600 text-white shadow-sm'
+                      ? 'bg-primary-600 text-white shadow-sm'
                       : 'bg-gray-100 text-gray-400'
                   }`}
                 >
@@ -69,7 +69,7 @@ const ProgressIndicator = ({
                   {s.label}
                 </div>
                 {idx < STEPS.length - 1 && (
-                  <div className={`h-px w-3 transition-colors ${stepVisual < visual ? 'bg-indigo-300' : 'bg-gray-200'}`} />
+                  <div className={`h-px w-3 transition-colors ${stepVisual < visual ? 'bg-primary-300' : 'bg-gray-200'}`} />
                 )}
               </div>
             )
@@ -82,7 +82,7 @@ const ProgressIndicator = ({
       {/* Progress bar */}
       <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
         <motion.div
-          className="h-full bg-indigo-600 rounded-full"
+          className="h-full bg-primary-600 rounded-full"
           initial={{ width: 0 }}
           animate={{ width: `${(visual / 3) * 100}%` }}
           transition={{ duration: 0.5, ease: 'easeOut' }}

@@ -41,11 +41,11 @@ export default function WordOfTheDay() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
     >
-      <div className="bg-gradient-to-br from-indigo-50 to-violet-50 border border-indigo-100 rounded-2xl p-3 sm:p-4">
+      <div className="bg-gradient-to-br from-primary-50 to-violet-50 border border-primary-100 rounded-2xl p-3 sm:p-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-2 sm:mb-3">
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-500" />
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary-500" />
             <h3 className="text-base sm:text-lg font-bold text-gray-900">
               每日一词
             </h3>
@@ -62,7 +62,7 @@ export default function WordOfTheDay() {
             style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}>
             {word.simplified}
           </div>
-          <div className="text-base sm:text-lg md:text-xl text-indigo-600 mb-1 sm:mb-2 font-medium">
+          <div className="text-base sm:text-lg md:text-xl text-primary-600 mb-1 sm:mb-2 font-medium">
             {word.pinyin}
           </div>
           <div className="text-sm sm:text-base md:text-lg text-gray-700">
@@ -72,7 +72,7 @@ export default function WordOfTheDay() {
           {/* Category Badge */}
           {word.category && (
             <div className="mt-2 sm:mt-3">
-              <span className="inline-block px-2 py-0.5 sm:px-3 sm:py-1 bg-white rounded-full text-[10px] sm:text-xs font-medium text-indigo-700 border border-indigo-200">
+              <span className="inline-block px-2 py-0.5 sm:px-3 sm:py-1 bg-white rounded-full text-[10px] sm:text-xs font-medium text-primary-700 border border-primary-200">
                 {word.category}
               </span>
             </div>

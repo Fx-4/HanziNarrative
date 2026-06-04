@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+﻿import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 
@@ -39,9 +39,10 @@ export default function AuthCallback() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-950">
             <div className="flex flex-col items-center gap-4">
-                <div className="w-10 h-10 border-[3px] border-indigo-200 dark:border-indigo-800 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin" />
-                <p className="text-gray-500 dark:text-gray-400 text-sm">Signing you in with Google…</p>
+                <div className="w-10 h-10 border-[3px] border-primary-200 dark:border-primary-800 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin" />
+                <p className="text-gray-500 dark:text-gray-400 text-sm">Signing you in with Googleâ€¦</p>
             </div>
         </div>
     )
 }
+

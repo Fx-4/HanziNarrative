@@ -278,8 +278,8 @@ export default function ToneTrainer() {
                             {q.options.map(tone => {
                                 let btnClass = 'bg-gray-50 dark:bg-gray-800 hover:bg-teal-50 dark:hover:bg-teal-950/30 border-2 border-gray-100 dark:border-gray-700 hover:border-teal-300 text-gray-800 dark:text-gray-200'
                                 if (selected !== null) {
-                                    if (tone === q.correctTone) btnClass = 'bg-green-50 border-2 border-green-400 text-green-800'
-                                    else if (tone === selected) btnClass = 'bg-red-50 border-2 border-red-400 text-red-800'
+                                    if (tone === q.correctTone) btnClass = 'bg-success-50 border-2 border-green-400 text-success-800'
+                                    else if (tone === selected) btnClass = 'bg-error-50 border-2 border-error-400 text-error-800'
                                     else btnClass = 'bg-gray-50 border-2 border-gray-100 text-gray-400'
                                 }
                                 return (
@@ -287,8 +287,8 @@ export default function ToneTrainer() {
                                         className={`rounded-2xl p-4 font-medium cursor-pointer transition-all text-center ${btnClass} disabled:cursor-default`}>
                                         <p className="text-lg font-bold">Tone {tone}</p>
                                         <p className="text-sm text-gray-500">{TONE_LABELS[tone]}</p>
-                                        {selected !== null && tone === q.correctTone && <CheckCircle className="w-4 h-4 text-green-600 mx-auto mt-1" />}
-                                        {selected !== null && tone === selected && tone !== q.correctTone && <XCircle className="w-4 h-4 text-red-500 mx-auto mt-1" />}
+                                        {selected !== null && tone === q.correctTone && <CheckCircle className="w-4 h-4 text-success-600 mx-auto mt-1" />}
+                                        {selected !== null && tone === selected && tone !== q.correctTone && <XCircle className="w-4 h-4 text-error-500 mx-auto mt-1" />}
                                     </button>
                                 )
                             })}

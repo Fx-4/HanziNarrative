@@ -165,7 +165,7 @@ export default function StrokeOrderDisplay({
 
       {/* Status Message */}
       {quizComplete && (
-        <div className="text-sm font-medium text-green-600 animate-fade-in">
+        <div className="text-sm font-medium text-success-600 animate-fade-in">
           ✓ Perfect! You wrote it correctly!
         </div>
       )}

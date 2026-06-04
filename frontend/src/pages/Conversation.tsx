@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+﻿import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { conversationApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
@@ -108,7 +108,7 @@ export default function Conversation() {
           isStreaming: false,
         }])
       } else {
-        // Stream was aborted or yielded no done event — mark done
+        // Stream was aborted or yielded no done event â€” mark done
         setMessages(prev => {
           const last = prev[prev.length - 1]
           if (!last) return prev
@@ -222,7 +222,7 @@ export default function Conversation() {
     setLoading(false)
   }
 
-  // ── Setup Screen ──
+  // â”€â”€ Setup Screen â”€â”€
   if (stage === 'setup') {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
@@ -314,7 +314,7 @@ export default function Conversation() {
     )
   }
 
-  // ── Chat Screen ──
+  // â”€â”€ Chat Screen â”€â”€
   return (
     <div className="max-w-2xl mx-auto px-4 py-4 flex flex-col h-[calc(100vh-120px)]">
       {/* Chat Header */}
@@ -326,7 +326,7 @@ export default function Conversation() {
           <ArrowLeft className="w-5 h-5 text-gray-600" />
         </button>
         <div className="flex-1">
-          <h2 className="font-bold text-gray-900 text-sm">AI Chat — HSK {hskLevel}</h2>
+          <h2 className="font-bold text-gray-900 text-sm">AI Chat â€” HSK {hskLevel}</h2>
           <p className="text-xs text-gray-500">{messages.length} messages</p>
         </div>
         <div className="flex items-center gap-1">
@@ -337,7 +337,7 @@ export default function Conversation() {
             }`}
             title="Toggle pinyin"
           >
-            拼
+            æ‹¼
           </button>
           <button
             onClick={() => setShowEnglish(!showEnglish)}
@@ -373,7 +373,7 @@ export default function Conversation() {
                   ? 'bg-blue-600 text-white rounded-2xl rounded-br-md'
                   : 'bg-white border border-gray-200 rounded-2xl rounded-bl-md shadow-sm'
               } p-3.5`}>
-                {/* Main text — show typing dots only if streaming with no content yet */}
+                {/* Main text â€” show typing dots only if streaming with no content yet */}
                 {msg.isStreaming && !msg.content ? (
                   <div className="flex items-center gap-1.5 py-0.5">
                     <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
@@ -389,17 +389,17 @@ export default function Conversation() {
                   </p>
                 )}
 
-                {/* Pinyin — only shown once streaming is complete */}
+                {/* Pinyin â€” only shown once streaming is complete */}
                 {msg.role === 'assistant' && !msg.isStreaming && showPinyin && msg.pinyin && (
                   <p className="text-xs text-gray-400 mt-1 italic">{msg.pinyin}</p>
                 )}
 
-                {/* English — only shown once streaming is complete */}
+                {/* English â€” only shown once streaming is complete */}
                 {msg.role === 'assistant' && !msg.isStreaming && showEnglish && msg.english && (
                   <p className="text-xs text-blue-500 mt-1">{msg.english}</p>
                 )}
 
-                {/* TTS button for assistant messages — only when done streaming */}
+                {/* TTS button for assistant messages â€” only when done streaming */}
                 {msg.role === 'assistant' && !msg.isStreaming && (
                   <button
                     onClick={() => speakText(msg.content)}
@@ -409,7 +409,7 @@ export default function Conversation() {
                   </button>
                 )}
 
-                {/* Corrections — only when done streaming */}
+                {/* Corrections â€” only when done streaming */}
                 {!msg.isStreaming && msg.corrections && msg.corrections.length > 0 && (
                   <div className="mt-2 p-2 bg-amber-50 rounded-xl border border-amber-200">
                     <p className="text-[10px] font-bold text-amber-700 mb-1 flex items-center gap-1">
@@ -417,9 +417,9 @@ export default function Conversation() {
                     </p>
                     {msg.corrections.map((c, ci) => (
                       <div key={ci} className="text-xs text-gray-700 mb-1">
-                        <span className="line-through text-red-500">{c.original}</span>
-                        {' → '}
-                        <span className="text-emerald-600 font-semibold">{c.corrected}</span>
+                        <span className="line-through text-error-500">{c.original}</span>
+                        {' â†’ '}
+                        <span className="text-success-600 font-semibold">{c.corrected}</span>
                         {c.explanation && (
                           <p className="text-[10px] text-gray-500 mt-0.5">{c.explanation}</p>
                         )}
@@ -428,7 +428,7 @@ export default function Conversation() {
                   </div>
                 )}
 
-                {/* New Vocabulary — only when done streaming */}
+                {/* New Vocabulary â€” only when done streaming */}
                 {!msg.isStreaming && msg.new_vocabulary && msg.new_vocabulary.length > 0 && (
                   <div className="mt-2 p-2 bg-blue-50 rounded-xl border border-blue-200">
                     <p className="text-[10px] font-bold text-blue-700 mb-1 flex items-center gap-1">
@@ -460,7 +460,7 @@ export default function Conversation() {
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-          placeholder="用中文说点什么... (Type in Chinese)"
+          placeholder="ç”¨ä¸­æ–‡è¯´ç‚¹ä»€ä¹ˆ... (Type in Chinese)"
           className="flex-1 px-3 py-2.5 text-sm outline-none bg-transparent"
           disabled={loading}
         />
@@ -475,3 +475,4 @@ export default function Conversation() {
     </div>
   )
 }
+

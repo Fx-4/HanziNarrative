@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+﻿import { Link } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import {
   BookOpen, PenLine, PenTool, Target, BarChart3,
@@ -18,8 +18,8 @@ const FEATURES = [
   {
     Icon: Target,
     title: 'HSK Focused',
-    desc: 'Content organized by HSK levels 1–6, from everyday beginner vocabulary to advanced topics.',
-    bg: 'bg-emerald-500', shadow: 'shadow-emerald-500/20',
+    desc: 'Content organized by HSK levels 1â€“6, from everyday beginner vocabulary to advanced topics.',
+    bg: 'bg-success-600', shadow: 'shadow-success-500/20',
   },
   {
     Icon: BarChart3,
@@ -77,7 +77,7 @@ const TOOLS = [
 const accentMap: Record<string, { bg: string; text: string; border: string; light: string }> = {
   indigo: { bg: 'bg-primary-600', text: 'text-primary-600', border: 'border-primary-200', light: 'bg-primary-50' },
   violet: { bg: 'bg-violet-600', text: 'text-violet-600', border: 'border-violet-200', light: 'bg-violet-50' },
-  emerald: { bg: 'bg-emerald-500', text: 'text-emerald-600', border: 'border-emerald-200', light: 'bg-emerald-50' },
+  emerald: { bg: 'bg-success-600', text: 'text-success-600', border: 'border-success-200', light: 'bg-success-50' },
 }
 
 export default function Home() {
@@ -86,7 +86,7 @@ export default function Home() {
   return (
     <div className="max-w-4xl mx-auto px-4 pb-20">
 
-      {/* ── Hero ────────────────────────────────────────────────────────── */}
+      {/* â”€â”€ Hero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="text-center py-16 sm:py-20">
 
         {/* Decorative character */}
@@ -96,7 +96,7 @@ export default function Home() {
           transition={{ type: 'spring', duration: 0.8 }}
           className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-br from-primary-500 to-violet-600 flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-primary-500/30"
         >
-          <span className="text-white text-4xl sm:text-5xl font-bold font-chinese">汉</span>
+          <span className="text-white text-4xl sm:text-5xl font-bold font-chinese">æ±‰</span>
         </motion.div>
 
         <motion.h1
@@ -146,14 +146,14 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* ── Daily Challenge ──────────────────────────────────────────────── */}
+      {/* â”€â”€ Daily Challenge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {isAuthenticated && (
         <section className="mb-8">
           <DailyChallengeCard />
         </section>
       )}
 
-      {/* ── Feature Cards ───────────────────────────────────────────────── */}
+      {/* â”€â”€ Feature Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="mb-16">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {FEATURES.map(({ Icon, title, desc, bg, shadow }, i) => (
@@ -172,7 +172,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── How It Works ────────────────────────────────────────────────── */}
+      {/* â”€â”€ How It Works â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="mb-16">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -196,7 +196,7 @@ export default function Home() {
                 transition={{ delay: i * 0.1 }}
                 className="flex items-start gap-4"
               >
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-extrabold text-base shrink-0 shadow-lg shadow-indigo-500/20">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary-500 to-violet-600 flex items-center justify-center text-white font-extrabold text-base shrink-0 shadow-lg shadow-primary-500/20">
                   {n}
                 </div>
                 <div className="pt-1">
@@ -209,7 +209,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* ── Learning Tools ───────────────────────────────────────────────── */}
+      {/* â”€â”€ Learning Tools â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="mb-16">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -254,17 +254,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── CTA Banner ──────────────────────────────────────────────────── */}
+      {/* â”€â”€ CTA Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {!isAuthenticated && (
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-gradient-to-r from-primary-600 to-violet-600 rounded-3xl p-8 text-center text-white shadow-2xl shadow-indigo-500/25"
+          className="bg-gradient-to-r from-primary-600 to-violet-600 rounded-3xl p-8 text-center text-white shadow-2xl shadow-primary-500/25"
         >
           <Zap className="w-10 h-10 mx-auto mb-4 opacity-90" />
           <h2 className="text-2xl font-extrabold mb-2">Ready to start?</h2>
-          <p className="text-indigo-100 text-sm mb-6">Create a free account and begin your Chinese journey today.</p>
+          <p className="text-primary-100 text-sm mb-6">Create a free account and begin your Chinese journey today.</p>
           <Link
             to="/register"
             className="inline-flex items-center gap-2 px-8 py-3 bg-white text-primary-700 font-bold rounded-xl hover:bg-primary-50 transition-colors shadow-lg"
@@ -277,3 +277,4 @@ export default function Home() {
     </div>
   )
 }
+
