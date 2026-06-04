@@ -210,6 +210,95 @@
   .alert-warning { @apply alert bg-warning-50 dark:bg-warning-900/20 text-warning-800 dark:text-warning-200 border border-warning-200 dark:border-warning-800/40; }
   .alert-error   { @apply alert bg-error-50   dark:bg-error-900/20   text-error-800   dark:text-error-200   border border-error-200   dark:border-error-800/40; }
   .alert-info    { @apply alert bg-info-50    dark:bg-info-900/20    text-info-800    dark:text-info-200    border border-info-200    dark:border-info-800/40; }
+
+  /* ══════════════════════════════════════════════
+     LEARNING MODULE — Kursus-specific components
+     Spacing: p-4 cards, gap-3 lists, space-y-6 sections
+     ══════════════════════════════════════════════ */
+
+  /* Unit / session card wrapper */
+  .learn-card {
+    @apply bg-white dark:bg-gray-900 rounded-2xl
+           border border-gray-100 dark:border-gray-800
+           shadow-card overflow-hidden
+           transition-colors duration-200;
+  }
+
+  /* Exercise option button — base state */
+  .exercise-option {
+    @apply w-full py-3 px-4 rounded-xl font-semibold text-sm
+           border-2 border-gray-200 dark:border-gray-700
+           bg-white dark:bg-gray-900
+           text-gray-800 dark:text-gray-200
+           transition-all duration-150
+           active:scale-[0.98];
+  }
+
+  /* Exercise option — correct answer revealed */
+  .exercise-option--correct {
+    @apply border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40
+           text-emerald-700 dark:text-emerald-300;
+  }
+
+  /* Exercise option — wrong answer selected */
+  .exercise-option--wrong {
+    @apply border-red-400 bg-red-50 dark:bg-red-950/40
+           text-red-700 dark:text-red-300;
+  }
+
+  /* Exercise option — active selection */
+  .exercise-option--selected {
+    @apply border-primary-500 bg-primary-50 dark:bg-primary-950/50
+           text-primary-700 dark:text-primary-300;
+  }
+
+  /* Grammar example row */
+  .grammar-example {
+    @apply border-b border-violet-100 dark:border-violet-900/40
+           last:border-0 pb-2 last:pb-0 space-y-0.5;
+  }
+
+  /* Session type pill (Vocabulary / Grammar / Practice) */
+  .session-type-pill {
+    @apply inline-flex items-center gap-1 text-[11px] text-gray-400;
+  }
+
+  /* Large Hanzi display (intro card) */
+  .hanzi-xl {
+    @apply font-chinese text-7xl font-bold
+           text-gray-900 dark:text-gray-50
+           leading-none tracking-normal;
+  }
+
+  /* Medium Hanzi display (MCQ prompt, fill sentence) */
+  .hanzi-md {
+    @apply font-chinese text-5xl font-bold
+           text-gray-900 dark:text-gray-50 leading-none;
+  }
+
+  /* Small Hanzi (grammar examples, match options) */
+  .hanzi-sm {
+    @apply font-chinese text-xl
+           text-gray-800 dark:text-gray-200;
+  }
+
+  /* Pinyin display */
+  .pinyin {
+    @apply text-primary-500 text-lg leading-none mt-1;
+  }
+
+  /* Progress bar fill */
+  .progress-fill {
+    @apply h-full bg-primary-500 rounded-full transition-all duration-300;
+  }
+
+  /* XP earned banner */
+  .xp-banner {
+    @apply flex items-center justify-center gap-2
+           bg-amber-50 dark:bg-amber-950/30
+           border border-amber-200 dark:border-amber-800
+           rounded-2xl py-3 px-4;
+  }
 }
 
 /* ═══════════════════════════════════════════════

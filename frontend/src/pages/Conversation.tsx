@@ -454,6 +454,8 @@ export default function Conversation() {
       {/* Input Area */}
       <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-2 flex items-center gap-2">
         <input
+          id="chat-input"
+          name="chat-input"
           type="text"
           value={input}
           onChange={e => setInput(e.target.value)}

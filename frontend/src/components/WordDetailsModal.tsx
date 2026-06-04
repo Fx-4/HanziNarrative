@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 import AudioButton from './AudioButton'
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+import { API_URL as API_BASE } from '@/lib/env'
 
 /* ─────────────────────────────────────
    Pexels via backend — best image match

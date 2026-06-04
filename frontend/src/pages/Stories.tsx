@@ -166,9 +166,9 @@ export default function Stories() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <p className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               Filter by HSK Level
-            </label>
+            </p>
             <div className="flex flex-wrap gap-2 mb-4">
               {levels.map((level, index) => (
                 <motion.div
@@ -192,9 +192,9 @@ export default function Stories() {
             </div>
 
             {/* Category filter */}
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <p className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               Filter by Category
-            </label>
+            </p>
             <div className="flex flex-wrap gap-2 mb-4">
               {([
                 { value: 'all', label: 'All Stories' },
@@ -219,6 +219,8 @@ export default function Stories() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
               <input
+                id="stories-search"
+                name="stories-search"
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}

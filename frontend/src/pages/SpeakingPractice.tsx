@@ -24,8 +24,7 @@ import { toast } from 'react-hot-toast'
 import axios from 'axios'
 import BlurText from '@/components/animations/BlurText'
 import { getVoiceName } from '@/utils/voicePreference'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+import { API_URL } from '@/lib/env'
 
 type PracticeMode = 'vocabulary' | 'pronunciation'
 

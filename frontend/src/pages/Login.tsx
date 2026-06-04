@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { motion, AnimatePresence } from 'framer-motion'
 import { User, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
+import { API_URL } from '@/lib/env'
 
 // ---------------------------------------------------------------------------
 // Floating character config — positions are fixed to avoid layout thrash
@@ -50,7 +51,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
 
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/auth/google`
+    window.location.href = `${API_URL}/auth/google`
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

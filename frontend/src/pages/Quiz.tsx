@@ -295,6 +295,8 @@ export default function Quiz() {
 
             <div className="flex items-center gap-2 mb-2">
               <input
+                id={`quiz-fill-${idx}`}
+                name={`quiz-fill-${idx}`}
                 type="text"
                 value={userAnswer || ''}
                 onChange={(e) => setAnswers({ ...answers, [idx]: e.target.value })}
@@ -489,7 +491,7 @@ export default function Quiz() {
 
             <div className="space-y-5 sm:space-y-6">
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">HSK Level</label>
+                <p className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">HSK Level</p>
                 <div className="flex flex-wrap gap-2">
                   {[1, 2, 3, 4, 5, 6].map(level => (
                     <button
@@ -508,7 +510,7 @@ export default function Quiz() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Quiz Type</label>
+                <p className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Quiz Type</p>
                 <div className="flex flex-wrap gap-2">
                   {quizTypes.map(type => (
                     <button
@@ -528,8 +530,9 @@ export default function Quiz() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Number of Questions</label>
+                <label htmlFor="quiz-num-questions" className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Number of Questions</label>
                 <select
+                  id="quiz-num-questions"
                   value={numQuestions}
                   onChange={(e) => setNumQuestions(Number(e.target.value))}
                   className="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm sm:text-base focus:outline-none focus:border-indigo-400"

@@ -7,6 +7,7 @@ import DraggableWord from '../components/sentencebuilder/DraggableWord';
 import SentenceDropZone from '../components/sentencebuilder/SentenceDropZone';
 import ValidationResult from '../components/sentencebuilder/ValidationResult';
 import toast from 'react-hot-toast';
+import { API_URL } from '@/lib/env';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import BlurText from '@/components/animations/BlurText';
@@ -156,7 +157,7 @@ export default function SentenceBuilder() {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/exercises/validate-sentence`,
+        `${API_URL}/exercises/validate-sentence`,
         {
           sentence: sentenceText,
           hsk_level: hskLevel

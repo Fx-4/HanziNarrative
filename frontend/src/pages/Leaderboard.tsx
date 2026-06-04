@@ -5,6 +5,7 @@ import {
   Loader2, RotateCcw, Users, Calendar, BookOpen, Clock,
 } from 'lucide-react'
 import CountUp from '@/components/animations/CountUp'
+import { API_URL } from '@/lib/env'
 
 interface LeaderboardEntry {
   rank: number
@@ -148,7 +149,7 @@ export default function Leaderboard() {
     setLoadingMessage('Connecting to leaderboard service...')
 
     try {
-      const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000')
+      const apiUrl = API_URL
       const token = localStorage.getItem('access_token')
       const params = new URLSearchParams({
         limit: '50',

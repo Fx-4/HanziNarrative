@@ -3,6 +3,7 @@ import { toast } from 'react-hot-toast'
 import axios from 'axios'
 import { buildCacheKey, getAudio, saveAudio } from '@/utils/ttsCache'
 import { getVoiceName, getSpeakingRate } from '@/utils/voicePreference'
+import { API_URL } from '@/lib/env'
 
 interface UseTTSOptions {
   language?: string
@@ -19,7 +20,6 @@ interface UseTTSReturn {
   isSupported: boolean
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 export function useTTS(options: UseTTSOptions = {}): UseTTSReturn {
   const {

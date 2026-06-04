@@ -5,6 +5,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { HanziWord } from '@/types'
 import axios from 'axios'
 import { getVoiceName } from '@/utils/voicePreference'
+import { API_URL } from '@/lib/env'
 import {
     Music,
     CheckCircle,
@@ -81,8 +82,6 @@ export default function ToneTrainer() {
     const [loading, setLoading] = useState(false)
     const [isPlaying, setIsPlaying] = useState(false)
     const audioRef = useRef<HTMLAudioElement | null>(null)
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-
     const startSession = async () => {
         setLoading(true)
         try {

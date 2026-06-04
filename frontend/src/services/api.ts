@@ -1,4 +1,5 @@
 ﻿import axios from 'axios'
+import { API_URL } from '@/lib/env'
 import type {
   User,
   Story,
@@ -25,8 +26,6 @@ import type {
   GamificationStats,
 } from '@/types'
 import { apiLogger } from '@/utils/debugLogger'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 
 type LearningStatsResponse = {

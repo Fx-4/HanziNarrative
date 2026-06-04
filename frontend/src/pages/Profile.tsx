@@ -231,7 +231,7 @@ export default function Profile() {
                   : <Camera className="w-5 h-5 text-white" />
                 }
               </button>
-              <input ref={fileInputRef} type="file" accept="image/*" onChange={handleProfilePictureUpload} className="hidden" />
+              <input ref={fileInputRef} id="avatar-upload" name="avatar-upload" type="file" accept="image/*" onChange={handleProfilePictureUpload} className="hidden" aria-label="Upload profile picture" />
             </motion.div>
 
             {/* Logout */}

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { storiesApi } from '@/services/api'
 import { apiLogger } from '@/utils/debugLogger'
+import { API_URL } from '@/lib/env'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import {
   Sparkles,
@@ -227,12 +228,11 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
         if (vocabArray.length > 0) request.target_vocabulary = vocabArray
       }
 
-      const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000')
       const token = localStorage.getItem('access_token')
 
-      apiLogger.debug('SSE connecting', { url: `${apiUrl}/stories/generate-stream` })
+      apiLogger.debug('SSE connecting', { url: `${API_URL}/stories/generate-stream` })
 
-      const res = await fetch(`${apiUrl}/stories/generate-stream`, {
+      const res = await fetch(`${API_URL}/stories/generate-stream`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

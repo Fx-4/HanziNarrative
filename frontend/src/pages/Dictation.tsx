@@ -19,8 +19,7 @@ import { toast } from 'react-hot-toast'
 import axios from 'axios'
 import BlurText from '@/components/animations/BlurText'
 import { getVoiceName } from '@/utils/voicePreference'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+import { API_URL } from '@/lib/env'
 
 interface DictationSentence {
     text: string
@@ -437,6 +436,8 @@ export default function Dictation() {
                             <div className="space-y-4">
                                 <input
                                     ref={inputRef}
+                                    id="dictation-answer"
+                                    name="dictation-answer"
                                     type="text"
                                     value={userInput}
                                     onChange={(e) => setUserInput(e.target.value)}

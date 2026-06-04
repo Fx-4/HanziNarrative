@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-const WS_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8000')
-  .replace(/^http/, 'ws')
+import { API_URL } from '@/lib/env'
+const WS_BASE = API_URL.replace(/^http/, 'ws') // http→ws, https→wss
 
 // ---------------------------------------------------------------------------
 // Message types mirroring backend protocol

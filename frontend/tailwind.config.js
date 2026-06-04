@@ -225,6 +225,29 @@ export default {
         '2xl': '1rem',
         '3xl': '1.5rem',
       },
+
+      /**
+       * SPACING SYSTEM — 4px base unit (4px = 0.25rem)
+       * All spacing is a multiple of 4px.
+       * Custom tokens fill gaps in Tailwind's default scale.
+       *
+       * Usage guide (Learning Module):
+       *   Micro gap (icon+text):  gap-1.5  (6px)
+       *   Compact gap (list row): gap-2    (8px)
+       *   Card inner gap:         gap-3    (12px)
+       *   Standard card padding:  p-4      (16px)
+       *   Section gap:            space-y-6 (24px)
+       *   Page bottom padding:    pb-16    (64px)
+       *   Touch target min:       h-11     (44px)
+       */
+      spacing: {
+        '4.5': '1.125rem',  // 18px — between card-p and section-gap
+        '13':  '3.25rem',   // 52px — medium icon container
+        '15':  '3.75rem',   // 60px — audio button size
+        '18':  '4.5rem',    // 72px — large Hanzi display area
+        '88':  '22rem',     // 352px — max exercise option width
+        '128': '32rem',     // 512px — max session container width
+      },
       zIndex: {
         '60': '60',
         '70': '70',

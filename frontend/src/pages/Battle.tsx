@@ -6,8 +6,7 @@ import { toast } from 'react-hot-toast'
 import { Swords, Users, Copy, Check, Crown, Heart, Trophy, Shield, Zap, LogOut, Play, ArrowRight, Star, X, BookOpen, Timer, Flame, Volume2 } from 'lucide-react'
 import axios from 'axios'
 import { playTTS } from '@/utils/ttsHelper'
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+import { API_URL as API } from '@/lib/env'
 function authHeaders() { const t = localStorage.getItem('access_token'); return t ? { Authorization: `Bearer ${t}` } : {} }
 
 function Hearts({ lives, max = 3 }: { lives: number; max?: number }) {

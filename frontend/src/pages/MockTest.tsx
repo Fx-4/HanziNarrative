@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { playTTS } from '@/utils/ttsHelper'
+import { API_URL } from '@/lib/env'
 import { vocabularyApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { HanziWord } from '@/types'
@@ -332,7 +333,6 @@ export default function MockTest() {
 
     const startTimer = useCallback((seconds: number) => {
         stopTimer()
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
         const token = localStorage.getItem('access_token')
         const abort = new AbortController()
         timerAbortRef.current = abort
