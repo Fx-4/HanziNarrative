@@ -6,8 +6,9 @@ import { learningPathApi, LessonProgressRecord } from '@/services/api'
 import {
   CheckCircle, Lock, PlayCircle, RotateCcw, ChevronDown,
   BookOpen, Brain, Dumbbell, Star, Zap, Trophy,
-  Loader2, RefreshCw,
+  RefreshCw,
 } from 'lucide-react'
+import { Skeleton } from '@/components/ui/Skeleton'
 
 const HSK_LEVELS = [1, 2, 3, 4, 5, 6]
 
@@ -133,10 +134,26 @@ export default function LearningPath() {
         })}
       </div>
 
-      {/* ── Loading / Error ── */}
+      {/* ── Skeleton ── */}
       {loading && (
-        <div className="flex justify-center py-12">
-          <Loader2 className="w-7 h-7 animate-spin text-indigo-500" />
+        <div className="space-y-3">
+          {[0, 1, 2, 3].map(i => (
+            <div key={i} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4 flex items-center gap-3">
+              {/* Emoji placeholder */}
+              <Skeleton className="w-12 h-12 rounded-xl flex-shrink-0" />
+              {/* Text + progress */}
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-3 w-16" />
+                <Skeleton className="h-5 w-48" />
+                <div className="flex items-center gap-2">
+                  <Skeleton className="flex-1 h-1.5 rounded-full" />
+                  <Skeleton className="h-3 w-8" />
+                </div>
+              </div>
+              {/* Chevron */}
+              <Skeleton className="w-4 h-4 rounded flex-shrink-0" />
+            </div>
+          ))}
         </div>
       )}
       {error && (

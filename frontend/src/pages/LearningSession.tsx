@@ -8,6 +8,7 @@ import {
   Volume2, ChevronRight, CheckCircle, X, Star, Zap,
   ArrowLeft, Loader2, Trophy,
 } from 'lucide-react'
+import { Skeleton } from '@/components/ui/Skeleton'
 import toast from 'react-hot-toast'
 
 // ── Step types ────────────────────────────────────────────────────────────────
@@ -374,8 +375,31 @@ export default function LearningSession() {
 
   if (!sessionId || steps.length === 0) {
     return (
-      <div className="flex justify-center items-center min-h-[50vh]">
-        <Loader2 className="w-7 h-7 animate-spin text-indigo-500" />
+      <div className="max-w-md mx-auto px-4 pb-16">
+        {/* Progress bar header */}
+        <div className="flex items-center gap-3 py-4">
+          <Skeleton className="w-8 h-8 rounded-lg flex-shrink-0" />
+          <Skeleton className="flex-1 h-3 rounded-full" />
+          <Skeleton className="w-10 h-3 rounded" />
+        </div>
+        {/* Session label */}
+        <Skeleton className="h-3 w-48 mx-auto mb-6 rounded-full" />
+
+        {/* Intro-style card skeleton (most common first step) */}
+        <div className="flex flex-col items-center gap-5 py-6">
+          {/* Audio button */}
+          <Skeleton className="w-16 h-16 rounded-2xl" />
+          {/* Big character */}
+          <Skeleton className="h-24 w-28 rounded-2xl" />
+          {/* Pinyin */}
+          <Skeleton className="h-5 w-24 rounded" />
+          {/* English */}
+          <Skeleton className="h-6 w-32 rounded" />
+          {/* Note */}
+          <Skeleton className="h-4 w-48 rounded" />
+          {/* Continue button */}
+          <Skeleton className="h-12 w-full max-w-xs rounded-xl mt-2" />
+        </div>
       </div>
     )
   }

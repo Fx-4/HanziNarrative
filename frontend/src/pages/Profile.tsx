@@ -8,6 +8,7 @@ import {
   Camera, Timer, BookOpen, TrendingUp, Zap, Star, CheckCircle2,
   Loader2,
 } from 'lucide-react'
+import { Skeleton } from '@/components/ui/Skeleton'
 import { motion, AnimatePresence } from 'framer-motion'
 import CountUp from '@/components/animations/CountUp'
 
@@ -255,18 +256,78 @@ export default function Profile() {
         </div>
       </motion.div>
 
-      {/* ── Loading skeleton ────────────────────────────────────────────── */}
+      {/* ── Stats skeleton ──────────────────────────────────────────────── */}
       <AnimatePresence>
         {loading && (
           <motion.div
-            key="loading"
+            key="skeleton"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col items-center py-12 gap-3"
+            className="space-y-6"
           >
-            <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-            <p className="text-sm text-gray-400">Loading your stats…</p>
+            {/* Level / XP card */}
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="w-12 h-12 rounded-2xl" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-3 w-20" />
+                    <Skeleton className="h-7 w-28" />
+                  </div>
+                </div>
+                <div className="text-right space-y-2">
+                  <Skeleton className="h-8 w-16 ml-auto" />
+                  <Skeleton className="h-3 w-14 ml-auto" />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <div className="flex justify-between">
+                  <Skeleton className="h-3 w-16" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+                <Skeleton className="h-3 w-full rounded-full" />
+              </div>
+            </div>
+
+            {/* 4 stat badges */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {['bg-orange-400', 'bg-indigo-600', 'bg-emerald-500', 'bg-violet-600'].map((bg, i) => (
+                <div key={i} className={`${bg} rounded-2xl p-4 opacity-30 animate-pulse space-y-2`}>
+                  <Skeleton className="w-5 h-5 rounded bg-white/40" />
+                  <Skeleton className="h-7 w-12 bg-white/40" />
+                  <Skeleton className="h-3 w-16 bg-white/40" />
+                </div>
+              ))}
+            </div>
+
+            {/* HSK Journey */}
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 space-y-3">
+              <div className="flex items-center gap-2 mb-4">
+                <Skeleton className="w-5 h-5 rounded" />
+                <Skeleton className="h-5 w-28" />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Skeleton className="h-24 rounded-2xl" />
+                <Skeleton className="h-24 rounded-2xl" />
+              </div>
+            </div>
+
+            {/* Learning Progress */}
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 space-y-3">
+              <div className="flex items-center gap-2 mb-4">
+                <Skeleton className="w-5 h-5 rounded" />
+                <Skeleton className="h-5 w-36" />
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                {[0, 1, 2].map(i => (
+                  <div key={i} className="space-y-2 text-center p-4 rounded-2xl bg-gray-50 animate-pulse">
+                    <Skeleton className="h-8 w-12 mx-auto" />
+                    <Skeleton className="h-3 w-16 mx-auto" />
+                  </div>
+                ))}
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

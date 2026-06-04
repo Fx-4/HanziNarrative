@@ -4,10 +4,11 @@ import { Link } from 'react-router-dom'
 import { dailyChallengeApi } from '@/services/api'
 import {
   Calendar, Flame, CheckCircle, BookOpen, Volume2,
-  Loader2, ChevronRight, Star, Zap, RefreshCw,
+  Loader2, ChevronRight, Star, Zap, RefreshCw, // Loader2 still used in audio button
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { playTTS } from '@/utils/ttsHelper'
+import { Skeleton } from '@/components/ui/Skeleton'
 
 interface ChallengeData {
   story: {
@@ -89,12 +90,51 @@ export default function DailyChallenge() {
     }
   }
 
-  /* ── Loading ── */
+  /* ── Skeleton ── */
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3">
-        <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
-        <p className="text-sm text-gray-400">Memuat challenge hari ini…</p>
+      <div className="max-w-2xl mx-auto px-4 pb-16 space-y-5 pt-2">
+        {/* Header */}
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-32 rounded-full" />
+          <Skeleton className="h-7 w-56" />
+          <div className="flex gap-2 pt-1">
+            <Skeleton className="h-7 w-28 rounded-full" />
+            <Skeleton className="h-7 w-24 rounded-full" />
+          </div>
+        </div>
+
+        {/* Story card */}
+        <div className="rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-xl">
+          {/* Gradient header placeholder */}
+          <div className="bg-gray-200 dark:bg-gray-700 px-6 py-4 space-y-2 animate-pulse">
+            <Skeleton className="h-5 w-14 rounded-full bg-gray-300 dark:bg-gray-600" />
+            <Skeleton className="h-7 w-40 bg-gray-300 dark:bg-gray-600" />
+            <Skeleton className="h-4 w-32 bg-gray-300 dark:bg-gray-600" />
+          </div>
+          {/* Content lines */}
+          <div className="px-6 py-5 space-y-3 bg-white dark:bg-gray-900">
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-5/6" />
+            <Skeleton className="h-6 w-4/5" />
+            <Skeleton className="h-6 w-3/4" />
+            <Skeleton className="h-4 w-36 mt-2" />
+          </div>
+        </div>
+
+        {/* CTA button */}
+        <Skeleton className="h-14 w-full rounded-2xl" />
+
+        {/* Stat cards */}
+        <div className="grid grid-cols-3 gap-3">
+          {[0, 1, 2].map(i => (
+            <div key={i} className="rounded-2xl p-4 bg-gray-50 dark:bg-gray-800/50 space-y-2 animate-pulse">
+              <Skeleton className="h-5 w-5 mx-auto rounded-full" />
+              <Skeleton className="h-6 w-10 mx-auto" />
+              <Skeleton className="h-3 w-14 mx-auto" />
+            </div>
+          ))}
+        </div>
       </div>
     )
   }
