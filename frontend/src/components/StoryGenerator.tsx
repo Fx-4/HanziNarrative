@@ -393,7 +393,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
               <div className="flex gap-3 text-sm">
                 <div className="text-center">
                   <div className={`font-bold text-base leading-none ${
-                    usageStats.used_today >= usageStats.limit_daily ? 'text-red-600' : isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-success-600 dark:text-success-400'
+                    usageStats.used_today >= usageStats.limit_daily ? 'text-error-600' : isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-success-600 dark:text-success-400'
                   }`}>
                     {usageStats.limit_daily - usageStats.used_today}
                   </div>
@@ -402,7 +402,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                 <div className="w-px bg-gray-200 dark:bg-gray-700 self-stretch" />
                 <div className="text-center">
                   <div className={`font-bold text-base leading-none ${
-                    usageStats.used_this_hour >= usageStats.limit_hourly ? 'text-red-600' : isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-success-600 dark:text-success-400'
+                    usageStats.used_this_hour >= usageStats.limit_hourly ? 'text-error-600' : isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-success-600 dark:text-success-400'
                   }`}>
                     {usageStats.limit_hourly - usageStats.used_this_hour}
                   </div>
@@ -421,7 +421,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             </button>
           </div>
           {isLimitReached && (
-            <div className="mt-2 text-xs text-red-600 dark:text-red-400 font-medium">
+            <div className="mt-2 text-xs text-error-600 dark:text-error-400 font-medium">
               Rate limit reached. Please wait for the limit to reset.
             </div>
           )}
@@ -473,7 +473,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                 value={topic}
                 onChange={e => setTopic(e.target.value)}
                 placeholder="e.g., daily life, school, travel, food..."
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
               />
             </div>
 
@@ -513,7 +513,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                   className="overflow-hidden"
                 >
                   <div className="space-y-5 pt-3 border-t border-gray-200 dark:border-gray-700">
-                    <p className="text-xs font-medium text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <p className="text-xs font-medium text-primary-600 dark:text-primary-400 uppercase tracking-wider flex items-center gap-1.5">
                       <SlidersHorizontal className="w-3.5 h-3.5" />
                       Customization Options
                     </p>
@@ -588,7 +588,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                               onClick={() => setNarrativePerspective(narrativePerspective === p ? '' : p)}
                               className={`rounded-full px-3 py-1 text-xs font-medium transition-all cursor-pointer ${
                                 narrativePerspective === p
-                                  ? 'bg-indigo-600 text-white shadow-sm'
+                                  ? 'bg-primary-600 text-white shadow-sm'
                                   : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                               }`}
                             >
@@ -613,7 +613,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                               onClick={() => setIncludeDialogue(includeDialogue === d.val ? null : d.val)}
                               className={`rounded-full px-3 py-1 text-xs font-medium transition-all cursor-pointer ${
                                 includeDialogue === d.val
-                                  ? 'bg-indigo-600 text-white shadow-sm'
+                                  ? 'bg-primary-600 text-white shadow-sm'
                                   : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                               }`}
                             >
@@ -635,7 +635,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                         value={characterNames}
                         onChange={e => setCharacterNames(e.target.value)}
                         placeholder="e.g., 小明, 小红, 王老师 (comma separated)"
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
                       />
                     </div>
 
@@ -650,7 +650,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                         value={targetVocabulary}
                         onChange={e => setTargetVocabulary(e.target.value)}
                         placeholder="Words to include: 学习, 朋友, 高兴 (comma separated)"
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
                       />
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         The AI will try to use these words in the story
@@ -661,7 +661,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                     <div>
                       <button
                         onClick={() => setShowGrammar(!showGrammar)}
-                        className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                        className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                       >
                         <GraduationCap className="w-4 h-4" />
                         Grammar Patterns (Optional)
@@ -731,9 +731,9 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
       {/* ─── Error ─────────────────────────────────────────── */}
       {error && (
         <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-          <div className="rounded-2xl shadow-sm border border-red-200 dark:border-red-800 p-5 bg-red-50 dark:bg-red-950/30">
+          <div className="rounded-2xl shadow-sm border border-error-200 dark:border-error-800 p-5 bg-error-50 dark:bg-error-950/30">
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-error-600 dark:text-error-400 flex-shrink-0 mt-0.5" />
               <div>
                 <h4 className="font-semibold text-red-900 dark:text-red-300 mb-1">Error</h4>
                 <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
@@ -768,8 +768,8 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
               <div className="flex items-center gap-2 flex-shrink-0">
                 <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                   isAdvanced
-                    ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300'
-                    : 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300'
+                    ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300'
+                    : 'bg-success-100 dark:bg-success-900/40 text-success-700 dark:text-success-300'
                 }`}>
                   HSK {generatedStory.hsk_level}
                 </span>
@@ -798,8 +798,8 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                     }}
                     className={`flex items-center text-white rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors ${
                       isAdvanced
-                        ? 'bg-indigo-600 hover:bg-indigo-700'
-                        : 'bg-emerald-600 hover:bg-emerald-700'
+                        ? 'bg-primary-600 hover:bg-primary-700'
+                        : 'bg-success-600 hover:bg-success-700'
                     }`}
                   >
                     <Eye className="w-4 h-4 mr-1" />
