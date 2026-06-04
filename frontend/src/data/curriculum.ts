@@ -170,7 +170,7 @@ const HSK1: UnitDef[] = [
         grammarPoints: [
           {
             pattern: 'A + 的 + B',
-            explanation: '的 (de) is a possessive particle, like "'s" in English. Place it between the possessor and what is possessed.',
+            explanation: "的 (de) is a possessive particle, like 's in English. Place it between the possessor and what is possessed.",
             examples: [
               { zh: '我的书',     py: "wǒ de shū",        en: 'My book' },
               { zh: '你的朋友',   py: "nǐ de péngyou",    en: 'Your friend' },
@@ -229,7 +229,7 @@ const HSK1: UnitDef[] = [
         grammarPoints: [
           {
             pattern: '现在几点？/ 几点了？',
-            explanation: '几 (jǐ) = "how many." 点 (diǎn) = "o'clock." Together 几点 = "what time." No verb needed — Chinese time expressions are direct.',
+            explanation: "几 (jǐ) = \"how many.\" 点 (diǎn) = \"o'clock.\" Together 几点 = \"what time.\" No verb needed — Chinese time expressions are direct.",
             examples: [
               { zh: '现在几点？',     py: 'Xiànzài jǐ diǎn?',      en: 'What time is it now?' },
               { zh: '现在八点。',     py: 'Xiànzài bā diǎn.',       en: "It's eight o'clock." },
