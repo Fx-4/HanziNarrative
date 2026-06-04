@@ -9,6 +9,7 @@ import {
   BarChart3, Type, ChevronDown, Menu, X, Moon, Sun,
   Layers, Keyboard, Trophy, ChevronRight, Headphones, Map, Mic, Lock,
   Target, Grid3X3, Music, Heart, MessageCircle, Shield, Swords, Zap,
+  Calendar, HelpCircle,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useState, useEffect, useRef } from 'react'
@@ -78,6 +79,7 @@ const dropdownMenus: DropdownMenu[] = [
       { to: '/tones',           label: 'Tones',            icon: Music,        description: 'Tone trainer' },
       { to: '/mock-test',       label: 'Mock Test',        icon: GraduationCap,description: 'Exam simulation' },
       { to: '/vocabulary',      label: 'Vocabulary',       icon: BookMarked,   description: 'Word browser' },
+      { to: '/explorer',        label: 'Story Blanks',     icon: HelpCircle,   description: 'Fill blanks from stories' },
     ],
   },
   {
@@ -90,7 +92,8 @@ const dropdownMenus: DropdownMenu[] = [
       { to: '/conversation',    label: 'AI Chat',          icon: MessageCircle,description: 'Conversation practice' },
       { to: '/matching',        label: 'Match Game',       icon: Grid3X3,      description: 'Card matching' },
       { to: '/sentence-builder',label: 'Sentence Builder', icon: Type,         description: 'Arrange words' },
-      { to: '/story-challenge', label: 'Story Challenge',  icon: Lock,         description: 'Unlock stories' },
+      { to: '/story-challenge',  label: 'Story Challenge',  icon: Lock,         description: 'Unlock stories' },
+      { to: '/daily-challenge', label: 'Daily Challenge',  icon: Calendar,     description: 'One story/day · +30 XP' },
     ],
   },
 ]

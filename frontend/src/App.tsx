@@ -38,6 +38,7 @@ const Conversation = lazy(() => import('./pages/Conversation'))
 const Admin = lazy(() => import('./pages/Admin'))
 const Battle = lazy(() => import('./pages/Battle'))
 const AuthCallback = lazy(() => import('./pages/AuthCallback'))
+const DailyChallenge = lazy(() => import('./pages/DailyChallenge'))
 
 // ── Minimal loading fallback ──────────────────────────────────────
 function PageLoader() {
@@ -213,6 +214,7 @@ function App() {
           <Route path="leaderboard" element={<LazyPage name="Leaderboard"><Leaderboard /></LazyPage>} />
           <Route path="conversation" element={<LazyPage name="Conversation"><Conversation /></LazyPage>} />
           <Route path="battle" element={<LazyPage name="Battle"><Battle /></LazyPage>} />
+          <Route path="daily-challenge" element={<LazyPage name="DailyChallenge"><DailyChallenge /></LazyPage>} />
         </Route>
       </Routes>
     </>
