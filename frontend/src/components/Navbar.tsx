@@ -9,7 +9,7 @@ import {
   BarChart3, Type, ChevronDown, Menu, X, Moon, Sun,
   Layers, Keyboard, Trophy, ChevronRight, Headphones, Map, Mic, Lock,
   Target, Grid3X3, Music, Heart, MessageCircle, Shield, Swords, Zap,
-  Calendar, HelpCircle,
+  Calendar, HelpCircle, Route,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useState, useEffect, useRef } from 'react'
@@ -58,9 +58,10 @@ const itemVariants = {
 
 // Primary links — always visible in desktop bar
 const primaryLinks: MenuItem[] = [
-  { to: '/review', label: 'Review', icon: Brain, badge: true },
-  { to: '/stories', label: 'Stories', icon: BookOpen },
-  { to: '/dashboard', label: 'Dashboard', icon: BarChart3 },
+  { to: '/review',     label: 'Review',  icon: Brain,      badge: true },
+  { to: '/path',       label: 'Kursus',  icon: Route },
+  { to: '/stories',    label: 'Stories', icon: BookOpen },
+  { to: '/dashboard',  label: 'Stats',   icon: BarChart3 },
 ]
 
 // Dropdown menus

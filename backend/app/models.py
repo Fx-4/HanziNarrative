@@ -339,3 +339,25 @@ class RefreshToken(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     user = relationship("User")
+
+
+class UserLessonProgress(Base):
+    """Tracks which structured-curriculum sessions a user has completed."""
+    __tablename__ = "user_lesson_progress"
+
+    id           = Column(Integer, primary_key=True, index=True)
+    user_id      = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    session_id   = Column(String(120), nullable=False)   # e.g. "h1-u1-s1"
+    unit_id      = Column(String(120), nullable=False)   # e.g. "h1-u1"
+    hsk_level    = Column(Integer, nullable=False, default=1)
+    score        = Column(Integer, default=0)            # 0–100
+    xp_earned    = Column(Integer, default=0)
+    completed    = Column(Boolean, default=False)
+    completed_at = Column(DateTime(timezone=True), nullable=True)
+    created_at   = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User", backref="lesson_progress")
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "session_id", name="uq_ulp_user_session"),
+    )

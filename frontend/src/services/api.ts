@@ -863,6 +863,43 @@ export const conversationApi = {
   },
 }
 
+// ── Learning Path API ────────────────────────────────────────────────────────
+
+export interface LessonProgressRecord {
+  session_id: string
+  unit_id: string
+  hsk_level: number
+  score: number
+  xp_earned: number
+  completed_at: string | null
+}
+
+export const learningPathApi = {
+  getProgress: async (): Promise<LessonProgressRecord[]> => {
+    const res = await api.get('/learning-path/progress')
+    return res.data
+  },
+
+  completeSession: async (body: {
+    session_id: string
+    unit_id: string
+    hsk_level: number
+    score: number
+  }): Promise<{ is_new: boolean; xp_earned: number; score: number }> => {
+    const res = await api.post('/learning-path/complete', body)
+    return res.data
+  },
+
+  getStats: async (): Promise<{
+    total_sessions: number
+    total_xp: number
+    by_hsk_level: Record<string, number>
+  }> => {
+    const res = await api.get('/learning-path/stats')
+    return res.data
+  },
+}
+
 export const adminApi = {
   getStats: async (): Promise<AdminSystemStatsResponse> => {
     const response = await api.get('/admin/stats')
