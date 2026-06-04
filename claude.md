@@ -209,6 +209,17 @@ alembic upgrade head                                # Apply ke DB
 - SSE stream menggunakan `fetch` langsung (bukan Axios) + helper `pumpSSE()`
 - Timeout `0` (disabled) untuk AI generation endpoints
 
+### Git Commit
+- **Commit per file** atau per concern yang cohesive — jangan batch semua perubahan sesi jadi 1 commit
+- Body commit **wajib list perubahan per file**, contoh:
+  ```
+  fix(api): deskripsi singkat
+
+  - backend/app/main.py: tambah ProxyHeadersMiddleware
+  - frontend/src/services/api.ts: fix trailing slash di /progress/, /vocabulary-sets/
+  - frontend/src/pages/Profile.tsx: wrap FileReader dalam Promise
+  ```
+
 ---
 
 ## Design System (Ringkasan)

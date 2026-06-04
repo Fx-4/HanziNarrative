@@ -20,23 +20,23 @@ const hskGradients: Record<number, string> = {
   6: 'from-rose-400 to-red-500',
 }
 
-// Category badge colors
+// Category badge colors — each part-of-speech gets distinct color for visual scanning
 const categoryColors: Record<string, string> = {
-  verb:         'bg-blue-100 text-blue-800',
-  noun:         'bg-green-100 text-green-800',
-  adjective:    'bg-purple-100 text-purple-800',
-  adverb:       'bg-orange-100 text-orange-800',
-  pronoun:      'bg-pink-100 text-pink-800',
-  particle:     'bg-gray-100 text-gray-700',
-  number:       'bg-yellow-100 text-yellow-800',
-  conjunction:  'bg-teal-100 text-teal-800',
-  preposition:  'bg-indigo-100 text-indigo-800',
-  interjection: 'bg-rose-100 text-rose-800',
+  verb:         'bg-info-100 text-info-800 dark:bg-info-900/40 dark:text-info-300',
+  noun:         'bg-success-100 text-success-800 dark:bg-success-900/40 dark:text-success-300',
+  adjective:    'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300',
+  adverb:       'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300',
+  pronoun:      'bg-pink-100 text-pink-800 dark:bg-pink-900/40 dark:text-pink-300',
+  particle:     'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
+  number:       'bg-warning-100 text-warning-800 dark:bg-warning-900/40 dark:text-warning-300',
+  conjunction:  'bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-300',
+  preposition:  'bg-primary-100 text-primary-800 dark:bg-primary-900/40 dark:text-primary-300',
+  interjection: 'bg-error-100 text-error-800 dark:bg-error-900/40 dark:text-error-300',
 }
 
 function getCategoryColor(category?: string) {
-  if (!category) return 'bg-indigo-100 text-indigo-800'
-  return categoryColors[category.toLowerCase()] ?? 'bg-indigo-100 text-indigo-800'
+  if (!category) return 'bg-primary-100 text-primary-800 dark:bg-primary-900/40 dark:text-primary-300'
+  return categoryColors[category.toLowerCase()] ?? 'bg-primary-100 text-primary-800 dark:bg-primary-900/40 dark:text-primary-300'
 }
 
 export default function VocabularyCard({ word }: VocabularyCardProps) {
@@ -58,8 +58,7 @@ export default function VocabularyCard({ word }: VocabularyCardProps) {
             </span>
 
             <motion.div
-              className="text-5xl font-bold text-white drop-shadow-md leading-none mb-1"
-              style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
+              className="font-chinese text-5xl font-bold text-white drop-shadow-md leading-none mb-1"
               whileHover={{ scale: 1.08 }}
               transition={{ type: 'spring', stiffness: 400, damping: 15 }}
             >
@@ -67,10 +66,7 @@ export default function VocabularyCard({ word }: VocabularyCardProps) {
             </motion.div>
 
             {word.traditional && word.traditional !== word.simplified && (
-              <div
-                className="text-sm text-white/80 font-medium"
-                style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
-              >
+              <div className="font-chinese text-sm text-white/80 font-medium">
                 {word.traditional}
               </div>
             )}
@@ -80,10 +76,7 @@ export default function VocabularyCard({ word }: VocabularyCardProps) {
           <div className="flex flex-col flex-1 p-4 gap-3">
             {/* Pinyin + audio */}
             <div className="flex items-center justify-between">
-              <span
-                className="text-base font-semibold text-indigo-600 tracking-wide"
-                style={{ fontFamily: '"Noto Sans", Arial, sans-serif' }}
-              >
+              <span className="font-mono text-base font-semibold text-primary-600 dark:text-primary-400 tracking-wide">
                 {word.pinyin}
               </span>
               <AudioButton
@@ -124,9 +117,9 @@ export default function VocabularyCard({ word }: VocabularyCardProps) {
             <button
               onClick={() => setShowDetails(true)}
               className="mt-1 w-full py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5
-                bg-gray-50 text-gray-600
-                hover:bg-indigo-50 hover:text-indigo-700
-                border border-gray-100 hover:border-indigo-200
+                bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400
+                hover:bg-primary-50 dark:hover:bg-primary-950/40 hover:text-primary-700 dark:hover:text-primary-300
+                border border-gray-100 dark:border-gray-700 hover:border-primary-200 dark:hover:border-primary-700
                 transition-all duration-200 cursor-pointer"
             >
               <Info className="w-3.5 h-3.5" />

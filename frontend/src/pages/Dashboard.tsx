@@ -31,7 +31,8 @@ interface HSKLevelData {
   stats: Stats
 }
 
-const CHART_COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
+// Align with design system tokens: primary-600, success-600, accent-500, error-600, then decorative violet/pink
+const CHART_COLORS = ['#4f46e5', '#16a34a', '#f59e0b', '#dc2626', '#8b5cf6', '#ec4899']
 const CACHE_KEY = 'dashboard_stats_cache'
 const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
@@ -88,9 +89,9 @@ function SectionCard({ title, icon: Icon, children }: {
   children: React.ReactNode
 }) {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-6">
+    <div className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-6">
       <h2 className="font-extrabold text-gray-900 dark:text-gray-100 text-lg mb-4 flex items-center gap-2">
-        <Icon className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
+        <Icon className="w-5 h-5 text-primary-500 dark:text-primary-400" />
         {title}
       </h2>
       {children}
@@ -181,16 +182,16 @@ export default function Dashboard() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-10 text-center max-w-sm w-full"
+          className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-10 text-center max-w-sm w-full"
         >
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mx-auto mb-5 shadow-lg shadow-indigo-500/20">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-violet-600 flex items-center justify-center mx-auto mb-5 shadow-lg shadow-primary-500/20">
             <LogIn className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-xl font-extrabold text-gray-900 dark:text-gray-100 mb-2">Login Required</h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Please login to view your learning dashboard</p>
           <Link
             to="/login"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/20 transition-colors text-sm"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/20 transition-colors text-sm"
           >
             Login Now
           </Link>
@@ -209,16 +210,16 @@ export default function Dashboard() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-10 text-center max-w-sm w-full"
+          className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-10 text-center max-w-sm w-full"
         >
-          <div className="w-16 h-16 rounded-2xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center mx-auto mb-5">
-            <AlertTriangle className="w-8 h-8 text-red-500 dark:text-red-400" />
+          <div className="w-16 h-16 rounded-2xl bg-error-50 dark:bg-error-950/30 flex items-center justify-center mx-auto mb-5">
+            <AlertTriangle className="w-8 h-8 text-error-500 dark:text-error-400" />
           </div>
           <h2 className="text-xl font-extrabold text-gray-900 dark:text-gray-100 mb-2">Failed to Load</h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{error}</p>
           <button
             onClick={fetchDashboardData}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors text-sm"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-colors text-sm"
           >
             <RotateCcw className="w-4 h-4" /> Try Again
           </button>
@@ -236,12 +237,12 @@ export default function Dashboard() {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden"
+        className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden"
       >
-        <div className="h-2 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600" />
+        <div className="h-2 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
         <div className="px-6 py-5 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 shrink-0">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary-500 to-violet-600 flex items-center justify-center shadow-lg shadow-primary-500/20 shrink-0">
               <span className="text-white text-xl font-bold font-chinese">学</span>
             </div>
             <div>
@@ -271,8 +272,8 @@ export default function Dashboard() {
       {/* ── 4 Stat Cards ────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { Icon: BookOpen, label: 'Total Words',  value: overallStats.total_words_learning, bg: 'bg-indigo-600',  shadow: 'shadow-indigo-500/20' },
-          { Icon: Award,    label: 'Mastered',     value: overallStats.mastered_words,       bg: 'bg-emerald-500', shadow: 'shadow-emerald-500/20' },
+          { Icon: BookOpen, label: 'Total Words',  value: overallStats.total_words_learning, bg: 'bg-primary-600',  shadow: 'shadow-primary-500/20' },
+          { Icon: Award,    label: 'Mastered',     value: overallStats.mastered_words,       bg: 'bg-success-600', shadow: 'shadow-success-500/20' },
           { Icon: Calendar, label: 'Due Today',    value: overallStats.due_for_review,       bg: 'bg-orange-500',  shadow: 'shadow-orange-500/20' },
           { Icon: Target,   label: 'Accuracy',     value: overallStats.accuracy, suffix: '%', decimals: 1, bg: 'bg-violet-600', shadow: 'shadow-violet-500/20' },
         ].map(({ Icon, label, value, suffix, decimals, bg, shadow }, i) => (
@@ -350,12 +351,12 @@ export default function Dashboard() {
         <SectionCard title="Overall Statistics" icon={BookOpen}>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { label: 'Total Reviews', value: overallStats.total_reviews, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-              { label: 'Avg Mastery', value: overallStats.average_mastery, decimals: 1, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+              { label: 'Total Reviews', value: overallStats.total_reviews, color: 'text-primary-600', bg: 'bg-primary-50' },
+              { label: 'Avg Mastery', value: overallStats.average_mastery, decimals: 1, color: 'text-success-600', bg: 'bg-success-50' },
               { label: 'Mastery Rate', value: masteryRate, decimals: 1, suffix: '%', color: 'text-violet-600', bg: 'bg-violet-50' },
               { label: 'Active Levels', value: activeLevels, color: 'text-orange-600', bg: 'bg-orange-50' },
             ].map(({ label, value, decimals, suffix, color, bg }) => (
-              <div key={label} className={`${bg} dark:bg-gray-800 rounded-2xl p-4 text-center`}>
+              <div key={label} className={`${bg} dark:bg-surface-card rounded-2xl p-4 text-center`}>
                 <p className={`text-2xl font-extrabold ${color} dark:text-gray-100`}>
                   <CountUp to={value} duration={1.2} decimals={decimals} suffix={suffix} />
                 </p>

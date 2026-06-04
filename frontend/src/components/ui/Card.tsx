@@ -15,8 +15,8 @@ export function Card({
   ...props
 }: CardProps) {
   const baseClass = cn(
-    "bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-shadow duration-200",
-    hover && "hover:shadow-lg",
+    "bg-white dark:bg-surface-card rounded-xl shadow-card p-6 transition-shadow duration-200",
+    hover && "hover:shadow-card-md",
     className
   )
 

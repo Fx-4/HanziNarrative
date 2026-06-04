@@ -126,9 +126,9 @@ function ChipSelector({
   }
 
   const activeClasses: Record<string, string> = {
-    indigo: 'bg-indigo-600 text-white shadow-sm',
+    indigo: 'bg-primary-600 text-white shadow-sm',
     purple: 'bg-purple-600 text-white shadow-sm',
-    emerald: 'bg-emerald-600 text-white shadow-sm',
+    emerald: 'bg-success-600 text-white shadow-sm',
   }
 
   return (
@@ -332,13 +332,13 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             onClick={() => setMode('quick')}
             className={`relative rounded-2xl p-4 border-2 transition-all cursor-pointer text-left ${
               !isAdvanced
-                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 shadow-md'
-                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-emerald-300 dark:hover:border-emerald-700'
+                ? 'border-success-500 bg-success-50 dark:bg-success-900/20 shadow-md'
+                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-success-300 dark:hover:border-success-700'
             }`}
           >
             <div className="flex items-center gap-2 mb-1.5">
-              <Zap className={`w-5 h-5 ${!isAdvanced ? 'text-emerald-600' : 'text-gray-400 dark:text-gray-500'}`} />
-              <span className={`font-bold text-sm ${!isAdvanced ? 'text-emerald-700 dark:text-emerald-400' : 'text-gray-700 dark:text-gray-300'}`}>
+              <Zap className={`w-5 h-5 ${!isAdvanced ? 'text-success-600' : 'text-gray-400 dark:text-gray-500'}`} />
+              <span className={`font-bold text-sm ${!isAdvanced ? 'text-success-700 dark:text-success-400' : 'text-gray-700 dark:text-gray-300'}`}>
                 Quick
               </span>
             </div>
@@ -346,7 +346,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
               Pick level & topic, generate instantly.
             </p>
             {!isAdvanced && (
-              <motion.div layoutId="mode-dot" className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-emerald-500" />
+              <motion.div layoutId="mode-dot" className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-success-500" />
             )}
           </button>
 
@@ -355,13 +355,13 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             onClick={() => setMode('advanced')}
             className={`relative rounded-2xl p-4 border-2 transition-all cursor-pointer text-left ${
               isAdvanced
-                ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 shadow-md'
-                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-indigo-300 dark:hover:border-indigo-700'
+                ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30 shadow-md'
+                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-primary-300 dark:hover:border-primary-700'
             }`}
           >
             <div className="flex items-center gap-2 mb-1.5">
-              <SlidersHorizontal className={`w-5 h-5 ${isAdvanced ? 'text-indigo-600' : 'text-gray-400 dark:text-gray-500'}`} />
-              <span className={`font-bold text-sm ${isAdvanced ? 'text-indigo-700 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-300'}`}>
+              <SlidersHorizontal className={`w-5 h-5 ${isAdvanced ? 'text-primary-600' : 'text-gray-400 dark:text-gray-500'}`} />
+              <span className={`font-bold text-sm ${isAdvanced ? 'text-primary-700 dark:text-primary-400' : 'text-gray-700 dark:text-gray-300'}`}>
                 Advanced
               </span>
             </div>
@@ -369,7 +369,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
               Genre, tone, setting, grammar & more.
             </p>
             {isAdvanced && (
-              <motion.div layoutId="mode-dot" className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-indigo-500" />
+              <motion.div layoutId="mode-dot" className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-primary-500" />
             )}
           </button>
         </div>
@@ -379,12 +379,12 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
       <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
         <div className={`rounded-2xl shadow-sm border p-3.5 ${
           isAdvanced
-            ? 'border-indigo-200 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/30 dark:to-violet-950/30'
-            : 'border-emerald-200 dark:border-emerald-800 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30'
+            ? 'border-primary-200 dark:border-primary-800 bg-gradient-to-br from-primary-50 to-violet-50 dark:from-primary-950/30 dark:to-violet-950/30'
+            : 'border-success-200 dark:border-success-800 bg-gradient-to-br from-success-50 to-teal-50 dark:from-success-950/30 dark:to-teal-950/30'
         }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Sparkles className={`w-4 h-4 ${isAdvanced ? 'text-indigo-600 dark:text-indigo-400' : 'text-emerald-600 dark:text-emerald-400'}`} />
+              <Sparkles className={`w-4 h-4 ${isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-success-600 dark:text-success-400'}`} />
               <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                 Story Generation
               </span>
@@ -393,7 +393,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
               <div className="flex gap-3 text-sm">
                 <div className="text-center">
                   <div className={`font-bold text-base leading-none ${
-                    usageStats.used_today >= usageStats.limit_daily ? 'text-red-600' : isAdvanced ? 'text-indigo-600 dark:text-indigo-400' : 'text-emerald-600 dark:text-emerald-400'
+                    usageStats.used_today >= usageStats.limit_daily ? 'text-red-600' : isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-success-600 dark:text-success-400'
                   }`}>
                     {usageStats.limit_daily - usageStats.used_today}
                   </div>
@@ -402,7 +402,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                 <div className="w-px bg-gray-200 dark:bg-gray-700 self-stretch" />
                 <div className="text-center">
                   <div className={`font-bold text-base leading-none ${
-                    usageStats.used_this_hour >= usageStats.limit_hourly ? 'text-red-600' : isAdvanced ? 'text-indigo-600 dark:text-indigo-400' : 'text-emerald-600 dark:text-emerald-400'
+                    usageStats.used_this_hour >= usageStats.limit_hourly ? 'text-red-600' : isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-success-600 dark:text-success-400'
                   }`}>
                     {usageStats.limit_hourly - usageStats.used_this_hour}
                   </div>
@@ -432,7 +432,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
       <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }}>
         <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-5">
           <h3 className="text-lg font-bold mb-5 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-            <Sparkles className={`w-5 h-5 ${isAdvanced ? 'text-indigo-600' : 'text-emerald-600'}`} />
+            <Sparkles className={`w-5 h-5 ${isAdvanced ? 'text-primary-600' : 'text-success-600'}`} />
             {isAdvanced ? 'Advanced Story Settings' : 'Story Settings'}
           </h3>
 
@@ -451,8 +451,8 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                     className={`rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors ${
                       hskLevel === level
                         ? isAdvanced
-                          ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                          : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                          ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                          : 'bg-success-600 hover:bg-success-700 text-white'
                         : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                     }`}
                   >
@@ -491,8 +491,8 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                     className={`capitalize rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors ${
                       length === len
                         ? isAdvanced
-                          ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                          : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                          ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                          : 'bg-success-600 hover:bg-success-700 text-white'
                         : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                     }`}
                   >
@@ -748,8 +748,8 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
           <div className={`rounded-2xl shadow-sm border p-5 ${
             isAdvanced
-              ? 'border-indigo-200 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/30 dark:to-violet-950/30'
-              : 'border-emerald-200 dark:border-emerald-800 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30'
+              ? 'border-primary-200 dark:border-primary-800 bg-gradient-to-br from-primary-50 to-violet-50 dark:from-primary-950/30 dark:to-violet-950/30'
+              : 'border-success-200 dark:border-success-800 bg-gradient-to-br from-success-50 to-teal-50 dark:from-success-950/30 dark:to-teal-950/30'
           }`}>
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1">
@@ -832,7 +832,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                 <div className="grid md:grid-cols-2 gap-3">
                   {generatedStory.vocabulary.map((vocab, index) => (
                     <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                      <span className={`text-xl font-medium ${isAdvanced ? 'text-indigo-600 dark:text-indigo-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                      <span className={`text-xl font-medium ${isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-success-600 dark:text-success-400'}`}>
                         {vocab.word}
                       </span>
                       <div className="flex-1">
@@ -852,7 +852,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                 <ul className="space-y-2">
                   {generatedStory.grammar_points.map((point, index) => (
                     <li key={index} className="flex items-start gap-2">
-                      <span className={`mt-1 ${isAdvanced ? 'text-indigo-600 dark:text-indigo-400' : 'text-emerald-600 dark:text-emerald-400'}`}>•</span>
+                      <span className={`mt-1 ${isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-success-600 dark:text-success-400'}`}>•</span>
                       <span className="text-gray-700 dark:text-gray-300">{point}</span>
                     </li>
                   ))}

@@ -65,9 +65,9 @@ export default function DailyGoalsTracker() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-indigo-500 p-3 sm:p-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-primary-500 p-3 sm:p-4">
           <div className="flex items-center gap-2 mb-3">
-            <Target className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
+            <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
             <h3 className="text-base sm:text-lg font-bold text-gray-900">
               Daily Goals
             </h3>
@@ -79,7 +79,7 @@ export default function DailyGoalsTracker() {
             </p>
             <Link
               to="/profile"
-              className="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm rounded-lg transition-colors"
+              className="inline-block px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-xs sm:text-sm rounded-lg transition-colors"
             >
               Set Goals
             </Link>
@@ -103,10 +103,10 @@ export default function DailyGoalsTracker() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 }}
     >
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-indigo-500 p-3 sm:p-4">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-primary-500 p-3 sm:p-4">
         {/* Header */}
         <div className="flex items-center gap-2 mb-3">
-          <Target className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
+          <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
           <h3 className="text-base sm:text-lg font-bold text-gray-900">
             Daily Goals
           </h3>
@@ -125,11 +125,11 @@ export default function DailyGoalsTracker() {
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs sm:text-sm font-bold text-indigo-600">
+                  <span className="text-xs sm:text-sm font-bold text-primary-600">
                     {Math.min(progress.wordsReviewed, goals.daily_words)}/{goals.daily_words}
                   </span>
                   {isGoalMet(progress.wordsReviewed, goals.daily_words) && (
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-success-500" />
                   )}
                 </div>
               </div>
@@ -140,8 +140,8 @@ export default function DailyGoalsTracker() {
                   transition={{ duration: 1, ease: "easeOut" }}
                   className={`h-2 rounded-full ${
                     isGoalMet(progress.wordsReviewed, goals.daily_words)
-                      ? 'bg-green-500'
-                      : 'bg-indigo-600'
+                      ? 'bg-success-500'
+                      : 'bg-primary-600'
                   }`}
                 />
               </div>
@@ -159,11 +159,11 @@ export default function DailyGoalsTracker() {
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs sm:text-sm font-bold text-indigo-600">
+                  <span className="text-xs sm:text-sm font-bold text-primary-600">
                     {Math.min(progress.timeStudied, goals.daily_time_minutes)}/{goals.daily_time_minutes} min
                   </span>
                   {isGoalMet(progress.timeStudied, goals.daily_time_minutes) && (
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-success-500" />
                   )}
                 </div>
               </div>
@@ -174,7 +174,7 @@ export default function DailyGoalsTracker() {
                   transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
                   className={`h-2 rounded-full ${
                     isGoalMet(progress.timeStudied, goals.daily_time_minutes)
-                      ? 'bg-green-500'
+                      ? 'bg-success-500'
                       : 'bg-orange-500'
                   }`}
                 />
@@ -192,7 +192,7 @@ export default function DailyGoalsTracker() {
                     Target Level
                   </span>
                 </div>
-                <span className="text-sm font-bold text-indigo-600">
+                <span className="text-sm font-bold text-primary-600">
                   HSK {goals.target_hsk_level}
                 </span>
               </div>
@@ -205,9 +205,9 @@ export default function DailyGoalsTracker() {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200"
+            className="mt-4 p-3 bg-success-50 dark:bg-success-900/20 rounded-lg border border-success-200 dark:border-success-800/40"
           >
-            <p className="text-sm text-green-800 font-medium text-center">
+            <p className="text-sm text-success-800 dark:text-success-200 font-medium text-center">
               Great job! You've reached your daily goal!
             </p>
           </motion.div>

@@ -154,7 +154,7 @@ export default function Navbar() {
   return (
     <>
       <motion.nav
-        className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-sm sticky top-0 z-40 border-b border-gray-200/60 dark:border-gray-800/60 transition-colors"
+        className="bg-white/90 dark:bg-surface-page/90 backdrop-blur-lg shadow-sm sticky top-0 z-40 border-b border-gray-200/60 dark:border-gray-800/60 transition-colors"
         initial={{ y: -64 }}
         animate={{ y: 0 }}
         transition={{ type: 'spring', stiffness: 120, damping: 20 }}
@@ -165,7 +165,7 @@ export default function Navbar() {
             {/* ── Logo ── */}
             <Link to="/" className="flex-shrink-0">
               <motion.div
-                className="flex items-center gap-1.5 sm:gap-2 text-indigo-600 font-bold"
+                className="flex items-center gap-1.5 sm:gap-2 text-primary-600 font-bold"
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
               >
@@ -225,7 +225,7 @@ export default function Navbar() {
                     <span className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors inline-block">Login</span>
                   </Link>
                   <Link to="/register">
-                    <span className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors inline-block">Register</span>
+                    <span className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors inline-block">Register</span>
                   </Link>
                 </motion.div>
               )}
@@ -237,16 +237,16 @@ export default function Navbar() {
 
               {isAuthenticated && (
                 <div className="relative">
-                  <Link to="/profile" className="flex items-center justify-center w-8 h-8 rounded-full ring-2 ring-transparent hover:ring-indigo-300 transition-all">
+                  <Link to="/profile" className="flex items-center justify-center w-8 h-8 rounded-full ring-2 ring-transparent hover:ring-primary-300 transition-all">
                     {user?.profile_picture
                       ? <img src={user.profile_picture} alt={user.username} className="w-8 h-8 rounded-full object-cover" />
-                      : <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                          <span className="text-xs font-bold text-indigo-600">{user?.username?.charAt(0).toUpperCase()}</span>
+                      : <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center">
+                          <span className="text-xs font-bold text-primary-600 dark:text-primary-300">{user?.username?.charAt(0).toUpperCase()}</span>
                         </div>
                     }
                   </Link>
                   {reviewCount > 0 && (
-                    <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[16px] h-4 bg-red-500 text-white text-[9px] font-bold rounded-full px-0.5 pointer-events-none">
+                    <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[16px] h-4 bg-error-500 text-white text-[9px] font-bold rounded-full px-0.5 pointer-events-none">
                       {reviewCount > 99 ? '99+' : reviewCount}
                     </span>
                   )}
@@ -282,7 +282,7 @@ export default function Navbar() {
               key="drawer"
               variants={drawerVariants}
               initial="hidden" animate="visible" exit="exit"
-              className="fixed top-0 right-0 h-full w-[min(320px,88vw)] sm:w-[min(360px,88vw)] bg-white dark:bg-gray-900 shadow-2xl z-60 flex flex-col"
+              className="fixed top-0 right-0 h-full w-[min(320px,88vw)] sm:w-[min(360px,88vw)] bg-white dark:bg-surface-card shadow-2xl z-60 flex flex-col"
             >
               {/* Drawer header */}
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800">
@@ -290,8 +290,8 @@ export default function Navbar() {
                   <div className="flex items-center gap-3">
                     {user?.profile_picture
                       ? <img src={user.profile_picture} alt={user.username} className="w-9 h-9 rounded-full object-cover" />
-                      : <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center">
-                          <span className="text-sm font-bold text-indigo-600">{user?.username?.charAt(0).toUpperCase()}</span>
+                      : <div className="w-9 h-9 rounded-full bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center">
+                          <span className="text-sm font-bold text-primary-600 dark:text-primary-300">{user?.username?.charAt(0).toUpperCase()}</span>
                         </div>
                     }
                     <div className="leading-tight">
@@ -300,7 +300,7 @@ export default function Navbar() {
                     </div>
                   </div>
                 ) : (
-                  <span className="text-sm font-bold text-indigo-600 font-chinese">汉字 HanziNarrative</span>
+                  <span className="text-sm font-bold text-primary-600 font-chinese">汉字 HanziNarrative</span>
                 )}
 
                 <motion.button
@@ -327,7 +327,7 @@ export default function Navbar() {
                     <Link to="/review" onClick={() => setMobileMenuOpen(false)}>
                       <div className={`flex items-center justify-between px-3 py-3 rounded-xl transition-colors mb-0.5 ${
                         isActive('/review')
-                          ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600'
+                          ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600'
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                       }`}>
                         <div className="flex items-center gap-3">
@@ -340,7 +340,7 @@ export default function Navbar() {
                           </div>
                         </div>
                         {reviewCount > 0
-                          ? <span className="flex items-center justify-center min-w-[22px] h-5 bg-red-500 text-white text-[10px] font-bold rounded-full px-1.5">{reviewCount > 99 ? '99+' : reviewCount}</span>
+                          ? <span className="flex items-center justify-center min-w-[22px] h-5 bg-error-500 text-white text-[10px] font-bold rounded-full px-1.5">{reviewCount > 99 ? '99+' : reviewCount}</span>
                           : isActive('/review') ? <ChevronRight className="w-3.5 h-3.5 opacity-50" /> : null
                         }
                       </div>
@@ -352,7 +352,7 @@ export default function Navbar() {
                     <Link to="/stories" onClick={() => setMobileMenuOpen(false)}>
                       <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
                         isActive('/stories')
-                          ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600'
+                          ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600'
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                       }`}>
                         <BookOpen className="w-4 h-4 flex-shrink-0" />
@@ -422,7 +422,7 @@ export default function Navbar() {
                     </Link>
                     {user?.is_admin && (
                       <Link to="/admin" onClick={() => setMobileMenuOpen(false)}>
-                        <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors">
+                        <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors">
                           <Shield className="w-4 h-4" />
                           <span className="text-sm font-medium">Admin Panel</span>
                         </div>
@@ -430,7 +430,7 @@ export default function Navbar() {
                     )}
                     <button
                       onClick={() => { handleLogout(); setMobileMenuOpen(false) }}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-error-600 hover:bg-error-50 dark:hover:bg-error-950/30 transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
                       <span className="text-sm font-medium">Logout</span>
@@ -442,7 +442,7 @@ export default function Navbar() {
                       <span className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors w-full block text-center text-sm">Login</span>
                     </Link>
                     <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="block">
-                      <span className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors w-full block text-center text-sm">Register</span>
+                      <span className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors w-full block text-center text-sm">Register</span>
                     </Link>
                   </div>
                 )}
@@ -476,13 +476,13 @@ function DrawerSection({
         onClick={onToggle}
         className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition-colors ${
           hasActive
-            ? 'text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/50'
+            ? 'text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/50'
             : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200'
         }`}
       >
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-bold uppercase tracking-widest">{label}</span>
-          {hasActive && <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />}
+          {hasActive && <span className="w-1.5 h-1.5 rounded-full bg-primary-500" />}
         </div>
         <motion.div animate={{ rotate: isOpen ? 0 : -90 }} transition={{ duration: 0.2 }}>
           <ChevronDown className="w-3.5 h-3.5" />
@@ -513,7 +513,7 @@ function DrawerItem({ item, active, onClose }: { item: MenuItem; active: boolean
     <Link to={item.to} onClick={onClose}>
       <div className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-colors ${
         active
-          ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600'
+          ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600'
           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
       }`}>
         <div className="flex items-center gap-3 min-w-0">
@@ -561,8 +561,8 @@ function DesktopNavLink({ link, active, badgeCount = 0 }: {
       <motion.div
         className={`relative flex items-center gap-1.5 px-2 lg:px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
           active
-            ? 'text-indigo-600 bg-indigo-50 dark:bg-indigo-950/50'
-            : 'text-gray-700 dark:text-gray-300 hover:text-indigo-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+            ? 'text-primary-600 bg-primary-50 dark:bg-primary-950/50'
+            : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
         }`}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
@@ -570,13 +570,13 @@ function DesktopNavLink({ link, active, badgeCount = 0 }: {
         <Icon className="w-4 h-4" />
         <span className="hidden lg:inline">{link.label}</span>
         {badgeCount > 0 && (
-          <span className="flex items-center justify-center min-w-[18px] h-[18px] bg-red-500 text-white text-[9px] font-bold rounded-full px-1 leading-none">
+          <span className="flex items-center justify-center min-w-[18px] h-[18px] bg-error-500 text-white text-[9px] font-bold rounded-full px-1 leading-none">
             {badgeCount > 99 ? '99+' : badgeCount}
           </span>
         )}
         {active && (
           <motion.div
-            className="absolute bottom-0 left-2 right-2 h-0.5 bg-indigo-600 rounded-full"
+            className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary-600 rounded-full"
             layoutId="nav-underline"
           />
         )}
@@ -598,8 +598,8 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
       <motion.div
         className={`flex items-center gap-1 px-2 lg:px-3 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
           active || isOpen
-            ? 'text-indigo-600 bg-indigo-50 dark:bg-indigo-950/50'
-            : 'text-gray-700 dark:text-gray-300 hover:text-indigo-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+            ? 'text-primary-600 bg-primary-50 dark:bg-primary-950/50'
+            : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
         }`}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
@@ -612,7 +612,7 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
         </motion.div>
         {active && (
           <motion.div
-            className="absolute bottom-0 left-2 right-2 h-0.5 bg-indigo-600 rounded-full"
+            className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary-600 rounded-full"
             layoutId="nav-underline"
           />
         )}
@@ -625,7 +625,7 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.96 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className={`absolute left-0 top-full mt-1.5 bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200/80 dark:border-gray-700 overflow-hidden z-50 ${
+            className={`absolute left-0 top-full mt-1.5 bg-white dark:bg-surface-card rounded-xl shadow-xl border border-gray-200/80 dark:border-gray-700 overflow-hidden z-50 ${
               isTwoCol ? 'w-[380px]' : 'w-52'
             }`}
           >
@@ -642,7 +642,7 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
                   >
                     <Link to={item.to} onClick={onClose}>
                       <div className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
-                        itemActive ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600' : 'text-gray-700 dark:text-gray-300'
+                        itemActive ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600' : 'text-gray-700 dark:text-gray-300'
                       }`}>
                         <ItemIcon className="w-3.5 h-3.5 flex-shrink-0" />
                         <div className="min-w-0">
@@ -678,8 +678,8 @@ const UserMenu = forwardRef<HTMLDivElement, {
       >
         {user?.profile_picture
           ? <img src={user.profile_picture} alt={user.username} className="w-7 h-7 rounded-full object-cover" />
-          : <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center">
-              <span className="text-xs font-bold text-indigo-600">{user?.username?.charAt(0).toUpperCase()}</span>
+          : <div className="w-7 h-7 rounded-full bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center">
+              <span className="text-xs font-bold text-primary-600 dark:text-primary-300">{user?.username?.charAt(0).toUpperCase()}</span>
             </div>
         }
         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{user?.full_name || user?.username}</span>
@@ -695,7 +695,7 @@ const UserMenu = forwardRef<HTMLDivElement, {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.96 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 top-full mt-1.5 w-48 bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200/80 dark:border-gray-700 overflow-hidden z-50"
+            className="absolute right-0 top-full mt-1.5 w-48 bg-white dark:bg-surface-card rounded-xl shadow-xl border border-gray-200/80 dark:border-gray-700 overflow-hidden z-50"
           >
             <div className="p-1">
               <Link to="/profile" onClick={onClose}>
@@ -720,7 +720,7 @@ const UserMenu = forwardRef<HTMLDivElement, {
                 <>
                   <div className="border-t border-gray-100 dark:border-gray-800 my-1" />
                   <Link to="/admin" onClick={onClose}>
-                    <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors text-indigo-600 dark:text-indigo-400">
+                    <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors text-primary-600 dark:text-primary-400">
                       <Shield className="w-4 h-4" />
                       <span className="text-sm font-medium">Admin Panel</span>
                     </div>
@@ -730,7 +730,7 @@ const UserMenu = forwardRef<HTMLDivElement, {
               <div className="border-t border-gray-100 dark:border-gray-800 my-1" />
               <button
                 onClick={onLogout}
-                className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors text-red-600"
+                className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-error-50 dark:hover:bg-error-950/30 transition-colors text-error-600"
               >
                 <LogOut className="w-4 h-4" />
                 <span className="text-sm">Logout</span>

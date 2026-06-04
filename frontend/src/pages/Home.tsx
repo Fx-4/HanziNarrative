@@ -13,7 +13,7 @@ const FEATURES = [
     Icon: BookOpen,
     title: 'Interactive Stories',
     desc: 'Read engaging stories with clickable words that reveal Pinyin, meaning, and illustrations.',
-    bg: 'bg-indigo-600', shadow: 'shadow-indigo-500/20',
+    bg: 'bg-primary-600', shadow: 'shadow-primary-500/20',
   },
   {
     Icon: Target,
@@ -75,7 +75,7 @@ const TOOLS = [
 ]
 
 const accentMap: Record<string, { bg: string; text: string; border: string; light: string }> = {
-  indigo: { bg: 'bg-indigo-600', text: 'text-indigo-600', border: 'border-indigo-200', light: 'bg-indigo-50' },
+  indigo: { bg: 'bg-primary-600', text: 'text-primary-600', border: 'border-primary-200', light: 'bg-primary-50' },
   violet: { bg: 'bg-violet-600', text: 'text-violet-600', border: 'border-violet-200', light: 'bg-violet-50' },
   emerald: { bg: 'bg-emerald-500', text: 'text-emerald-600', border: 'border-emerald-200', light: 'bg-emerald-50' },
 }
@@ -94,7 +94,7 @@ export default function Home() {
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', duration: 0.8 }}
-          className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-indigo-500/30"
+          className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-br from-primary-500 to-violet-600 flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-primary-500/30"
         >
           <span className="text-white text-4xl sm:text-5xl font-bold font-chinese">汉</span>
         </motion.div>
@@ -106,7 +106,7 @@ export default function Home() {
           className="text-3xl sm:text-5xl font-extrabold text-gray-900 mb-4 leading-tight"
         >
           Learn HSK Through
-          <span className="block bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">
+          <span className="block bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-violet-600">
             Immersive Stories
           </span>
         </motion.h1>
@@ -129,7 +129,7 @@ export default function Home() {
         >
           <Link
             to="/stories"
-            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/20 transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/20 transition-colors"
           >
             <BookOpen className="w-4 h-4" />
             Start Reading
@@ -137,7 +137,7 @@ export default function Home() {
           {!isAuthenticated && (
             <Link
               to="/register"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 text-gray-700 font-semibold rounded-xl transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50 text-gray-700 font-semibold rounded-xl transition-colors"
             >
               Sign Up Free
               <ArrowRight className="w-4 h-4" />
@@ -181,7 +181,7 @@ export default function Home() {
           className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8"
         >
           <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 text-center mb-2 flex items-center justify-center gap-2">
-            <Sparkles className="w-6 h-6 text-indigo-500" />
+            <Sparkles className="w-6 h-6 text-primary-500" />
             How It Works
           </h2>
           <p className="text-center text-gray-400 text-sm mb-8">Three simple steps to Chinese fluency</p>
@@ -218,7 +218,7 @@ export default function Home() {
           className="text-center mb-6"
         >
           <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 flex items-center justify-center gap-2">
-            <GraduationCap className="w-6 h-6 text-indigo-500" />
+            <GraduationCap className="w-6 h-6 text-primary-500" />
             Learning Tools
           </h2>
           <p className="text-sm text-gray-400">Everything you need to master Chinese</p>
@@ -260,14 +260,14 @@ export default function Home() {
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-3xl p-8 text-center text-white shadow-2xl shadow-indigo-500/25"
+          className="bg-gradient-to-r from-primary-600 to-violet-600 rounded-3xl p-8 text-center text-white shadow-2xl shadow-indigo-500/25"
         >
           <Zap className="w-10 h-10 mx-auto mb-4 opacity-90" />
           <h2 className="text-2xl font-extrabold mb-2">Ready to start?</h2>
           <p className="text-indigo-100 text-sm mb-6">Create a free account and begin your Chinese journey today.</p>
           <Link
             to="/register"
-            className="inline-flex items-center gap-2 px-8 py-3 bg-white text-indigo-700 font-bold rounded-xl hover:bg-indigo-50 transition-colors shadow-lg"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-white text-primary-700 font-bold rounded-xl hover:bg-primary-50 transition-colors shadow-lg"
           >
             Get Started Free <ArrowRight className="w-4 h-4" />
           </Link>

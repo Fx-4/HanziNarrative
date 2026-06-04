@@ -62,15 +62,15 @@ export default function DailyChallengeCard() {
           <p className="text-xs text-gray-500">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
         </div>
         {challenge.completed && (
-          <CheckCircle className="w-5 h-5 text-emerald-500 ml-auto" />
+          <CheckCircle className="w-5 h-5 text-success-500 ml-auto" />
         )}
       </div>
 
       {/* Story Info */}
       <div className="bg-white/70 rounded-xl p-3 mb-3">
         <div className="flex items-center gap-2 mb-1">
-          <BookOpen className="w-3.5 h-3.5 text-amber-600" />
-          <span className="text-xs font-semibold text-amber-700">HSK {challenge.story.hsk_level}</span>
+          <BookOpen className="w-3.5 h-3.5 text-accent-600" />
+          <span className="text-xs font-semibold text-accent-700">HSK {challenge.story.hsk_level}</span>
         </div>
         <p className="font-bold text-gray-900 text-sm">{challenge.story.title}</p>
         <p className="text-xs text-gray-500">{challenge.story.title_english}</p>
@@ -89,7 +89,7 @@ export default function DailyChallengeCard() {
 
       {/* CTA */}
       {challenge.completed ? (
-        <div className="text-center py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-semibold">
+        <div className="text-center py-1.5 bg-success-100 dark:bg-success-900/40 text-success-700 dark:text-success-300 rounded-lg text-xs font-semibold">
           Completed today! +30 XP earned
         </div>
       ) : (
