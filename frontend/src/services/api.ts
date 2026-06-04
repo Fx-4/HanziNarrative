@@ -102,6 +102,20 @@ api.interceptors.response.use(
     const method = error.config?.method?.toUpperCase() ?? '?'
     const detail = error.response?.data?.detail ?? error.message
     const isTimeout = error.code === 'ECONNABORTED' || /timeout/i.test(String(error.message))
+    const isNetworkError = !status && !isTimeout
+
+    // Retry once on Network Error — Koyeb free tier sleeps and first request may fail while waking up
+    if (isNetworkError) {
+      const originalRequest = error.config as typeof error.config & { _networkRetry?: boolean }
+      if (!originalRequest._networkRetry) {
+        originalRequest._networkRetry = true
+        apiLogger.warn(`← NETWORK_ERROR ${method} ${url} — backend may be waking up, retrying in 3s`)
+        await new Promise(resolve => setTimeout(resolve, 3000))
+        return api(originalRequest)
+      }
+      apiLogger.error(`← NETWORK_ERROR ${method} ${url} — backend unreachable after retry`)
+      return Promise.reject(error)
+    }
 
     if (isTimeout) {
       apiLogger.warn(`← TIMEOUT ${method} ${url} — request exceeded client timeout`)
@@ -206,7 +220,7 @@ export const storiesApi = {
   },
 
   create: async (story: Partial<Story>): Promise<Story> => {
-    const response = await api.post('/stories', story)
+    const response = await api.post('/stories/', story)
     return response.data
   },
 
@@ -303,12 +317,12 @@ export const vocabularyApi = {
 
 export const userProgressApi = {
   getProgress: async (): Promise<UserProgress[]> => {
-    const response = await api.get('/progress')
+    const response = await api.get('/progress/')
     return response.data
   },
 
   updateProgress: async (wordId: number, familiarityLevel: number): Promise<UserProgress> => {
-    const response = await api.post('/progress', {
+    const response = await api.post('/progress/', {
       word_id: wordId,
       familiarity_level: familiarityLevel,
     })
@@ -318,12 +332,12 @@ export const userProgressApi = {
 
 export const vocabularySetsApi = {
   getAll: async (): Promise<VocabularySet[]> => {
-    const response = await api.get('/vocabulary-sets')
+    const response = await api.get('/vocabulary-sets/')
     return response.data
   },
 
   create: async (name: string, description?: string): Promise<VocabularySet> => {
-    const response = await api.post('/vocabulary-sets', { name, description })
+    const response = await api.post('/vocabulary-sets/', { name, description })
     return response.data
   },
 

@@ -5,6 +5,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from .routers import auth, stories, vocabulary, progress, vocabulary_sets, exercises, learning, writing, quiz, gamification, onboarding, typing, tts, dictation, adventure, stt, scramble, daily_challenge, conversation, admin, battle, mock_test, learning_path
 from .database import engine, Base
 from .config import settings
@@ -103,6 +104,8 @@ app.add_middleware(
     allow_headers=["*"],
     max_age=86400,
 )
+# Trust Cloudflare/Koyeb reverse proxy so redirect URLs use https:// not http://
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 
 
 @app.exception_handler(Exception)

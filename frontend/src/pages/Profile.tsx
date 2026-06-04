@@ -158,14 +158,15 @@ export default function Profile() {
 
     setUploadingPicture(true)
     try {
-      const reader = new FileReader()
-      reader.onloadend = async () => {
-        const base64String = reader.result as string
-        const updatedUser = await authApi.updateProfile({ profile_picture: base64String })
-        useAuthStore.setState({ user: updatedUser })
-        await loadData()
-      }
-      reader.readAsDataURL(file)
+      const base64String = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onloadend = () => resolve(reader.result as string)
+        reader.onerror = () => reject(new Error('Failed to read file'))
+        reader.readAsDataURL(file)
+      })
+      const updatedUser = await authApi.updateProfile({ profile_picture: base64String })
+      useAuthStore.setState({ user: updatedUser })
+      await loadData()
     } catch {
       alert('Failed to upload profile picture. Please try again.')
     } finally {
