@@ -51,5 +51,6 @@ export async function playTTS(options: TTSPlayOptions): Promise<HTMLAudioElement
   audio.addEventListener('ended', cleanup, { once: true })
   audio.addEventListener('error', cleanup, { once: true })
 
+  await audio.play()
   return audio
 }
