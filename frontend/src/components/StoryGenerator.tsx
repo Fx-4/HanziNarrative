@@ -430,7 +430,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
 
       {/* ─── Generator Form ────────────────────────────────── */}
       <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }}>
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-5">
+        <div className="bg-white dark:bg-surface-card rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-5">
           <h3 className="text-lg font-bold mb-5 flex items-center gap-2 text-gray-900 dark:text-gray-100">
             <Sparkles className={`w-5 h-5 ${isAdvanced ? 'text-primary-600' : 'text-success-600'}`} />
             {isAdvanced ? 'Advanced Story Settings' : 'Story Settings'}
@@ -704,7 +704,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
               disabled={loading || isLimitReached}
               className={`w-full flex items-center justify-center rounded-xl px-6 py-3 font-semibold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-white ${
                 isAdvanced
-                  ? 'bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700'
+                  ? 'bg-gradient-to-r from-primary-600 to-violet-600 hover:from-primary-700 hover:to-violet-700'
                   : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700'
               }`}
             >
@@ -735,8 +735,8 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-error-600 dark:text-error-400 flex-shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-semibold text-red-900 dark:text-red-300 mb-1">Error</h4>
-                <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+                <h4 className="font-semibold text-error-900 dark:text-error-300 mb-1">Error</h4>
+                <p className="text-sm text-error-700 dark:text-error-400">{error}</p>
               </div>
             </div>
           </div>
@@ -761,7 +761,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                     {generatedStory.title_english}
                   </p>
                 )}
-                <p className="text-sm text-green-700 dark:text-green-400 font-medium">
+                <p className="text-sm text-success-700 dark:text-success-400 font-medium">
                   Story saved! Find it in Browse Stories.
                 </p>
               </div>
@@ -810,7 +810,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             </div>
 
             {/* Story Content */}
-            <div className="bg-white dark:bg-gray-900 rounded-lg p-5 mb-4">
+            <div className="bg-white dark:bg-surface-card rounded-lg p-5 mb-4">
               <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">Story</h3>
               <p className="text-gray-800 dark:text-gray-200 leading-relaxed text-lg mb-4 whitespace-pre-wrap">
                 {generatedStory.content}
@@ -827,7 +827,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
 
             {/* Vocabulary */}
             {generatedStory.vocabulary && generatedStory.vocabulary.length > 0 && (
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-5 mb-4">
+              <div className="bg-white dark:bg-surface-card rounded-lg p-5 mb-4">
                 <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Key Vocabulary</h3>
                 <div className="grid md:grid-cols-2 gap-3">
                   {generatedStory.vocabulary.map((vocab, index) => (
@@ -847,7 +847,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
 
             {/* Grammar Points */}
             {generatedStory.grammar_points && generatedStory.grammar_points.length > 0 && (
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-5">
+              <div className="bg-white dark:bg-surface-card rounded-lg p-5">
                 <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Grammar Points</h3>
                 <ul className="space-y-2">
                   {generatedStory.grammar_points.map((point, index) => (
