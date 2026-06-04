@@ -1,7 +1,7 @@
 ﻿import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { getSession, getUnitWords, Word, GrammarPoint, FillBlank } from '@/data/curriculum'
+import { getSession, getUnitWords, ALL_UNITS, Word, GrammarPoint, FillBlank } from '@/data/curriculum'
 import { learningPathApi } from '@/services/api'
 import { playTTS } from '@/utils/ttsHelper'
 import {
@@ -311,6 +311,10 @@ export default function LearningSession() {
   const [xpEarned, setXpEarned] = useState(0)
   const [isNew, setIsNew] = useState(false)
   const [stepKey, setStepKey] = useState(0)
+  // Next-session navigation state
+  const [nextSessionId, setNextSessionId] = useState<string | null>(null)
+  const [isLastInUnit, setIsLastInUnit] = useState(false)
+  const [nextUnitInfo, setNextUnitInfo] = useState<{ title: string; subtitle: string; emoji: string } | null>(null)
 
   useEffect(() => {
     if (!sessionId) return
@@ -370,6 +374,29 @@ export default function LearningSession() {
     } finally {
       setSaving(false)
       setDone(true)
+    }
+
+    // ── Compute next session ──────────────────────────────────────────────────
+    const currentSessionIdx = unit.sessions.findIndex(s => s.id === session.id)
+    const nextInUnit = unit.sessions[currentSessionIdx + 1]
+
+    if (nextInUnit) {
+      // More sessions remain in this unit
+      setNextSessionId(nextInUnit.id)
+      setIsLastInUnit(false)
+      setNextUnitInfo(null)
+    } else {
+      // Last session in the unit — look for the next unit
+      setIsLastInUnit(true)
+      const unlockedUnits = ALL_UNITS.filter(u => !u.locked)
+      const currentUnitIdx = unlockedUnits.findIndex(u => u.id === unit.id)
+      const nextUnit = unlockedUnits[currentUnitIdx + 1]
+      if (nextUnit) {
+        setNextSessionId(nextUnit.sessions[0]?.id ?? null)
+        setNextUnitInfo({ title: nextUnit.title, subtitle: nextUnit.subtitle, emoji: nextUnit.emoji })
+      } else {
+        setNextSessionId(null)
+      }
     }
   }
 
@@ -473,16 +500,59 @@ export default function LearningSession() {
 
           {saving && <Loader2 className="w-5 h-5 animate-spin text-primary-500 mx-auto" />}
 
-          <div className="flex flex-col gap-2">
-            <button
-              onClick={() => navigate('/path')}
-              className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors"
+          {/* ── Unit-complete banner (shown only when last session of unit) ── */}
+          {isLastInUnit && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+              className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-2xl p-3 text-center"
             >
-              <Trophy className="w-4 h-4" /> Kembali ke Kursus
-            </button>
+              <span className="text-2xl">🎊</span>
+              <p className="font-bold text-amber-800 dark:text-amber-300 text-sm mt-1">Unit Selesai!</p>
+              {nextUnitInfo && (
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                  {nextUnitInfo.emoji} Berikutnya: {nextUnitInfo.title} · {nextUnitInfo.subtitle}
+                </p>
+              )}
+            </motion.div>
+          )}
+
+          <div className="flex flex-col gap-2">
+            {/* Primary CTA: next session (if available) */}
+            {nextSessionId ? (
+              <button
+                onClick={() => navigate(`/session/${nextSessionId}`)}
+                className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors"
+              >
+                <ChevronRight className="w-4 h-4" />
+                {isLastInUnit && nextUnitInfo
+                  ? `Mulai ${nextUnitInfo.title}`
+                  : 'Lanjut ke Sesi Berikutnya'}
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate('/path')}
+                className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors"
+              >
+                <Trophy className="w-4 h-4" /> Lihat Semua Kursus
+              </button>
+            )}
+
+            {/* Secondary: back to course list */}
+            {nextSessionId && (
+              <button
+                onClick={() => navigate('/path')}
+                className="w-full py-2.5 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm"
+              >
+                Kembali ke Kursus
+              </button>
+            )}
+
+            {/* Tertiary: replay */}
             <button
               onClick={() => { setCurrentIdx(0); setCorrect(0); setWrong(0); setDone(false); setStepKey(k => k + 1) }}
-              className="w-full py-2.5 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm"
+              className="w-full py-2.5 text-gray-400 dark:text-gray-500 font-medium rounded-xl hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm"
             >
               Ulangi Sesi
             </button>
