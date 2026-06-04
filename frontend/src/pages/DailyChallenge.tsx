@@ -8,7 +8,6 @@ import {
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { playTTS } from '@/utils/ttsHelper'
-import { getVoiceName } from '@/utils/voicePreference'
 
 interface ChallengeData {
   story: {
@@ -16,7 +15,7 @@ interface ChallengeData {
     title: string
     title_english: string
     hsk_level: number
-    content: string
+    content?: string
     content_pinyin?: string
     english_translation?: string
   }
@@ -82,7 +81,7 @@ export default function DailyChallenge() {
     setIsPlayingAudio(true)
     try {
       const firstSentence = challenge.story.content.split(/[。！？]/)[0]
-      await playTTS(firstSentence, getVoiceName())
+      await playTTS({ text: firstSentence })
     } catch {
       toast.error('Audio tidak tersedia')
     } finally {
@@ -121,7 +120,7 @@ export default function DailyChallenge() {
   })
   const displayContent = (showPinyin && story.content_pinyin)
     ? story.content_pinyin
-    : story.content
+    : (story.content ?? '')
 
   return (
     <div className="max-w-2xl mx-auto px-4 pb-16 space-y-5">

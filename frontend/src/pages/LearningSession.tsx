@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { getSession, getUnitWords, Word, GrammarPoint, FillBlank } from '@/data/curriculum'
 import { learningPathApi } from '@/services/api'
 import { playTTS } from '@/utils/ttsHelper'
-import { getVoiceName } from '@/utils/voicePreference'
 import {
   Volume2, ChevronRight, CheckCircle, X, Star, Zap,
   ArrowLeft, Loader2, Trophy,
@@ -86,7 +85,7 @@ function IntroCard({ step, onNext }: { step: StepIntro; onNext: () => void }) {
 
   const play = async () => {
     setPlaying(true)
-    try { await playTTS(step.word.zh, getVoiceName()) } catch { /* silent */ }
+    try { await playTTS({ text: step.word.zh }) } catch { /* silent */ }
     setPlaying(false)
   }
 

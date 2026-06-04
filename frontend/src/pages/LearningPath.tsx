@@ -155,9 +155,6 @@ export default function LearningPath() {
             const pct = unitProgress(unit, completed)
             const isLocked = unit.locked
             const isExpanded = expandedUnit === unit.id
-            const prevUnit = units[unitIdx - 1]
-            const prevPct = prevUnit ? unitProgress(prevUnit, completed) : 100
-            const unitAvailable = !isLocked && (unitIdx === 0 || prevPct >= 50)
 
             return (
               <motion.div
