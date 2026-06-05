@@ -1,5 +1,6 @@
 ﻿import axios from 'axios'
 import { API_URL } from '@/lib/env'
+import { ensureBackendReady } from '@/lib/backendStatus'
 import type {
   User,
   Story,
@@ -104,16 +105,21 @@ api.interceptors.response.use(
     const isTimeout = error.code === 'ECONNABORTED' || /timeout/i.test(String(error.message))
     const isNetworkError = !status && !isTimeout
 
-    // Retry once on Network Error — Koyeb free tier sleeps and first request may fail while waking up
+    // On Network Error, wait for the shared backend health-check and retry once.
+    // Multiple concurrent requests all await the same ensureBackendReady() promise —
+    // no duplicate polling loops, no fixed arbitrary delay.
     if (isNetworkError) {
       const originalRequest = error.config as typeof error.config & { _networkRetry?: boolean }
       if (!originalRequest._networkRetry) {
         originalRequest._networkRetry = true
-        apiLogger.warn(`← NETWORK_ERROR ${method} ${url} — backend may be waking up, retrying in 3s`)
-        await new Promise(resolve => setTimeout(resolve, 3000))
-        return api(originalRequest)
+        apiLogger.warn(`← NETWORK_ERROR ${method} ${url} — waiting for backend to wake up`)
+        try {
+          await ensureBackendReady()
+          return api(originalRequest)
+        } catch {
+          apiLogger.error(`← NETWORK_ERROR ${method} ${url} — backend unreachable, giving up`)
+        }
       }
-      apiLogger.error(`← NETWORK_ERROR ${method} ${url} — backend unreachable after retry`)
       return Promise.reject(error)
     }
 
