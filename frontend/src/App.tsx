@@ -1,10 +1,11 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { useEffect, lazy, Suspense } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import Layout from './components/Layout'
 import { Toaster } from './components/ui/Toast'
 import ErrorBoundary from './components/ErrorBoundary'
 import { useAuthStore } from './store/authStore'
 import { appLogger } from './utils/debugLogger'
+import { ensureBackendReady, subscribeBackendStatus, type BackendStatus } from './lib/backendStatus'
 
 // ── Lazy-loaded pages (code-split per route) ──────────────────────
 const Home = lazy(() => import('./pages/Home'))
@@ -41,6 +42,29 @@ const AuthCallback = lazy(() => import('./pages/AuthCallback'))
 const DailyChallenge = lazy(() => import('./pages/DailyChallenge'))
 const LearningPath = lazy(() => import('./pages/LearningPath'))
 const LearningSession = lazy(() => import('./pages/LearningSession'))
+
+// ── Backend warm-up banner (Koyeb free tier cold start) ──────────
+function BackendBanner() {
+  const [status, setStatus] = useState<BackendStatus>('unknown')
+  useEffect(() => subscribeBackendStatus(setStatus), [])
+
+  if (status === 'warming') {
+    return (
+      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-amber-500 text-white text-sm font-medium shadow-lg shadow-amber-500/30 animate-fade-in">
+        <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin shrink-0" />
+        Server is starting up — please wait a moment
+      </div>
+    )
+  }
+  if (status === 'failed') {
+    return (
+      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-500 text-white text-sm font-medium shadow-lg">
+        ⚠ Server unreachable — check your connection
+      </div>
+    )
+  }
+  return null
+}
 
 // ── Minimal loading fallback ──────────────────────────────────────
 function PageLoader() {
@@ -126,7 +150,16 @@ function App() {
     const initAuth = async () => {
       const token = localStorage.getItem('access_token')
 
+      // Kick off backend health check immediately (non-blocking for public pages).
+      // If backend is sleeping, ensureBackendReady() will show the banner and
+      // the axios interceptor will await it before retrying failed requests.
+      const backendCheck = ensureBackendReady().catch(() => {
+        appLogger.warn('Backend unreachable on startup')
+      })
+
       if (token) {
+        // Wait for backend before fetching user so auth doesn't fail on cold start
+        await backendCheck
         try {
           await fetchUser()
           if (!cancelled) appLogger.info('Auth token verified successfully')
@@ -153,6 +186,7 @@ function App() {
   return (
     <>
       <Toaster />
+      <BackendBanner />
       <Routes>
         {/* Public routes */}
         <Route path="/landing" element={<LazyPage name="Landing"><Landing /></LazyPage>} />
