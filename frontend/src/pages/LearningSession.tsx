@@ -86,7 +86,12 @@ function IntroCard({ step, onNext }: { step: StepIntro; onNext: () => void }) {
 
   const play = async () => {
     setPlaying(true)
-    try { await playTTS({ text: step.word.zh }) } catch { /* silent */ }
+    try {
+      await playTTS({ text: step.word.zh })
+    } catch (err) {
+      console.error('[TTS] playTTS failed:', err)
+      toast.error('Gagal memutar audio', { duration: 2000 })
+    }
     setPlaying(false)
   }
 

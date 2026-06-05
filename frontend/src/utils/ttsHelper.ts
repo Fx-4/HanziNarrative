@@ -43,14 +43,30 @@ export async function playTTS(options: TTSPlayOptions): Promise<HTMLAudioElement
     { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' }
   )
 
-  const url = URL.createObjectURL(new Blob([response.data], { type: 'audio/mpeg' }))
+  const blob = response.data instanceof Blob
+    ? response.data
+    : new Blob([response.data], { type: 'audio/mpeg' })
+
+  const url = URL.createObjectURL(blob)
   const audio = new Audio(url)
 
-  // Auto-revoke blob URL on finish
   const cleanup = () => URL.revokeObjectURL(url)
   audio.addEventListener('ended', cleanup, { once: true })
   audio.addEventListener('error', cleanup, { once: true })
 
-  await audio.play()
+  try {
+    await audio.play()
+  } catch (playErr) {
+    // NotAllowedError = browser autoplay policy; try once more with muted then unmute
+    if ((playErr as DOMException)?.name === 'NotAllowedError') {
+      audio.muted = true
+      await audio.play()
+      audio.muted = false
+    } else {
+      cleanup()
+      throw playErr
+    }
+  }
+
   return audio
 }
