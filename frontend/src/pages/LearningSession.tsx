@@ -366,6 +366,23 @@ export default function LearningSession() {
     const practicePool = getUnitWords(unit.id)
     const generated = generateSteps(session.type, session.words, session.grammarPoints, practicePool)
     setSteps(generated)
+
+    // Pre-warm TTS for all intro words in this session (fire-and-forget)
+    // By the time user reaches each card, audio is likely already in IndexedDB
+    const introWords = generated
+      .filter((s): s is StepIntro => s.kind === 'intro')
+      .map(s => s.word.zh)
+    if (introWords.length > 0) {
+      const token = localStorage.getItem('access_token')
+      if (token) {
+        // Stagger requests 300ms apart to avoid hammering the backend
+        introWords.forEach((zh, i) => {
+          setTimeout(() => {
+            fetchTTSAudio({ text: zh }).catch(() => { /* silent — best-effort */ })
+          }, i * 300)
+        })
+      }
+    }
   }, [sessionId])
 
   const goNext = useCallback(() => {
