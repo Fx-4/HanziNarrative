@@ -64,9 +64,11 @@ export interface UnitDef {
 
 import { HSK1 } from './hsk1'
 import { HSK2 } from './hsk2'
+import { HSK3 } from './hsk3'
+import { HSK4 } from './hsk4'
 
 // ─────────────────────────────────────────────────────────────────────────────
-// HSK 3–6  stubs (locked — content coming soon)
+// HSK 5–6  stubs (locked — content coming soon)
 // ─────────────────────────────────────────────────────────────────────────────
 
 function makeStub(level: number, unitCount = 4): UnitDef[] {
@@ -94,8 +96,8 @@ function makeStub(level: number, unitCount = 4): UnitDef[] {
 export const CURRICULUM: Record<number, UnitDef[]> = {
   1: HSK1,
   2: HSK2,
-  3: makeStub(3),
-  4: makeStub(4),
+  3: HSK3,
+  4: HSK4,
   5: makeStub(5),
   6: makeStub(6),
 }
