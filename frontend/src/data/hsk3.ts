@@ -548,7 +548,243 @@ export const HSK3: UnitDef[] = [
           },
         ],
       },
-      { id: 'h3-u8-s6', type: 'practice', xp: 50, title: 'HSK 3 大回顾', subtitle: 'HSK 3 grand review' },
+      { id: 'h3-u8-s6', type: 'practice', xp: 40, title: '知识文化练习', subtitle: 'Unit 8 review' },
+    ],
+  },
+
+  // ── Unit 9: 人际与社交 ──────────────────────────────────────────────────────
+  {
+    id: 'h3-u9', hsk_level: 3,
+    title: 'Unit 9', subtitle: '人际与社交 · Social Life & Relationships',
+    emoji: '👥', color: 'from-indigo-500 to-violet-500',
+    sessions: [
+      {
+        id: 'h3-u9-s1', type: 'vocab', xp: 30,
+        title: '社会人物', subtitle: 'People in society',
+        words: [
+          { zh: '邻居', py: 'línjū',     en: 'Neighbor' },
+          { zh: '客人', py: 'kèrén',     en: 'Guest / Visitor' },
+          { zh: '观众', py: 'guānzhòng', en: 'Audience / Spectator' },
+          { zh: '叔叔', py: 'shūshu',    en: 'Uncle (father\'s younger brother)', note: 'Paternal uncle (younger than father)' },
+          { zh: '阿姨', py: 'āyí',       en: 'Aunt / Older woman (polite)',        note: 'Also used politely for any middle-aged woman' },
+          { zh: '律师', py: 'lǜshī',     en: 'Lawyer / Attorney' },
+          { zh: '作者', py: 'zuòzhě',    en: 'Author / Writer' },
+          { zh: '导游', py: 'dǎoyóu',    en: 'Tour guide' },
+        ],
+      },
+      {
+        id: 'h3-u9-s2', type: 'vocab', xp: 30,
+        title: '社交动作', subtitle: 'Social interaction verbs',
+        words: [
+          { zh: '安排', py: 'ānpái',    en: 'To arrange / To plan',             note: '安排时间 = arrange time' },
+          { zh: '申请', py: 'shēnqǐng', en: 'To apply (for)',                    note: '申请工作/奖学金 = apply for job/scholarship' },
+          { zh: '推迟', py: 'tuīchí',   en: 'To postpone / To delay' },
+          { zh: '取消', py: 'qǔxiāo',   en: 'To cancel' },
+          { zh: '拒绝', py: 'jùjué',    en: 'To refuse / To reject',             note: '拒绝邀请 = decline an invitation' },
+          { zh: '接受', py: 'jiēshòu',  en: 'To accept / To receive' },
+          { zh: '适应', py: 'shìyìng',  en: 'To adapt / To get used to',         note: '适应新环境 = adapt to a new environment' },
+          { zh: '尊重', py: 'zūnzhòng', en: 'To respect',                        note: '尊重别人 = respect others' },
+        ],
+      },
+      {
+        id: 'h3-u9-s3', type: 'grammar', xp: 35,
+        title: '语法：不过', subtitle: 'Soft contrast with 不过',
+        grammarPoints: [
+          {
+            pattern: 'Clause A, 不过 + Clause B  (however / but — softer than 但是)',
+            explanation: '不过 (búguò) = "however / but." Softer and more conversational than 但是. Introduces a mild qualification. Also means "only / just": 不过是小事 = it\'s only a small matter.',
+            examples: [
+              { zh: '这里的食物很好，不过有点贵。', py: 'Zhèlǐ de shíwù hěn hǎo, búguò yǒudiǎn guì.', en: 'The food here is great, but a bit expensive.' },
+              { zh: '他很忙，不过还是来参加了。',   py: 'Tā hěn máng, búguò háishi lái cānjiā le.',   en: 'He was busy, but still came.' },
+              { zh: '这不过是一个小问题，别担心。', py: 'Zhè búguò shì yīgè xiǎo wèntí, bié dānxīn.', en: "It's only a small issue, don't worry." },
+            ],
+            fillBlanks: [
+              { sentence_zh: '食物很好，___有点贵。',   sentence_en: 'Food is great, ___ a bit pricey.',       options: ['不过', '因为', '所以', '虽然'], correct: 0 },
+              { sentence_zh: '他很忙，___还是来了。',   sentence_en: 'He was busy, ___ he still came.',        options: ['不过', '因为', '所以', '如果'], correct: 0 },
+              { sentence_zh: '这___是个小事，别担心。', sentence_en: 'This is ___ a small matter, don\'t worry.', options: ['不过', '已经', '正在', '还是'], correct: 0 },
+              { sentence_zh: '我想去，___没有时间。',   sentence_en: 'I want to go, ___ I have no time.',       options: ['不过', '因为', '所以', '而且'], correct: 0 },
+            ],
+          },
+        ],
+      },
+      { id: 'h3-u9-s4', type: 'practice', xp: 40, title: '社交练习', subtitle: 'Unit 9 review' },
+    ],
+  },
+
+  // ── Unit 10: 教育与校园 ─────────────────────────────────────────────────────
+  {
+    id: 'h3-u10', hsk_level: 3,
+    title: 'Unit 10', subtitle: '教育与校园 · Education & Campus',
+    emoji: '📚', color: 'from-blue-500 to-indigo-500',
+    sessions: [
+      {
+        id: 'h3-u10-s1', type: 'vocab', xp: 30,
+        title: '学习材料', subtitle: 'Study materials & school items',
+        words: [
+          { zh: '笔记本', py: 'bǐjìběn',  en: 'Notebook',                          note: '做笔记 = take notes' },
+          { zh: '字典',   py: 'zìdiǎn',   en: 'Dictionary',                        note: '查字典 = look up in a dictionary' },
+          { zh: '语法',   py: 'yǔfǎ',     en: 'Grammar' },
+          { zh: '作文',   py: 'zuòwén',   en: 'Essay / Composition' },
+          { zh: '日记',   py: 'rìjì',     en: 'Diary / Journal',                   note: '写日记 = write in a diary' },
+          { zh: '成绩',   py: 'chéngjì',  en: 'Grade / Score / Achievement' },
+          { zh: '游戏',   py: 'yóuxì',    en: 'Game',                              note: '电子游戏 = video game' },
+          { zh: '比赛',   py: 'bǐsài',    en: 'Competition / Match / Contest',     note: '参加比赛 = join a competition' },
+        ],
+      },
+      {
+        id: 'h3-u10-s2', type: 'vocab', xp: 30,
+        title: '竞争与成果', subtitle: 'Competition & achievement',
+        words: [
+          { zh: '赢',   py: 'yíng',     en: 'To win',                              note: '赢了比赛 = won the competition' },
+          { zh: '输',   py: 'shū',      en: 'To lose (a game/competition)',        note: '输了 = lost; opposite of 赢' },
+          { zh: '合格', py: 'hégé',     en: 'Qualified / Up to standard / To pass', note: '考试合格 = pass the exam standard' },
+          { zh: '批评', py: 'pīpíng',   en: 'To criticize / Criticism',            note: '受到批评 = be criticized' },
+          { zh: '培养', py: 'péiyǎng',  en: 'To cultivate / To train / To foster', note: '培养能力 = cultivate ability' },
+          { zh: '区别', py: 'qūbié',    en: 'Difference / To distinguish',         note: '有什么区别？= What\'s the difference?' },
+          { zh: '标准', py: 'biāozhǔn', en: 'Standard / Criterion',               note: '达到标准 = meet the standard' },
+          { zh: '规定', py: 'guīdìng',  en: 'Rule / Regulation',                  note: '遵守规定 = follow the rules' },
+        ],
+      },
+      {
+        id: 'h3-u10-s3', type: 'grammar', xp: 35,
+        title: '语法：不是…而是', subtitle: 'Correcting with 不是…而是',
+        grammarPoints: [
+          {
+            pattern: '不是 + A，而是 + B  (It\'s not A, but rather B)',
+            explanation: '不是…而是 (búshì…érshì) = "not A but B." Corrects a mistaken assumption. The focus is on what something IS (B). Stronger than simply denying A; 而是 emphasizes the correct replacement.',
+            examples: [
+              { zh: '他不是失败了，而是还在努力。', py: 'Tā búshì shībài le, érshì hái zài nǔlì.',       en: "He hasn't failed; he's still working hard." },
+              { zh: '这不是问题，而是机会。',       py: 'Zhè búshì wèntí, érshì jīhuì.',               en: "This isn't a problem, but an opportunity." },
+              { zh: '她不是不喜欢，而是没时间。',   py: 'Tā búshì bù xǐhuān, érshì méi shíjiān.',     en: "She doesn't dislike it; she just has no time." },
+            ],
+            fillBlanks: [
+              { sentence_zh: '这不是问题，___机会。',      sentence_en: 'This isn\'t a problem, ___ an opportunity.', options: ['而是', '但是', '所以', '还是'], correct: 0 },
+              { sentence_zh: '他不是失败，___还在努力。',  sentence_en: 'He hasn\'t failed, ___ is still working.',    options: ['而是', '所以', '因为', '但是'], correct: 0 },
+              { sentence_zh: '___是他的错，而是误会。',    sentence_en: '___ is his fault; it\'s a misunderstanding.', options: ['不是', '没有', '虽然', '就是'], correct: 0 },
+              { sentence_zh: '我不是不去，___没有时间。',  sentence_en: 'I\'m not refusing; ___ I have no time.',       options: ['而是', '但是', '因为', '所以'], correct: 0 },
+            ],
+          },
+        ],
+      },
+      { id: 'h3-u10-s4', type: 'practice', xp: 40, title: '教育练习', subtitle: 'Unit 10 review' },
+    ],
+  },
+
+  // ── Unit 11: 身体与医疗 ─────────────────────────────────────────────────────
+  {
+    id: 'h3-u11', hsk_level: 3,
+    title: 'Unit 11', subtitle: '身体与医疗 · Body & Health Care',
+    emoji: '💊', color: 'from-red-500 to-rose-500',
+    sessions: [
+      {
+        id: 'h3-u11-s1', type: 'vocab', xp: 30,
+        title: '身体与感官', subtitle: 'Body & senses',
+        words: [
+          { zh: '皮肤', py: 'pífū',      en: 'Skin' },
+          { zh: '头发', py: 'tóufa',     en: 'Hair (on head)' },
+          { zh: '感觉', py: 'gǎnjué',    en: 'Feeling / Sensation / Sense',        note: '感觉不好 = feel unwell' },
+          { zh: '声音', py: 'shēngyīn',  en: 'Sound / Voice',                      note: '声音很大 = loud voice' },
+          { zh: '生命', py: 'shēngmìng', en: 'Life (biological)',                  note: '生命很宝贵 = life is precious' },
+          { zh: '营养', py: 'yíngyǎng',  en: 'Nutrition / Nutrients',              note: '营养丰富 = nutritious' },
+          { zh: '睡眠', py: 'shuìmián',  en: 'Sleep',                              note: '睡眠质量 = quality of sleep' },
+          { zh: '疲劳', py: 'píláo',     en: 'Fatigue / Exhausted',               note: 'More serious than 累; 感到疲劳 = feel fatigued' },
+        ],
+      },
+      {
+        id: 'h3-u11-s2', type: 'vocab', xp: 30,
+        title: '健康习惯', subtitle: 'Health habits & medical verbs',
+        words: [
+          { zh: '节约', py: 'jiéyuē',    en: 'To save / To economize',             note: '节约时间/钱 = save time/money' },
+          { zh: '浪费', py: 'làngfèi',   en: 'To waste',                           note: '浪费食物/时间 = waste food/time' },
+          { zh: '吸烟', py: 'xīyān',     en: 'To smoke (cigarettes)',              note: '禁止吸烟 = no smoking' },
+          { zh: '锻炼', py: 'duànliàn',  en: 'To exercise / To work out',          note: '坚持锻炼 = stick to exercising' },
+          { zh: '值得', py: 'zhíde',     en: 'To be worth (it)',                   note: '值得努力 = worth the effort' },
+          { zh: '养成', py: 'yǎngchéng', en: 'To form (a habit)',                  note: '养成好习惯 = form good habits' },
+          { zh: '受伤', py: 'shòu shāng', en: 'To get hurt / To be injured',       note: '受伤了！= Got hurt/injured!' },
+          { zh: '恢复', py: 'huīfù',     en: 'To recover / To restore / To resume', note: '恢复健康 = recover health' },
+        ],
+      },
+      {
+        id: 'h3-u11-s3', type: 'grammar', xp: 35,
+        title: '语法：来得及 / 来不及', subtitle: 'Time pressure expressions',
+        grammarPoints: [
+          {
+            pattern: '来得及 (there\'s still time) vs. 来不及 (no time / too late)',
+            explanation: '来得及 (láidejí) = "there\'s still enough time." 来不及 (láibùjí) = "there\'s no time / too late." Both are verb-potential complements. Subject + 来不及 + Verb: 我来不及吃早饭 = I don\'t have time to eat breakfast.',
+            examples: [
+              { zh: '还早，来得及。',             py: 'Hái zǎo, láidejí.',               en: "It's still early, there's time." },
+              { zh: '我来不及准备了。',           py: 'Wǒ láibùjí zhǔnbèi le.',           en: "I don't have time to prepare." },
+              { zh: '别担心，我们还来得及赶上。', py: 'Bié dānxīn, wǒmen hái láidejí gǎnshàng.', en: "Don't worry, we can still catch up." },
+            ],
+            fillBlanks: [
+              { sentence_zh: '还早呢，___的，别担心。',   sentence_en: 'It\'s still early, there ___ time.',         options: ['来得及', '来不及', '快要', '已经'], correct: 0 },
+              { sentence_zh: '快跑！___迟到了！',         sentence_en: 'Run! There\'s no time, we\'ll be late!',     options: ['来不及', '来得及', '已经', '快要'], correct: 0 },
+              { sentence_zh: '你___吗？现在才开始。',     sentence_en: 'Is there still time? It\'s only starting now.', options: ['来得及', '来不及', '快要', '刚才'], correct: 0 },
+              { sentence_zh: '他___吃早饭，直接去上班。', sentence_en: 'He had no time to eat breakfast.',           options: ['来不及', '来得及', '已经', '刚才'], correct: 0 },
+            ],
+          },
+        ],
+      },
+      { id: 'h3-u11-s4', type: 'practice', xp: 40, title: '健康练习', subtitle: 'Unit 11 review' },
+    ],
+  },
+
+  // ── Unit 12: 媒体与现代生活 ─────────────────────────────────────────────────
+  {
+    id: 'h3-u12', hsk_level: 3,
+    title: 'Unit 12', subtitle: '媒体与现代生活 · Media & Modern Life',
+    emoji: '📱', color: 'from-violet-500 to-purple-500',
+    sessions: [
+      {
+        id: 'h3-u12-s1', type: 'vocab', xp: 30,
+        title: '媒体词汇', subtitle: 'Media vocabulary',
+        words: [
+          { zh: '新闻', py: 'xīnwén',   en: 'News',                              note: '看新闻 = read/watch news' },
+          { zh: '节目', py: 'jiémù',    en: 'Program / Show / Episode',          note: '电视节目 = TV show' },
+          { zh: '广告', py: 'guǎnggào', en: 'Advertisement',                     note: '电视广告 = TV commercial' },
+          { zh: '网站', py: 'wǎngzhàn', en: 'Website',                           note: '上网站 = visit a website' },
+          { zh: '消息', py: 'xiāoxi',   en: 'Message / News / Information',      note: '好消息！= Good news!; 发消息 = send a message' },
+          { zh: '邮件', py: 'yóujiàn',  en: 'Email / Mail',                      note: '发邮件 = send an email' },
+          { zh: '信',   py: 'xìn',      en: 'Letter (written)',                  note: '写信 = write a letter; 收到一封信 = received a letter' },
+          { zh: '信息', py: 'xìnxī',    en: 'Information / Data',               note: 'More formal than 消息; 获取信息 = get information' },
+        ],
+      },
+      {
+        id: 'h3-u12-s2', type: 'vocab', xp: 30,
+        title: '常用物品', subtitle: 'Common everyday objects',
+        words: [
+          { zh: '钥匙',   py: 'yàoshi',      en: 'Key',                           note: '钥匙丢了 = lost the key' },
+          { zh: '眼镜',   py: 'yǎnjìng',     en: 'Glasses / Eyeglasses',          note: '戴眼镜 = wear glasses; 一副眼镜 = a pair of glasses' },
+          { zh: '信用卡', py: 'xìnyòngkǎ',   en: 'Credit card',                   note: '刷信用卡 = swipe a credit card' },
+          { zh: '行李箱', py: 'xínglixiāng',  en: 'Suitcase / Luggage',           note: '托运行李箱 = check in luggage' },
+          { zh: '照片',   py: 'zhàopiàn',    en: 'Photo / Picture',               note: '拍照片 = take a photo' },
+          { zh: '垃圾',   py: 'lājī',        en: 'Garbage / Trash / Rubbish',     note: '扔垃圾 = throw away trash; 垃圾桶 = trash can' },
+          { zh: '礼物',   py: 'lǐwù',        en: 'Gift / Present',                note: '送礼物 = give a gift' },
+          { zh: '爱好',   py: 'àihào',       en: 'Hobby / Interest',              note: '你有什么爱好？= What are your hobbies?' },
+        ],
+      },
+      {
+        id: 'h3-u12-s3', type: 'grammar', xp: 35,
+        title: '语法：于是', subtitle: 'Narrative result with 于是',
+        grammarPoints: [
+          {
+            pattern: 'Situation A, 于是 + Action/Result B  (and so / thereupon)',
+            explanation: '于是 (yúshì) = "and so / thereupon / as a result." Shows what someone DID next after a situation. More narrative than 所以 (which explains a logical cause-effect). 于是 tells the story; 所以 explains the logic.',
+            examples: [
+              { zh: '他迷路了，于是打电话问路。',     py: 'Tā mílù le, yúshì dǎ diànhuà wèn lù.',           en: 'He got lost, and so called to ask for directions.' },
+              { zh: '天气很好，于是我们决定出去玩。', py: 'Tiānqì hěn hǎo, yúshì wǒmen juédìng chūqù wán.', en: 'The weather was great, so we decided to go out.' },
+              { zh: '来不及了，于是我们跑步去。',     py: 'Láibùjí le, yúshì wǒmen pǎobù qù.',               en: 'There was no time, so we ran there.' },
+            ],
+            fillBlanks: [
+              { sentence_zh: '他迷路了，___打电话问路。', sentence_en: 'He got lost, ___ called for directions.',    options: ['于是', '因为', '所以', '如果'], correct: 0 },
+              { sentence_zh: '天气很好，___我们出去了。', sentence_en: 'The weather was good, ___ we went out.',     options: ['于是', '因为', '但是', '虽然'], correct: 0 },
+              { sentence_zh: '他看到消息，___很高兴。',   sentence_en: 'He saw the message, ___ was very happy.',   options: ['于是', '因为', '所以', '就是'], correct: 0 },
+              { sentence_zh: '来不及了，___我们跑步去。', sentence_en: 'There\'s no time, ___ we ran there.',        options: ['于是', '因为', '但是', '虽然'], correct: 0 },
+            ],
+          },
+        ],
+      },
+      { id: 'h3-u12-s4', type: 'practice', xp: 50, title: 'HSK 3 总复习', subtitle: 'HSK 3 final grand review' },
     ],
   },
 ]

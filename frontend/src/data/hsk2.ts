@@ -436,7 +436,264 @@ export const HSK2: UnitDef[] = [
           },
         ],
       },
-      { id: 'h2-u6-s5', type: 'practice', xp: 40, title: 'HSK 2 大回顾', subtitle: 'HSK 2 grand review' },
+      { id: 'h2-u6-s5', type: 'practice', xp: 40, title: '旅行练习', subtitle: 'Unit 6 review' },
+    ],
+  },
+
+  // ── Unit 7: 食物与饮食 ──────────────────────────────────────────────────────
+  {
+    id: 'h2-u7', hsk_level: 2,
+    title: 'Unit 7', subtitle: '食物与饮食 · Food & Dining',
+    emoji: '🍜', color: 'from-orange-500 to-amber-500',
+    sessions: [
+      {
+        id: 'h2-u7-s1', type: 'vocab', xp: 25,
+        title: '食物词汇', subtitle: 'Food vocabulary',
+        words: [
+          { zh: '西瓜', py: 'xīguā',   en: 'Watermelon' },
+          { zh: '鱼',   py: 'yú',      en: 'Fish' },
+          { zh: '鸡蛋', py: 'jīdàn',   en: 'Egg',                  note: '鸡 = chicken; 蛋 = egg' },
+          { zh: '面包', py: 'miànbāo', en: 'Bread' },
+          { zh: '饮料', py: 'yǐnliào', en: 'Beverage / Drink',     note: '饮 = to drink; 料 = material' },
+          { zh: '啤酒', py: 'píjiǔ',   en: 'Beer' },
+          { zh: '果汁', py: 'guǒzhī',  en: 'Fruit juice',          note: '果 = fruit; 汁 = juice' },
+          { zh: '糖',   py: 'táng',    en: 'Sugar / Candy / Sweet', note: '吃糖 = eat candy; 加糖 = add sugar' },
+        ],
+      },
+      {
+        id: 'h2-u7-s2', type: 'vocab', xp: 25,
+        title: '口味与状态', subtitle: 'Tastes & eating states',
+        words: [
+          { zh: '甜',  py: 'tián',  en: 'Sweet' },
+          { zh: '咸',  py: 'xián',  en: 'Salty' },
+          { zh: '辣',  py: 'là',    en: 'Spicy / Hot' },
+          { zh: '酸',  py: 'suān',  en: 'Sour' },
+          { zh: '饱',  py: 'bǎo',   en: 'Full (after eating)' },
+          { zh: '饿',  py: 'è',     en: 'Hungry' },
+          { zh: '渴',  py: 'kě',    en: 'Thirsty' },
+          { zh: '香',  py: 'xiāng', en: 'Fragrant / Delicious-smelling', note: '好香！= Smells so good!' },
+        ],
+      },
+      {
+        id: 'h2-u7-s3', type: 'grammar', xp: 30,
+        title: '语法：还是', subtitle: 'Choice questions with 还是',
+        grammarPoints: [
+          {
+            pattern: 'A 还是 B？  (Is it A or B? — choice question)',
+            explanation: '还是 (háishi) in questions = "or / which one?" It offers two alternatives to choose from. Different from 或者 (or), which appears in statements. Answer by repeating one of the choices.',
+            examples: [
+              { zh: '你喝茶还是咖啡？',     py: 'Nǐ hē chá háishi kāfēi?',         en: 'Do you want tea or coffee?' },
+              { zh: '你吃米饭还是面条？',   py: 'Nǐ chī mǐfàn háishi miàntiáo?',   en: 'Do you want rice or noodles?' },
+              { zh: '你喜欢甜的还是辣的？', py: 'Nǐ xǐhuān tián de háishi là de?', en: 'Do you like sweet or spicy?' },
+            ],
+            fillBlanks: [
+              { sentence_zh: '你喝茶___咖啡？',       sentence_en: 'Do you want tea ___ coffee?',        options: ['还是', '和', '或者', '但是'], correct: 0 },
+              { sentence_zh: '你吃米饭___面条？',     sentence_en: 'Do you want rice ___ noodles?',      options: ['因为', '和', '还是', '也'],   correct: 2 },
+              { sentence_zh: '他是中国人___日本人？', sentence_en: 'Is he Chinese ___ Japanese?',        options: ['也', '和', '都', '还是'],     correct: 3 },
+              { sentence_zh: '你要甜的___辣的？',     sentence_en: 'Do you want sweet ___ spicy food?',  options: ['还是', '因为', '所以', '就'],  correct: 0 },
+            ],
+          },
+        ],
+      },
+      { id: 'h2-u7-s4', type: 'practice', xp: 35, title: '食物练习', subtitle: 'Unit 7 review' },
+    ],
+  },
+
+  // ── Unit 8: 天气与季节 ──────────────────────────────────────────────────────
+  {
+    id: 'h2-u8', hsk_level: 2,
+    title: 'Unit 8', subtitle: '天气与季节 · Weather & Seasons',
+    emoji: '🌤️', color: 'from-sky-500 to-cyan-500',
+    sessions: [
+      {
+        id: 'h2-u8-s1', type: 'vocab', xp: 25,
+        title: '四季', subtitle: 'The four seasons',
+        words: [
+          { zh: '春天', py: 'chūntiān',  en: 'Spring',                    note: '春 = spring; 天 = sky/season' },
+          { zh: '夏天', py: 'xiàtiān',   en: 'Summer' },
+          { zh: '秋天', py: 'qiūtiān',   en: 'Autumn / Fall' },
+          { zh: '冬天', py: 'dōngtiān',  en: 'Winter' },
+          { zh: '季节', py: 'jìjié',     en: 'Season',                    note: '四个季节 = four seasons' },
+          { zh: '温度', py: 'wēndù',     en: 'Temperature',               note: '温度很高/低 = high/low temperature' },
+          { zh: '度',   py: 'dù',        en: 'Degree (°C)',               note: '今天三十度 = 30 degrees today' },
+          { zh: '凉快', py: 'liángkuai', en: 'Cool / Pleasantly cool',    note: '秋天很凉快 = autumn is pleasantly cool' },
+        ],
+      },
+      {
+        id: 'h2-u8-s2', type: 'vocab', xp: 25,
+        title: '天气词汇', subtitle: 'Weather vocabulary',
+        words: [
+          { zh: '天气', py: 'tiānqì',   en: 'Weather' },
+          { zh: '晴',   py: 'qíng',     en: 'Sunny / Clear',             note: '晴天 = sunny day' },
+          { zh: '阴',   py: 'yīn',      en: 'Overcast / Cloudy',         note: '阴天 = cloudy/overcast day' },
+          { zh: '下雨', py: 'xià yǔ',   en: 'To rain',                   note: '下雨了 = it started raining' },
+          { zh: '下雪', py: 'xià xuě',  en: 'To snow' },
+          { zh: '刮风', py: 'guā fēng', en: 'To be windy' },
+          { zh: '云',   py: 'yún',      en: 'Cloud' },
+          { zh: '雪',   py: 'xuě',      en: 'Snow' },
+        ],
+      },
+      {
+        id: 'h2-u8-s3', type: 'grammar', xp: 30,
+        title: '语法：快要…了', subtitle: 'Something about to happen',
+        grammarPoints: [
+          {
+            pattern: '快要 + Verb/Adj + 了  (about to… / almost…)',
+            explanation: '快要…了 (kuài yào…le) = "about to / going to happen soon." The 了 signals an upcoming change. Shorter form: 快…了. Use for imminent events.',
+            examples: [
+              { zh: '快要下雨了。',   py: 'Kuài yào xià yǔ le.',   en: "It's about to rain." },
+              { zh: '他快要毕业了。', py: 'Tā kuài yào bìyè le.',  en: "He's about to graduate." },
+              { zh: '快要冬天了。',   py: 'Kuài yào dōngtiān le.', en: 'Winter is almost here.' },
+            ],
+            fillBlanks: [
+              { sentence_zh: '___下雨了，带雨伞吧。',      sentence_en: "It's ___ to rain, bring an umbrella.", options: ['快要', '已经', '正在', '在'],  correct: 0 },
+              { sentence_zh: '快要___了，我很高兴。',      sentence_en: "It's about to ___; I'm happy.",        options: ['放假', '结束', '开始', '天黑'], correct: 0 },
+              { sentence_zh: '天气___变冷了。',            sentence_en: 'The weather is ___ to get cold.',      options: ['快要', '已经', '还', '没'],     correct: 0 },
+              { sentence_zh: '他___毕业，开始找工作吧。',  sentence_en: 'He\'s ___ to graduate, start job hunting.', options: ['快要', '已经', '正在', '以前'], correct: 0 },
+            ],
+          },
+        ],
+      },
+      { id: 'h2-u8-s4', type: 'practice', xp: 35, title: '天气练习', subtitle: 'Unit 8 review' },
+    ],
+  },
+
+  // ── Unit 9: 颜色与购物 ──────────────────────────────────────────────────────
+  {
+    id: 'h2-u9', hsk_level: 2,
+    title: 'Unit 9', subtitle: '颜色与购物 · Colors & Shopping',
+    emoji: '🛍️', color: 'from-pink-500 to-rose-500',
+    sessions: [
+      {
+        id: 'h2-u9-s1', type: 'vocab', xp: 25,
+        title: '颜色', subtitle: 'Colors',
+        words: [
+          { zh: '颜色', py: 'yánsè', en: 'Color',  note: '什么颜色？= What color?' },
+          { zh: '红',   py: 'hóng',  en: 'Red',    note: '红色 = red color (noun form)' },
+          { zh: '黄',   py: 'huáng', en: 'Yellow' },
+          { zh: '蓝',   py: 'lán',   en: 'Blue' },
+          { zh: '绿',   py: 'lǜ',    en: 'Green' },
+          { zh: '白',   py: 'bái',   en: 'White' },
+          { zh: '黑',   py: 'hēi',   en: 'Black' },
+          { zh: '粉',   py: 'fěn',   en: 'Pink',   note: '粉红色 = pink; 粉 = powder/pink' },
+        ],
+      },
+      {
+        id: 'h2-u9-s2', type: 'vocab', xp: 25,
+        title: '购物词汇', subtitle: 'Shopping vocabulary',
+        words: [
+          { zh: '便宜', py: 'piányí',   en: 'Cheap / Inexpensive' },
+          { zh: '贵',   py: 'guì',      en: 'Expensive' },
+          { zh: '价格', py: 'jiàgé',    en: 'Price',               note: '价格怎么样？= How\'s the price?' },
+          { zh: '付钱', py: 'fùqián',   en: 'To pay (money)',      note: '付现金 = pay cash; 付账 = pay the bill' },
+          { zh: '找钱', py: 'zhǎoqián', en: 'To give change' },
+          { zh: '打折', py: 'dǎzhé',    en: 'Discount / On sale',  note: '打八折 = 20% off (80% of price)' },
+          { zh: '换',   py: 'huàn',     en: 'Exchange / Change',   note: '换钱 = exchange money; 换衣服 = change clothes' },
+          { zh: '退',   py: 'tuì',      en: 'Return / Refund',     note: '退货 = return goods; 退钱 = refund' },
+        ],
+      },
+      {
+        id: 'h2-u9-s3', type: 'grammar', xp: 30,
+        title: '语法：没有…那么', subtitle: '"Not as… as" with 没有',
+        grammarPoints: [
+          {
+            pattern: 'A + 没有 + B + (那么) + Adj  (A is not as [adj] as B)',
+            explanation: '没有 (méiyǒu) + adj creates "not as… as." 那么 (nàme) = "that/so" (optional). This is the negative counterpart to 比 comparisons.',
+            examples: [
+              { zh: '这件衣服没有那件贵。',   py: 'Zhè jiàn yīfu méiyǒu nà jiàn guì.',     en: 'This clothing is not as expensive as that one.' },
+              { zh: '今天没有昨天那么冷。',   py: 'Jīntiān méiyǒu zuótiān nàme lěng.',     en: 'Today is not as cold as yesterday.' },
+              { zh: '他的汉语没有我说得好。', py: 'Tā de Hànyǔ méiyǒu wǒ shuō de hǎo.',   en: 'His Chinese is not as good as mine.' },
+            ],
+            fillBlanks: [
+              { sentence_zh: '这件___那件贵。',         sentence_en: 'This one is not as expensive as that one.', options: ['没有', '比', '很', '也'],  correct: 0 },
+              { sentence_zh: '今天___昨天那么冷。',     sentence_en: 'Today is not as cold as yesterday.',        options: ['比', '没有', '也', '还'], correct: 1 },
+              { sentence_zh: '他的汉语___我说得好。',   sentence_en: 'His Chinese is not as good as mine.',       options: ['没有', '比', '也', '不'],  correct: 0 },
+              { sentence_zh: '红色___蓝色那么好看。',   sentence_en: 'Red is not as nice-looking as blue.',       options: ['没有', '比', '和', '跟'],  correct: 0 },
+            ],
+          },
+        ],
+      },
+      { id: 'h2-u9-s4', type: 'practice', xp: 35, title: '购物练习', subtitle: 'Unit 9 review' },
+    ],
+  },
+
+  // ── Unit 10: 方向与运动 ─────────────────────────────────────────────────────
+  {
+    id: 'h2-u10', hsk_level: 2,
+    title: 'Unit 10', subtitle: '方向与运动 · Directions & Sports',
+    emoji: '🏃', color: 'from-teal-500 to-green-500',
+    sessions: [
+      {
+        id: 'h2-u10-s1', type: 'vocab', xp: 25,
+        title: '方向与位置', subtitle: 'Direction & position words',
+        words: [
+          { zh: '左边', py: 'zuǒbiān',   en: 'Left side / To the left',    note: '往左走 = go left; 左转 = turn left' },
+          { zh: '右边', py: 'yòubiān',   en: 'Right side / To the right' },
+          { zh: '旁边', py: 'pángbiān',  en: 'Beside / Next to' },
+          { zh: '中间', py: 'zhōngjiān', en: 'Middle / Between',            note: '在两者中间 = between the two' },
+          { zh: '对面', py: 'duìmiàn',   en: 'Opposite / Across from' },
+          { zh: '往',   py: 'wǎng',      en: 'Towards (direction)',         note: '往左走 = walk towards the left' },
+          { zh: '向',   py: 'xiàng',     en: 'Towards / Facing',            note: '向前看 = look forward; similar to 往' },
+          { zh: '直走', py: 'zhí zǒu',   en: 'Go straight' },
+        ],
+      },
+      {
+        id: 'h2-u10-s2', type: 'vocab', xp: 25,
+        title: '运动与爱好', subtitle: 'Sports & hobbies',
+        words: [
+          { zh: '游泳', py: 'yóuyǒng', en: 'To swim / Swimming',         note: '游泳池 = swimming pool' },
+          { zh: '跑步', py: 'pǎobù',   en: 'To jog / Jogging' },
+          { zh: '唱歌', py: 'chànggē', en: 'To sing' },
+          { zh: '跳舞', py: 'tiàowǔ',  en: 'To dance' },
+          { zh: '打球', py: 'dǎqiú',   en: 'To play ball sports',        note: '打篮球/乒乓球 = basketball/ping-pong' },
+          { zh: '爬山', py: 'páshān',  en: 'To hike / To climb a mountain' },
+          { zh: '运动', py: 'yùndòng', en: 'Exercise / Sport / Physical activity' },
+          { zh: '爱好', py: 'àihào',   en: 'Hobby / Interest',            note: '你有什么爱好？= What are your hobbies?' },
+        ],
+      },
+      {
+        id: 'h2-u10-s3', type: 'grammar', xp: 30,
+        title: '语法：是…的', subtitle: 'Emphasizing circumstances with 是…的',
+        grammarPoints: [
+          {
+            pattern: '是 + [When/Where/How] + Verb + 的  (emphasizing the circumstances of a past action)',
+            explanation: '是…的 (shì…de) emphasizes HOW, WHEN, or WHERE a completed action happened. The action itself is already known; 是…的 clarifies the circumstances. 是 can be omitted in speech.',
+            examples: [
+              { zh: '我是坐地铁来的。',   py: 'Wǒ shì zuò dìtiě lái de.',          en: 'I came by subway. (how)' },
+              { zh: '他是昨天回来的。',   py: 'Tā shì zuótiān huí lái de.',        en: 'He came back yesterday. (when)' },
+              { zh: '她是在上海出生的。', py: 'Tā shì zài Shànghǎi chūshēng de.', en: 'She was born in Shanghai. (where)' },
+            ],
+            fillBlanks: [
+              { sentence_zh: '我___坐飞机来___。',     sentence_en: 'I came by plane (emphasis on how).',  options: ['是/的', '在/了', '从/到', '用/吧'], correct: 0 },
+              { sentence_zh: '他___昨天回来的。',      sentence_en: 'He came back (emphasizing when).',    options: ['是', '在', '从', '到'],            correct: 0 },
+              { sentence_zh: '你是怎么___的？',        sentence_en: 'How did you ___ (asking manner)?',    options: ['来', '去', '出发', '回来'],         correct: 0 },
+              { sentence_zh: '她是在北京___的。',      sentence_en: 'She ___ in Beijing (emphasizing where).', options: ['出生', '工作', '学习', '生活'],  correct: 0 },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'h2-u10-s4', type: 'grammar', xp: 30,
+        title: '语法：让', subtitle: 'Causative sentences with 让',
+        grammarPoints: [
+          {
+            pattern: '让 + Person + Verb  (let / allow / make someone do)',
+            explanation: '让 (ràng) = "let / allow / make." Can express permission (让我去 = let me go), an instruction (让他来 = ask him to come), or cause (这让我高兴 = this makes me happy).',
+            examples: [
+              { zh: '请让我过去。',       py: 'Qǐng ràng wǒ guòqù.',              en: 'Please let me through.' },
+              { zh: '妈妈让我早点睡。',   py: 'Māma ràng wǒ zǎo diǎn shuì.',      en: 'Mom told me to sleep early.' },
+              { zh: '这首歌让我很感动。', py: 'Zhè shǒu gē ràng wǒ hěn gǎndòng.', en: 'This song moved me deeply.' },
+            ],
+            fillBlanks: [
+              { sentence_zh: '妈妈___我早点睡。',   sentence_en: 'Mom ___ me sleep early.',          options: ['让', '叫', '使', '把'],   correct: 0 },
+              { sentence_zh: '请___我过去一下。',   sentence_en: 'Please ___ me through.',            options: ['让', '叫', '给', '把'],   correct: 0 },
+              { sentence_zh: '这件事___我很难过。', sentence_en: 'This matter ___ me very sad.',      options: ['让', '叫', '使', '把'],   correct: 0 },
+              { sentence_zh: '老师___我们练习。',   sentence_en: 'The teacher ___ us practice.',      options: ['让', '叫', '叫叫', '给'], correct: 0 },
+            ],
+          },
+        ],
+      },
+      { id: 'h2-u10-s5', type: 'practice', xp: 50, title: 'HSK 2 总复习', subtitle: 'HSK 2 final grand review' },
     ],
   },
 ]

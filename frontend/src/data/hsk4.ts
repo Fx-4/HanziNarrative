@@ -672,7 +672,301 @@ export const HSK4: UnitDef[] = [
           },
         ],
       },
-      { id: 'h4-u10-s5', type: 'practice', xp: 60, title: 'HSK 4 大回顾', subtitle: 'HSK 4 grand review' },
+      { id: 'h4-u10-s5', type: 'practice', xp: 45, title: '综合名词练习', subtitle: 'Unit 10 review' },
+    ],
+  },
+
+  // ── Unit 11: 家庭与人际 ─────────────────────────────────────────────────────
+  {
+    id: 'h4-u11', hsk_level: 4,
+    title: 'Unit 11', subtitle: '家庭与人际关系 · Family & Relationships',
+    emoji: '👨‍👩‍👧', color: 'from-pink-500 to-rose-500',
+    sessions: [
+      {
+        id: 'h4-u11-s1', type: 'vocab', xp: 35,
+        title: '家庭人物', subtitle: 'Family members & social roles',
+        words: [
+          { zh: '妻子',   py: 'qīzi',        en: 'Wife' },
+          { zh: '丈夫',   py: 'zhàngfu',     en: 'Husband' },
+          { zh: '亲戚',   py: 'qīnqi',       en: 'Relative / Family member',        note: '亲戚朋友 = relatives and friends' },
+          { zh: '儿童',   py: 'értóng',      en: 'Children (collective)',            note: '儿童节 = Children\'s Day; more formal than 孩子' },
+          { zh: '青少年', py: 'qīngshàonián', en: 'Teenager / Youth',              note: '青少年问题 = teenage issues' },
+          { zh: '博士',   py: 'bóshì',       en: 'Doctor (PhD) / Doctoral degree',  note: '博士学位 = doctoral degree; 博士生 = PhD student' },
+          { zh: '教授',   py: 'jiàoshòu',    en: 'Professor',                       note: '大学教授 = university professor' },
+          { zh: '主人',   py: 'zhǔrén',      en: 'Host / Owner / Master',           note: '做主人 = be the host; 房子的主人 = owner of the house' },
+        ],
+      },
+      {
+        id: 'h4-u11-s2', type: 'vocab', xp: 35,
+        title: '感情与关系', subtitle: 'Emotions & interpersonal dynamics',
+        words: [
+          { zh: '信任', py: 'xìnrèn',   en: 'Trust / To trust',                    note: '建立信任 = build trust; 失去信任 = lose trust' },
+          { zh: '感激', py: 'gǎnjī',    en: 'Grateful / To appreciate',            note: '感激你的帮助 = grateful for your help' },
+          { zh: '相处', py: 'xiāngchǔ', en: 'To get along with / To interact',     note: '相处很好 = get along well; 难以相处 = hard to get along with' },
+          { zh: '误会', py: 'wùhuì',    en: 'Misunderstanding / To misunderstand', note: '产生误会 = cause a misunderstanding; 消除误会 = clear it up' },
+          { zh: '矛盾', py: 'máodùn',   en: 'Contradiction / Conflict',            note: '解决矛盾 = resolve conflict' },
+          { zh: '感受', py: 'gǎnshòu',  en: 'To feel / To experience / Feeling',   note: '有什么感受？= How do you feel about it?' },
+          { zh: '心理', py: 'xīnlǐ',    en: 'Psychology / Mentality',             note: '心理健康 = mental health; 心理压力 = psychological pressure' },
+          { zh: '人生', py: 'rénshēng', en: 'Life (of a person)',                  note: '人生意义 = meaning of life; 人生经验 = life experience' },
+        ],
+      },
+      {
+        id: 'h4-u11-s3', type: 'grammar', xp: 40,
+        title: '语法：何况', subtitle: '"Let alone / all the more so" with 何况',
+        grammarPoints: [
+          {
+            pattern: 'A already [true/hard]; 何况 + B  (let alone / much less / all the more so B)',
+            explanation: '何况 (hékuàng) = "let alone / much less." Used to strengthen an argument by adding a more extreme case: "If even A is [true/hard], then certainly B (even more extreme) is also [true/impossible]."',
+            examples: [
+              { zh: '大人都学不会，何况是孩子？',       py: 'Dàrén dōu xué bù huì, hékuàng shì háizi?',       en: 'Even adults can\'t learn it, let alone children.' },
+              { zh: '这道题我都不会，何况别人？',       py: 'Zhè dào tí wǒ dōu bù huì, hékuàng biérén?',       en: 'I can\'t do this problem, let alone others.' },
+              { zh: '一件事都做不好，何况同时做三件？', py: 'Yī jiàn shì dōu zuò bù hǎo, hékuàng tóngshí zuò sān jiàn?', en: 'Can\'t do one thing well, let alone three at once.' },
+            ],
+            fillBlanks: [
+              { sentence_zh: '大人都做不到，___是孩子？',   sentence_en: 'Even adults can\'t, ___ children?',         options: ['何况', '难道', '除非', '反正'], correct: 0 },
+              { sentence_zh: '我都不行，___你？',           sentence_en: 'Even I can\'t, ___ you?',                   options: ['何况', '难道', '况且', '既然'],  correct: 0 },
+              { sentence_zh: '一件事做不完，___两件？',     sentence_en: 'Can\'t finish one task, ___ two?',           options: ['何况', '而且', '并且', '因此'], correct: 0 },
+              { sentence_zh: '他年轻时就这样，___现在？',   sentence_en: 'He was like this when young, ___ now?',     options: ['何况', '所以', '于是', '反正'], correct: 0 },
+            ],
+          },
+        ],
+      },
+      { id: 'h4-u11-s4', type: 'practice', xp: 45, title: '家庭关系练习', subtitle: 'Unit 11 review' },
+    ],
+  },
+
+  // ── Unit 12: 健康与科学 ─────────────────────────────────────────────────────
+  {
+    id: 'h4-u12', hsk_level: 4,
+    title: 'Unit 12', subtitle: '健康与科学 · Health & Science',
+    emoji: '🔬', color: 'from-teal-500 to-cyan-500',
+    sessions: [
+      {
+        id: 'h4-u12-s1', type: 'vocab', xp: 35,
+        title: '健康词汇', subtitle: 'Health & body advanced vocabulary',
+        words: [
+          { zh: '疾病', py: 'jíbìng',    en: 'Disease / Illness',               note: '预防疾病 = prevent disease' },
+          { zh: '肌肉', py: 'jīròu',     en: 'Muscle',                          note: '锻炼肌肉 = build muscle; 肌肉酸痛 = muscle soreness' },
+          { zh: '血液', py: 'xuèyè',     en: 'Blood',                           note: '血液循环 = blood circulation; 血液检查 = blood test' },
+          { zh: '预防', py: 'yùfáng',    en: 'To prevent / Prevention',         note: '预防感冒 = prevent colds; 预防措施 = preventive measures' },
+          { zh: '保持', py: 'bǎochí',    en: 'To keep / To maintain',           note: '保持健康 = maintain health; 保持联系 = keep in touch' },
+          { zh: '状况', py: 'zhuàngkuàng', en: 'Condition / State',             note: '健康状况 = health condition' },
+          { zh: '成分', py: 'chéngfèn',  en: 'Component / Ingredient',          note: '营养成分 = nutritional components' },
+          { zh: '充分', py: 'chōngfèn',  en: 'Ample / Sufficient',              note: '充分准备 = be fully prepared; 充分利用 = make full use of' },
+        ],
+      },
+      {
+        id: 'h4-u12-s2', type: 'vocab', xp: 35,
+        title: '科学研究', subtitle: 'Science & research vocabulary',
+        words: [
+          { zh: '数据', py: 'shùjù',     en: 'Data / Statistics',               note: '收集数据 = collect data; 分析数据 = analyze data' },
+          { zh: '比例', py: 'bǐlì',      en: 'Proportion / Ratio / Scale',      note: '占很大比例 = account for a large proportion' },
+          { zh: '成果', py: 'chéngguǒ',  en: 'Achievement / Result',            note: '研究成果 = research findings' },
+          { zh: '成就', py: 'chéngjiù',  en: 'Achievement / Accomplishment',    note: '取得成就 = achieve accomplishments' },
+          { zh: '发明', py: 'fāmíng',    en: 'To invent / Invention',           note: '发明家 = inventor; 重要发明 = important invention' },
+          { zh: '证明', py: 'zhèngmíng', en: 'To prove / Proof',                note: '证明你的观点 = prove your point' },
+          { zh: '观察', py: 'guānchá',   en: 'To observe / Observation',        note: '仔细观察 = observe carefully' },
+          { zh: '假设', py: 'jiǎshè',    en: 'Hypothesis / To assume',          note: '提出假设 = put forward a hypothesis' },
+        ],
+      },
+      {
+        id: 'h4-u12-s3', type: 'grammar', xp: 40,
+        title: '语法：不得不', subtitle: 'No choice but to with 不得不',
+        grammarPoints: [
+          {
+            pattern: 'Subject + 不得不 + Verb  (have no choice but to / be forced to)',
+            explanation: '不得不 (bùdébù) = "have no choice but to / be compelled to." Expresses reluctant action due to external circumstances. Stronger than 必须; implies constraint or resignation.',
+            examples: [
+              { zh: '路上堵车，我不得不走路去。',   py: 'Lù shàng dǔchē, wǒ bùdébù zǒulù qù.',         en: 'The road was jammed; I had no choice but to walk.' },
+              { zh: '天气太差，他们不得不取消活动。', py: 'Tiānqì tài chà, tāmen bùdébù qǔxiāo huódòng.', en: 'The weather was too bad; they had to cancel.' },
+              { zh: '证据很充分，他不得不承认了。',  py: 'Zhèngjù hěn chōngfèn, tā bùdébù chéngrèn le.', en: 'The evidence was solid; he had no choice but to admit it.' },
+            ],
+            fillBlanks: [
+              { sentence_zh: '堵车太严重，我___走路去。',   sentence_en: 'Traffic was terrible; I ___ walk.',          options: ['不得不', '不必', '可以', '应该'],  correct: 0 },
+              { sentence_zh: '天气很差，我们___取消活动。', sentence_en: 'Weather was bad; we ___ cancel.',             options: ['不得不', '不必', '也许', '应该'],  correct: 0 },
+              { sentence_zh: '证据很充分，他___承认了。',   sentence_en: 'Evidence was solid; he ___ admit it.',        options: ['不得不', '不必', '可以', '想'],    correct: 0 },
+              { sentence_zh: '时间到了，我___离开了。',     sentence_en: 'Time was up; I ___ leave.',                   options: ['不得不', '不必', '可能', '要'],    correct: 0 },
+            ],
+          },
+        ],
+      },
+      { id: 'h4-u12-s4', type: 'practice', xp: 45, title: '健康科学练习', subtitle: 'Unit 12 review' },
+    ],
+  },
+
+  // ── Unit 13: 科技与网络 ─────────────────────────────────────────────────────
+  {
+    id: 'h4-u13', hsk_level: 4,
+    title: 'Unit 13', subtitle: '科技与网络 · Technology & Internet',
+    emoji: '💻', color: 'from-blue-500 to-cyan-500',
+    sessions: [
+      {
+        id: 'h4-u13-s1', type: 'vocab', xp: 35,
+        title: '科技名词', subtitle: 'Technology vocabulary',
+        words: [
+          { zh: '网络', py: 'wǎngluò',  en: 'Network / Internet',               note: '网络安全 = internet security; 连接网络 = connect to internet' },
+          { zh: '系统', py: 'xìtǒng',   en: 'System',                           note: '操作系统 = operating system; 系统故障 = system failure' },
+          { zh: '程序', py: 'chéngxù',  en: 'Program / Procedure',              note: '写程序 = write a program' },
+          { zh: '信息', py: 'xìnxī',    en: 'Information / Data',               note: '获取信息 = get information; 信息时代 = information age' },
+          { zh: '通讯', py: 'tōngxùn',  en: 'Communication / Correspondence',   note: '通讯工具 = communication tools' },
+          { zh: '设备', py: 'shèbèi',   en: 'Equipment / Device',               note: '电子设备 = electronic device; 先进设备 = advanced equipment' },
+          { zh: '平台', py: 'píngtái',  en: 'Platform',                         note: '社交平台 = social media platform' },
+          { zh: '功能', py: 'gōngnéng', en: 'Function / Feature',               note: '主要功能 = main function; 新功能 = new feature' },
+        ],
+      },
+      {
+        id: 'h4-u13-s2', type: 'vocab', xp: 35,
+        title: '科技动词', subtitle: 'Technology action verbs',
+        words: [
+          { zh: '应用', py: 'yìngyòng',  en: 'To apply / Application',          note: '应用技术 = apply technology; 手机应用 = mobile app' },
+          { zh: '传播', py: 'chuánbō',   en: 'To spread / To disseminate',      note: '传播信息 = spread information' },
+          { zh: '推广', py: 'tuīguǎng',  en: 'To promote / To popularize',      note: '推广产品/技术 = promote products/technology' },
+          { zh: '设计', py: 'shèjì',     en: 'To design / Design',              note: '设计产品 = design products; 设计师 = designer' },
+          { zh: '开发', py: 'kāifā',     en: 'To develop / To exploit',         note: '软件开发 = software development' },
+          { zh: '更新', py: 'gēngxīn',   en: 'To update / To renew',            note: '更新版本 = update version' },
+          { zh: '分享', py: 'fēnxiǎng',  en: 'To share',                        note: '分享信息/经验 = share information/experience' },
+          { zh: '提供', py: 'tígōng',    en: 'To provide / To supply',          note: '提供帮助/服务 = provide help/service' },
+        ],
+      },
+      {
+        id: 'h4-u13-s3', type: 'grammar', xp: 40,
+        title: '语法：由于…从而', subtitle: 'Formal cause-result with 由于…从而',
+        grammarPoints: [
+          {
+            pattern: '由于 + Cause, 从而 + Result/Action  (due to… and as a result…)',
+            explanation: '由于 (yóuyú) = "due to / owing to." 从而 (cóngér) = "thereby / thus / as a result." Together they form a formal cause-effect chain, common in academic/written contexts.',
+            examples: [
+              { zh: '由于科技进步，从而改变了人们的生活。', py: 'Yóuyú kējì jìnbù, cóngér gǎibiàn le rénmen de shēnghuó.', en: 'Due to technological progress, it changed people\'s lives.' },
+              { zh: '由于缺乏数据，从而无法得出结论。',     py: 'Yóuyú quēfá shùjù, cóngér wúfǎ déchū jiélùn.',           en: 'Due to a lack of data, no conclusion can be drawn.' },
+              { zh: '由于网络普及，从而促进了信息传播。',   py: 'Yóuyú wǎngluò pǔjí, cóngér cùjìn le xìnxī chuánbō.',     en: 'Due to internet spread, it promoted information sharing.' },
+            ],
+            fillBlanks: [
+              { sentence_zh: '___科技发展，从而改变了生活。', sentence_en: '___ technology development, it changed life.',    options: ['由于', '因此', '所以', '然后'], correct: 0 },
+              { sentence_zh: '由于缺少资金，___无法继续。',   sentence_en: 'Due to lack of funds, ___ can\'t continue.',      options: ['从而', '所以', '因为', '但是'], correct: 0 },
+              { sentence_zh: '___网络普及，从而改变了教育。', sentence_en: '___ internet spread, it changed education.',       options: ['由于', '所以', '然后', '因此'], correct: 0 },
+              { sentence_zh: '___设备先进，从而提高了效率。', sentence_en: '___ advanced equipment, efficiency improved.',     options: ['由于', '所以', '如果', '虽然'], correct: 0 },
+            ],
+          },
+        ],
+      },
+      { id: 'h4-u13-s4', type: 'practice', xp: 45, title: '科技练习', subtitle: 'Unit 13 review' },
+    ],
+  },
+
+  // ── Unit 14: 地球与环境 ─────────────────────────────────────────────────────
+  {
+    id: 'h4-u14', hsk_level: 4,
+    title: 'Unit 14', subtitle: '地球与环境 · Earth & Environment',
+    emoji: '🌍', color: 'from-green-500 to-teal-500',
+    sessions: [
+      {
+        id: 'h4-u14-s1', type: 'vocab', xp: 35,
+        title: '地球与地理', subtitle: 'Earth & geography',
+        words: [
+          { zh: '地球', py: 'dìqiú',    en: 'Earth / The globe',                note: '保护地球 = protect the earth' },
+          { zh: '海洋', py: 'hǎiyáng',  en: 'Ocean / Sea',                      note: '海洋生物 = marine life; 海洋污染 = ocean pollution' },
+          { zh: '大陆', py: 'dàlù',     en: 'Continent / Mainland',             note: '七大洲 = seven continents' },
+          { zh: '沙漠', py: 'shāmò',    en: 'Desert',                           note: '撒哈拉沙漠 = Sahara Desert' },
+          { zh: '平原', py: 'píngyuán', en: 'Plain / Flatland' },
+          { zh: '地区', py: 'dìqū',     en: 'Region / Area / District',         note: '农村地区 = rural area; 发达地区 = developed region' },
+          { zh: '陆地', py: 'lùdì',     en: 'Land / Dry land' },
+          { zh: '大气', py: 'dàqì',     en: 'Atmosphere / Air',                 note: '大气污染 = atmospheric pollution; 大气层 = the atmosphere' },
+        ],
+      },
+      {
+        id: 'h4-u14-s2', type: 'vocab', xp: 35,
+        title: '能源与环保', subtitle: 'Energy & environmental protection',
+        words: [
+          { zh: '能源', py: 'néngyuán',  en: 'Energy / Energy source',          note: '可再生能源 = renewable energy; 节约能源 = save energy' },
+          { zh: '资源', py: 'zīyuán',    en: 'Resources',                       note: '自然资源 = natural resources' },
+          { zh: '破坏', py: 'pòhuài',    en: 'To destroy / To damage',          note: '破坏环境/生态 = damage environment/ecosystem' },
+          { zh: '恢复', py: 'huīfù',     en: 'To recover / To restore',         note: '生态恢复 = ecological restoration' },
+          { zh: '趋势', py: 'qūshì',     en: 'Trend / Tendency',                note: '发展趋势 = development trend; 明显趋势 = clear trend' },
+          { zh: '现象', py: 'xiànxiàng', en: 'Phenomenon',                      note: '自然现象 = natural phenomenon; 社会现象 = social phenomenon' },
+          { zh: '因素', py: 'yīnsù',     en: 'Factor / Element',                note: '关键因素 = key factor; 影响因素 = influencing factor' },
+          { zh: '危害', py: 'wēihài',    en: 'Harm / Danger / To endanger',     note: '危害健康 = harm health; 危害环境 = harm the environment' },
+        ],
+      },
+      {
+        id: 'h4-u14-s3', type: 'grammar', xp: 40,
+        title: '语法：不仅…而且…还', subtitle: 'Triple escalation with 不仅…而且…还',
+        grammarPoints: [
+          {
+            pattern: '不仅 + A，而且 + B，还 + C  (not only A, but also B, and furthermore C)',
+            explanation: '不仅 (bùjǐn) = "not only." 而且 (érqiě) = "but also." 还 (hái) = "furthermore." Together they build a 3-level escalation. This extends the HSK 3 pattern 不但…而且 with a third layer.',
+            examples: [
+              { zh: '这问题不仅复杂，而且危险，还很难解决。',         py: 'Zhè wèntí bùjǐn fùzá, érqiě wēixiǎn, hái hěn nán jiějué.',                     en: 'This issue is not only complex and dangerous, but also hard to solve.' },
+              { zh: '环境污染不仅影响健康，而且破坏生态，还威胁未来。', py: 'Huánjìng wūrǎn bùjǐn yǐngxiǎng jiànkāng, érqiě pòhuài shēngtài, hái wēixié wèilái.', en: 'Pollution not only harms health, damages ecosystems, but also threatens the future.' },
+            ],
+            fillBlanks: [
+              { sentence_zh: '___复杂，而且危险，还难解决。', sentence_en: '___ complex, dangerous, and hard to solve.',    options: ['不仅', '虽然', '因为', '即使'], correct: 0 },
+              { sentence_zh: '不仅影响健康，___破坏环境。',   sentence_en: 'Not only affects health, ___ damages environment.', options: ['而且', '因为', '所以', '但是'], correct: 0 },
+              { sentence_zh: '不仅便宜，而且好用，___省时间。', sentence_en: 'Not only cheap and useful, ___ saves time.',    options: ['还', '也', '更', '却'],         correct: 0 },
+              { sentence_zh: '___影响环境，还浪费资源。',     sentence_en: '___ affects environment, also wastes resources.',  options: ['不仅', '因为', '所以', '虽然'], correct: 0 },
+            ],
+          },
+        ],
+      },
+      { id: 'h4-u14-s4', type: 'practice', xp: 45, title: '地球环境练习', subtitle: 'Unit 14 review' },
+    ],
+  },
+
+  // ── Unit 15: 法律与社会 ─────────────────────────────────────────────────────
+  {
+    id: 'h4-u15', hsk_level: 4,
+    title: 'Unit 15', subtitle: '法律与社会制度 · Law & Society',
+    emoji: '⚖️', color: 'from-slate-500 to-gray-600',
+    sessions: [
+      {
+        id: 'h4-u15-s1', type: 'vocab', xp: 35,
+        title: '法律与制度', subtitle: 'Law & institutional vocabulary',
+        words: [
+          { zh: '法律', py: 'fǎlǜ',    en: 'Law / Legislation',               note: '遵守法律 = abide by the law; 违反法律 = violate the law' },
+          { zh: '制度', py: 'zhìdù',   en: 'System / Institution',            note: '完善制度 = improve the system' },
+          { zh: '政策', py: 'zhèngcè', en: 'Policy',                          note: '国家政策 = national policy; 执行政策 = implement policy' },
+          { zh: '原则', py: 'yuánzé',  en: 'Principle / Tenet',               note: '坚持原则 = stick to principles' },
+          { zh: '道德', py: 'dàodé',   en: 'Morality / Ethics / Virtue',      note: '道德标准 = moral standard; 职业道德 = professional ethics' },
+          { zh: '权利', py: 'quánlì',  en: 'Right / Privilege',               note: '保护权利 = protect rights; 公民权利 = civil rights' },
+          { zh: '义务', py: 'yìwù',    en: 'Duty / Obligation',               note: '权利和义务 = rights and duties' },
+          { zh: '规律', py: 'guīlǜ',   en: 'Regular pattern / Law (of nature)', note: '自然规律 = law of nature; 生活规律 = regular lifestyle' },
+        ],
+      },
+      {
+        id: 'h4-u15-s2', type: 'vocab', xp: 35,
+        title: '社会价值观', subtitle: 'Social values & civic vocabulary',
+        words: [
+          { zh: '公平', py: 'gōngpíng', en: 'Fair / Just / Impartial',         note: '公平竞争 = fair competition; 不公平 = unfair' },
+          { zh: '平等', py: 'píngděng', en: 'Equal / Equality',                note: '男女平等 = gender equality; 平等权利 = equal rights' },
+          { zh: '独立', py: 'dúlì',     en: 'Independent / Independence',      note: '独立思考 = independent thinking; 经济独立 = financial independence' },
+          { zh: '自由', py: 'zìyóu',    en: 'Free / Freedom / Liberty',        note: '言论自由 = freedom of speech; 自由选择 = free choice' },
+          { zh: '价值', py: 'jiàzhí',   en: 'Value / Worth',                   note: '社会价值 = social value; 人生价值 = the value of life' },
+          { zh: '遵守', py: 'zūnshǒu',  en: 'To comply with / To abide by',    note: '遵守法律/规定 = comply with laws/rules' },
+          { zh: '保证', py: 'bǎozhèng', en: 'To guarantee / To ensure',        note: '保证质量 = guarantee quality; 无法保证 = cannot guarantee' },
+          { zh: '文明', py: 'wénmíng',  en: 'Civilization / Civilized',        note: '文明行为 = civilized behavior; 古代文明 = ancient civilization' },
+        ],
+      },
+      {
+        id: 'h4-u15-s3', type: 'grammar', xp: 40,
+        title: '语法：总而言之 & 换句话说', subtitle: 'Summarizing & rephrasing discourse markers',
+        grammarPoints: [
+          {
+            pattern: '总而言之 (in short / to sum up) + 换句话说 (in other words)',
+            explanation: '总而言之 (zǒng ér yán zhī) = "in short / to sum up." Summarizes what was said. 换句话说 (huàn jù huà shuō) = "in other words." Rephrases or clarifies. Both are formal discourse markers used to organize longer arguments.',
+            examples: [
+              { zh: '这件事很复杂，总而言之，需要时间解决。', py: 'Zhè jiàn shì hěn fùzá, zǒng ér yán zhī, xūyào shíjiān jiějué.', en: 'This is complex; in short, it needs time to resolve.' },
+              { zh: '换句话说，这个方法根本行不通。',         py: 'Huàn jù huà shuō, zhège fāngfǎ gēnběn xíng bù tōng.',             en: 'In other words, this method simply won\'t work.' },
+              { zh: '他无法保证质量，总而言之，不可信任。',   py: 'Tā wúfǎ bǎozhèng zhìliàng, zǒng ér yán zhī, bù kě xìnrèn.',     en: 'He can\'t guarantee quality; in short, he can\'t be trusted.' },
+            ],
+            fillBlanks: [
+              { sentence_zh: '情况很复杂，___，需要合作。',       sentence_en: 'Situation is complex; ___, cooperation needed.',   options: ['总而言之', '换句话说', '因为', '其实'],  correct: 0 },
+              { sentence_zh: '___，这个计划不可行。',             sentence_en: '___, this plan is not feasible.',                  options: ['换句话说', '总而言之', '如果', '既然'],  correct: 0 },
+              { sentence_zh: '他无法保证质量，___，不可信任。',   sentence_en: 'He can\'t guarantee quality; ___, can\'t trust.',  options: ['总而言之', '换句话说', '所以', '因此'],  correct: 0 },
+              { sentence_zh: '所有证据都指向他，___，他有责任。', sentence_en: 'All evidence points to him; ___, he\'s responsible.', options: ['总而言之', '换句话说', '如果', '虽然'], correct: 0 },
+            ],
+          },
+        ],
+      },
+      { id: 'h4-u15-s4', type: 'practice', xp: 60, title: 'HSK 4 总复习', subtitle: 'HSK 4 final grand review' },
     ],
   },
 ]
