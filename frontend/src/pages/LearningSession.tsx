@@ -2,7 +2,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getSession, getUnitWords, ALL_UNITS, Word, GrammarPoint, FillBlank } from '@/data/curriculum'
-import { learningPathApi } from '@/services/api'
+import { learningPathApi, learningApi } from '@/services/api'
 import { fetchTTSAudio } from '@/utils/ttsHelper'
 import {
   Volume2, ChevronRight, CheckCircle, X, Star, Zap,
@@ -427,6 +427,11 @@ export default function LearningSession() {
       })
       setXpEarned(res.xp_earned)
       setIsNew(res.is_new)
+
+      // Seed vocab words into SRS so they appear in Review tomorrow
+      if (session.words && session.words.length > 0) {
+        learningApi.seedWords(session.words.map(w => w.zh)).catch(() => {})
+      }
     } catch {
       toast.error('Gagal menyimpan progress')
     } finally {
