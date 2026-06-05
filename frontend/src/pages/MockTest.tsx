@@ -27,14 +27,14 @@ import BlurText from '@/components/animations/BlurText'
 
 type TestSection = 'listening' | 'reading' | 'writing'
 
-// Question subtypes â€” maps closely to real HSK skill areas
+// Question subtypes — maps closely to real HSK skill areas
 type QuestionSubtype =
-    | 'listen-pinyin-pick-chinese'   // See pinyin sentence + hear target word â†’ pick Chinese char
-    | 'listen-chinese-pick-english'  // Hear Chinese word spoken â†’ pick English meaning
-    | 'read-fill-blank'              // Chinese sentence with ___ â†’ pick Chinese word
-    | 'read-match-meaning'           // See Chinese word â†’ pick English meaning
-    | 'write-pick-character'         // English meaning + pinyin hint â†’ pick Chinese char
-    | 'write-pick-pinyin'            // See Chinese character â†’ pick correct pinyin
+    | 'listen-pinyin-pick-chinese'   // See pinyin sentence + hear target word → pick Chinese char
+    | 'listen-chinese-pick-english'  // Hear Chinese word spoken → pick English meaning
+    | 'read-fill-blank'              // Chinese sentence with ___ → pick Chinese word
+    | 'read-match-meaning'           // See Chinese word → pick English meaning
+    | 'write-pick-character'         // English meaning + pinyin hint → pick Chinese char
+    | 'write-pick-pinyin'            // See Chinese character → pick correct pinyin
 
 interface Question {
     type: TestSection
@@ -53,36 +53,36 @@ interface SectionResult {
     total: number
 }
 
-// â”€â”€ Sentence templates â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Sentence templates ────────────────────────────────────────────────────────
 const SENTENCE_TEMPLATES = [
-    'ä»–æ˜¯æˆ‘çš„___ã€‚', 'æˆ‘å–œæ¬¢___ã€‚', 'å¥¹å­¦___å¾ˆåŠªåŠ›ã€‚', 'è¿™æ˜¯ä¸€ä¸ª___ã€‚',
-    'æˆ‘æ¯å¤©___ã€‚', 'ä»–æœ‰ä¸€ä¸ª___ã€‚', 'æˆ‘ä»¬åŽ»___å§ã€‚', 'å¥¹å–œæ¬¢åƒ___ã€‚',
-    'æˆ‘æƒ³å­¦___ã€‚', 'è¿™ä¸ª___å¾ˆå¥½ã€‚', 'ä»–åœ¨___å·¥ä½œã€‚', 'æˆ‘çš„___å¾ˆæ¼‚äº®ã€‚',
-    'æˆ‘ä»¬éœ€è¦___ã€‚', 'å¥¹ä¹°äº†ä¸€ä¸ª___ã€‚', 'è¯·é—®ï¼Œ___åœ¨å“ªé‡Œï¼Ÿ',
-    'ä»Šå¤©çš„___å¾ˆå¥½åƒã€‚', 'ä»–ç»™æˆ‘ä¸€ä¸ª___ã€‚', 'æˆ‘åœ¨___é‡Œçœ‹ä¹¦ã€‚',
-    'é‚£ä¸ª___å¾ˆè´µã€‚', 'æˆ‘ä¸å–œæ¬¢___ã€‚', 'ä»–æ¯å¤©å–___ã€‚',
-    'è¿™æ˜¯æˆ‘çš„___æœ‹å‹ã€‚', 'å¥¹åœ¨___å­¦ä¹ ä¸­æ–‡ã€‚', 'æˆ‘ä»Šå¤©ä¹°äº†___ã€‚',
+    '他是我的___。', '我喜欢___。', '她学___很努力。', '这是一个___。',
+    '我每天___。', '他有一个___。', '我们去___吧。', '她喜欢吃___。',
+    '我想学___。', '这个___很好。', '他在___工作。', '我的___很漂亮。',
+    '我们需要___。', '她买了一个___。', '请问，___在哪里？',
+    '今天的___很好吃。', '他给我一个___。', '我在___里看书。',
+    '那个___很贵。', '我不喜欢___。', '他每天喝___。',
+    '这是我的___朋友。', '她在___学习中文。', '我今天买了___。',
 ]
 
 const PINYIN_TEMPLATES = [
-    'TÄ shÃ¬ wÇ’ de ___.',
-    'WÇ’ xÇhuÄn ___.',
-    'ZhÃ¨ shÃ¬ yÄ«gÃ¨ ___.',
-    'TÄ yÇ’u yÄ«gÃ¨ ___.',
-    'WÇ’men qÃ¹ ___ ba.',
-    'TÄ mÄ›itiÄn ___.',
-    'WÇ’ xiÇŽng xuÃ© ___.',
-    'TÄ gÄ›i wÇ’ yÄ«gÃ¨ ___.',
-    'NÃ gÃ¨ ___ hÄ›n guÃ¬.',
-    'QÇngwÃ¨n, ___ zÃ i nÇŽlÇ?',
-    'WÇ’ jÄ«ntiÄn mÇŽi le ___.',
-    'TÄ zÃ i ___ xuÃ©xÃ­ ZhÅngwÃ©n.',
+    'Tā shì wǒ de ___.',
+    'Wǒ xǐhuān ___.',
+    'Zhè shì yīgè ___.',
+    'Tā yǒu yīgè ___.',
+    'Wǒmen qù ___ ba.',
+    'Tā měitiān ___.',
+    'Wǒ xiǎng xué ___.',
+    'Tā gěi wǒ yīgè ___.',
+    'Nàgè ___ hěn guì.',
+    'Qǐngwèn, ___ zài nǎlǐ?',
+    'Wǒ jīntiān mǎi le ___.',
+    'Tā zài ___ xuéxí Zhōngwén.',
 ]
 
-// â”€â”€ Question builders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Question builders ─────────────────────────────────────────────────────────
 function buildListeningQuestion(word: HanziWord, others: HanziWord[], idx: number): Omit<Question, 'type'> {
     if (idx % 2 === 0) {
-        // Subtype A: Pinyin sentence shown + Chinese word spoken â†’ pick Chinese char
+        // Subtype A: Pinyin sentence shown + Chinese word spoken → pick Chinese char
         const tpl = PINYIN_TEMPLATES[Math.floor(Math.random() * PINYIN_TEMPLATES.length)]
         const prompt = tpl.replace('___', `[${word.pinyin}]`)
         const promptSub = 'Listen to the word, then choose the correct Chinese character'
@@ -96,7 +96,7 @@ function buildListeningQuestion(word: HanziWord, others: HanziWord[], idx: numbe
             options, correctIndex: options.indexOf(correct), word,
         }
     } else {
-        // Subtype B: Hear Chinese word spoken â†’ pick English meaning (no visual hint)
+        // Subtype B: Hear Chinese word spoken → pick English meaning (no visual hint)
         const promptSub = 'Listen carefully and choose the correct English meaning'
         const correct = word.english
         const wrongs = others.slice(0, 3).map(o => o.english)
@@ -113,7 +113,7 @@ function buildListeningQuestion(word: HanziWord, others: HanziWord[], idx: numbe
 
 function buildReadingQuestion(word: HanziWord, others: HanziWord[], idx: number): Omit<Question, 'type'> {
     if (idx % 3 !== 1) {
-        // Subtype A (majority): Chinese sentence with blank â†’ pick correct Chinese word
+        // Subtype A (majority): Chinese sentence with blank → pick correct Chinese word
         const tpl = SENTENCE_TEMPLATES[Math.floor(Math.random() * SENTENCE_TEMPLATES.length)]
         const prompt = tpl
         const promptSub = `Meaning of the missing word: "${word.english}"`
@@ -126,7 +126,7 @@ function buildReadingQuestion(word: HanziWord, others: HanziWord[], idx: number)
             options, correctIndex: options.indexOf(correct), word,
         }
     } else {
-        // Subtype B: See Chinese word â†’ pick English meaning
+        // Subtype B: See Chinese word → pick English meaning
         const prompt = word.simplified
         const promptSub = 'Choose the correct English meaning for this word'
         const correct = word.english
@@ -142,7 +142,7 @@ function buildReadingQuestion(word: HanziWord, others: HanziWord[], idx: number)
 
 function buildWritingQuestion(word: HanziWord, others: HanziWord[], idx: number): Omit<Question, 'type'> {
     if (idx % 2 === 0) {
-        // Subtype A: English meaning + pinyin hint â†’ pick Chinese character
+        // Subtype A: English meaning + pinyin hint → pick Chinese character
         const prompt = word.english
         const promptSub = `Pinyin: ${word.pinyin}`
         const correct = word.simplified
@@ -154,7 +154,7 @@ function buildWritingQuestion(word: HanziWord, others: HanziWord[], idx: number)
             options, correctIndex: options.indexOf(correct), word,
         }
     } else {
-        // Subtype B: See Chinese character â†’ pick correct pinyin
+        // Subtype B: See Chinese character → pick correct pinyin
         const prompt = word.simplified
         const promptSub = 'Choose the correct pinyin pronunciation'
         const correct = word.pinyin
@@ -195,10 +195,10 @@ function generateSectionedQuestions(words: HanziWord[]): [Question[], Question[]
     return [listening, reading, writing]
 }
 
-// â”€â”€ Section metadata â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Section metadata ──────────────────────────────────────────────────────────
 const SECTION_META = {
     listening: {
-        label: 'å¬åŠ›', labelEn: 'Listening', timePerQ: 45, total: 10,
+        label: '听力', labelEn: 'Listening', timePerQ: 45, total: 10,
         color: 'indigo', gradient: 'from-primary-500 to-blue-600',
         gradientLight: 'from-primary-50 to-blue-50',
         gradientDark: 'from-primary-950/30 to-blue-950/30',
@@ -208,7 +208,7 @@ const SECTION_META = {
         desc: 'Listen to the spoken word/sentence and choose the correct answer.',
     },
     reading: {
-        label: 'é˜…è¯»', labelEn: 'Reading', timePerQ: 30, total: 10,
+        label: '阅读', labelEn: 'Reading', timePerQ: 30, total: 10,
         color: 'emerald', gradient: 'from-success-500 to-success-600',
         gradientLight: 'from-success-50 to-success-50',
         gradientDark: 'from-success-950/30 to-success-950/30',
@@ -218,7 +218,7 @@ const SECTION_META = {
         desc: 'Read the Chinese text and choose the correct word or meaning.',
     },
     writing: {
-        label: 'ä¹¦å†™', labelEn: 'Writing', timePerQ: 60, total: 5,
+        label: '书写', labelEn: 'Writing', timePerQ: 60, total: 5,
         color: 'purple', gradient: 'from-purple-500 to-violet-600',
         gradientLight: 'from-purple-50 to-violet-50',
         gradientDark: 'from-purple-950/30 to-violet-950/30',
@@ -233,7 +233,7 @@ const SECTION_ORDER: TestSection[] = ['listening', 'reading', 'writing']
 
 type PageState = 'cover' | 'section-intro' | 'question' | 'section-done' | 'results'
 
-// â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Component ─────────────────────────────────────────────────────────────────
 export default function MockTest() {
     const [hskLevel, setHskLevel] = useState(1)
     const [loading, setLoading] = useState(false)
@@ -273,7 +273,7 @@ export default function MockTest() {
         }
     }, [])
 
-    // â”€â”€ TTS helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── TTS helpers ───────────────────────────────────────────────────────────
     const audioRef = useRef<HTMLAudioElement | null>(null)
 
     const stopSpeech = useCallback(() => {
@@ -325,7 +325,7 @@ export default function MockTest() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentQ, sectionIndex, page])
 
-    // â”€â”€ SSE Timer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── SSE Timer ─────────────────────────────────────────────────────────────
     const stopTimer = () => {
         timerAbortRef.current?.abort()
         timerAbortRef.current = null
@@ -364,7 +364,7 @@ export default function MockTest() {
                                     autoAdvance()
                                     return
                                 }
-                            } catch { /* malformed SSE line â€” skip */ }
+                            } catch { /* malformed SSE line — skip */ }
                         }
                         return pump()
                     })
@@ -372,7 +372,7 @@ export default function MockTest() {
             })
             .catch(err => {
                 if (err?.name !== 'AbortError') {
-                    console.error('Timer SSE error â€” falling back to local countdown', err)
+                    console.error('Timer SSE error — falling back to local countdown', err)
                     let remaining = seconds
                     const id = setInterval(() => {
                         remaining -= 1
@@ -410,7 +410,7 @@ export default function MockTest() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentQ, page])
 
-    // â”€â”€ Test flow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Test flow ─────────────────────────────────────────────────────────────
     const startTest = async () => {
         setLoading(true)
         try {
@@ -509,7 +509,7 @@ export default function MockTest() {
         return { grade: 'D', color: 'text-error-600', bg: 'bg-error-50 dark:bg-error-950/30' }
     }
 
-    // â”€â”€ Breadcrumb â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Breadcrumb ────────────────────────────────────────────────────────────
     const Breadcrumb = () => (
         <div className="flex items-center justify-center gap-2 mb-6">
             {SECTION_ORDER.map((sec, idx) => {
@@ -534,7 +534,7 @@ export default function MockTest() {
         </div>
     )
 
-    // â”€â”€ COVER PAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── COVER PAGE ────────────────────────────────────────────────────────────
     if (page === 'cover') {
         return (
             <div className="min-h-screen py-6 sm:py-10 px-3 sm:px-4">
@@ -567,7 +567,7 @@ export default function MockTest() {
                     {/* Test Overview */}
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.12 }} className="mb-5">
                         <div className="bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-950/40 dark:to-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
-                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 text-sm uppercase tracking-wide">Test Structure â€” 25 Questions Â· ~20 min</h4>
+                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 text-sm uppercase tracking-wide">Test Structure — 25 Questions · ~20 min</h4>
                             <div className="grid sm:grid-cols-3 gap-4">
                                 {SECTION_ORDER.map(sec => {
                                     const m = SECTION_META[sec]
@@ -583,7 +583,7 @@ export default function MockTest() {
                                                     <p className="text-xs text-gray-500">{m.labelEn}</p>
                                                 </div>
                                             </div>
-                                            <p className="text-sm text-gray-700 dark:text-gray-300">{m.total} questions Â· {m.timePerQ}s each</p>
+                                            <p className="text-sm text-gray-700 dark:text-gray-300">{m.total} questions · {m.timePerQ}s each</p>
                                             <p className="text-xs text-gray-500 mt-1">{m.desc}</p>
                                         </div>
                                     )
@@ -627,14 +627,14 @@ export default function MockTest() {
                             {loading ? <LoadingSpinner size="sm" /> : <Target className="w-6 h-6" />}
                             Start Mock Test
                         </button>
-                        <p className="text-xs text-gray-400 mt-3">Requires â‰¥ 25 words in selected HSK level</p>
+                        <p className="text-xs text-gray-400 mt-3">Requires ≥ 25 words in selected HSK level</p>
                     </motion.div>
                 </div>
             </div>
         )
     }
 
-    // â”€â”€ SECTION INTRO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── SECTION INTRO ─────────────────────────────────────────────────────────
     if (page === 'section-intro') {
         const Icon = SectionIcon
         const subtypeDescriptions: Record<TestSection, string[]> = {
@@ -701,7 +701,7 @@ export default function MockTest() {
         )
     }
 
-    // â”€â”€ SECTION DONE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── SECTION DONE ──────────────────────────────────────────────────────────
     if (page === 'section-done') {
         const lastResult = sectionResults[sectionResults.length - 1]
         const pct = lastResult ? Math.round((lastResult.correct / lastResult.total) * 100) : 0
@@ -723,7 +723,7 @@ export default function MockTest() {
                             {meta.labelEn} Complete!
                         </h2>
                         <p className={`text-sm font-semibold mb-6 ${passed ? 'text-success-600' : 'text-amber-600'}`}>
-                            {passed ? 'âœ“ Section passed â€” Keep going!' : 'âœ— Below 60% â€” Keep practicing!'}
+                            {passed ? '✓ Section passed — Keep going!' : '✗ Below 60% — Keep practicing!'}
                         </p>
 
                         {lastResult && (
@@ -738,7 +738,7 @@ export default function MockTest() {
                                 </div>
                                 <div className={`rounded-2xl px-6 py-4 ${passed ? 'bg-success-50 dark:bg-success-950/30' : 'bg-error-50 dark:bg-error-950/30'}`}>
                                     <p className={`text-3xl font-bold ${passed ? 'text-success-600' : 'text-error-600'}`}>{passed ? 'PASS' : 'FAIL'}</p>
-                                    <p className="text-xs text-gray-500 mt-0.5">â‰¥ 60% needed</p>
+                                    <p className="text-xs text-gray-500 mt-0.5">≥ 60% needed</p>
                                 </div>
                             </div>
                         )}
@@ -757,12 +757,12 @@ export default function MockTest() {
         )
     }
 
-    // â”€â”€ RESULTS PAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── RESULTS PAGE ──────────────────────────────────────────────────────────
     if (page === 'results') {
         const totalCorrect = sectionResults.reduce((s, r) => s + r.correct, 0)
         const totalQuestions = sectionResults.reduce((s, r) => s + r.total, 0)
         const overallPct = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0
-        // Real HSK: must pass ALL sections (â‰¥ 60% each)
+        // Real HSK: must pass ALL sections (≥ 60% each)
         const allSectionsPassed = sectionResults.every(r => (r.correct / r.total) >= 0.6)
         const gradeInfo = getGrade(totalCorrect, totalQuestions)
 
@@ -786,7 +786,7 @@ export default function MockTest() {
                             <div className={`text-7xl font-bold ${gradeInfo.color} mb-2`}>{gradeInfo.grade}</div>
                             <p className="text-xl text-gray-700 dark:text-gray-300">{totalCorrect}/{totalQuestions} correct ({overallPct}%)</p>
                             <div className={`inline-block mt-2 px-4 py-1 rounded-full text-sm font-bold ${allSectionsPassed ? 'bg-success-100 dark:bg-success-950/40 text-success-700 dark:text-success-300' : 'bg-error-100 dark:bg-error-950/40 text-error-700 dark:text-error-300'}`}>
-                                {allSectionsPassed ? 'âœ“ PASS' : 'âœ— FAIL'} â€” {allSectionsPassed ? 'All sections â‰¥ 60%' : 'Some sections below 60%'}
+                                {allSectionsPassed ? '✓ PASS' : '✗ FAIL'} — {allSectionsPassed ? 'All sections ≥ 60%' : 'Some sections below 60%'}
                             </div>
                             <p className="text-sm text-gray-400 mt-3">Total time: {formatTime(totalTimeUsed)}</p>
 
@@ -806,7 +806,7 @@ export default function MockTest() {
                                             <p className="text-lg font-bold text-gray-800 dark:text-gray-200">{r.correct}/{r.total}</p>
                                             <p className="text-xs text-gray-500">{secPct}%</p>
                                             <span className={`text-xs font-semibold ${secPassed ? 'text-success-600' : 'text-error-500'}`}>
-                                                {secPassed ? 'âœ“ Pass' : 'âœ— Fail'}
+                                                {secPassed ? '✓ Pass' : '✗ Fail'}
                                             </span>
                                         </div>
                                     )
@@ -826,7 +826,7 @@ export default function MockTest() {
                         </div>
                     </motion.div>
 
-                    {/* Wrong answer review â€” all sections */}
+                    {/* Wrong answer review — all sections */}
                     {allAns.some((a, i) => a !== null && a !== allQs[i]?.correctIndex) && (
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
                             <details className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
@@ -869,7 +869,7 @@ export default function MockTest() {
         )
     }
 
-    // â”€â”€ ACTIVE QUESTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── ACTIVE QUESTION ───────────────────────────────────────────────────────
     const qs = sectionQuestions[sectionIndex]
     const q = qs[currentQ]
     if (!q) return null
@@ -892,7 +892,7 @@ export default function MockTest() {
                 <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                         <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${meta.badge}`}>
-                            <span className="font-chinese">{meta.label}</span> Section {sectionIndex + 1} Â· Q{currentQ + 1}/{qs.length}
+                            <span className="font-chinese">{meta.label}</span> Section {sectionIndex + 1} · Q{currentQ + 1}/{qs.length}
                         </span>
                     </div>
                     <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-mono font-bold text-sm transition-colors ${timerUrgent ? 'bg-error-100 dark:bg-error-950/30 text-error-700 dark:text-error-400 animate-pulse' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'}`}>
@@ -936,7 +936,7 @@ export default function MockTest() {
                                 <span className="text-xs text-gray-400">HSK {hskLevel}</span>
                             </div>
 
-                            {/* â”€â”€ Question stimulus area â”€â”€ */}
+                            {/* ── Question stimulus area ── */}
                             <div className="text-center mb-8">
 
                                 {/* LISTENING subtypes */}
@@ -955,7 +955,7 @@ export default function MockTest() {
                                                 className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${isSpeaking ? 'bg-primary-600 text-white animate-pulse' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 hover:bg-primary-200'}`}
                                             >
                                                 {isSpeaking ? <Volume2 className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                                                {isSpeaking ? 'Playingâ€¦' : 'Play Again'}
+                                                {isSpeaking ? 'Playing…' : 'Play Again'}
                                             </button>
                                         </div>
                                     </div>
@@ -967,7 +967,7 @@ export default function MockTest() {
                                             <Headphones className="w-5 h-5 text-primary-400" />
                                             <span className="text-xs text-primary-500 font-semibold uppercase tracking-wide">Listening</span>
                                         </div>
-                                        {/* Big audio button â€” don't show the Chinese word to force listening */}
+                                        {/* Big audio button — don't show the Chinese word to force listening */}
                                         <button
                                             onClick={() => speakText(q.audioText)}
                                             className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 transition-all shadow-lg ${isSpeaking ? 'bg-primary-600 text-white scale-110 animate-pulse' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-300 hover:bg-primary-200 hover:scale-105'}`}
@@ -975,7 +975,7 @@ export default function MockTest() {
                                             {isSpeaking ? <Volume2 className="w-10 h-10" /> : <Play className="w-10 h-10" />}
                                         </button>
                                         <p className="text-sm text-gray-400">
-                                            {isSpeaking ? 'Playing audioâ€¦' : 'Tap to hear the word'}
+                                            {isSpeaking ? 'Playing audio…' : 'Tap to hear the word'}
                                         </p>
                                         {/* Reveal Chinese after answering */}
                                         {isAnswered && (
@@ -1038,7 +1038,7 @@ export default function MockTest() {
                                 <p className="text-sm text-gray-400 mt-3">{q.promptSub}</p>
                             </div>
 
-                            {/* â”€â”€ Options grid â”€â”€ */}
+                            {/* ── Options grid ── */}
                             <div className="grid grid-cols-2 gap-3">
                                 {q.options.map((opt, i) => {
                                     const label = ['A', 'B', 'C', 'D'][i]

@@ -382,12 +382,12 @@ export default function Quiz() {
           </div>
         )}
 
-        {/* Two-column match grid â€” always 2 cols, responsive sizing */}
+        {/* Two-column match grid — always 2 cols, responsive sizing */}
         <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-5">
           {/* LEFT: Chinese Characters */}
           <div>
             <h3 className="font-semibold mb-1.5 sm:mb-3 text-xs sm:text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-              æ±‰å­—
+              汉字
             </h3>
             <div className="space-y-1.5 sm:space-y-2">
               {leftItems.map((q) => {
@@ -414,13 +414,13 @@ export default function Quiz() {
                       <span className="text-lg sm:text-2xl md:text-3xl leading-tight">{q.chinese}</span>
                       {matches[q.id] ? (
                         <span className="text-[10px] sm:text-xs leading-tight text-gray-500 dark:text-gray-400 font-sans line-clamp-1">
-                          {showResults ? (isCorrect ? 'âœ“' : 'âœ— ') : ''}
+                          {showResults ? (isCorrect ? '✓' : '✗ ') : ''}
                           {matchedEnglish}
                         </span>
                       ) : null}
                       {showResults && matches[q.id] && !isCorrect && (
                         <span className="text-[9px] sm:text-[10px] text-success-600 dark:text-success-400 font-sans leading-tight line-clamp-1">
-                          âœ“ {q.english}
+                          ✓ {q.english}
                         </span>
                       )}
                     </div>
@@ -565,7 +565,7 @@ export default function Quiz() {
                   <span className="bg-primary-100 dark:bg-primary-950/40 text-primary-700 dark:text-primary-400 rounded-full px-3 py-1 text-sm font-semibold">
                     HSK {hskLevel}
                   </span>
-                  <span className="text-gray-400 dark:text-gray-500">â€¢</span>
+                  <span className="text-gray-400 dark:text-gray-500">•</span>
                   <span className="text-sm sm:text-base font-semibold text-gray-700 dark:text-gray-300">
                     {quizTypes.find(t => t.value === quizType)?.label}
                   </span>

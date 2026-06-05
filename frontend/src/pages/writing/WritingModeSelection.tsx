@@ -339,10 +339,10 @@ export default function WritingModeSelection({
             <div>
               <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Writing Tips</h4>
               <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
-                <li>â€¢ Follow the stroke order animation carefully</li>
-                <li>â€¢ Practice each character multiple times for better retention</li>
-                <li>â€¢ Focus on accuracy first, speed will come naturally</li>
-                <li>â€¢ Take breaks between practice sessions</li>
+                <li>• Follow the stroke order animation carefully</li>
+                <li>• Practice each character multiple times for better retention</li>
+                <li>• Focus on accuracy first, speed will come naturally</li>
+                <li>• Take breaks between practice sessions</li>
               </ul>
             </div>
           </div>

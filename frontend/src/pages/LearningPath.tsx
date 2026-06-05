@@ -76,17 +76,17 @@ export default function LearningPath() {
   return (
     <div className="max-w-2xl mx-auto px-4 pb-16 space-y-6">
 
-      {/* â”€â”€ Header â”€â”€ */}
+      {/* ── Header ── */}
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="pt-2">
         <h1 className="text-2xl font-extrabold text-gray-900 dark:text-gray-50">
-          ðŸ“š Kursus HSK
+          📚 Kursus HSK
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-          Belajar bertahap dari HSK 1 â€” teori, kosakata, dan latihan terintegrasi.
+          Belajar bertahap dari HSK 1 — teori, kosakata, dan latihan terintegrasi.
         </p>
       </motion.div>
 
-      {/* â”€â”€ Stats bar â”€â”€ */}
+      {/* ── Stats bar ── */}
       {stats && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -107,7 +107,7 @@ export default function LearningPath() {
         </motion.div>
       )}
 
-      {/* â”€â”€ HSK level tabs â”€â”€ */}
+      {/* ── HSK level tabs ── */}
       <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
         {HSK_LEVELS.map(lv => {
           const count = stats?.by_hsk_level?.[String(lv)] ?? 0
@@ -134,7 +134,7 @@ export default function LearningPath() {
         })}
       </div>
 
-      {/* â”€â”€ Skeleton â”€â”€ */}
+      {/* ── Skeleton ── */}
       {loading && (
         <div className="space-y-3">
           {[0, 1, 2, 3].map(i => (
@@ -165,7 +165,7 @@ export default function LearningPath() {
         </div>
       )}
 
-      {/* â”€â”€ Unit list â”€â”€ */}
+      {/* ── Unit list ── */}
       {!loading && !error && (
         <div className="space-y-3">
           {units.map((unit, unitIdx) => {
@@ -193,7 +193,7 @@ export default function LearningPath() {
                 >
                   {/* Emoji + gradient badge */}
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${unit.color} flex items-center justify-center text-xl shadow-md flex-shrink-0`}>
-                    {isLocked ? 'ðŸ”’' : unit.emoji}
+                    {isLocked ? '🔒' : unit.emoji}
                   </div>
 
                   <div className="flex-1 min-w-0">
@@ -253,7 +253,7 @@ export default function LearningPath() {
                                 <div className="flex items-center gap-1.5 mt-0.5">
                                   <Icon className={`w-3 h-3 ${status === 'locked' ? 'text-gray-300' : meta.color}`} />
                                   <span className="text-[11px] text-gray-400">{meta.label}</span>
-                                  <span className="text-[11px] text-gray-300">Â·</span>
+                                  <span className="text-[11px] text-gray-300">·</span>
                                   <Zap className="w-3 h-3 text-amber-400" />
                                   <span className="text-[11px] text-gray-400">{session.xp} XP</span>
                                 </div>

@@ -18,7 +18,7 @@ const FEATURES = [
   {
     Icon: Target,
     title: 'HSK Focused',
-    desc: 'Content organized by HSK levels 1â€“6, from everyday beginner vocabulary to advanced topics.',
+    desc: 'Content organized by HSK levels 1–6, from everyday beginner vocabulary to advanced topics.',
     bg: 'bg-success-600', shadow: 'shadow-success-500/20',
   },
   {
@@ -86,7 +86,7 @@ export default function Home() {
   return (
     <div className="max-w-4xl mx-auto px-4 pb-20">
 
-      {/* â”€â”€ Hero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Hero ────────────────────────────────────────────────────────── */}
       <section className="text-center py-16 sm:py-20">
 
         {/* Decorative character */}
@@ -96,7 +96,7 @@ export default function Home() {
           transition={{ type: 'spring', duration: 0.8 }}
           className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-br from-primary-500 to-violet-600 flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-primary-500/30"
         >
-          <span className="text-white text-4xl sm:text-5xl font-bold font-chinese">æ±‰</span>
+          <span className="text-white text-4xl sm:text-5xl font-bold font-chinese">汉</span>
         </motion.div>
 
         <motion.h1
@@ -146,14 +146,14 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* â”€â”€ Daily Challenge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Daily Challenge ──────────────────────────────────────────────── */}
       {isAuthenticated && (
         <section className="mb-8">
           <DailyChallengeCard />
         </section>
       )}
 
-      {/* â”€â”€ Feature Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Feature Cards ───────────────────────────────────────────────── */}
       <section className="mb-16">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {FEATURES.map(({ Icon, title, desc, bg, shadow }, i) => (
@@ -172,7 +172,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* â”€â”€ How It Works â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── How It Works ────────────────────────────────────────────────── */}
       <section className="mb-16">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -209,7 +209,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* â”€â”€ Learning Tools â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Learning Tools ───────────────────────────────────────────────── */}
       <section className="mb-16">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -254,7 +254,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* â”€â”€ CTA Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── CTA Banner ──────────────────────────────────────────────────── */}
       {!isAuthenticated && (
         <motion.div
           initial={{ opacity: 0, y: 16 }}

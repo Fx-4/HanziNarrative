@@ -68,7 +68,7 @@ export default function DailyChallenge() {
       setCompleted(true)
       const s = await dailyChallengeApi.getStats()
       setStats(s)
-      toast.success('+30 XP! Daily challenge selesai ðŸŽ‰', { duration: 4000 })
+      toast.success('+30 XP! Daily challenge selesai 🎉', { duration: 4000 })
     } catch (err: unknown) {
       const e = err as { response?: { data?: { detail?: string } } }
       toast.error(e.response?.data?.detail ?? 'Gagal menyelesaikan challenge')
@@ -81,7 +81,7 @@ export default function DailyChallenge() {
     if (!challenge?.story.content || isPlayingAudio) return
     setIsPlayingAudio(true)
     try {
-      const firstSentence = challenge.story.content.split(/[ã€‚ï¼ï¼Ÿ]/)[0]
+      const firstSentence = challenge.story.content.split(/[。！？]/)[0]
       await playTTS({ text: firstSentence })
     } catch {
       toast.error('Audio tidak tersedia')
@@ -90,7 +90,7 @@ export default function DailyChallenge() {
     }
   }
 
-  /* â”€â”€ Skeleton â”€â”€ */
+  /* ── Skeleton ── */
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto px-4 pb-16 space-y-5 pt-2">
@@ -139,7 +139,7 @@ export default function DailyChallenge() {
     )
   }
 
-  /* â”€â”€ Error â”€â”€ */
+  /* ── Error ── */
   if (error || !challenge) {
     return (
       <div className="max-w-xl mx-auto px-4 py-20 text-center space-y-4">
@@ -165,7 +165,7 @@ export default function DailyChallenge() {
   return (
     <div className="max-w-2xl mx-auto px-4 pb-16 space-y-5">
 
-      {/* â”€â”€ Header â”€â”€ */}
+      {/* ── Header ── */}
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="pt-2">
         <div className="flex items-start justify-between flex-wrap gap-3">
           <div>
@@ -191,7 +191,7 @@ export default function DailyChallenge() {
         </div>
       </motion.div>
 
-      {/* â”€â”€ Completion banner â”€â”€ */}
+      {/* ── Completion banner ── */}
       <AnimatePresence>
         {completed && (
           <motion.div
@@ -214,7 +214,7 @@ export default function DailyChallenge() {
         )}
       </AnimatePresence>
 
-      {/* â”€â”€ Story card â”€â”€ */}
+      {/* ── Story card ── */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -247,7 +247,7 @@ export default function DailyChallenge() {
                     : 'bg-white/25 text-white hover:bg-white/40'
                 }`}
               >
-                {showPinyin ? 'Pinyin âœ“' : 'Pinyin'}
+                {showPinyin ? 'Pinyin ✓' : 'Pinyin'}
               </button>
             </div>
           </div>
@@ -283,12 +283,12 @@ export default function DailyChallenge() {
         </div>
       </motion.div>
 
-      {/* â”€â”€ CTA button â”€â”€ */}
+      {/* ── CTA button ── */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
         {completed ? (
           <div className="flex items-center justify-center gap-2 py-4 bg-success-600 dark:bg-success-700 rounded-2xl text-white font-bold shadow-lg shadow-success-500/20">
             <CheckCircle className="w-5 h-5" />
-            Selesai Hari Ini Â· +30 XP
+            Selesai Hari Ini · +30 XP
           </div>
         ) : (
           <button
@@ -297,14 +297,14 @@ export default function DailyChallenge() {
             className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-2xl shadow-lg shadow-amber-500/20 transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {completing
-              ? <><Loader2 className="w-5 h-5 animate-spin" /> Menyimpanâ€¦</>
-              : <><Zap className="w-5 h-5" /> Tandai Selesai Â· +30 XP</>
+              ? <><Loader2 className="w-5 h-5 animate-spin" /> Menyimpan…</>
+              : <><Zap className="w-5 h-5" /> Tandai Selesai · +30 XP</>
             }
           </button>
         )}
       </motion.div>
 
-      {/* â”€â”€ Stats cards â”€â”€ */}
+      {/* ── Stats cards ── */}
       {stats && (
         <motion.div
           initial={{ opacity: 0 }}

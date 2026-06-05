@@ -123,12 +123,12 @@ export default function Flashcards() {
       setCurrentIndex(prev => prev + 1)
       setIsFlipped(false)
     } else {
-      // Session complete â€” advance index past end to trigger complete screen
+      // Session complete — advance index past end to trigger complete screen
       setCurrentIndex(words.length)
       setIsFlipped(false)
     }
 
-    // Fire API call in background â€” don't block UI
+    // Fire API call in background — don't block UI
     learningApi.recordReview(currentWord.id, quality).catch(err => {
       console.error('Failed to record review:', err)
     })
@@ -136,7 +136,7 @@ export default function Flashcards() {
 
   const handleSwipe = (direction: 'left' | 'right') => {
     if (!isFlipped) {
-      toast('Flip the card first to see the answer!', { icon: 'â†»' })
+      toast('Flip the card first to see the answer!', { icon: '↻' })
       return
     }
 
@@ -180,7 +180,7 @@ export default function Flashcards() {
     })
   }
 
-  // â”€â”€â”€ Settings Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Settings Screen ───────────────────────────────────────────────────────
   if (!sessionStarted && showSettings) {
     return (
       <div className="min-h-screen py-6 sm:py-10 px-4 sm:px-6">
@@ -322,10 +322,10 @@ export default function Flashcards() {
               <div className="bg-primary-50 rounded-2xl p-4 border border-primary-100 mb-6">
                 <h3 className="text-sm font-bold text-primary-800 mb-2">How it works</h3>
                 <ul className="text-sm text-primary-700 space-y-1">
-                  <li>â€¢ Click to flip and see the answer</li>
-                  <li>â€¢ Swipe left (Again) or right (Easy)</li>
-                  <li>â€¢ Rate difficulty to improve spaced repetition</li>
-                  <li>â€¢ Track your progress in real-time</li>
+                  <li>• Click to flip and see the answer</li>
+                  <li>• Swipe left (Again) or right (Easy)</li>
+                  <li>• Rate difficulty to improve spaced repetition</li>
+                  <li>• Track your progress in real-time</li>
                 </ul>
               </div>
 
@@ -344,7 +344,7 @@ export default function Flashcards() {
     )
   }
 
-  // â”€â”€â”€ Loading State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Loading State ─────────────────────────────────────────────────────────
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -353,7 +353,7 @@ export default function Flashcards() {
     )
   }
 
-  // â”€â”€â”€ No Words State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── No Words State ────────────────────────────────────────────────────────
   if (words.length === 0) {
     return (
       <div className="min-h-screen py-6 sm:py-10 px-4 sm:px-6 flex items-center justify-center">
@@ -381,7 +381,7 @@ export default function Flashcards() {
   const progress = ((currentIndex + 1) / words.length) * 100
   const isSessionComplete = currentIndex >= words.length
 
-  // â”€â”€â”€ Session Complete Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Session Complete Screen ───────────────────────────────────────────────
   if (isSessionComplete) {
     const accuracy = sessionStats.total > 0
       ? Math.round((sessionStats.correct / sessionStats.total) * 100)
@@ -451,7 +451,7 @@ export default function Flashcards() {
     )
   }
 
-  // â”€â”€â”€ Active Session â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Active Session ────────────────────────────────────────────────────────
   return (
     <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 min-h-screen">
       {/* Header area */}
@@ -546,7 +546,7 @@ export default function Flashcards() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Swipe buttons â€“ shown after flip */}
+        {/* Swipe buttons – shown after flip */}
         {isFlipped && (
           <div className="flex justify-center gap-3 mt-6">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -571,7 +571,7 @@ export default function Flashcards() {
           </div>
         )}
 
-        {/* Detailed rating card â€“ shown after flip */}
+        {/* Detailed rating card – shown after flip */}
         {isFlipped && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -604,7 +604,7 @@ export default function Flashcards() {
           </motion.div>
         )}
 
-        {/* Instruction text â€“ before flip */}
+        {/* Instruction text – before flip */}
         {!isFlipped && (
           <p className="text-center text-sm text-gray-400 mt-6">
             Click card to flip &bull; Swipe left (Again) or right (Easy)

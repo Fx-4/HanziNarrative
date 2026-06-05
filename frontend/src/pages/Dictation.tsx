@@ -121,7 +121,7 @@ export default function Dictation() {
             const userChar = userText[i] || ''
             const correctChar = correctText[i] || ''
             result.push({
-                char: userChar || 'Â·',
+                char: userChar || '·',
                 correct: userChar === correctChar,
                 expected: correctChar,
             })
@@ -147,11 +147,11 @@ export default function Dictation() {
         if (accuracy >= 80) {
             setScore(prev => prev + 1)
             setStreak(prev => prev + 1)
-            if (accuracy === 100) toast.success('Perfect! å®Œç¾Žï¼')
+            if (accuracy === 100) toast.success('Perfect! 完美！')
             else toast.success(`Great! ${accuracy}% accurate!`)
         } else {
             setStreak(0)
-            toast(`${accuracy}% â€” keep practicing!`, { icon: 'âœŽ' })
+            toast(`${accuracy}% — keep practicing!`, { icon: '✎' })
         }
     }
 
@@ -192,7 +192,7 @@ export default function Dictation() {
                                 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900"
                                 wordDelay={0.08}
                             >
-                                Dictation å¬å†™
+                                Dictation 听写
                             </BlurText>
                         </div>
                         <p className="text-base sm:text-lg text-gray-600">
@@ -350,7 +350,7 @@ export default function Dictation() {
                         onClick={() => setSessionStarted(false)}
                         className="text-gray-600 hover:text-gray-900 font-medium cursor-pointer"
                     >
-                        â† Back
+                        ← Back
                     </button>
                     <div className="flex items-center gap-3">
                         <div className="bg-white rounded-xl shadow-sm border px-3 py-1.5 flex items-center gap-1.5">

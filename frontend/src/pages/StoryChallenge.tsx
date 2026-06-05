@@ -82,7 +82,7 @@ export default function StoryChallenge() {
                 const words = await storiesApi.getStoryWords(storyId)
                 vocab = words.map((w: { simplified: string; pinyin: string; english: string }) => ({ simplified: w.simplified, pinyin: w.pinyin, english: w.english }))
             } catch {
-                // No associated words â€” extract 2-char substrings from content as fallback
+                // No associated words — extract 2-char substrings from content as fallback
             }
 
             // If no words, create simple ones from story content
@@ -259,7 +259,7 @@ export default function StoryChallenge() {
                     toast.success('Daily Challenge completed! +30 XP')
                 })
                 .catch(() => {
-                    // Already completed or error â€” ignore
+                    // Already completed or error — ignore
                 })
         }
     }, [allUnlocked, isDailyChallenge, dailyChallengeCompleted])
@@ -422,7 +422,7 @@ export default function StoryChallenge() {
                         onClick={() => setSelectedStory(null)}
                         className="text-gray-600 hover:text-gray-900 font-medium cursor-pointer"
                     >
-                        â† Back
+                        ← Back
                     </button>
                     <div className="flex items-center gap-3">
                         <button

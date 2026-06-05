@@ -12,7 +12,7 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { motion, AnimatePresence } from 'framer-motion'
 import CountUp from '@/components/animations/CountUp'
 
-// â”€â”€â”€ Achievement Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Achievement Card ───────────────────────────────────────────────────────
 
 interface AchievementCardProps {
   achievement: { id: string; name: string; description: string; xp: number }
@@ -113,7 +113,7 @@ function AchievementCard({ achievement }: AchievementCardProps) {
   )
 }
 
-// â”€â”€â”€ Main Profile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Main Profile ────────────────────────────────────────────────────────────
 
 export default function Profile() {
   const { user, logout } = useAuthStore()
@@ -195,7 +195,7 @@ export default function Profile() {
   return (
     <div className="max-w-3xl mx-auto px-4 pb-16 space-y-6">
 
-      {/* â”€â”€ Hero Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Hero Card ───────────────────────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -257,7 +257,7 @@ export default function Profile() {
         </div>
       </motion.div>
 
-      {/* â”€â”€ Stats skeleton â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Stats skeleton ──────────────────────────────────────────────── */}
       <AnimatePresence>
         {loading && (
           <motion.div
@@ -333,7 +333,7 @@ export default function Profile() {
         )}
       </AnimatePresence>
 
-      {/* â”€â”€ Error state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Error state ─────────────────────────────────────────────────── */}
       {!loading && loadError && (
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -364,7 +364,7 @@ export default function Profile() {
           className="space-y-6"
         >
 
-          {/* â”€â”€ Level / XP card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ── Level / XP card ─────────────────────────────────────────── */}
           {gamification && (
             <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
               <div className="flex items-center justify-between mb-5">
@@ -408,7 +408,7 @@ export default function Profile() {
             </div>
           )}
 
-          {/* â”€â”€ 4 Stat Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ── 4 Stat Cards ────────────────────────────────────────────── */}
           {gamification && (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
@@ -448,7 +448,7 @@ export default function Profile() {
             </div>
           )}
 
-          {/* â”€â”€ HSK Journey â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ── HSK Journey ─────────────────────────────────────────────── */}
           {onboarding && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -496,7 +496,7 @@ export default function Profile() {
             </motion.div>
           )}
 
-          {/* â”€â”€ Learning Progress â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ── Learning Progress ────────────────────────────────────────── */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -532,7 +532,7 @@ export default function Profile() {
             )}
           </motion.div>
 
-          {/* â”€â”€ Achievements â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ── Achievements ─────────────────────────────────────────────── */}
           {gamification && gamification.achievements.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}

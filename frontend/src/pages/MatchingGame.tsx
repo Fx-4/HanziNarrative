@@ -208,7 +208,7 @@ export default function MatchingGame() {
                 <div className="flex items-center justify-between mb-4">
                     <button onClick={() => { if (timerRef.current) clearInterval(timerRef.current); setGameStarted(false); setGameFinished(false) }}
                         className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 font-medium cursor-pointer">
-                        â† Back
+                        ← Back
                     </button>
                     <div className="flex items-center gap-3">
                         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 px-3 py-1.5 flex items-center gap-1.5">

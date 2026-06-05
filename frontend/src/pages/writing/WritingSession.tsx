@@ -68,7 +68,7 @@ export default function WritingSession({
             onClick={onBack}
             className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 font-medium cursor-pointer flex items-center gap-1 transition-colors"
           >
-            â† Back to Modes
+            ← Back to Modes
           </button>
         </div>
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden p-6 sm:p-8 text-center">
@@ -96,7 +96,7 @@ export default function WritingSession({
             onClick={onBack}
             className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 font-medium cursor-pointer flex items-center gap-1 transition-colors"
           >
-            â† Back to Modes
+            ← Back to Modes
           </button>
 
           <div className="flex flex-wrap items-center gap-2 sm:gap-4">
@@ -144,7 +144,7 @@ export default function WritingSession({
         </div>
       </div>
 
-      {/* Character Grid â€” compact top panel on mobile/tablet, sidebar on desktop */}
+      {/* Character Grid — compact top panel on mobile/tablet, sidebar on desktop */}
       {mode === 'practice' && (
         <div className="mb-4 lg:hidden">
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">

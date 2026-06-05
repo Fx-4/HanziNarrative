@@ -236,13 +236,13 @@ export default function Leaderboard() {
     const end = new Date(start)
     end.setDate(end.getDate() + 6)
     const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    return `${fmt(start)} â€“ ${fmt(end)}`
+    return `${fmt(start)} – ${fmt(end)}`
   })()
 
   return (
     <div className="max-w-3xl mx-auto px-4 pb-16 space-y-5">
 
-      {/* â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Header ──────────────────────────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -260,7 +260,7 @@ export default function Leaderboard() {
         </div>
       </motion.div>
 
-      {/* â”€â”€ Period Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Period Tabs ──────────────────────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -280,13 +280,13 @@ export default function Leaderboard() {
             <Icon className="w-4 h-4" />
             {label}
             {id === 'weekly' && period === 'weekly' && data && (
-              <span className="text-xs opacity-70 hidden sm:inline">Â· {weekLabel}</span>
+              <span className="text-xs opacity-70 hidden sm:inline">· {weekLabel}</span>
             )}
           </button>
         ))}
       </motion.div>
 
-      {/* â”€â”€ Metric Selector (all_time only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Metric Selector (all_time only) ─────────────────────────────── */}
       <AnimatePresence mode="wait">
         {period === 'all_time' && (
           <motion.div
@@ -339,7 +339,7 @@ export default function Leaderboard() {
         )}
       </AnimatePresence>
 
-      {/* â”€â”€ Your Rank Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Your Rank Banner ────────────────────────────────────────────── */}
       {data && !loading && (
         <motion.div
           key={`rank-${period}-${selectedMetric}`}
@@ -373,11 +373,11 @@ export default function Leaderboard() {
         </motion.div>
       )}
 
-      {/* â”€â”€ Leaderboard List â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Leaderboard List ────────────────────────────────────────────── */}
       {loading ? (
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-12 flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
-          <p className="text-sm text-gray-400">{loadingMessage || 'Loading leaderboardâ€¦'}</p>
+          <p className="text-sm text-gray-400">{loadingMessage || 'Loading leaderboard…'}</p>
         </div>
       ) : error ? (
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-10 text-center">

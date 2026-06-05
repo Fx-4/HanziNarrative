@@ -13,7 +13,7 @@ import {
 import { adminApi } from '@/services/api'
 import { useAuthStore } from '@/store/authStore'
 
-// â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Types ──────────────────────────────────────────────────────────────────────
 
 interface SystemStats {
   total_users: number
@@ -62,7 +62,7 @@ type Tab = 'overview' | 'users' | 'stories' | 'ai-usage' | 'trash'
 
 const HSK_COLORS = ['#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
 
-// â”€â”€ Small helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Small helpers ──────────────────────────────────────────────────────────────
 
 function StatCard({ label, value, sub, color }: {
   label: string
@@ -166,7 +166,7 @@ function ConfirmModal({ message, onConfirm, onCancel }: {
   )
 }
 
-// â”€â”€ Tab: Overview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Tab: Overview ──────────────────────────────────────────────────────────────
 
 function OverviewTab() {
   const [stats, setStats] = useState<SystemStats | null>(null)
@@ -283,7 +283,7 @@ function OverviewTab() {
   )
 }
 
-// â”€â”€ Tab: Users â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Tab: Users ─────────────────────────────────────────────────────────────────
 
 function UsersTab({ currentUserId }: { currentUserId: number }) {
   const [users, setUsers] = useState<AdminUser[]>([])
@@ -346,7 +346,7 @@ function UsersTab({ currentUserId }: { currentUserId: number }) {
           <input
             value={searchInput}
             onChange={e => setSearchInput(e.target.value)}
-            placeholder="Search username, emailâ€¦"
+            placeholder="Search username, email…"
             className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
         </div>
@@ -463,7 +463,7 @@ function UsersTab({ currentUserId }: { currentUserId: number }) {
   )
 }
 
-// â”€â”€ Tab: Stories â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Tab: Stories ───────────────────────────────────────────────────────────────
 
 function StoriesTab() {
   const [stories, setStories] = useState<AdminStory[]>([])
@@ -528,7 +528,7 @@ function StoriesTab() {
             <input
               value={searchInput}
               onChange={e => setSearchInput(e.target.value)}
-              placeholder="Search story titleâ€¦"
+              placeholder="Search story title…"
               className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
@@ -652,7 +652,7 @@ function StoriesTab() {
   )
 }
 
-// â”€â”€ Tab: AI Usage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Tab: AI Usage ──────────────────────────────────────────────────────────────
 
 function AIUsageTab() {
   const [entries, setEntries] = useState<AIEntry[]>([])
@@ -710,7 +710,7 @@ function AIUsageTab() {
                   </td>
                   <td className="px-4 py-3 font-mono text-gray-600 dark:text-gray-400">{entry.tokens_used.toLocaleString()}</td>
                   <td className="px-4 py-3 text-gray-400 text-xs hidden md:table-cell">
-                    {entry.timestamp ? new Date(entry.timestamp).toLocaleString() : 'â€”'}
+                    {entry.timestamp ? new Date(entry.timestamp).toLocaleString() : '—'}
                   </td>
                 </tr>
               ))}
@@ -725,7 +725,7 @@ function AIUsageTab() {
   )
 }
 
-// â”€â”€ Tab: Trash â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Tab: Trash ─────────────────────────────────────────────────────────────────
 
 const TRASH_RETENTION_DAYS = 30
 
@@ -865,7 +865,7 @@ function TrashTab({ currentUserId }: { currentUserId: number }) {
             <input
               value={searchInput}
               onChange={e => setSearchInput(e.target.value)}
-              placeholder={subTab === 'users' ? 'Search username, emailâ€¦' : 'Search story titleâ€¦'}
+              placeholder={subTab === 'users' ? 'Search username, email…' : 'Search story title…'}
               className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
@@ -921,7 +921,7 @@ function TrashTab({ currentUserId }: { currentUserId: number }) {
                       </td>
                       <td className="px-4 py-3 text-gray-600 dark:text-gray-400 hidden md:table-cell">{user.email}</td>
                       <td className="px-4 py-3 text-gray-400 text-xs">
-                        {user.soft_deleted_at ? new Date(user.soft_deleted_at).toLocaleDateString() : 'â€”'}
+                        {user.soft_deleted_at ? new Date(user.soft_deleted_at).toLocaleDateString() : '—'}
                       </td>
                       <td className="px-4 py-3">
                         <span className={`text-xs font-medium ${left <= 3 ? 'text-error-500' : left <= 7 ? 'text-amber-500' : 'text-gray-400'}`}>
@@ -1000,7 +1000,7 @@ function TrashTab({ currentUserId }: { currentUserId: number }) {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-gray-400 text-xs">
-                        {story.soft_deleted_at ? new Date(story.soft_deleted_at).toLocaleDateString() : 'â€”'}
+                        {story.soft_deleted_at ? new Date(story.soft_deleted_at).toLocaleDateString() : '—'}
                       </td>
                       <td className="px-4 py-3">
                         <span className={`text-xs font-medium ${left <= 3 ? 'text-error-500' : left <= 7 ? 'text-amber-500' : 'text-gray-400'}`}>
@@ -1056,7 +1056,7 @@ function TrashTab({ currentUserId }: { currentUserId: number }) {
   )
 }
 
-// â”€â”€ Main Admin Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Main Admin Page ────────────────────────────────────────────────────────────
 
 const NAV_ITEMS: { tab: Tab; label: string; icon: React.ElementType }[] = [
   { tab: 'overview', label: 'Overview', icon: LayoutDashboard },
@@ -1091,7 +1091,7 @@ export default function Admin() {
         <div className="flex items-center gap-2">
           <Shield className="w-6 h-6 text-primary-600 dark:text-primary-400" />
           <span className="font-bold text-gray-900 dark:text-gray-100 text-lg">Admin Panel</span>
-          <span className="hidden sm:inline text-gray-300 dark:text-gray-600">â€”</span>
+          <span className="hidden sm:inline text-gray-300 dark:text-gray-600">—</span>
           <span className="hidden sm:inline text-sm text-gray-400">HanziNarrative</span>
         </div>
         <div className="ml-auto flex items-center gap-3">

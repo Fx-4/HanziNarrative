@@ -11,7 +11,7 @@ import {
 import { Skeleton } from '@/components/ui/Skeleton'
 import toast from 'react-hot-toast'
 
-// â”€â”€ Step types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Step types ────────────────────────────────────────────────────────────────
 
 type StepIntro = { kind: 'intro'; word: Word }
 type StepGrammar = { kind: 'grammar'; point: GrammarPoint }
@@ -20,7 +20,7 @@ type StepMatch = { kind: 'match'; pairs: { zh: string; en: string }[] }
 type StepFill = { kind: 'fill'; fb: FillBlank }
 type Step = StepIntro | StepGrammar | StepMCQ | StepMatch | StepFill
 
-// â”€â”€ Exercise generation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Exercise generation ────────────────────────────────────────────────────────
 
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5)
@@ -79,7 +79,7 @@ function generateSteps(
   return steps
 }
 
-// â”€â”€ Sub-components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Sub-components ────────────────────────────────────────────────────────────
 
 function IntroCard({ step, onNext }: { step: StepIntro; onNext: () => void }) {
   const [playing, setPlaying] = useState(false)
@@ -310,7 +310,7 @@ function FillCard({ step, onCorrect, onWrong }: { step: StepFill; onCorrect: () 
     else setTimeout(onWrong, 900)
   }
 
-  const highlighted = fb.sentence_zh.replace('___', 'ï¼¿ï¼¿ï¼¿')
+  const highlighted = fb.sentence_zh.replace('___', '＿＿＿')
 
   return (
     <motion.div key={fb.sentence_zh} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
@@ -338,7 +338,7 @@ function FillCard({ step, onCorrect, onWrong }: { step: StepFill; onCorrect: () 
   )
 }
 
-// â”€â”€ Main Session Player â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Main Session Player ───────────────────────────────────────────────────────
 
 export default function LearningSession() {
   const { sessionId } = useParams<{ sessionId: string }>()
@@ -493,7 +493,7 @@ export default function LearningSession() {
   const sessionMeta = found?.session
   const unitMeta = found?.unit
 
-  // â”€â”€ Completion screen â”€â”€
+  // ── Completion screen ──
   if (done) {
     const total = correct + wrong
     const score = total > 0 ? Math.round((correct / total) * 100) : 100
@@ -521,7 +521,7 @@ export default function LearningSession() {
 
           <div>
             <h2 className="text-2xl font-extrabold text-gray-900 dark:text-gray-50">
-              {score >= 90 ? 'Sempurna! ðŸŽ‰' : score >= 70 ? 'Bagus! ðŸ‘' : 'Selesai! ðŸ’ª'}
+              {score >= 90 ? 'Sempurna! 🎉' : score >= 70 ? 'Bagus! 👍' : 'Selesai! 💪'}
             </h2>
             <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{sessionMeta?.title}</p>
           </div>
@@ -553,7 +553,7 @@ export default function LearningSession() {
             </motion.div>
           )}
           {!isNew && (
-            <p className="text-xs text-gray-400">Session reviewed â€” no extra XP for repeats.</p>
+            <p className="text-xs text-gray-400">Session reviewed — no extra XP for repeats.</p>
           )}
 
           {saving && <Loader2 className="w-5 h-5 animate-spin text-primary-500 mx-auto" />}
@@ -620,7 +620,7 @@ export default function LearningSession() {
     )
   }
 
-  // â”€â”€ Active session â”€â”€
+  // ── Active session ──
   const progress = steps.length > 0 ? (currentIdx / steps.length) * 100 : 0
   const step = steps[currentIdx]
 
@@ -645,7 +645,7 @@ export default function LearningSession() {
       </div>
 
       <div className="text-xs text-primary-500 font-bold uppercase tracking-widest text-center mb-4">
-        {unitMeta?.subtitle} Â· {sessionMeta?.title}
+        {unitMeta?.subtitle} · {sessionMeta?.title}
       </div>
 
       {/* Exercise */}

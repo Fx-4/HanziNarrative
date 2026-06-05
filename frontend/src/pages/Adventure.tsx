@@ -58,14 +58,14 @@ const TOPIC_ICONS: Record<string, React.ComponentType<{ className?: string }>> =
 }
 
 const TOPICS = [
-    { value: 'daily life', label: 'æ—¥å¸¸ç”Ÿæ´»' },
-    { value: 'food and restaurant', label: 'ç¾Žé£Ÿ' },
-    { value: 'school and studying', label: 'å­¦ä¹ ' },
-    { value: 'travel and transportation', label: 'æ—…è¡Œ' },
-    { value: 'shopping', label: 'è´­ç‰©' },
-    { value: 'friendship', label: 'å‹è°Š' },
-    { value: 'mystery', label: 'ç¥žç§˜' },
-    { value: 'nature and animals', label: 'è‡ªç„¶' },
+    { value: 'daily life', label: '日常生活' },
+    { value: 'food and restaurant', label: '美食' },
+    { value: 'school and studying', label: '学习' },
+    { value: 'travel and transportation', label: '旅行' },
+    { value: 'shopping', label: '购物' },
+    { value: 'friendship', label: '友谊' },
+    { value: 'mystery', label: '神秘' },
+    { value: 'nature and animals', label: '自然' },
 ]
 
 export default function Adventure() {
@@ -94,7 +94,7 @@ export default function Adventure() {
             const stats = await adventureApi.getUsageStats()
             setUsageStats(stats)
         } catch {
-            // Ignore â€” will show default
+            // Ignore — will show default
         }
     }
 
@@ -244,7 +244,7 @@ export default function Adventure() {
                             </BlurText>
                         </div>
                         <p className="text-base sm:text-lg text-gray-600">
-                            Choose your own adventure â€” in Chinese!
+                            Choose your own adventure — in Chinese!
                         </p>
                     </motion.div>
 
@@ -318,13 +318,13 @@ export default function Adventure() {
                                     <div>
                                         <p className="text-xs text-success-700">Adventures remaining</p>
                                         <p className="text-lg font-bold text-success-800">
-                                            {startQuota ? `${startQuota.remaining_daily}/${startQuota.limit_daily}` : 'â€”'}
+                                            {startQuota ? `${startQuota.remaining_daily}/${startQuota.limit_daily}` : '—'}
                                         </p>
                                     </div>
                                     <div>
                                         <p className="text-xs text-success-700">Choices remaining</p>
                                         <p className="text-lg font-bold text-success-800">
-                                            {continueQuota ? `${continueQuota.remaining_daily}/${continueQuota.limit_daily}` : 'â€”'}
+                                            {continueQuota ? `${continueQuota.remaining_daily}/${continueQuota.limit_daily}` : '—'}
                                         </p>
                                     </div>
                                 </div>
@@ -345,7 +345,7 @@ export default function Adventure() {
                             className="bg-gradient-to-r from-success-600 to-success-600 hover:from-success-700 hover:to-success-700 text-white rounded-2xl px-8 py-4 font-semibold text-lg cursor-pointer transition-all flex items-center gap-3 mx-auto disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {loading ? <LoadingSpinner size="sm" /> : <Map className="w-6 h-6" />}
-                            {canStart ? 'Start Adventure' : 'Quota exhausted â€” try tomorrow'}
+                            {canStart ? 'Start Adventure' : 'Quota exhausted — try tomorrow'}
                         </button>
                     </motion.div>
                 </div>
@@ -463,7 +463,7 @@ export default function Adventure() {
                     ))}
                 </div>
 
-                {/* Streaming paragraph â€” shown while AI is generating */}
+                {/* Streaming paragraph — shown while AI is generating */}
                 {loading && streamingText !== null && (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -472,7 +472,7 @@ export default function Adventure() {
                         <div className="bg-white rounded-2xl shadow-sm border border-success-200 ring-1 ring-success-100 p-4 sm:p-5 mb-4">
                             <p className="text-xl sm:text-2xl font-chinese leading-relaxed text-gray-900">
                                 {streamingText}
-                                <span className="inline-block w-0.5 h-6 bg-success-500 ml-0.5 animate-pulse align-middle">â–Š</span>
+                                <span className="inline-block w-0.5 h-6 bg-success-500 ml-0.5 animate-pulse align-middle">▊</span>
                             </p>
                         </div>
                     </motion.div>
@@ -485,7 +485,7 @@ export default function Adventure() {
                         <span className="ml-3 text-gray-600">Writing the next chapter...</span>
                     </div>
                 ) : loading ? (
-                    /* streaming in progress â€” choices will appear after done */
+                    /* streaming in progress — choices will appear after done */
                     null
                 ) : isEnding ? (
                     /* Story Ending */

@@ -52,7 +52,7 @@ export default function Stories() {
     }
   }
 
-  // Called by StoryGenerator when a story finishes generating â€” adds it to the
+  // Called by StoryGenerator when a story finishes generating — adds it to the
   // top of the list instantly without re-fetching the full list.
   const handleStoryGenerated = (partial: {
     id: number
@@ -80,7 +80,7 @@ export default function Stories() {
     })
   }
 
-  // Client-side filter â€” no extra API call on every keystroke
+  // Client-side filter — no extra API call on every keystroke
   const filteredStories = stories
     .filter(s =>
       !searchQuery.trim() ||
@@ -198,8 +198,8 @@ export default function Stories() {
             <div className="flex flex-wrap gap-2 mb-4">
               {([
                 { value: 'all', label: 'All Stories' },
-                { value: 'curated', label: 'ðŸ“š Curated' },
-                { value: 'ai_generated', label: 'âœ¨ AI Generated' },
+                { value: 'curated', label: '📚 Curated' },
+                { value: 'ai_generated', label: '✨ AI Generated' },
               ] as const).map((cat) => (
                 <button
                   key={cat.value}
@@ -215,7 +215,7 @@ export default function Stories() {
               ))}
             </div>
 
-            {/* Client-side search â€” filters already-loaded stories with no extra API call */}
+            {/* Client-side search — filters already-loaded stories with no extra API call */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
               <input
@@ -277,11 +277,11 @@ export default function Stories() {
                       <div className="mb-3">
                         {(story.category ?? 'curated') === 'ai_generated' ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300">
-                            âœ¨ AI Generated
+                            ✨ AI Generated
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-success-100 dark:bg-success-950/40 text-success-700 dark:text-success-300">
-                            ðŸ“š Curated
+                            📚 Curated
                           </span>
                         )}
                       </div>

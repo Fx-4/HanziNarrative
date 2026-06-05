@@ -495,7 +495,7 @@ export default function Review() {
                       ) : (
                         <div className="flex items-center justify-center gap-2 text-error-700">
                           <XCircle className="w-5 h-5" />
-                          <span className="text-base font-semibold">Incorrect â€“ See the answer below</span>
+                          <span className="text-base font-semibold">Incorrect – See the answer below</span>
                         </div>
                       )}
                     </motion.div>
@@ -592,7 +592,7 @@ export default function Review() {
                         onClick={() => setShowAnswer(true)}
                         className="border-2 border-gray-200 text-gray-700 rounded-2xl px-8 py-3.5 font-semibold hover:border-primary-300 hover:bg-primary-50 transition-all flex items-center gap-2 cursor-pointer"
                       >
-                        Skip Quiz â€“ Show Answer
+                        Skip Quiz – Show Answer
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     </div>

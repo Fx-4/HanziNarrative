@@ -7,7 +7,7 @@ import {
   Flame, Dumbbell, Zap, Rocket, Star, Sparkles, Gem, BookOpen
 } from 'lucide-react'
 
-// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Types ────────────────────────────────────────────────────────────────────
 export type QuestionType = 'recognition' | 'meaning' | 'pinyin'
 
 export interface Question {
@@ -17,7 +17,7 @@ export interface Question {
   correctAnswer: number
 }
 
-// â”€â”€â”€ Giphy meme component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Giphy meme component ─────────────────────────────────────────────────────
 const GIPHY_KEY = '1rcSsQCZN5FuSwxfwyihbQCC4SuC6nDQ'
 
 type MemeData = { caption: string; query: string }
@@ -68,14 +68,14 @@ const TenorMeme = ({ caption, query }: MemeData) => {
           />
         )}
         {!loading && !gifUrl && (
-          <div className="text-gray-500 text-sm p-4 text-center">ðŸ˜¢ no meme loaded</div>
+          <div className="text-gray-500 text-sm p-4 text-center">😢 no meme loaded</div>
         )}
       </div>
     </div>
   )
 }
 
-// â”€â”€â”€ Motivational messages â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Motivational messages ────────────────────────────────────────────────────
 const MOTIVATIONAL_MESSAGES = [
   { Icon: Flame, iconClass: 'text-orange-500', title: "You're on fire!", message: 'Keep up the amazing work! Your Chinese is getting better with every answer.', color: 'from-orange-400 to-error-500', meme: { caption: 'me studying chinese at 3am', query: 'kung fu panda studying' } },
   { Icon: Dumbbell, iconClass: 'text-purple-500', title: 'Beast mode activated!', message: "You're crushing it! Remember, every character you learn makes you stronger.", color: 'from-purple-400 to-pink-500', meme: { caption: 'my brain memorizing hsk vocab', query: 'kung fu panda training' } },
@@ -99,12 +99,12 @@ const MOTIVATIONAL_MESSAGES = [
   { Icon: Rocket, iconClass: 'text-violet-500', title: 'Non-Chinese speakers could never', message: "Look at you reading hanzi like it's nothing. Legendary.", color: 'from-violet-400 to-purple-600', meme: { caption: 'people who never studied chinese', query: 'mulan disguise secret identity funny' } },
   { Icon: Trophy, iconClass: 'text-lime-500', title: 'HSK grind = locked in', message: "The grind never stops for real ones. You're locked in.", color: 'from-lime-400 to-success-500', meme: { caption: 'me after 5 correct hsk answers', query: 'kung fu panda victory celebrate champion' } },
   { Icon: Zap, iconClass: 'text-sky-400', title: 'Ate those HSK questions!', message: 'You absolutely demolished those 5 questions. Zero crumbs. Keep going!', color: 'from-sky-400 to-blue-500', meme: { caption: 'me eating hsk questions for breakfast', query: 'kung fu panda eating dumpling food' } },
-  { Icon: BookOpen, iconClass: 'text-rose-400', title: 'Sleep is for after HSK', message: 'Just kidding, sleep is important. But first â€” 5 more questions.', color: 'from-rose-400 to-error-500', meme: { caption: 'me choosing chinese study over sleep', query: 'panda tired sleepy exhausted funny' } },
+  { Icon: BookOpen, iconClass: 'text-rose-400', title: 'Sleep is for after HSK', message: 'Just kidding, sleep is important. But first — 5 more questions.', color: 'from-rose-400 to-error-500', meme: { caption: 'me choosing chinese study over sleep', query: 'panda tired sleepy exhausted funny' } },
   { Icon: Star, iconClass: 'text-purple-400', title: 'One weird trick to learn Chinese', message: "Just keep answering 5 questions at a time. You're doing it!", color: 'from-purple-400 to-violet-500', meme: { caption: 'language teachers hate this student', query: 'kung fu panda secret ingredient scroll' } },
-  { Icon: Sparkles, iconClass: 'text-success-400', title: 'æ±‰å­—? No problem!', message: "Look at you reading Chinese characters like it's nothing. Respect.", color: 'from-success-400 to-success-500', meme: { caption: 'me reading hanzi like its easy', query: 'chinese new year dragon dance happy' } },
+  { Icon: Sparkles, iconClass: 'text-success-400', title: '汉字? No problem!', message: "Look at you reading Chinese characters like it's nothing. Respect.", color: 'from-success-400 to-success-500', meme: { caption: 'me reading hanzi like its easy', query: 'chinese new year dragon dance happy' } },
 ]
 
-// â”€â”€â”€ Props â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Props ────────────────────────────────────────────────────────────────────
 interface TestModeProps {
   questions: Question[]
   currentQuestionIndex: number
@@ -120,7 +120,7 @@ interface TestModeProps {
   onContinueFromBreak: () => void
 }
 
-// â”€â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Component ────────────────────────────────────────────────────────────────
 export default function TestMode({
   questions,
   currentQuestionIndex,
@@ -144,7 +144,7 @@ export default function TestMode({
     )
   }
 
-  // â”€â”€ Motivational break screen â”€â”€
+  // ── Motivational break screen ──
   if (showMotivationalBreak) {
     const randomMessage = MOTIVATIONAL_MESSAGES[Math.floor(Math.random() * MOTIVATIONAL_MESSAGES.length)]
     const questionsCompleted = currentQuestionIndex + 1
@@ -168,12 +168,12 @@ export default function TestMode({
                 <div className="text-3xl font-bold text-primary-600 dark:text-primary-400">{questionsCompleted}</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Completed</div>
               </div>
-              <div className="text-2xl text-gray-300 dark:text-gray-600">â€¢</div>
+              <div className="text-2xl text-gray-300 dark:text-gray-600">•</div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{score}</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Correct</div>
               </div>
-              <div className="text-2xl text-gray-300 dark:text-gray-600">â€¢</div>
+              <div className="text-2xl text-gray-300 dark:text-gray-600">•</div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">{questionsRemaining}</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">To go</div>
@@ -193,7 +193,7 @@ export default function TestMode({
     )
   }
 
-  // â”€â”€ Test complete / results screen â”€â”€
+  // ── Test complete / results screen ──
   if (testComplete) {
     const percentage = Math.round((score / questions.length) * 100)
     const passed = percentage >= 70
@@ -289,7 +289,7 @@ export default function TestMode({
     )
   }
 
-  // â”€â”€ Active quiz â”€â”€
+  // ── Active quiz ──
   const question = questions[currentQuestionIndex]
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100
 
@@ -301,7 +301,7 @@ export default function TestMode({
             onClick={onBack}
             className="flex items-center gap-1 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors cursor-pointer"
           >
-            â† Back
+            ← Back
           </button>
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-600 dark:text-gray-400">

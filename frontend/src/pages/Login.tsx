@@ -6,9 +6,9 @@ import { User, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
 import { API_URL } from '@/lib/env'
 
 // ---------------------------------------------------------------------------
-// Floating character config â€” positions are fixed to avoid layout thrash
+// Floating character config — positions are fixed to avoid layout thrash
 // ---------------------------------------------------------------------------
-const FLOATING_CHARS = ['æ±‰', 'å­—', 'å­¦', 'ä¹ ', 'ä¸­', 'æ–‡', 'è¯­', 'è¨€', 'æ•…', 'äº‹', 'ä½ ', 'å¥½']
+const FLOATING_CHARS = ['汉', '字', '学', '习', '中', '文', '语', '言', '故', '事', '你', '好']
 
 interface FloatItem {
   char: string
@@ -76,7 +76,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex bg-white dark:bg-gray-950">
       {/* ================================================================
-          LEFT DECORATIVE PANEL â€” hidden on mobile
+          LEFT DECORATIVE PANEL — hidden on mobile
       ================================================================ */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 flex-col items-center justify-center px-12">
         {/* Floating Chinese characters */}
@@ -119,7 +119,7 @@ export default function Login() {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 260, damping: 22, delay: 0.15 }}
           >
-            <span className="text-white text-5xl font-bold font-chinese">æ±‰</span>
+            <span className="text-white text-5xl font-bold font-chinese">汉</span>
           </motion.div>
 
           <h1 className="text-5xl font-extrabold text-white tracking-tight mb-3">
@@ -137,7 +137,7 @@ export default function Login() {
             transition={{ delay: 0.5 }}
           >
             <div className="h-px w-16 bg-white/30" />
-            <span className="text-white/50 text-sm tracking-widest uppercase">Learn Â· Practice Â· Master</span>
+            <span className="text-white/50 text-sm tracking-widest uppercase">Learn · Practice · Master</span>
             <div className="h-px w-16 bg-white/30" />
           </motion.div>
         </motion.div>
@@ -161,7 +161,7 @@ export default function Login() {
             transition={{ delay: 0.1 }}
           >
             <div className="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center shadow-md shadow-primary-500/30">
-              <span className="text-white text-lg font-bold font-chinese">æ±‰</span>
+              <span className="text-white text-lg font-bold font-chinese">汉</span>
             </div>
             <span className="text-xl font-bold text-gray-900 dark:text-gray-100">HanziNarrative</span>
           </motion.div>
@@ -275,7 +275,7 @@ export default function Login() {
                 {loading ? (
                   <>
                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Signing inâ€¦
+                    Signing in…
                   </>
                 ) : (
                   <>
@@ -286,7 +286,7 @@ export default function Login() {
               </motion.button>
             </motion.div>
 
-            {/* â”€â”€ Divider â”€â”€ */}
+            {/* ── Divider ── */}
             <motion.div
               className="flex items-center gap-3"
               initial={{ opacity: 0 }}
@@ -298,7 +298,7 @@ export default function Login() {
               <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
             </motion.div>
 
-            {/* â”€â”€ Google button â”€â”€ */}
+            {/* ── Google button ── */}
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
