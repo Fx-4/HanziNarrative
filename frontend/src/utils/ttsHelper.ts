@@ -10,7 +10,7 @@ import axios from 'axios'
 import { getVoiceName, getSpeakingRate } from '@/utils/voicePreference'
 import { API_URL } from '@/lib/env'
 
-interface TTSPlayOptions {
+interface TTSOptions {
   text: string
   speakingRate?: number
   language?: string
@@ -19,11 +19,11 @@ interface TTSPlayOptions {
 }
 
 /**
- * Synthesize and play audio via the backend TTS API.
- * Returns the HTMLAudioElement for caller to manage (pause, cleanup).
- * Throws on failure — caller should catch and fall back to browser TTS.
+ * Fetch audio from backend and return a ready-to-play HTMLAudioElement.
+ * Does NOT call play() — caller decides when to play.
+ * Use this to pre-fetch audio before user interaction.
  */
-export async function playTTS(options: TTSPlayOptions): Promise<HTMLAudioElement> {
+export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioElement> {
   const {
     text,
     speakingRate,
@@ -54,16 +54,26 @@ export async function playTTS(options: TTSPlayOptions): Promise<HTMLAudioElement
   audio.addEventListener('ended', cleanup, { once: true })
   audio.addEventListener('error', cleanup, { once: true })
 
+  return audio
+}
+
+/**
+ * Synthesize and immediately play audio via the backend TTS API.
+ * Returns the HTMLAudioElement for caller to manage (pause, cleanup).
+ * Throws on failure — caller should catch and fall back to browser TTS.
+ */
+export async function playTTS(options: TTSOptions): Promise<HTMLAudioElement> {
+  const audio = await fetchTTSAudio(options)
+
   try {
     await audio.play()
   } catch (playErr) {
-    // NotAllowedError = browser autoplay policy; try once more with muted then unmute
+    // NotAllowedError = browser autoplay policy blocked; mute-trick to unlock
     if ((playErr as DOMException)?.name === 'NotAllowedError') {
       audio.muted = true
       await audio.play()
       audio.muted = false
     } else {
-      cleanup()
       throw playErr
     }
   }

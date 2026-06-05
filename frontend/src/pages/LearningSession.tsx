@@ -1,9 +1,9 @@
-﻿import { useState, useEffect, useCallback } from 'react'
+﻿import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getSession, getUnitWords, ALL_UNITS, Word, GrammarPoint, FillBlank } from '@/data/curriculum'
 import { learningPathApi } from '@/services/api'
-import { playTTS } from '@/utils/ttsHelper'
+import { fetchTTSAudio } from '@/utils/ttsHelper'
 import {
   Volume2, ChevronRight, CheckCircle, X, Star, Zap,
   ArrowLeft, Loader2, Trophy,
@@ -83,13 +83,49 @@ function generateSteps(
 
 function IntroCard({ step, onNext }: { step: StepIntro; onNext: () => void }) {
   const [playing, setPlaying] = useState(false)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const fetchPromiseRef = useRef<Promise<HTMLAudioElement> | null>(null)
+
+  // Pre-fetch audio as soon as card mounts, auto-play if browser allows
+  useEffect(() => {
+    let cancelled = false
+    const promise = fetchTTSAudio({ text: step.word.zh })
+    fetchPromiseRef.current = promise
+
+    promise.then(audio => {
+      if (cancelled) return
+      audioRef.current = audio
+      // Auto-play (fires-and-forgets; NotAllowedError is fine here)
+      audio.play().catch(() => { /* autoplay blocked — user can click */ })
+    }).catch(err => {
+      if (!cancelled) console.error('[TTS] prefetch failed:', err)
+    })
+
+    return () => {
+      cancelled = true
+      audioRef.current?.pause()
+      audioRef.current = null
+      fetchPromiseRef.current = null
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step.word.zh])
 
   const play = async () => {
+    if (playing) return
     setPlaying(true)
     try {
-      await playTTS({ text: step.word.zh })
+      let audio = audioRef.current
+      if (!audio && fetchPromiseRef.current) {
+        // Still fetching — wait for it
+        audio = await fetchPromiseRef.current
+        audioRef.current = audio
+      }
+      if (audio) {
+        audio.currentTime = 0
+        await audio.play()
+      }
     } catch (err) {
-      console.error('[TTS] playTTS failed:', err)
+      console.error('[TTS] play failed:', err)
       toast.error('Gagal memutar audio', { duration: 2000 })
     }
     setPlaying(false)
