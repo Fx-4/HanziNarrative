@@ -439,10 +439,10 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
           <div className="space-y-5">
             {/* HSK Level */}
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <p className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 <GraduationCap className="w-4 h-4" />
                 HSK Level
-              </label>
+              </p>
               <div className="flex flex-wrap gap-2">
                 {[1, 2, 3, 4, 5, 6].map(level => (
                   <button
@@ -464,11 +464,13 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
 
             {/* Topic */}
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="sg-topic" className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 <BookOpen className="w-4 h-4" />
                 Topic (Optional)
               </label>
               <input
+                id="sg-topic"
+                name="story-topic"
                 type="text"
                 value={topic}
                 onChange={e => setTopic(e.target.value)}
@@ -479,10 +481,10 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
 
             {/* Story Length */}
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <p className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 <AlignLeft className="w-4 h-4" />
                 Story Length
-              </label>
+              </p>
               <div className="flex gap-2">
                 {(['short', 'medium', 'long'] as const).map(len => (
                   <button
@@ -520,10 +522,10 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
 
                     {/* Genre */}
                     <div>
-                      <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <p className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <Drama className="w-4 h-4" />
                         Genre
-                      </label>
+                      </p>
                       <ChipSelector
                         options={GENRE_OPTIONS.map(g => ({ value: g.value, label: g.label }))}
                         value={genre}
@@ -534,10 +536,10 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
 
                     {/* Tone */}
                     <div>
-                      <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <p className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <Palette className="w-4 h-4" />
                         Tone / Mood
-                      </label>
+                      </p>
                       <ChipSelector
                         options={TONE_OPTIONS}
                         value={tone}
@@ -548,10 +550,10 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
 
                     {/* Setting */}
                     <div>
-                      <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <p className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <MapPin className="w-4 h-4" />
                         Setting / Location
-                      </label>
+                      </p>
                       <ChipSelector
                         options={SETTING_OPTIONS}
                         value={setting}
@@ -562,10 +564,10 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
 
                     {/* Cultural Theme */}
                     <div>
-                      <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <p className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <Landmark className="w-4 h-4" />
                         Cultural Theme
-                      </label>
+                      </p>
                       <ChipSelector
                         options={CULTURAL_THEMES}
                         value={culturalTheme}
@@ -577,10 +579,10 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                     {/* Narrative Perspective + Dialogue (row) */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <p className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           <PenTool className="w-4 h-4" />
                           Perspective
-                        </label>
+                        </p>
                         <div className="flex gap-2">
                           {(['first-person', 'third-person'] as const).map(p => (
                             <button
@@ -599,10 +601,10 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                       </div>
 
                       <div>
-                        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <p className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           <MessageSquare className="w-4 h-4" />
                           Dialogue
-                        </label>
+                        </p>
                         <div className="flex gap-2">
                           {([
                             { val: true, label: '💬 Yes' },
@@ -626,11 +628,13 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
 
                     {/* Character Names (moved here for advanced) */}
                     <div>
-                      <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label htmlFor="sg-characters" className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <Users className="w-4 h-4" />
                         Character Names (Optional)
                       </label>
                       <input
+                        id="sg-characters"
+                        name="character-names"
                         type="text"
                         value={characterNames}
                         onChange={e => setCharacterNames(e.target.value)}
@@ -641,11 +645,13 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
 
                     {/* Target Vocabulary */}
                     <div>
-                      <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label htmlFor="sg-vocab" className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <BookText className="w-4 h-4" />
                         Target Vocabulary (Optional)
                       </label>
                       <input
+                        id="sg-vocab"
+                        name="target-vocabulary"
                         type="text"
                         value={targetVocabulary}
                         onChange={e => setTargetVocabulary(e.target.value)}

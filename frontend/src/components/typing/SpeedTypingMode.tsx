@@ -235,6 +235,8 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
         <div className="max-w-md mx-auto">
           <input
             ref={inputRef}
+            id="speed-typing-input"
+            name="speed-typing"
             type="text"
             value={inputValue}
             onChange={handleInputChange}

@@ -60,9 +60,9 @@ export default function MyBookmarks() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
-        <label className="block text-sm font-medium text-gray-700 mb-3">
+        <p className="block text-sm font-medium text-gray-700 mb-3">
           Filter by HSK Level
-        </label>
+        </p>
         <div className="flex flex-wrap gap-2">
           {levels.map((level, index) => (
             <motion.div

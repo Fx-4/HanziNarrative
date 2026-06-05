@@ -2,20 +2,11 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "backend",
-      "runtimeExecutable": "D:\\uii\\belajar mandiri\\learn-HSK\\.venv\\Scripts\\uvicorn.exe",
-      "runtimeArgs": ["app.main:app", "--reload", "--port", "8000"],
-      "cwd": "D:\\uii\\belajar mandiri\\learn-HSK\\backend",
-      "port": 8000,
-      "autoPort": false
-    },
-    {
       "name": "frontend",
-      "runtimeExecutable": "cmd",
-      "runtimeArgs": ["/c", "npm", "run", "dev"],
+      "runtimeExecutable": "npm.cmd",
+      "runtimeArgs": ["run", "dev"],
       "cwd": "D:\\uii\\belajar mandiri\\learn-HSK\\frontend",
-      "port": 5173,
-      "autoPort": false
+      "port": 5173
     }
   ]
 }

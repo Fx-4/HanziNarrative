@@ -78,7 +78,14 @@
       "mcp__Claude_Preview__preview_start",
       "Bash(npx vite:*)",
       "Bash(cmd /c \"taskkill /PID 18688 /F\")",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(find 'D:\\\\uii\\\\belajar mandiri\\\\learn-HSK\\\\frontend\\\\src' -type f \\\\\\(-name *Quiz* -o -name *quiz* -o -name *Test* -o -name *test* \\\\\\))",
+      "mcp__obsidian__list_vault_files",
+      "mcp__obsidian__get_vault_file",
+      "mcp__obsidian__create_vault_file",
+      "Bash(powershell -command \"\\(Get-Content src/data/curriculum.ts\\).Count\")",
+      "mcp__obsidian__patch_vault_file",
+      "mcp__obsidian__append_to_vault_file"
     ],
     "deny": [],
     "ask": []

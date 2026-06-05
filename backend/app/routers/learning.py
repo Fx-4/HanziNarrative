@@ -15,6 +15,10 @@ from app import schemas
 router = APIRouter(prefix="/learning", tags=["learning"])
 
 
+class SeedRequest(BaseModel):
+    simplified_chars: List[str]
+
+
 class ReviewRequest(BaseModel):
     word_id: int
     quality: int  # 0-5 rating
@@ -104,6 +108,24 @@ def get_test_words(
         "words": test_words,
         "count": len(test_words)
     }
+
+
+@router.post("/seed")
+def seed_words_from_session(
+    request: SeedRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Seed words from a completed LearningSession into the SRS queue.
+    Creates UserProgress entries for words not yet tracked.
+    """
+    seeded = LearningService.seed_words_from_session(
+        db=db,
+        user=current_user,
+        simplified_chars=request.simplified_chars,
+    )
+    return {"seeded": seeded, "total": len(request.simplified_chars)}
 
 
 @router.post("/review", response_model=ReviewResponse)

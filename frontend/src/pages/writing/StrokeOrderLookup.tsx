@@ -81,6 +81,8 @@ export default function StrokeOrderLookup() {
           <div className="flex gap-2">
             <div className="relative flex-1">
               <input
+                id="stroke-lookup"
+                name="hanzi-search"
                 type="text"
                 value={inputValue}
                 onChange={e => { setInputValue(e.target.value); setError(null) }}

@@ -180,6 +180,8 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
         <div className="max-w-md mx-auto">
           <input
             ref={inputRef}
+            id="ime-practice-input"
+            name="ime-typing"
             type="text"
             value={inputValue}
             onChange={handleInputChange}

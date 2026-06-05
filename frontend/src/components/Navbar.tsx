@@ -347,8 +347,26 @@ export default function Navbar() {
                     </Link>
                   </motion.div>
 
-                  {/* Stories */}
+                  {/* Kursus */}
                   <motion.div custom={1} variants={itemVariants} initial="hidden" animate="visible">
+                    <Link to="/path" onClick={() => setMobileMenuOpen(false)}>
+                      <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+                        isActive('/path')
+                          ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                      }`}>
+                        <Route className="w-4 h-4 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm font-semibold leading-none">Kursus</p>
+                          <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">Learning path HSK</p>
+                        </div>
+                        {isActive('/path') && <ChevronRight className="w-3.5 h-3.5 ml-auto opacity-50" />}
+                      </div>
+                    </Link>
+                  </motion.div>
+
+                  {/* Stories */}
+                  <motion.div custom={2} variants={itemVariants} initial="hidden" animate="visible">
                     <Link to="/stories" onClick={() => setMobileMenuOpen(false)}>
                       <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
                         isActive('/stories')
@@ -369,7 +387,7 @@ export default function Navbar() {
                   isOpen={openSections.Practice}
                   onToggle={() => toggleSection('Practice')}
                   hasActive={dropdownMenus[0].items.some(i => isActive(i.to))}
-                  animIndex={2}
+                  animIndex={3}
                 >
                   {dropdownMenus[0].items.map((item) => (
                     <DrawerItem key={item.to} item={item} active={isActive(item.to)} onClose={() => setMobileMenuOpen(false)} />

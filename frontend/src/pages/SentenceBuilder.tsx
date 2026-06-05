@@ -299,9 +299,9 @@ export default function SentenceBuilder() {
           transition={{ delay: 0.3, duration: 0.4 }}
           className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-3 sm:p-4 mb-4 sm:mb-6 border border-gray-100 dark:border-gray-800"
         >
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <p className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             HSK Level:
-          </label>
+          </p>
           <StaggerOnMount className="flex flex-wrap gap-2" staggerDelay={0.05} delay={0.35}>
             {[1, 2, 3, 4, 5, 6].map(level => (
               <StaggerItem key={level}>

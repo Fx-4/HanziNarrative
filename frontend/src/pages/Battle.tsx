@@ -378,26 +378,26 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
           <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-gray-100 flex items-center gap-2"><Flame className="w-4 h-4 text-orange-500" /> Game Settings</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">HSK Level</label>
+              <p className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">HSK Level</p>
               <div className="flex flex-wrap gap-1.5">{[1, 2, 3, 4, 5, 6].map(l => <button key={l} onClick={() => setHskLevel(l)} className={`w-9 h-9 rounded-xl text-sm font-semibold transition-all ${hskLevel === l ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}>{l}</button>)}</div>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Questions</label>
+              <p className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Questions</p>
               <div className="flex flex-wrap gap-1.5">{[5, 10, 15, 20].map(n => <button key={n} onClick={() => setNumQ(n)} className={`px-3 h-9 rounded-xl text-sm font-semibold transition-all ${numQ === n ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}>{n}</button>)}</div>
             </div>
             <div>
-              <label className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1"><Timer className="w-3 h-3" /> Time per Question</label>
+              <p className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1"><Timer className="w-3 h-3" /> Time per Question</p>
               <div className="flex flex-wrap gap-1.5">{[10, 15, 20, 30].map(s => <button key={s} onClick={() => setTimeLimitSec(s)} className={`px-3 h-9 rounded-xl text-sm font-semibold transition-all ${timeLimitSec === s ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}>{s}s</button>)}</div>
             </div>
             {gameState.mode === 'battle_royale' && (
               <div>
-                <label className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1"><Heart className="w-3 h-3" /> Lives</label>
+                <p className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1"><Heart className="w-3 h-3" /> Lives</p>
                 <div className="flex flex-wrap gap-1.5">{[1, 2, 3].map(n => <button key={n} onClick={() => setStartingLivesLocal(n)} className={`px-3 h-9 rounded-xl text-sm font-semibold transition-all ${startingLives === n ? 'bg-rose-500 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}>{'❤️'.repeat(n)}</button>)}</div>
               </div>
             )}
           </div>
           <div>
-            <label className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1"><BookOpen className="w-3 h-3" /> Question Type</label>
+            <p className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1"><BookOpen className="w-3 h-3" /> Question Type</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
               {QTYPES.map(({ value, label, desc }) => (
                 <button key={value} onClick={() => setQType(value)} className={`p-2 rounded-xl text-center transition-all border-2 ${qType === value ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300'}`}>
@@ -409,9 +409,9 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
           </div>
           {/* Buff / Debuff Mode */}
           <div>
-            <label className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1">
+            <p className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1">
               ✨ Power-ups Mode
-            </label>
+            </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
               {([
                 { value: 'both', label: '⚡+☠️ Both', desc: 'Buffs & debuffs', color: 'indigo' },

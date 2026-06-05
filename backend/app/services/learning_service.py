@@ -272,3 +272,49 @@ class LearningService:
             "total_reviews": total_reviews,
             "accuracy": (total_correct / total_reviews * 100) if total_reviews > 0 else 0
         }
+
+    @staticmethod
+    def seed_words_from_session(
+        db: Session,
+        user: User,
+        simplified_chars: List[str],
+    ) -> int:
+        """
+        Seed words into SRS after a LearningSession completes.
+        Creates UserProgress entries for unseen words so they appear in Review.
+        Returns count of newly seeded words.
+        """
+        now = datetime.now(timezone.utc)
+        first_review = now + timedelta(days=1)
+
+        seeded = 0
+        for simplified in simplified_chars:
+            word = db.query(HanziWord).filter(HanziWord.simplified == simplified).first()
+            if not word:
+                continue
+
+            existing = db.query(UserProgress).filter(
+                UserProgress.user_id == user.id,
+                UserProgress.word_id == word.id,
+            ).first()
+
+            if not existing:
+                db.add(UserProgress(
+                    user_id=user.id,
+                    word_id=word.id,
+                    mastery_level=0,
+                    correct_count=0,
+                    incorrect_count=0,
+                    easiness_factor=2.5,
+                    interval=1,
+                    repetitions=0,
+                    next_review=first_review,
+                    familiarity_level=0,
+                    review_count=0,
+                    last_reviewed=now,
+                ))
+                seeded += 1
+
+        if seeded > 0:
+            db.commit()
+        return seeded

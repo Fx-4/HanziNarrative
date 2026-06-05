@@ -142,6 +142,8 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
             <div className="mb-4">
               <input
                 ref={inputRef}
+                id="pinyin-typing-input"
+                name="pinyin-typing"
                 type="text"
                 value={inputValue}
                 onChange={handleInputChange}
