@@ -8,6 +8,7 @@
 
 import axios from 'axios'
 import { getVoiceName, getSpeakingRate } from '@/utils/voicePreference'
+import { buildCacheKey, getAudio, saveAudio } from '@/utils/ttsCache'
 import { API_URL } from '@/lib/env'
 
 interface TTSOptions {
@@ -37,6 +38,18 @@ export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioEleme
   const voice = voiceName || getVoiceName()
   const rate = speakingRate ?? getSpeakingRate()
 
+  // Layer 1: IndexedDB — zero network if heard before
+  const cacheKey = buildCacheKey(text, language, voice, rate)
+  const cached = await getAudio(cacheKey)
+  if (cached) {
+    const url = URL.createObjectURL(cached)
+    const audio = new Audio(url)
+    audio.addEventListener('ended', () => URL.revokeObjectURL(url), { once: true })
+    audio.addEventListener('error', () => URL.revokeObjectURL(url), { once: true })
+    return audio
+  }
+
+  // Layer 2: Backend (file cache → edge-tts on miss)
   const response = await axios.post(
     `${API_URL}/tts/synthesize`,
     { text, language, voice_name: voice, speaking_rate: rate },
@@ -47,12 +60,13 @@ export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioEleme
     ? response.data
     : new Blob([response.data], { type: 'audio/mpeg' })
 
+  // Save to IndexedDB for future plays (fire-and-forget)
+  saveAudio(cacheKey, blob)
+
   const url = URL.createObjectURL(blob)
   const audio = new Audio(url)
-
-  const cleanup = () => URL.revokeObjectURL(url)
-  audio.addEventListener('ended', cleanup, { once: true })
-  audio.addEventListener('error', cleanup, { once: true })
+  audio.addEventListener('ended', () => URL.revokeObjectURL(url), { once: true })
+  audio.addEventListener('error', () => URL.revokeObjectURL(url), { once: true })
 
   return audio
 }
