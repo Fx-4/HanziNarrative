@@ -13,6 +13,12 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* color-scheme: native browser elements (scrollbar, inputs) follow theme */
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
   }
 
   body {
@@ -218,8 +224,8 @@
 
   /* Unit / session card wrapper */
   .learn-card {
-    @apply bg-white dark:bg-gray-900 rounded-2xl
-           border border-gray-100 dark:border-gray-800
+    @apply bg-white dark:bg-surface-card rounded-2xl
+           border border-gray-100 dark:border-gray-700/60
            shadow-card overflow-hidden
            transition-colors duration-200;
   }
@@ -227,9 +233,9 @@
   /* Exercise option button — base state */
   .exercise-option {
     @apply w-full py-3 px-4 rounded-xl font-semibold text-sm
-           border-2 border-gray-200 dark:border-gray-700
-           bg-white dark:bg-gray-900
-           text-gray-800 dark:text-gray-200
+           border-2 border-gray-200 dark:border-gray-600
+           bg-white dark:bg-surface-card
+           text-gray-800 dark:text-gray-100
            transition-all duration-150
            active:scale-[0.98];
   }
@@ -258,9 +264,9 @@
            last:border-0 pb-2 last:pb-0 space-y-0.5;
   }
 
-  /* Session type pill (Vocabulary / Grammar / Practice) */
+  /* Session type pill (Vocabulary / Grammar / Practice) — gray-500/400 = 4.7:1 light / 6.0:1 dark ✓ */
   .session-type-pill {
-    @apply inline-flex items-center gap-1 text-[11px] text-gray-400;
+    @apply inline-flex items-center gap-1 text-[11px] text-gray-500 dark:text-gray-400;
   }
 
   /* Large Hanzi display (intro card) */

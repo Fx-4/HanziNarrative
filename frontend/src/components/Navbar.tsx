@@ -318,7 +318,7 @@ export default function Navbar() {
 
                 {/* ── Daily section — always visible at top, no collapse ── */}
                 <div className="mb-2">
-                  <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+                  <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
                     Daily
                   </p>
 
@@ -334,7 +334,7 @@ export default function Navbar() {
                           <Brain className="w-4 h-4 flex-shrink-0" />
                           <div>
                             <p className="text-sm font-semibold leading-none">Review</p>
-                            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                            <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
                               {reviewCount > 0 ? `${reviewCount} due today` : 'Spaced repetition'}
                             </p>
                           </div>
@@ -358,7 +358,7 @@ export default function Navbar() {
                         <Route className="w-4 h-4 flex-shrink-0" />
                         <div>
                           <p className="text-sm font-semibold leading-none">Kursus</p>
-                          <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">Learning path HSK</p>
+                          <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">Learning path HSK</p>
                         </div>
                         {isActive('/path') && <ChevronRight className="w-3.5 h-3.5 ml-auto opacity-50" />}
                       </div>
@@ -539,7 +539,7 @@ function DrawerItem({ item, active, onClose }: { item: MenuItem; active: boolean
           <div className="min-w-0">
             <p className="text-sm font-medium leading-none">{item.label}</p>
             {item.description && (
-              <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 truncate">{item.description}</p>
+              <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 truncate">{item.description}</p>
             )}
           </div>
         </div>
@@ -557,6 +557,7 @@ function DarkModeButton({ isDarkMode, toggle }: { isDarkMode: boolean; toggle: (
       className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors overflow-hidden"
       whileHover={{ scale: 1.08 }}
       whileTap={{ scale: 0.92 }}
+      aria-label={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
       title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
     >
       <AnimatePresence mode="wait">
@@ -666,7 +667,7 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
                         <div className="min-w-0">
                           <p className="text-sm font-medium leading-none">{item.label}</p>
                           {item.description && (
-                            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">{item.description}</p>
+                            <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">{item.description}</p>
                           )}
                         </div>
                       </div>
