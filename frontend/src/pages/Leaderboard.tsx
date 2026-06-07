@@ -439,7 +439,7 @@ export default function Leaderboard() {
                       {entry.full_name || entry.username}
                       {isMe && <span className="ml-2 text-xs text-primary-500 font-semibold">(You)</span>}
                     </p>
-                    <p className="text-xs text-gray-400 dark:text-gray-500">Lv {entry.level}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Lv {entry.level}</p>
                   </div>
                   <p className={`text-sm font-extrabold ${isMe ? 'text-primary-600 dark:text-primary-400' : 'text-gray-700 dark:text-gray-300'}`}>
                     {getMetricValue(entry, displayMetric)}

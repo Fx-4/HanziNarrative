@@ -337,7 +337,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             }`}
           >
             <div className="flex items-center gap-2 mb-1.5">
-              <Zap className={`w-5 h-5 ${!isAdvanced ? 'text-success-600' : 'text-gray-400 dark:text-gray-500'}`} />
+              <Zap className={`w-5 h-5 ${!isAdvanced ? 'text-success-600' : 'text-gray-500 dark:text-gray-400'}`} />
               <span className={`font-bold text-sm ${!isAdvanced ? 'text-success-700 dark:text-success-400' : 'text-gray-700 dark:text-gray-300'}`}>
                 Quick
               </span>
@@ -360,7 +360,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             }`}
           >
             <div className="flex items-center gap-2 mb-1.5">
-              <SlidersHorizontal className={`w-5 h-5 ${isAdvanced ? 'text-primary-600' : 'text-gray-400 dark:text-gray-500'}`} />
+              <SlidersHorizontal className={`w-5 h-5 ${isAdvanced ? 'text-primary-600' : 'text-gray-500 dark:text-gray-400'}`} />
               <span className={`font-bold text-sm ${isAdvanced ? 'text-primary-700 dark:text-primary-400' : 'text-gray-700 dark:text-gray-300'}`}>
                 Advanced
               </span>
@@ -397,7 +397,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                   }`}>
                     {usageStats.limit_daily - usageStats.used_today}
                   </div>
-                  <div className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">left today</div>
+                  <div className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">left today</div>
                 </div>
                 <div className="w-px bg-gray-200 dark:bg-gray-700 self-stretch" />
                 <div className="text-center">
@@ -406,7 +406,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                   }`}>
                     {usageStats.limit_hourly - usageStats.used_this_hour}
                   </div>
-                  <div className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">left/hour</div>
+                  <div className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">left/hour</div>
                 </div>
               </div>
             ) : (

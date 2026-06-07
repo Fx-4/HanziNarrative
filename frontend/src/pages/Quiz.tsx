@@ -565,7 +565,7 @@ export default function Quiz() {
                   <span className="bg-primary-100 dark:bg-primary-950/40 text-primary-700 dark:text-primary-400 rounded-full px-3 py-1 text-sm font-semibold">
                     HSK {hskLevel}
                   </span>
-                  <span className="text-gray-400 dark:text-gray-500">•</span>
+                  <span className="text-gray-500 dark:text-gray-400">•</span>
                   <span className="text-sm sm:text-base font-semibold text-gray-700 dark:text-gray-300">
                     {quizTypes.find(t => t.value === quizType)?.label}
                   </span>

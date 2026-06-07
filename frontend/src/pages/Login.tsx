@@ -251,7 +251,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -294,7 +294,7 @@ export default function Login() {
               transition={{ delay: 0.33 }}
             >
               <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
-              <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">or continue with</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">or continue with</span>
               <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
             </motion.div>
 

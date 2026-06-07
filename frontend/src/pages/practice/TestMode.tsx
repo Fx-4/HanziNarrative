@@ -206,7 +206,7 @@ export default function TestMode({
               {passed ? (
                 <Trophy className="w-24 h-24 mx-auto text-yellow-500 dark:text-yellow-400" />
               ) : (
-                <Target className="w-24 h-24 mx-auto text-gray-400 dark:text-gray-500" />
+                <Target className="w-24 h-24 mx-auto text-gray-500 dark:text-gray-400" />
               )}
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">

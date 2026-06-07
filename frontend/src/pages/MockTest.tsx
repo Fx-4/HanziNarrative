@@ -1046,7 +1046,7 @@ export default function MockTest() {
                                     if (isAnswered) {
                                         if (i === q.correctIndex) btnClass = 'bg-success-50 dark:bg-success-950/30 border-2 border-success-400 text-success-800 dark:text-success-300'
                                         else if (i === selectedAnswer) btnClass = 'bg-error-50 dark:bg-error-950/30 border-2 border-error-400 text-error-800 dark:text-error-300'
-                                        else btnClass = 'bg-gray-50 dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-gray-400 dark:text-gray-500'
+                                        else btnClass = 'bg-gray-50 dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-gray-500 dark:text-gray-400'
                                     }
                                     return (
                                         <button key={i} onClick={() => handleAnswer(i)} disabled={isAnswered}

@@ -146,7 +146,7 @@ export default function StrokeOrderLookup() {
                 {/* Left: character info */}
                 <div className="flex flex-col items-center gap-3">
                   <span className="text-8xl font-chinese text-gray-800 dark:text-gray-200 leading-none">{lookupChar}</span>
-                  <span className="text-xs text-gray-400 dark:text-gray-500">U+{lookupChar.charCodeAt(0).toString(16).toUpperCase()}</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">U+{lookupChar.charCodeAt(0).toString(16).toUpperCase()}</span>
 
                   {/* Word info panel */}
                   {infoLoading ? (
@@ -173,7 +173,7 @@ export default function StrokeOrderLookup() {
                       )}
                     </div>
                   ) : (
-                    <p className="text-xs text-gray-400 dark:text-gray-500 italic">Info tidak ditemukan di database</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 italic">Info tidak ditemukan di database</p>
                   )}
                 </div>
 

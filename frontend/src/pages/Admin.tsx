@@ -78,7 +78,7 @@ function StatCard({ label, value, sub, color }: {
     >
       <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{label}</p>
       <p className={`text-3xl font-bold mt-1 ${color}`}>{value.toLocaleString()}</p>
-      {sub && <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{sub}</p>}
+      {sub && <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{sub}</p>}
     </motion.div>
   )
 }

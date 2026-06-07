@@ -251,7 +251,7 @@ export default function Dashboard() {
             </div>
           </div>
           {stale && (
-            <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">Cached · refreshing…</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">Cached · refreshing…</span>
           )}
         </div>
       </motion.div>

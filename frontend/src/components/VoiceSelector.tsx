@@ -120,7 +120,7 @@ export default function VoiceSelector({ compact = false }: VoiceSelectorProps) {
 
       {/* Speed control */}
       <div className="flex items-center gap-2">
-        <span className="text-xs text-gray-400 dark:text-gray-500 w-4 text-center">
+        <span className="text-xs text-gray-500 dark:text-gray-400 w-4 text-center">
           {speedInfo.icon}
         </span>
         <div className="flex bg-gray-100 dark:bg-gray-800 rounded-xl p-0.5 gap-0.5">

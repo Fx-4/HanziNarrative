@@ -172,7 +172,7 @@ export default function WritingSession({
             <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm sticky top-4 overflow-hidden">
               <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 dark:border-gray-700">
                 <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Characters</h3>
-                <span className="text-xs text-gray-400 dark:text-gray-500">{characters.length}</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">{characters.length}</span>
               </div>
               <div className="p-2.5 max-h-[calc(100vh-12rem)] overflow-y-auto scrollbar-thin">
                 <CharacterGrid

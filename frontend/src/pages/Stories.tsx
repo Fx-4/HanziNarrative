@@ -246,7 +246,7 @@ export default function Stories() {
               animate={{ scale: 1, opacity: 1 }}
             >
               <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 text-center py-12 px-6">
-                <BookOpen className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                <BookOpen className="w-16 h-16 text-gray-500 dark:text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-600 dark:text-gray-400 text-lg">
                   {searchQuery.trim()
                     ? `No stories match "${searchQuery}".`

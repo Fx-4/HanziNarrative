@@ -334,7 +334,7 @@ export default function WritingCanvas({
                 style={{ width: canvasSize, height: canvasSize }}
               >
                 <span className="text-6xl font-chinese text-gray-300 dark:text-gray-600 mb-2">{character.simplified}</span>
-                <p className="text-xs text-gray-400 dark:text-gray-500 text-center px-4">
+                <p className="text-xs text-gray-500 dark:text-gray-400 text-center px-4">
                   Data karakter tidak tersedia
                 </p>
               </div>
