@@ -146,7 +146,7 @@ function IntroCard({ step, onNext }: { step: StepIntro; onNext: () => void }) {
         <p className="text-primary-500 text-lg mt-2">{step.word.py}</p>
         <p className="text-gray-600 dark:text-gray-300 text-xl font-semibold mt-1">{step.word.en}</p>
         {step.word.note && (
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 max-w-xs mx-auto italic">{step.word.note}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 max-w-xs mx-auto italic">{step.word.note}</p>
         )}
       </div>
 
@@ -211,7 +211,7 @@ function MCQCard({ step, onCorrect, onWrong }: { step: StepMCQ; onCorrect: () =>
         {step.options.map((opt, i) => {
           const isSelected = selected === i
           const isCorrect = i === step.correct
-          let cls = 'border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200'
+          let cls = 'border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-surface-card text-gray-800 dark:text-gray-100'
           if (isSelected && isCorrect) cls = 'border-success-500 bg-success-50 dark:bg-success-950/40 text-success-700 dark:text-success-300'
           else if (isSelected && !isCorrect) cls = 'border-error-400 bg-error-50 dark:bg-error-950/40 text-error-700 dark:text-error-300'
           else if (selected !== null && isCorrect) cls = 'border-success-500 bg-success-50 dark:bg-success-950/40 text-success-700'
@@ -260,7 +260,7 @@ function MatchCard({ step, onNext }: { step: StepMatch; onNext: () => void }) {
     if (matched.has(val)) return 'border-success-400 bg-success-50 dark:bg-success-950/40 text-success-700 dark:text-success-300 opacity-60'
     if (flash === zhKey || flash === enKey) return 'border-error-400 bg-error-50 dark:bg-error-950/30 text-error-600'
     if (side === 'l' && leftSel === val) return 'border-primary-500 bg-primary-50 dark:bg-primary-950/50 text-primary-700 dark:text-primary-300'
-    return 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:border-primary-300 hover:bg-primary-50 dark:hover:bg-primary-950/30'
+    return 'border-gray-200 dark:border-gray-600 bg-white dark:bg-surface-card text-gray-700 dark:text-gray-300 hover:border-primary-300 hover:bg-primary-50 dark:hover:bg-primary-950/30'
   }
 
   return (
@@ -291,7 +291,7 @@ function MatchCard({ step, onNext }: { step: StepMatch; onNext: () => void }) {
         </div>
       </div>
       {matched.size < step.pairs.length * 2 && (
-        <p className="text-center text-xs text-gray-400">
+        <p className="text-center text-xs text-gray-500 dark:text-gray-400">
           {matched.size / 2} / {step.pairs.length} matched
         </p>
       )}
@@ -316,14 +316,14 @@ function FillCard({ step, onCorrect, onWrong }: { step: StepFill; onCorrect: () 
     <motion.div key={fb.sentence_zh} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
       <div className="bg-primary-50 dark:bg-primary-950/30 rounded-2xl p-4 text-center space-y-1">
         <p className="font-chinese text-2xl font-bold text-gray-900 dark:text-gray-100">{highlighted}</p>
-        <p className="text-xs text-gray-400 italic">{fb.sentence_en}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 italic">{fb.sentence_en}</p>
       </div>
       <p className="text-center text-sm font-semibold text-gray-600 dark:text-gray-400">Choose the correct word:</p>
       <div className="grid grid-cols-2 gap-2">
         {fb.options.map((opt, i) => {
           const isSel = selected === i
           const isCorr = i === fb.correct
-          let cls = 'border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200'
+          let cls = 'border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-surface-card text-gray-800 dark:text-gray-100'
           if (isSel && isCorr) cls = 'border-success-500 bg-success-50 dark:bg-success-950/40 text-success-700'
           else if (isSel && !isCorr) cls = 'border-error-400 bg-error-50 dark:bg-error-950/40 text-error-700'
           else if (selected !== null && isCorr) cls = 'border-success-500 bg-success-50 text-success-700'
@@ -536,11 +536,11 @@ export default function LearningSession() {
             {[
               { label: 'Skor',   value: `${score}%`,   color: score >= 70 ? 'text-success-600' : 'text-orange-600' },
               { label: 'Benar', value: correct,         color: 'text-success-600' },
-              { label: 'Salah', value: wrong,           color: wrong > 0 ? 'text-error-500' : 'text-gray-400' },
+              { label: 'Salah', value: wrong,           color: wrong > 0 ? 'text-error-500' : 'text-gray-500 dark:text-gray-400' },
             ].map(({ label, value, color }) => (
-              <div key={label} className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-3 text-center">
+              <div key={label} className="bg-gray-50 dark:bg-surface-card rounded-2xl p-3 text-center">
                 <p className={`text-2xl font-extrabold ${color}`}>{value}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{label}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{label}</p>
               </div>
             ))}
           </div>
@@ -558,7 +558,7 @@ export default function LearningSession() {
             </motion.div>
           )}
           {!isNew && (
-            <p className="text-xs text-gray-400">Session reviewed — no extra XP for repeats.</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Session reviewed — no extra XP for repeats.</p>
           )}
 
           {saving && <Loader2 className="w-5 h-5 animate-spin text-primary-500 mx-auto" />}
@@ -615,7 +615,7 @@ export default function LearningSession() {
             {/* Tertiary: replay */}
             <button
               onClick={() => { setCurrentIdx(0); setCorrect(0); setWrong(0); setDone(false); setStepKey(k => k + 1) }}
-              className="w-full py-2.5 text-gray-400 dark:text-gray-500 font-medium rounded-xl hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm"
+              className="w-full py-2.5 text-gray-500 dark:text-gray-400 font-medium rounded-xl hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm"
             >
               Ulangi Sesi
             </button>
@@ -644,7 +644,7 @@ export default function LearningSession() {
             transition={{ duration: 0.3 }}
           />
         </div>
-        <span className="text-xs text-gray-400 font-medium w-10 text-right">
+        <span className="text-xs text-gray-500 dark:text-gray-400 font-medium w-10 text-right">
           {currentIdx}/{steps.length}
         </span>
       </div>

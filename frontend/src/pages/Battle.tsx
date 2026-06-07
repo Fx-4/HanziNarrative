@@ -108,7 +108,7 @@ function EffectReferencePanel() {
                   ))}
                 </div>
               </div>
-              <p className="text-[10px] text-gray-400 dark:text-gray-500 text-center">Buffs/debuffs are randomly awarded after each question. Correct answers earn inventory items you can use strategically!</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 text-center">Buffs/debuffs are randomly awarded after each question. Correct answers earn inventory items you can use strategically!</p>
             </div>
           </motion.div>
         )}
@@ -346,7 +346,7 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-3 sm:p-5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-gray-100">Players ({gameState.players.length}/20)</h3>
-          <p className="text-xs text-gray-400 dark:text-gray-500">Waiting…</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">Waiting…</p>
         </div>
         <div className="space-y-2">
           {gameState.players.map(p => (
@@ -368,7 +368,7 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
               )}
             </div>
           ))}
-          {gameState.players.length === 0 && <p className="text-center py-4 text-gray-400 dark:text-gray-500 text-sm">No players yet</p>}
+          {gameState.players.length === 0 && <p className="text-center py-4 text-gray-500 dark:text-gray-400 text-sm">No players yet</p>}
         </div>
       </div>
 
@@ -402,7 +402,7 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
               {QTYPES.map(({ value, label, desc }) => (
                 <button key={value} onClick={() => setQType(value)} className={`p-2 rounded-xl text-center transition-all border-2 ${qType === value ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300'}`}>
                   <p className="text-xs sm:text-sm font-semibold">{label}</p>
-                  <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">{desc}</p>
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">{desc}</p>
                 </button>
               ))}
             </div>
@@ -425,10 +425,10 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
                       : color === 'emerald' ? 'border-success-500 bg-success-50 dark:bg-success-950/30 text-success-700 dark:text-success-300'
                         : color === 'rose' ? 'border-rose-500 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300'
                           : 'border-gray-400 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
-                    : 'border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-500 hover:border-gray-300'
+                    : 'border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-gray-300'
                     }`}>
                   <p className="text-xs sm:text-sm font-semibold">{label}</p>
-                  <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">{desc}</p>
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">{desc}</p>
                 </button>
               ))}
             </div>

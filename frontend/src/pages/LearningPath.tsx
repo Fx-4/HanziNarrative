@@ -98,10 +98,10 @@ export default function LearningPath() {
             { label: 'Total XP',     value: stats.total_xp,       icon: Star,         color: 'text-amber-500' },
             { label: 'Level Aktif',  value: `HSK ${activeLevel}`, icon: Trophy,       color: 'text-primary-500', str: true },
           ].map(({ label, value, icon: Icon, color, str }) => (
-            <div key={label} className="bg-white dark:bg-gray-900 rounded-2xl p-3 border border-gray-100 dark:border-gray-800 text-center shadow-sm">
+            <div key={label} className="bg-white dark:bg-surface-card rounded-2xl p-3 border border-gray-100 dark:border-gray-800 text-center shadow-sm">
               <Icon className={`w-4 h-4 ${color} mx-auto mb-1`} />
               <p className="text-lg font-extrabold text-gray-900 dark:text-gray-100">{str ? value : value}</p>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wide">{label}</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">{label}</p>
             </div>
           ))}
         </motion.div>
@@ -125,7 +125,7 @@ export default function LearningPath() {
             >
               HSK {lv}
               {count > 0 && (
-                <span className={`ml-1.5 text-[10px] ${isActive ? 'text-primary-200' : 'text-gray-400'}`}>
+                <span className={`ml-1.5 text-[10px] ${isActive ? 'text-primary-200' : 'text-gray-500 dark:text-gray-400'}`}>
                   {count}/{total}
                 </span>
               )}
@@ -138,7 +138,7 @@ export default function LearningPath() {
       {loading && (
         <div className="space-y-3">
           {[0, 1, 2, 3].map(i => (
-            <div key={i} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4 flex items-center gap-3">
+            <div key={i} className="bg-white dark:bg-surface-card rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4 flex items-center gap-3">
               {/* Emoji placeholder */}
               <Skeleton className="w-12 h-12 rounded-xl flex-shrink-0" />
               {/* Text + progress */}
@@ -179,7 +179,7 @@ export default function LearningPath() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: unitIdx * 0.05 }}
-                className={`bg-white dark:bg-gray-900 rounded-2xl border shadow-sm overflow-hidden transition-all ${
+                className={`bg-white dark:bg-surface-card rounded-2xl border shadow-sm overflow-hidden transition-all ${
                   isLocked
                     ? 'border-gray-200 dark:border-gray-800 opacity-60'
                     : 'border-gray-100 dark:border-gray-800'
@@ -197,7 +197,7 @@ export default function LearningPath() {
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wide">{unit.title}</p>
+                    <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{unit.title}</p>
                     <p className="font-bold text-gray-900 dark:text-gray-100 truncate">{unit.subtitle}</p>
                     {/* Progress bar */}
                     {!isLocked && (
@@ -208,14 +208,14 @@ export default function LearningPath() {
                             style={{ width: `${pct}%` }}
                           />
                         </div>
-                        <span className="text-[10px] text-gray-400 font-medium">{pct}%</span>
+                        <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">{pct}%</span>
                       </div>
                     )}
                   </div>
 
                   {!isLocked && (
                     <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                      <ChevronDown className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                      <ChevronDown className="w-4 h-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
                     </motion.div>
                   )}
                 </button>
@@ -252,10 +252,10 @@ export default function LearningPath() {
                                 }`}>{session.title}</p>
                                 <div className="flex items-center gap-1.5 mt-0.5">
                                   <Icon className={`w-3 h-3 ${status === 'locked' ? 'text-gray-300' : meta.color}`} />
-                                  <span className="text-[11px] text-gray-400">{meta.label}</span>
+                                  <span className="text-[11px] text-gray-500 dark:text-gray-400">{meta.label}</span>
                                   <span className="text-[11px] text-gray-300">·</span>
                                   <Zap className="w-3 h-3 text-amber-400" />
-                                  <span className="text-[11px] text-gray-400">{session.xp} XP</span>
+                                  <span className="text-[11px] text-gray-500 dark:text-gray-400">{session.xp} XP</span>
                                 </div>
                               </div>
 
