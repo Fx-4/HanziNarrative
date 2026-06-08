@@ -4,6 +4,14 @@ import { fetchTTSAudio } from '@/utils/ttsHelper'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { pinyin } from 'pinyin-pro'
+
+// pinyin-pro single-char lookup defaults to literary readings for some polyphones.
+// These particles are almost exclusively used with their grammatical (non-literary)
+// reading in HSK texts, so we override them here rather than globally (a global
+// customPinyin override would break compound words like 了解→liǎojiě in sentences).
+const PARTICLE_PINYIN: Record<string, string> = {
+  '了': 'le',   // particle (vs. liǎo = understand/finish — rare in HSK stories)
+}
 import { storiesApi, vocabularyApi } from '@/services/api'
 import { Story, HanziWord } from '@/types'
 import HanziWordPopup from '@/components/HanziWordPopup'
@@ -271,7 +279,7 @@ export default function StoryReader() {
 
   // Stable fallback — useCallback so PinyinText memo isn't defeated on re-renders
   const getPinyinFallback = useCallback(
-    (char: string) => pinyin(char, { toneType: 'symbol', type: 'array' })[0] || '',
+    (char: string) => PARTICLE_PINYIN[char] ?? (pinyin(char, { toneType: 'symbol', type: 'array' })[0] || ''),
     [],
   )
 
@@ -419,7 +427,7 @@ export default function StoryReader() {
 
             <div className="space-y-3">
               {uniqueChars.map((char, idx) => {
-                const charPinyin = pinyin(char, { toneType: 'symbol' })
+                const charPinyin = PARTICLE_PINYIN[char] ?? pinyin(char, { toneType: 'symbol' })
                 const isExpanded = selectedChar === char
                 return (
                   <motion.div

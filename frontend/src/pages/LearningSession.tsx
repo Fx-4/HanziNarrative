@@ -5,6 +5,11 @@ import { getSession, getUnitWords, ALL_UNITS, Word, GrammarPoint, FillBlank } fr
 import { learningPathApi, learningApi } from '@/services/api'
 import { fetchTTSAudio } from '@/utils/ttsHelper'
 import { pinyin as toPinyin } from 'pinyin-pro'
+
+// Single-char lookup override: 了 defaults to liǎo in isolation, but in HSK fill-
+// blank options it's always the particle "le". Full-sentence toPinyin() is context-
+// aware and already handles this correctly — only needed for per-char display.
+const PARTICLE_PINYIN: Record<string, string> = { '了': 'le' }
 import {
   Volume2, ChevronRight, CheckCircle, X, Star, Zap,
   ArrowLeft, Loader2, Trophy,
@@ -342,7 +347,7 @@ function FillCard({ step, onCorrect, onWrong }: { step: StepFill; onCorrect: () 
             >
               <span className="font-chinese text-xl font-bold leading-none">{opt}</span>
               <span className="text-[10px] font-mono font-normal opacity-70">
-                {toPinyin(opt, { toneType: 'symbol', type: 'string' })}
+                {PARTICLE_PINYIN[opt] ?? toPinyin(opt, { toneType: 'symbol', type: 'string' })}
               </span>
             </button>
           )
