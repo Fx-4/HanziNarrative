@@ -1,0 +1,197 @@
+{
+  "nav": {
+    "items": {
+      "review":          { "label": "Ulasan",           "desc": "Pengulangan terjadwal" },
+      "course":          { "label": "Kursus",           "desc": "Jalur belajar HSK" },
+      "stories":         { "label": "Cerita",           "desc": "" },
+      "stats":           { "label": "Statistik",        "desc": "Progres kamu" },
+      "profile":         { "label": "Profil",           "desc": "Akun kamu" },
+      "flashcards":      { "label": "Kartu Kosakata",   "desc": "Pengulangan terjadwal" },
+      "writing":         { "label": "Menulis",          "desc": "Kuas per kuas" },
+      "typing":          { "label": "Mengetik",         "desc": "Input pinyin" },
+      "speaking":        { "label": "Berbicara",        "desc": "Pengucapan" },
+      "dictation":       { "label": "Dikte",            "desc": "Mendengarkan" },
+      "quiz":            { "label": "Kuis",             "desc": "Pilihan ganda" },
+      "tones":           { "label": "Nada",             "desc": "Pelatih nada" },
+      "mockTest":        { "label": "Tes Simulasi",     "desc": "Simulasi ujian" },
+      "vocabulary":      { "label": "Kosakata",         "desc": "Jelajah kata" },
+      "storyBlanks":     { "label": "Isi Cerita",       "desc": "Isi bagian kosong dari cerita" },
+      "battle":          { "label": "Duel",             "desc": "Duel waktu nyata" },
+      "adventure":       { "label": "Petualangan",      "desc": "Cerita bercabang AI" },
+      "aiChat":          { "label": "Chat AI",          "desc": "Latihan percakapan" },
+      "matchGame":       { "label": "Cocokkan",         "desc": "Cocokkan kartu" },
+      "sentenceBuilder": { "label": "Susun Kalimat",    "desc": "Susun kata-kata" },
+      "storyChallenge":  { "label": "Tantangan Cerita", "desc": "Buka kunci cerita" },
+      "dailyChallenge":  { "label": "Tantangan Harian", "desc": "Satu cerita/hari · +30 XP" },
+      "dashboard":       { "label": "Dasbor",           "desc": "Statistik kamu" },
+      "leaderboard":     { "label": "Peringkat",        "desc": "Perbandingan" },
+      "bookmarks":       { "label": "Tersimpan",        "desc": "Cerita tersimpan" }
+    },
+    "sections": {
+      "daily":    "Harian",
+      "practice": "Latihan",
+      "play":     "Bermain",
+      "track":    "Pantau"
+    },
+    "auth": {
+      "login":    "Masuk",
+      "register": "Daftar",
+      "signIn":   "Masuk"
+    },
+    "user": {
+      "adminPanel": "Panel Admin",
+      "logout":     "Keluar",
+      "loggedOut":  "Berhasil keluar"
+    },
+    "a11y": {
+      "openMenu":  "Buka menu",
+      "closeMenu": "Tutup menu",
+      "lightMode": "Beralih ke Mode Terang",
+      "darkMode":  "Beralih ke Mode Gelap"
+    },
+    "review": {
+      "dueToday":    "{{count}} harus ditinjau",
+      "description": "Pengulangan terjadwal"
+    }
+  },
+
+  "landing": {
+    "nav": {
+      "whyStories": "Kenapa cerita?",
+      "features":   "Fitur",
+      "pricing":    "Harga",
+      "about":      "Tentang"
+    },
+    "badge": "Belajar Mandarin dengan AI",
+    "hero": {
+      "headline1":    "Kuasai Bahasa",
+      "headline2":    "Mandarin lewat cerita",
+      "sub":          "AI menghasilkan cerita imersif yang disesuaikan dengan level HSK kamu agar kosakata mudah diingat melalui konteks — bukan hafalan. Gratis selamanya.",
+      "ctaPrimary":   "Mulai belajar gratis",
+      "ctaSecondary": "Lihat cara kerjanya",
+      "trust":        "Tanpa kartu kredit · Tanpa iklan · HSK 1–6 lengkap"
+    },
+    "storyCard": {
+      "excerpt":      "Cuplikan cerita",
+      "vocabInStory": "Kosakata dalam cerita ini",
+      "quizUnlock":   "Kuis terbuka setelah kamu menyelesaikan cerita"
+    },
+    "floatingBadges": {
+      "storyCompleted": "Cerita selesai!",
+      "xpEarned":       "+50 XP diperoleh",
+      "quizScore":      "Nilai kuis",
+      "correct":        "92% benar"
+    },
+    "stats": {
+      "vocabWords":  "kata kosakata HSK",
+      "hskLevels":   "level HSK tersedia",
+      "storyGen":    "Generasi cerita",
+      "freeToStart": "Gratis untuk mulai"
+    },
+    "why": {
+      "badge": "Metode utama kami",
+      "title": "Kenapa cerita lebih efektif",
+      "sub":   "Flashcard tradisional memang berguna, tapi cerita lebih mudah diingat. Inilah ilmu di balik pendekatan kami.",
+      "pillars": {
+        "contextBeatsIsolation": {
+          "title": "Konteks mengalahkan isolasi",
+          "desc":  "Otak kamu mengingat kata 3× lebih baik ketika muncul dalam cerita bermakna, bukan daftar yang terpisah-pisah."
+        },
+        "calibratedToLevel": {
+          "title": "Disesuaikan dengan levelmu",
+          "desc":  "Setiap cerita AI hanya menggunakan kosakata yang sedang kamu pelajari — selalu menantang tapi tidak membebani."
+        },
+        "reinforcedWithQuizzes": {
+          "title": "Diperkuat dengan kuis",
+          "desc":  "Setiap cerita diakhiri dengan pertanyaan pemahaman. Kamu tidak hanya membaca — tapi aktif mengingat dan menerapkan."
+        }
+      },
+      "table": {
+        "method":      "Metode",
+        "weekRecall":  "Ingat 1 minggu",
+        "monthRecall": "Ingat 1 bulan",
+        "flashcards":  "Flashcard biasa",
+        "contextual":  "Membaca kontekstual",
+        "ourMethod":   "Cerita + SRS (kami)"
+      }
+    },
+    "features": {
+      "title": "Semua yang kamu butuhkan untuk mencapai HSK 6",
+      "sub":   "Satu platform, semua alat — dari kosakata pemula hingga kelancaran tingkat lanjut.",
+      "items": {
+        "aiStories":     { "title": "Cerita Buatan AI",        "desc": "Gemini AI menciptakan narasi imersif yang disesuaikan dengan level HSK kamu — kosakata hadir dalam konteks bermakna, bukan flashcard terpisah." },
+        "vocabulary":    { "title": "Kosakata HSK 1–6",        "desc": "1.536 kata terorganisir per level dengan pinyin, nada, definisi, dan contoh kalimat. Seluruh perjalanan HSK kamu dalam satu tempat." },
+        "srs":           { "title": "Pengulangan Terjadwal",   "desc": "Algoritma SRS kami menampilkan kata yang terlupakan pada waktu yang tepat — sehingga kamu mengingat lebih banyak dengan waktu ulasan lebih sedikit." },
+        "gamification":  { "title": "Gamifikasi",              "desc": "Kumpulkan XP, jaga streak harian, naiki papan peringkat, dan buka lencana pencapaian saat kamu menguasai setiap level HSK." },
+        "speaking":      { "title": "Berbicara & Mendengarkan","desc": "Pelatih nada, dikte, dan latihan pengucapan. Nada bahasa Mandarin itu sulit — kami berikan alat khusus untuk menguasainya." },
+        "practiceModes": { "title": "10+ Mode Latihan",        "desc": "Flashcard, mengetik, menulis kuas, kuis, susun kalimat, permainan mencocokkan, simulasi ujian HSK — semua dalam satu aplikasi." }
+      }
+    },
+    "pricing": {
+      "title": "Harga yang sederhana dan transparan",
+      "sub":   "Mulai gratis. Upgrade kalau ingin cerita lebih banyak.",
+      "month": "/bulan",
+      "free": {
+        "badge": "Gratis selamanya",
+        "cta":   "Mulai gratis",
+        "features": [
+          "Akses penuh kosakata HSK 1–6",
+          "Cerita buatan AI (5/bulan)",
+          "Sesi ulasan pengulangan terjadwal",
+          "Flashcard, mengetik & latihan menulis",
+          "Gamifikasi, XP & papan peringkat",
+          "Latihan berbicara & nada"
+        ]
+      },
+      "premium": {
+        "badge":      "Premium",
+        "comingSoon": "Segera hadir",
+        "features": [
+          "Cerita AI tanpa batas",
+          "Set kosakata khusus",
+          "Mode offline",
+          "Audio penutur asli",
+          "Analitik lanjutan & ekspor",
+          "Dukungan prioritas"
+        ]
+      }
+    },
+    "cta": {
+      "title":     "Siap memulai perjalananmu?",
+      "sub":       "Bergabunglah dengan para pelajar yang menguasai Mandarin lewat cerita. Gratis, tanpa kartu.",
+      "primary":   "Mulai belajar gratis",
+      "secondary": "Masuk"
+    },
+    "footer": {
+      "builtFor": "Dibuat untuk para pelajar.",
+      "about":    "Tentang",
+      "signIn":   "Masuk",
+      "register": "Daftar"
+    }
+  },
+
+  "auth": {
+    "login": {
+      "tagline":            "Kuasai Mandarin lewat cerita",
+      "subtitle":           "Belajar · Berlatih · Kuasai",
+      "welcome":            "Selamat datang kembali",
+      "signinSub":          "Masuk untuk melanjutkan perjalanan belajarmu",
+      "username":           "Nama pengguna",
+      "usernamePlaceholder":"Masukkan nama pengguna",
+      "password":           "Kata sandi",
+      "passwordPlaceholder":"Masukkan kata sandi",
+      "showPassword":       "Tampilkan kata sandi",
+      "hidePassword":       "Sembunyikan kata sandi",
+      "signingIn":          "Sedang masuk…",
+      "signIn":             "Masuk",
+      "orContinueWith":     "atau lanjutkan dengan",
+      "continueGoogle":     "Lanjutkan dengan Google",
+      "noAccount":          "Belum punya akun?",
+      "createOne":          "Buat akun",
+      "errors": {
+        "invalidCredentials": "Nama pengguna atau kata sandi salah",
+        "googleFailed":       "Login Google gagal. Silakan coba lagi."
+      }
+    }
+  }
+}

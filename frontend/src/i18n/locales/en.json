@@ -1,0 +1,197 @@
+{
+  "nav": {
+    "items": {
+      "review":          { "label": "Review",          "desc": "Spaced repetition" },
+      "course":          { "label": "Course",          "desc": "Learning path HSK" },
+      "stories":         { "label": "Stories",         "desc": "" },
+      "stats":           { "label": "Stats",           "desc": "Your progress" },
+      "profile":         { "label": "Profile",         "desc": "Your account" },
+      "flashcards":      { "label": "Flashcards",      "desc": "Spaced repetition" },
+      "writing":         { "label": "Writing",         "desc": "Stroke by stroke" },
+      "typing":          { "label": "Typing",          "desc": "Pinyin input" },
+      "speaking":        { "label": "Speaking",        "desc": "Pronunciation" },
+      "dictation":       { "label": "Dictation",       "desc": "Listening" },
+      "quiz":            { "label": "Quiz",            "desc": "Multiple choice" },
+      "tones":           { "label": "Tones",           "desc": "Tone trainer" },
+      "mockTest":        { "label": "Mock Test",       "desc": "Exam simulation" },
+      "vocabulary":      { "label": "Vocabulary",      "desc": "Word browser" },
+      "storyBlanks":     { "label": "Story Blanks",    "desc": "Fill blanks from stories" },
+      "battle":          { "label": "Battle",          "desc": "Real-time duel" },
+      "adventure":       { "label": "Adventure",       "desc": "AI branching story" },
+      "aiChat":          { "label": "AI Chat",         "desc": "Conversation practice" },
+      "matchGame":       { "label": "Match Game",      "desc": "Card matching" },
+      "sentenceBuilder": { "label": "Sentence Builder","desc": "Arrange words" },
+      "storyChallenge":  { "label": "Story Challenge", "desc": "Unlock stories" },
+      "dailyChallenge":  { "label": "Daily Challenge", "desc": "One story/day · +30 XP" },
+      "dashboard":       { "label": "Dashboard",       "desc": "Your stats" },
+      "leaderboard":     { "label": "Leaderboard",     "desc": "Rankings" },
+      "bookmarks":       { "label": "Bookmarks",       "desc": "Saved stories" }
+    },
+    "sections": {
+      "daily":    "Daily",
+      "practice": "Practice",
+      "play":     "Play",
+      "track":    "Track"
+    },
+    "auth": {
+      "login":    "Login",
+      "register": "Register",
+      "signIn":   "Sign in"
+    },
+    "user": {
+      "adminPanel":   "Admin Panel",
+      "logout":       "Logout",
+      "loggedOut":    "Logged out successfully"
+    },
+    "a11y": {
+      "openMenu":  "Open menu",
+      "closeMenu": "Close menu",
+      "lightMode": "Switch to Light Mode",
+      "darkMode":  "Switch to Dark Mode"
+    },
+    "review": {
+      "dueToday":   "{{count}} due today",
+      "description": "Spaced repetition"
+    }
+  },
+
+  "landing": {
+    "nav": {
+      "whyStories": "Why stories?",
+      "features":   "Features",
+      "pricing":    "Pricing",
+      "about":      "About"
+    },
+    "badge": "AI-powered Chinese learning",
+    "hero": {
+      "headline1":    "Master Chinese",
+      "headline2":    "through stories",
+      "sub":          "AI generates immersive stories calibrated to your HSK level so vocabulary sticks through context — not rote memorization. Free forever.",
+      "ctaPrimary":   "Start learning for free",
+      "ctaSecondary": "See how it works",
+      "trust":        "No credit card · No ads · HSK 1–6 included"
+    },
+    "storyCard": {
+      "excerpt":      "Story excerpt",
+      "vocabInStory": "Vocabulary in this story",
+      "quizUnlock":   "Quiz unlocks after you finish the story"
+    },
+    "floatingBadges": {
+      "storyCompleted": "Story completed!",
+      "xpEarned":       "+50 XP earned",
+      "quizScore":      "Quiz score",
+      "correct":        "92% correct"
+    },
+    "stats": {
+      "vocabWords":  "HSK vocabulary words",
+      "hskLevels":   "HSK levels covered",
+      "storyGen":    "Story generation",
+      "freeToStart": "Free to start"
+    },
+    "why": {
+      "badge": "Our core method",
+      "title": "Why stories work better",
+      "sub":   "Traditional flashcards work, but stories stick. Here's the science behind our approach.",
+      "pillars": {
+        "contextBeatsIsolation": {
+          "title": "Context beats isolation",
+          "desc":  "Your brain retains words 3× better when they appear in meaningful stories, not disconnected lists."
+        },
+        "calibratedToLevel": {
+          "title": "Calibrated to your level",
+          "desc":  "Every AI story uses only vocabulary you're learning — so it's always challenging but never overwhelming."
+        },
+        "reinforcedWithQuizzes": {
+          "title": "Reinforced with quizzes",
+          "desc":  "Each story ends with comprehension questions. You don't just read — you actively recall and apply."
+        }
+      },
+      "table": {
+        "method":      "Method",
+        "weekRecall":  "1-week recall",
+        "monthRecall": "1-month recall",
+        "flashcards":  "Isolated flashcards",
+        "contextual":  "Contextual reading",
+        "ourMethod":   "Stories + SRS (us)"
+      }
+    },
+    "features": {
+      "title": "Everything you need to reach HSK 6",
+      "sub":   "One platform, every tool — from beginner vocabulary to advanced fluency.",
+      "items": {
+        "aiStories":     { "title": "AI-Generated Stories",  "desc": "Gemini AI crafts immersive narratives calibrated to your HSK level — vocabulary lands in meaningful context, not isolated flashcards." },
+        "vocabulary":    { "title": "HSK 1–6 Vocabulary",    "desc": "1,536 words organized by level with pinyin, tones, definitions, and example sentences. Your entire HSK journey in one place." },
+        "srs":           { "title": "Spaced Repetition",     "desc": "Our SRS algorithm surfaces forgotten words at exactly the right moment — so you remember more with less review time." },
+        "gamification":  { "title": "Gamification",          "desc": "Earn XP, maintain daily streaks, climb the leaderboard, and unlock achievement badges as you master each HSK level." },
+        "speaking":      { "title": "Speaking & Listening",  "desc": "Tone trainer, dictation, and pronunciation practice. Chinese tones are hard — we give you dedicated tools to master them." },
+        "practiceModes": { "title": "10+ Practice Modes",    "desc": "Flashcards, typing, writing strokes, quizzes, sentence builder, matching game, mock HSK exam — all in one app." }
+      }
+    },
+    "pricing": {
+      "title": "Simple, transparent pricing",
+      "sub":   "Start free. Upgrade when you want more stories.",
+      "month": "/month",
+      "free": {
+        "badge": "Free forever",
+        "cta":   "Get started free",
+        "features": [
+          "Full HSK 1–6 vocabulary access",
+          "AI-generated stories (5/month)",
+          "Spaced repetition review sessions",
+          "Flashcards, typing & writing practice",
+          "Gamification, XP & leaderboard",
+          "Speaking & tone training"
+        ]
+      },
+      "premium": {
+        "badge":      "Premium",
+        "comingSoon": "Coming soon",
+        "features": [
+          "Unlimited AI stories",
+          "Custom vocabulary sets",
+          "Offline mode",
+          "Native speaker audio",
+          "Advanced analytics & exports",
+          "Priority support"
+        ]
+      }
+    },
+    "cta": {
+      "title":     "Ready to start your journey?",
+      "sub":       "Join learners mastering Chinese through stories. Free, no card needed.",
+      "primary":   "Start learning for free",
+      "secondary": "Sign in"
+    },
+    "footer": {
+      "builtFor": "Built for learners.",
+      "about":    "About",
+      "signIn":   "Sign in",
+      "register": "Register"
+    }
+  },
+
+  "auth": {
+    "login": {
+      "tagline":            "Master Chinese through stories",
+      "subtitle":           "Learn · Practice · Master",
+      "welcome":            "Welcome back",
+      "signinSub":          "Sign in to continue your learning journey",
+      "username":           "Username",
+      "usernamePlaceholder":"Enter your username",
+      "password":           "Password",
+      "passwordPlaceholder":"Enter your password",
+      "showPassword":       "Show password",
+      "hidePassword":       "Hide password",
+      "signingIn":          "Signing in…",
+      "signIn":             "Sign in",
+      "orContinueWith":     "or continue with",
+      "continueGoogle":     "Continue with Google",
+      "noAccount":          "Don't have an account?",
+      "createOne":          "Create one",
+      "errors": {
+        "invalidCredentials": "Invalid username or password",
+        "googleFailed":       "Google sign-in failed. Please try again."
+      }
+    }
+  }
+}
