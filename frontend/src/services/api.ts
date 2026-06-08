@@ -1006,6 +1006,52 @@ export const adminApi = {
   purgeTrash: async () => {
     await api.post('/admin/trash/purge')
   },
+
+  // ── Feedback Inbox ─────────────────────────────────────────────
+  getFeedback: async (params?: { page?: number; page_size?: number; type?: string; unread_only?: boolean }) => {
+    const response = await api.get('/feedback/admin', { params })
+    return response.data as {
+      feedbacks: FeedbackItem[]
+      total: number
+      unread_count: number
+    }
+  },
+
+  updateFeedback: async (id: number, data: { is_read?: boolean; is_resolved?: boolean }) => {
+    const response = await api.patch(`/feedback/admin/${id}`, data)
+    return response.data as FeedbackItem
+  },
+
+  deleteFeedback: async (id: number) => {
+    await api.delete(`/feedback/admin/${id}`)
+  },
+}
+
+// ── Feedback API (user-facing) ─────────────────────────────────────────────────
+
+export const feedbackApi = {
+  submit: async (data: {
+    type: string
+    subject: string
+    message: string
+    page_url?: string
+  }) => {
+    const response = await api.post('/feedback/', data)
+    return response.data as FeedbackItem
+  },
+}
+
+export interface FeedbackItem {
+  id: number
+  user_id: number | null
+  username: string | null
+  type: string
+  subject: string
+  message: string
+  page_url: string | null
+  is_read: boolean
+  is_resolved: boolean
+  created_at: string
 }
 
 export default api

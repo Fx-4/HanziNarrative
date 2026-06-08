@@ -42,6 +42,9 @@ const AuthCallback = lazy(() => import('./pages/AuthCallback'))
 const DailyChallenge = lazy(() => import('./pages/DailyChallenge'))
 const LearningPath = lazy(() => import('./pages/LearningPath'))
 const LearningSession = lazy(() => import('./pages/LearningSession'))
+const NotFound = lazy(() => import('./pages/NotFound'))
+const MaintenancePage = lazy(() => import('./pages/Maintenance'))
+const About = lazy(() => import('./pages/About'))
 
 // ── Backend warm-up banner (Koyeb free tier cold start) ──────────
 function BackendBanner() {
@@ -193,6 +196,8 @@ function App() {
         <Route path="/login" element={<LazyPage name="Login"><Login /></LazyPage>} />
         <Route path="/register" element={<LazyPage name="Register"><Register /></LazyPage>} />
         <Route path="/auth/callback" element={<LazyPage name="AuthCallback"><AuthCallback /></LazyPage>} />
+        <Route path="/about" element={<LazyPage name="About"><About /></LazyPage>} />
+        <Route path="/maintenance" element={<LazyPage name="Maintenance"><MaintenancePage /></LazyPage>} />
 
         {/* Onboarding route - requires auth */}
         <Route
@@ -254,6 +259,9 @@ function App() {
           <Route path="path" element={<LazyPage name="LearningPath"><LearningPath /></LazyPage>} />
           <Route path="path/session/:sessionId" element={<LazyPage name="LearningSession"><LearningSession /></LazyPage>} />
         </Route>
+
+        {/* 404 catch-all */}
+        <Route path="*" element={<LazyPage name="NotFound"><NotFound /></LazyPage>} />
       </Routes>
     </>
   )

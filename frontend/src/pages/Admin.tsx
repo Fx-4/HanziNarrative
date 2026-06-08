@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from 'react'
+﻿import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -8,9 +8,11 @@ import {
   LayoutDashboard, Users, BookOpen, Zap, LogOut, Shield, Search,
   Trash2, ChevronLeft, ChevronRight, Eye, EyeOff, ShieldCheck, ShieldOff,
   TrendingUp, FileText, Loader2, RefreshCw, AlertTriangle, Menu, X,
-  RotateCcw, Clock,
+  RotateCcw, Clock, Inbox, Bug, Lightbulb, MessageSquare, CheckCircle2,
+  Circle, Filter, ExternalLink,
 } from 'lucide-react'
 import { adminApi } from '@/services/api'
+import type { FeedbackItem } from '@/services/api'
 import { useAuthStore } from '@/store/authStore'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -58,7 +60,7 @@ interface AIEntry {
   timestamp: string
 }
 
-type Tab = 'overview' | 'users' | 'stories' | 'ai-usage' | 'trash'
+type Tab = 'overview' | 'users' | 'stories' | 'ai-usage' | 'trash' | 'inbox'
 
 const HSK_COLORS = ['#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
 
@@ -1056,6 +1058,245 @@ function TrashTab({ currentUserId }: { currentUserId: number }) {
   )
 }
 
+// ── Tab: Inbox ─────────────────────────────────────────────────────────────────
+
+const FEEDBACK_TYPE_META: Record<string, { label: string; icon: React.ElementType; color: string }> = {
+  general: { label: 'General', icon: MessageSquare, color: 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30' },
+  bug: { label: 'Bug', icon: Bug, color: 'text-error-600 dark:text-error-400 bg-error-50 dark:bg-error-900/30' },
+  feature: { label: 'Feature', icon: Lightbulb, color: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30' },
+  error: { label: 'Error', icon: AlertTriangle, color: 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30' },
+}
+
+function InboxTab({ onUnreadChange }: { onUnreadChange: (n: number) => void }) {
+  const [items, setItems] = useState<FeedbackItem[]>([])
+  const [total, setTotal] = useState(0)
+  const [page, setPage] = useState(1)
+  const [typeFilter, setTypeFilter] = useState<string>('')
+  const [unreadOnly, setUnreadOnly] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [actionId, setActionId] = useState<number | null>(null)
+  const [expanded, setExpanded] = useState<number | null>(null)
+  const unreadRef = useRef(0)
+
+  const PAGE_SIZE = 20
+
+  const load = useCallback(async () => {
+    try {
+      setLoading(true)
+      const data = await adminApi.getFeedback({
+        page,
+        page_size: PAGE_SIZE,
+        type: typeFilter || undefined,
+        unread_only: unreadOnly || undefined,
+      })
+      setItems(data.feedbacks)
+      setTotal(data.total)
+      unreadRef.current = data.unread_count
+      onUnreadChange(data.unread_count)
+    } finally {
+      setLoading(false)
+    }
+  }, [page, typeFilter, unreadOnly, onUnreadChange])
+
+  useEffect(() => { load() }, [load])
+
+  const handleMarkRead = async (item: FeedbackItem) => {
+    setActionId(item.id)
+    try {
+      const updated = await adminApi.updateFeedback(item.id, { is_read: !item.is_read })
+      setItems(prev => prev.map(f => f.id === item.id ? updated : f))
+      const delta = updated.is_read ? -1 : 1
+      unreadRef.current = Math.max(0, unreadRef.current + delta)
+      onUnreadChange(unreadRef.current)
+    } finally {
+      setActionId(null)
+    }
+  }
+
+  const handleMarkResolved = async (item: FeedbackItem) => {
+    setActionId(item.id)
+    try {
+      const updated = await adminApi.updateFeedback(item.id, { is_resolved: !item.is_resolved })
+      setItems(prev => prev.map(f => f.id === item.id ? updated : f))
+    } finally {
+      setActionId(null)
+    }
+  }
+
+  const handleDelete = async (item: FeedbackItem) => {
+    setActionId(item.id)
+    try {
+      await adminApi.deleteFeedback(item.id)
+      setItems(prev => prev.filter(f => f.id !== item.id))
+      setTotal(prev => prev - 1)
+    } finally {
+      setActionId(null)
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Filters */}
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-1.5 text-sm text-gray-500">
+          <Filter className="w-3.5 h-3.5" />
+        </div>
+        <select
+          value={typeFilter}
+          onChange={e => { setTypeFilter(e.target.value); setPage(1) }}
+          className="px-3 py-1.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
+        >
+          <option value="">All types</option>
+          {Object.entries(FEEDBACK_TYPE_META).map(([v, { label }]) => (
+            <option key={v} value={v}>{label}</option>
+          ))}
+        </select>
+        <button
+          onClick={() => { setUnreadOnly(o => !o); setPage(1) }}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium border cursor-pointer transition-colors ${
+            unreadOnly
+              ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border-primary-200 dark:border-primary-700'
+              : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
+          }`}
+        >
+          <Circle className="w-3.5 h-3.5" />
+          Unread only
+        </button>
+      </div>
+
+      {/* List */}
+      <div className="space-y-2">
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="w-5 h-5 animate-spin text-primary-500" />
+          </div>
+        ) : items.length === 0 ? (
+          <div className="flex flex-col items-center gap-3 py-16 text-gray-400">
+            <Inbox className="w-8 h-8" />
+            <p className="text-sm">No feedback yet</p>
+          </div>
+        ) : items.map(item => {
+          const meta = FEEDBACK_TYPE_META[item.type] ?? FEEDBACK_TYPE_META.general
+          const Icon = meta.icon
+          const isExpanded = expanded === item.id
+          return (
+            <motion.div
+              key={item.id}
+              layout
+              className={`bg-white dark:bg-gray-900 rounded-2xl border shadow-sm overflow-hidden transition-colors ${
+                item.is_read
+                  ? 'border-gray-100 dark:border-gray-800'
+                  : 'border-primary-200 dark:border-primary-800'
+              }`}
+            >
+              <div
+                className="flex items-start gap-3 p-4 cursor-pointer"
+                onClick={() => {
+                  setExpanded(isExpanded ? null : item.id)
+                  if (!item.is_read) handleMarkRead(item)
+                }}
+              >
+                {/* Unread dot */}
+                <div className="mt-0.5 shrink-0">
+                  {item.is_read
+                    ? <div className="w-2 h-2 rounded-full bg-gray-200 dark:bg-gray-700" />
+                    : <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse" />}
+                </div>
+
+                {/* Type badge */}
+                <span className={`shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-medium mt-0.5 ${meta.color}`}>
+                  <Icon className="w-3 h-3" />
+                  {meta.label}
+                </span>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className={`text-sm font-medium truncate ${item.is_read ? 'text-gray-700 dark:text-gray-300' : 'text-gray-900 dark:text-gray-100'}`}>
+                      {item.subject}
+                    </p>
+                    <span className="text-xs text-gray-400 shrink-0">
+                      {new Date(item.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    {item.username ?? 'Anonymous'}
+                    {item.page_url && (
+                      <> · <span className="font-mono">{item.page_url}</span></>
+                    )}
+                  </p>
+                  {!isExpanded && (
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 truncate">{item.message}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Expanded message */}
+              <AnimatePresence>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-4 pb-4 ml-5">
+                      <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed bg-gray-50 dark:bg-gray-800 rounded-xl p-3 mb-3">
+                        {item.message}
+                      </p>
+                      {item.page_url && (
+                        <p className="text-xs text-gray-400 flex items-center gap-1 mb-3">
+                          <ExternalLink className="w-3 h-3" />
+                          From page: <span className="font-mono">{item.page_url}</span>
+                        </p>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleMarkRead(item)}
+                          disabled={actionId === item.id}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transition-colors disabled:opacity-50"
+                        >
+                          {actionId === item.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : item.is_read ? <Circle className="w-3.5 h-3.5" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
+                          {item.is_read ? 'Mark unread' : 'Mark read'}
+                        </button>
+                        <button
+                          onClick={() => handleMarkResolved(item)}
+                          disabled={actionId === item.id}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors disabled:opacity-50 ${
+                            item.is_resolved
+                              ? 'bg-success-50 dark:bg-success-900/30 text-success-700 dark:text-success-400 hover:bg-success-100 dark:hover:bg-success-900/40'
+                              : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                          }`}
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          {item.is_resolved ? 'Resolved' : 'Mark resolved'}
+                        </button>
+                        <button
+                          onClick={() => handleDelete(item)}
+                          disabled={actionId === item.id}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-error-50 dark:bg-error-900/20 text-error-600 dark:text-error-400 hover:bg-error-100 dark:hover:bg-error-900/30 cursor-pointer transition-colors ml-auto disabled:opacity-50"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          )
+        })}
+      </div>
+
+      {total > PAGE_SIZE && (
+        <Pagination page={page} total={total} pageSize={PAGE_SIZE} onChange={setPage} />
+      )}
+    </div>
+  )
+}
+
 // ── Main Admin Page ────────────────────────────────────────────────────────────
 
 const NAV_ITEMS: { tab: Tab; label: string; icon: React.ElementType }[] = [
@@ -1063,6 +1304,7 @@ const NAV_ITEMS: { tab: Tab; label: string; icon: React.ElementType }[] = [
   { tab: 'users', label: 'Users', icon: Users },
   { tab: 'stories', label: 'Stories', icon: BookOpen },
   { tab: 'ai-usage', label: 'AI Usage', icon: Zap },
+  { tab: 'inbox', label: 'Inbox', icon: Inbox },
   { tab: 'trash', label: 'Trash', icon: Trash2 },
 ]
 
@@ -1070,6 +1312,7 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState<Tab>('overview')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [refreshKey, setRefreshKey] = useState(0)
+  const [unreadCount, setUnreadCount] = useState(0)
   const { user, logout } = useAuthStore()
   const navigate = useNavigate()
 
@@ -1155,7 +1398,12 @@ export default function Admin() {
               `}
             >
               <Icon className="w-4 h-4 shrink-0" />
-              {label}
+              <span className="flex-1">{label}</span>
+              {tab === 'inbox' && unreadCount > 0 && (
+                <span className="ml-auto inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold bg-primary-600 text-white">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
             </button>
           ))}
 
@@ -1202,6 +1450,7 @@ export default function Admin() {
               {activeTab === 'users' && <UsersTab currentUserId={user?.id ?? -1} />}
               {activeTab === 'stories' && <StoriesTab />}
               {activeTab === 'ai-usage' && <AIUsageTab />}
+              {activeTab === 'inbox' && <InboxTab onUnreadChange={setUnreadCount} />}
               {activeTab === 'trash' && <TrashTab currentUserId={user?.id ?? -1} />}
             </motion.div>
           </AnimatePresence>
