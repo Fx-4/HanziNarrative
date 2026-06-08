@@ -9,43 +9,64 @@ import {
 
 // ── Tech stack data ────────────────────────────────────────────────────────────
 
+// Static map so Tailwind JIT includes every class used in tooltips
+const TOOLTIP_COLORS: Record<string, { bg: string; border: string; arrow: string }> = {
+  cyan:    { bg: 'bg-cyan-700',    border: 'border-cyan-500/50',    arrow: 'border-t-cyan-700' },
+  violet:  { bg: 'bg-violet-700',  border: 'border-violet-500/50',  arrow: 'border-t-violet-700' },
+  sky:     { bg: 'bg-sky-600',     border: 'border-sky-400/50',     arrow: 'border-t-sky-600' },
+  pink:    { bg: 'bg-pink-600',    border: 'border-pink-400/50',    arrow: 'border-t-pink-600' },
+  red:     { bg: 'bg-red-700',     border: 'border-red-500/50',     arrow: 'border-t-red-700' },
+  orange:  { bg: 'bg-orange-600',  border: 'border-orange-400/50',  arrow: 'border-t-orange-600' },
+  purple:  { bg: 'bg-purple-700',  border: 'border-purple-500/50',  arrow: 'border-t-purple-700' },
+  slate:   { bg: 'bg-slate-700',   border: 'border-slate-500/50',   arrow: 'border-t-slate-700' },
+  amber:   { bg: 'bg-amber-700',   border: 'border-amber-500/50',   arrow: 'border-t-amber-700' },
+  lime:    { bg: 'bg-lime-700',    border: 'border-lime-500/50',    arrow: 'border-t-lime-700' },
+  emerald: { bg: 'bg-emerald-700', border: 'border-emerald-500/50', arrow: 'border-t-emerald-700' },
+  green:   { bg: 'bg-green-700',   border: 'border-green-500/50',   arrow: 'border-t-green-700' },
+  teal:    { bg: 'bg-teal-700',    border: 'border-teal-500/50',    arrow: 'border-t-teal-700' },
+  blue:    { bg: 'bg-blue-700',    border: 'border-blue-500/50',    arrow: 'border-t-blue-700' },
+  indigo:  { bg: 'bg-indigo-700',  border: 'border-indigo-500/50',  arrow: 'border-t-indigo-700' },
+  rose:    { bg: 'bg-rose-600',    border: 'border-rose-400/50',    arrow: 'border-t-rose-600' },
+  gray:    { bg: 'bg-gray-700',    border: 'border-gray-500/50',    arrow: 'border-t-gray-700' },
+}
+
 const TECH_STACK = [
   // Frontend
-  { label: 'React 18 + TypeScript', category: 'Frontend', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400', desc: 'Component-based UI dengan type safety penuh — mencegah bug di runtime sebelum deploy.' },
-  { label: 'Vite 5', category: 'Frontend', color: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400', desc: 'Dev server dengan HMR instan — build jauh lebih cepat dibanding Create React App.' },
-  { label: 'Tailwind CSS 3', category: 'Frontend', color: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400', desc: 'Utility-first dengan custom design tokens. Dark mode dan responsive layout jadi jauh lebih mudah.' },
-  { label: 'Framer Motion', category: 'Frontend', color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400', desc: 'Animasi halus dengan API deklaratif. Dipakai untuk page transition, card flip, dan micro-interactions.' },
-  { label: 'React Router v6', category: 'Frontend', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400', desc: 'Client-side routing dengan nested routes dan lazy loading per halaman.' },
-  { label: 'Zustand', category: 'Frontend', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400', desc: 'State management minimalis tanpa boilerplate Redux. Dipakai untuk auth state dan theme.' },
-  { label: 'Axios', category: 'Frontend', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400', desc: 'HTTP client dengan interceptor — auto token refresh dan retry request saat 401.' },
-  { label: 'Radix UI', category: 'Frontend', color: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300', desc: 'Accessible primitives (dialog, select, tabs, toast) yang unstyled — tinggal tambah Tailwind.' },
-  { label: 'hanzi-writer', category: 'Frontend', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', desc: 'Animasi stroke order karakter Hanzi secara interaktif — fitur utama latihan menulis.' },
-  { label: 'pinyin-pro', category: 'Frontend', color: 'bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400', desc: 'Konversi teks Mandarin ke pinyin dengan akurat, termasuk tanda nada.' },
-  { label: 'Recharts', category: 'Frontend', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400', desc: 'Chart progress belajar dan statistik XP di dashboard — berbasis SVG dan mudah dikustomisasi.' },
+  { label: 'React 18 + TypeScript', category: 'Frontend', tc: 'cyan',    color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400',       desc: 'Component-based UI dengan type safety penuh — mencegah bug di runtime sebelum deploy.' },
+  { label: 'Vite 5',                category: 'Frontend', tc: 'violet',  color: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400', desc: 'Dev server dengan HMR instan — build jauh lebih cepat dibanding Create React App.' },
+  { label: 'Tailwind CSS 3',        category: 'Frontend', tc: 'sky',     color: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400',             desc: 'Utility-first dengan custom design tokens. Dark mode dan responsive layout jadi jauh lebih mudah.' },
+  { label: 'Framer Motion',         category: 'Frontend', tc: 'pink',    color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400',         desc: 'Animasi halus dengan API deklaratif. Dipakai untuk page transition, card flip, dan micro-interactions.' },
+  { label: 'React Router v6',       category: 'Frontend', tc: 'red',     color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',             desc: 'Client-side routing dengan nested routes dan lazy loading per halaman.' },
+  { label: 'Zustand',               category: 'Frontend', tc: 'orange',  color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400', desc: 'State management minimalis tanpa boilerplate Redux. Dipakai untuk auth state dan theme.' },
+  { label: 'Axios',                 category: 'Frontend', tc: 'purple',  color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400', desc: 'HTTP client dengan interceptor — auto token refresh dan retry request saat 401.' },
+  { label: 'Radix UI',              category: 'Frontend', tc: 'slate',   color: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',         desc: 'Accessible primitives (dialog, select, tabs, toast) yang unstyled — tinggal tambah Tailwind.' },
+  { label: 'hanzi-writer',          category: 'Frontend', tc: 'amber',   color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',     desc: 'Animasi stroke order karakter Hanzi secara interaktif — fitur utama latihan menulis.' },
+  { label: 'pinyin-pro',            category: 'Frontend', tc: 'lime',    color: 'bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400',         desc: 'Konversi teks Mandarin ke pinyin dengan akurat, termasuk tanda nada.' },
+  { label: 'Recharts',              category: 'Frontend', tc: 'emerald', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400', desc: 'Chart progress belajar dan statistik XP di dashboard — berbasis SVG dan mudah dikustomisasi.' },
   // Backend
-  { label: 'FastAPI + Python 3.12', category: 'Backend', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400', desc: 'Framework async modern dengan auto-docs Swagger. Cocok untuk AI endpoints yang butuh streaming.' },
-  { label: 'Uvicorn', category: 'Backend', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400', desc: 'ASGI server yang cepat untuk menjalankan FastAPI di production.' },
-  { label: 'SQLAlchemy 2 + Alembic', category: 'Backend', color: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', desc: 'ORM untuk query database yang type-safe, Alembic untuk migration schema yang terstruktur.' },
-  { label: 'Pydantic v2', category: 'Backend', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400', desc: 'Validasi request dan response otomatis via type hints — error terdeteksi sebelum sampai ke database.' },
-  { label: 'python-jose + bcrypt', category: 'Backend', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400', desc: 'JWT untuk access & refresh token, bcrypt untuk hashing password yang aman.' },
+  { label: 'FastAPI + Python 3.12', category: 'Backend',  tc: 'emerald', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400', desc: 'Framework async modern dengan auto-docs Swagger. Cocok untuk AI endpoints yang butuh streaming.' },
+  { label: 'Uvicorn',               category: 'Backend',  tc: 'green',   color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',     desc: 'ASGI server yang cepat untuk menjalankan FastAPI di production.' },
+  { label: 'SQLAlchemy 2 + Alembic',category: 'Backend',  tc: 'teal',    color: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',         desc: 'ORM untuk query database yang type-safe, Alembic untuk migration schema yang terstruktur.' },
+  { label: 'Pydantic v2',           category: 'Backend',  tc: 'cyan',    color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400',         desc: 'Validasi request dan response otomatis via type hints — error terdeteksi sebelum sampai ke database.' },
+  { label: 'python-jose + bcrypt',  category: 'Backend',  tc: 'blue',    color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',         desc: 'JWT untuk access & refresh token, bcrypt untuk hashing password yang aman.' },
   // Database
-  { label: 'PostgreSQL', category: 'Database', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400', desc: 'Database relasional andal untuk menyimpan data user, progress belajar, dan kata kosakata.' },
-  { label: 'Supabase', category: 'Database', color: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400', desc: 'Hosted PostgreSQL dengan dashboard visual dan free tier yang cukup untuk skala project ini.' },
+  { label: 'PostgreSQL',            category: 'Database', tc: 'blue',    color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',         desc: 'Database relasional andal untuk menyimpan data user, progress belajar, dan kata kosakata.' },
+  { label: 'Supabase',              category: 'Database', tc: 'indigo',  color: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400', desc: 'Hosted PostgreSQL dengan dashboard visual dan free tier yang cukup untuk skala project ini.' },
   // AI / APIs
-  { label: 'Google Gemini', category: 'AI / APIs', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', desc: 'Primary AI — dipakai untuk generate cerita, conversation, dan badge. Paling konsisten dan cepat.' },
-  { label: 'Anthropic Claude', category: 'AI / APIs', color: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400', desc: 'Last-resort AI fallback dengan kemampuan reasoning yang sangat baik.' },
-  { label: 'Groq', category: 'AI / APIs', color: 'bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400', desc: 'Secondary AI fallback — inference sangat cepat berkat hardware LPU khusus.' },
-  { label: 'Mistral', category: 'AI / APIs', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400', desc: 'Tertiary AI fallback — model open source yang efisien untuk teks pendek.' },
-  { label: 'OpenRouter', category: 'AI / APIs', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400', desc: 'Gateway ke berbagai model AI — satu API key untuk banyak provider sekaligus.' },
-  { label: 'Cohere', category: 'AI / APIs', color: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', desc: 'AI fallback tambahan untuk memastikan availability tinggi meski satu provider down.' },
-  { label: 'Edge TTS', category: 'AI / APIs', color: 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', desc: 'Primary TTS — suara natural Microsoft, gratis, dan di-cache agar tidak generate ulang.' },
-  { label: 'Google Cloud TTS', category: 'AI / APIs', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400', desc: 'TTS fallback dengan kualitas premium dan pilihan suara Mandarin yang beragam.' },
-  { label: 'Google Cloud STT', category: 'AI / APIs', color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400', desc: 'Speech-to-text untuk fitur pronunciation practice — mendeteksi akurasi pelafalan.' },
-  { label: 'Pexels', category: 'AI / APIs', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400', desc: 'Gambar ilustrasi kosakata free royalty — memperkuat konteks visual saat belajar kata baru.' },
-  { label: 'Resend', category: 'AI / APIs', color: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300', desc: 'Email transaksional untuk fitur reset password — API sederhana dan deliverability tinggi.' },
+  { label: 'Google Gemini',         category: 'AI / APIs', tc: 'amber',  color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',     desc: 'Primary AI — dipakai untuk generate cerita, conversation, dan badge. Paling konsisten dan cepat.' },
+  { label: 'Anthropic Claude',      category: 'AI / APIs', tc: 'violet', color: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400', desc: 'Last-resort AI fallback dengan kemampuan reasoning yang sangat baik.' },
+  { label: 'Groq',                  category: 'AI / APIs', tc: 'lime',   color: 'bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400',         desc: 'Secondary AI fallback — inference sangat cepat berkat hardware LPU khusus.' },
+  { label: 'Mistral',               category: 'AI / APIs', tc: 'orange', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400', desc: 'Tertiary AI fallback — model open source yang efisien untuk teks pendek.' },
+  { label: 'OpenRouter',            category: 'AI / APIs', tc: 'cyan',   color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400',         desc: 'Gateway ke berbagai model AI — satu API key untuk banyak provider sekaligus.' },
+  { label: 'Cohere',                category: 'AI / APIs', tc: 'teal',   color: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',         desc: 'AI fallback tambahan untuk memastikan availability tinggi meski satu provider down.' },
+  { label: 'Edge TTS',              category: 'AI / APIs', tc: 'rose',   color: 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',         desc: 'Primary TTS — suara natural Microsoft, gratis, dan di-cache agar tidak generate ulang.' },
+  { label: 'Google Cloud TTS',      category: 'AI / APIs', tc: 'red',    color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',             desc: 'TTS fallback dengan kualitas premium dan pilihan suara Mandarin yang beragam.' },
+  { label: 'Google Cloud STT',      category: 'AI / APIs', tc: 'pink',   color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400',         desc: 'Speech-to-text untuk fitur pronunciation practice — mendeteksi akurasi pelafalan.' },
+  { label: 'Pexels',                category: 'AI / APIs', tc: 'green',  color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',     desc: 'Gambar ilustrasi kosakata free royalty — memperkuat konteks visual saat belajar kata baru.' },
+  { label: 'Resend',                category: 'AI / APIs', tc: 'slate',  color: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',         desc: 'Email transaksional untuk fitur reset password — API sederhana dan deliverability tinggi.' },
   // Deploy
-  { label: 'Vercel', category: 'Deploy', color: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300', desc: 'Deploy frontend — CI/CD otomatis dari GitHub, CDN global, dan preview per branch.' },
-  { label: 'Koyeb', category: 'Deploy', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400', desc: 'Deploy backend Python — free tier yang mendukung always-on dengan cold start yang wajar.' },
+  { label: 'Vercel',                category: 'Deploy',    tc: 'gray',   color: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',             desc: 'Deploy frontend — CI/CD otomatis dari GitHub, CDN global, dan preview per branch.' },
+  { label: 'Koyeb',                 category: 'Deploy',    tc: 'purple', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400', desc: 'Deploy backend Python — free tier yang mendukung always-on dengan cold start yang wajar.' },
 ]
 
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
@@ -85,9 +106,10 @@ const SOCIAL_LINKS = [
 
 // ── TechBadge with tooltip ─────────────────────────────────────────────────────
 
-function TechBadge({ label, color, desc }: { label: string; color: string; desc: string }) {
+function TechBadge({ label, color, desc, tc }: { label: string; color: string; desc: string; tc: string }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const tt = TOOLTIP_COLORS[tc] ?? TOOLTIP_COLORS.gray
 
   // Close on outside click (mobile)
   useEffect(() => {
@@ -117,10 +139,10 @@ function TechBadge({ label, color, desc }: { label: string; color: string; desc:
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 6, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-50 w-52 px-3 py-2.5 rounded-xl bg-gray-900 dark:bg-gray-800 border border-gray-700/50 text-white text-xs leading-relaxed shadow-2xl pointer-events-none text-center"
+            className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-50 w-52 px-3 py-2.5 rounded-xl ${tt.bg} border ${tt.border} text-white text-xs leading-relaxed shadow-2xl pointer-events-none text-center`}
           >
             {desc}
-            <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-gray-900 dark:border-t-gray-800" />
+            <div className={`absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent ${tt.arrow}`} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -249,7 +271,7 @@ export default function About() {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {items.map(t => (
-                      <TechBadge key={t.label} label={t.label} color={t.color} desc={t.desc} />
+                      <TechBadge key={t.label} label={t.label} color={t.color} desc={t.desc} tc={t.tc} />
                     ))}
                   </div>
                 </div>
