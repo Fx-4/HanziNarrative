@@ -164,6 +164,7 @@ export default function Landing() {
             <a href="#why"      className="hover:text-gray-900 transition-colors cursor-pointer">Why stories?</a>
             <a href="#features" className="hover:text-gray-900 transition-colors cursor-pointer">Features</a>
             <a href="#pricing"  className="hover:text-gray-900 transition-colors cursor-pointer">Pricing</a>
+            <Link to="/about"   className="hover:text-gray-900 transition-colors">About</Link>
           </nav>
 
           {/* Auth */}
@@ -691,6 +692,7 @@ export default function Landing() {
           </div>
           <span>© {new Date().getFullYear()} HanziNarrative. Built for learners.</span>
           <div className="flex items-center gap-4">
+            <Link to="/about"    className="hover:text-gray-600 transition-colors">About</Link>
             <Link to="/login"    className="hover:text-gray-600 transition-colors">Sign in</Link>
             <Link to="/register" className="hover:text-gray-600 transition-colors">Register</Link>
           </div>
