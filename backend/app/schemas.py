@@ -371,3 +371,14 @@ class FeedbackListResponse(BaseModel):
     feedbacks: List[FeedbackOut]
     total: int
     unread_count: int
+
+
+class FeedbackImproveRequest(BaseModel):
+    type: str = "general"
+    subject: str = Field(default="", max_length=200)
+    message: str = Field(min_length=10, max_length=2000)
+
+
+class FeedbackImproveResponse(BaseModel):
+    message: str
+    subject: str

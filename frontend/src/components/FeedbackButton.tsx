@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageSquarePlus, X, Bug, Lightbulb, MessageSquare, AlertTriangle, Loader2, CheckCircle } from 'lucide-react'
+import { MessageSquarePlus, X, Bug, Lightbulb, MessageSquare, AlertTriangle, Loader2, CheckCircle, Sparkles } from 'lucide-react'
 import { feedbackApi } from '@/services/api'
 import { useLocation } from 'react-router-dom'
 
@@ -15,6 +15,13 @@ const TYPES: { value: FeedbackType; label: string; icon: React.ElementType; colo
   { value: 'error', label: 'Error', icon: AlertTriangle, color: 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30 border-orange-200 dark:border-orange-700' },
 ]
 
+const TEMPLATES: Record<FeedbackType, string> = {
+  general: '',
+  bug: 'What happened:\n\n\nSteps to reproduce:\n1. \n2. \n\nExpected behavior:\n',
+  feature: 'Feature request:\n\n\nWhy it would be useful:\n\n\nPossible implementation (optional):\n',
+  error: 'Error encountered:\n\n\nWhen it happens:\n\n\nBrowser / Device:\n',
+}
+
 // ── Main component ─────────────────────────────────────────────────────────────
 
 export default function FeedbackButton() {
@@ -23,6 +30,7 @@ export default function FeedbackButton() {
   const [subject, setSubject] = useState('')
   const [message, setMessage] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [improving, setImproving] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const location = useLocation()
@@ -38,6 +46,28 @@ export default function FeedbackButton() {
   const handleClose = () => {
     setOpen(false)
     setTimeout(reset, 300)
+  }
+
+  const handleTypeChange = (newType: FeedbackType) => {
+    setType(newType)
+    if (!message.trim()) {
+      setMessage(TEMPLATES[newType])
+    }
+  }
+
+  const handleImprove = async () => {
+    if (!message.trim() || improving) return
+    setImproving(true)
+    setError(null)
+    try {
+      const result = await feedbackApi.improve({ type, subject, message })
+      setMessage(result.message)
+      if (result.subject && !subject.trim()) setSubject(result.subject)
+    } catch {
+      setError('AI improvement failed. Please try again.')
+    } finally {
+      setImproving(false)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -134,7 +164,7 @@ export default function FeedbackButton() {
                           <button
                             key={value}
                             type="button"
-                            onClick={() => setType(value)}
+                            onClick={() => handleTypeChange(value)}
                             className={`flex flex-col items-center gap-1 px-2 py-2 rounded-xl border text-xs font-medium cursor-pointer transition-all ${
                               selected
                                 ? color
@@ -178,7 +208,22 @@ export default function FeedbackButton() {
                       required
                       className="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-shadow resize-none"
                     />
-                    <p className="text-right text-xs text-gray-400 mt-1">{message.length}/2000</p>
+                    <div className="flex items-center justify-between mt-1">
+                      <button
+                        type="button"
+                        onClick={handleImprove}
+                        disabled={improving || !message.trim() || submitting}
+                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                      >
+                        {improving ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <Sparkles className="w-3 h-3" />
+                        )}
+                        {improving ? 'Improving…' : 'Improve with AI'}
+                      </button>
+                      <span className="text-xs text-gray-400">{message.length}/2000</span>
+                    </div>
                   </div>
 
                   {error && (

@@ -1039,6 +1039,11 @@ export const feedbackApi = {
     const response = await api.post('/feedback/', data)
     return response.data as FeedbackItem
   },
+
+  improve: async (data: { type: string; subject: string; message: string }) => {
+    const response = await api.post('/feedback/improve', data)
+    return response.data as { message: string; subject: string }
+  },
 }
 
 export interface FeedbackItem {

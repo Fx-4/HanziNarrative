@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from .. import models, schemas, auth
 from ..database import get_db
+from ..services.ai_provider import generate_json
 
 router = APIRouter(prefix="/feedback", tags=["feedback"])
 
@@ -25,6 +26,33 @@ async def submit_feedback(
     db.commit()
     db.refresh(fb)
     return fb
+
+
+@router.post("/improve", response_model=schemas.FeedbackImproveResponse)
+async def improve_feedback(
+    body: schemas.FeedbackImproveRequest,
+    _: models.User = Depends(auth.get_current_user),
+):
+    prompt = f"""You are helping a user write clear, constructive app feedback.
+
+Feedback type: {body.type}
+Current subject: "{body.subject}"
+Current message: "{body.message}"
+
+Rewrite the message to be clear, specific, and constructive. Preserve the original meaning.
+Also suggest a concise subject line (max 60 characters).
+
+Return JSON only, no extra text:
+{{"message": "improved message here", "subject": "suggested subject here"}}"""
+
+    try:
+        data, _ = await generate_json(prompt, max_tokens=600, temperature=0.4)
+        return {
+            "message": str(data.get("message", body.message))[:2000],
+            "subject": str(data.get("subject", body.subject))[:200],
+        }
+    except Exception:
+        raise HTTPException(status_code=503, detail="AI service unavailable, please try again")
 
 
 @router.get("/admin", response_model=schemas.FeedbackListResponse)
