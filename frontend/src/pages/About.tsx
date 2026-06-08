@@ -124,7 +124,7 @@ function TechBadge({ label, color, desc, tc }: { label: string; color: string; d
   return (
     <div
       ref={ref}
-      className="relative"
+      className="relative w-fit"
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
       onClick={() => setOpen(v => !v)}
