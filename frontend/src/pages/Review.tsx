@@ -358,10 +358,10 @@ export default function Review() {
                 Start New Session
               </button>
               <button
-                onClick={() => navigate('/path')}
+                onClick={() => navigate('/dashboard')}
                 className="border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:border-primary-300 hover:bg-primary-50 transition-all cursor-pointer"
               >
-                Lanjut Belajar
+                Lihat Progress
               </button>
             </div>
           </div>
