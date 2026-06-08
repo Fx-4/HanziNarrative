@@ -9,15 +9,28 @@ import {
 // ── Tech stack data ────────────────────────────────────────────────────────────
 
 const TECH_STACK = [
+  // Frontend
   { label: 'React 18 + TypeScript', category: 'Frontend', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400' },
   { label: 'Vite 5', category: 'Frontend', color: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400' },
   { label: 'Tailwind CSS 3', category: 'Frontend', color: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400' },
   { label: 'Framer Motion', category: 'Frontend', color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' },
+  { label: 'React Router v6', category: 'Frontend', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' },
   { label: 'Zustand', category: 'Frontend', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
-  { label: 'FastAPI + Python', category: 'Backend', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' },
-  { label: 'SQLAlchemy + Alembic', category: 'Backend', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
+  { label: 'Axios', category: 'Frontend', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' },
+  { label: 'Radix UI', category: 'Frontend', color: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300' },
+  { label: 'hanzi-writer', category: 'Frontend', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
+  { label: 'pinyin-pro', category: 'Frontend', color: 'bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400' },
+  { label: 'Recharts', category: 'Frontend', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' },
+  // Backend
+  { label: 'FastAPI + Python 3.12', category: 'Backend', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' },
+  { label: 'Uvicorn', category: 'Backend', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
+  { label: 'SQLAlchemy 2 + Alembic', category: 'Backend', color: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' },
+  { label: 'Pydantic v2', category: 'Backend', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400' },
+  { label: 'python-jose + bcrypt', category: 'Backend', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
+  // Database
   { label: 'PostgreSQL', category: 'Database', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
   { label: 'Supabase', category: 'Database', color: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' },
+  // AI / APIs
   { label: 'Google Gemini', category: 'AI / APIs', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
   { label: 'Anthropic Claude', category: 'AI / APIs', color: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400' },
   { label: 'Groq', category: 'AI / APIs', color: 'bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400' },
@@ -25,7 +38,13 @@ const TECH_STACK = [
   { label: 'OpenRouter', category: 'AI / APIs', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400' },
   { label: 'Cohere', category: 'AI / APIs', color: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' },
   { label: 'Edge TTS', category: 'AI / APIs', color: 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' },
-  { label: 'Vercel + Koyeb', category: 'Deploy', color: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' },
+  { label: 'Google Cloud TTS', category: 'AI / APIs', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' },
+  { label: 'Google Cloud STT', category: 'AI / APIs', color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' },
+  { label: 'Pexels', category: 'AI / APIs', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
+  { label: 'Resend', category: 'AI / APIs', color: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300' },
+  // Deploy
+  { label: 'Vercel', category: 'Deploy', color: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' },
+  { label: 'Koyeb', category: 'Deploy', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' },
 ]
 
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
