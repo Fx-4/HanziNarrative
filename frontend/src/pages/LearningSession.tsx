@@ -437,6 +437,8 @@ export default function LearningSession() {
     } finally {
       setSaving(false)
       setDone(true)
+      // Invalidate LearningPath cache so back-nav shows fresh progress
+      sessionStorage.setItem('lp-cache-invalid', '1')
     }
 
     // ── Compute next session ──────────────────────────────────────────────────
@@ -585,7 +587,7 @@ export default function LearningSession() {
             {/* Primary CTA: next session (if available) */}
             {nextSessionId ? (
               <button
-                onClick={() => navigate(`/session/${nextSessionId}`)}
+                onClick={() => navigate(`/path/session/${nextSessionId}`)}
                 className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors"
               >
                 <ChevronRight className="w-4 h-4" />

@@ -35,6 +35,15 @@ function unitProgress(unit: UnitDef, completed: Set<string>): number {
   return Math.round((done / unit.sessions.length) * 100)
 }
 
+// Module-level cache — survives re-mounts within the same page session
+type ProgressCache = {
+  completed: string[]
+  stats: { total_sessions: number; total_xp: number; by_hsk_level: Record<string, number> }
+}
+let _cache: ProgressCache | null = null
+let _cacheTs = 0
+const CACHE_TTL = 60_000 // 60 s — fresh enough, avoids loading flash on back-nav
+
 export default function LearningPath() {
   const [activeLevel, setActiveLevel] = useState(1)
   const [completed, setCompleted] = useState<Set<string>>(new Set())
@@ -47,25 +56,51 @@ export default function LearningPath() {
     loadProgress()
   }, [])
 
+  const applyProgress = (completedIds: string[], statsData: ProgressCache['stats']) => {
+    const set = new Set(completedIds)
+    setCompleted(set)
+    setStats(statsData)
+    // Auto-expand first in-progress unit of HSK 1
+    const units = CURRICULUM[1]
+    let expanded = false
+    for (const u of units) {
+      if (unitProgress(u, set) > 0 && unitProgress(u, set) < 100) {
+        setExpandedUnit(u.id)
+        expanded = true
+        break
+      }
+    }
+    if (!expanded) setExpandedUnit(CURRICULUM[1][0]?.id ?? null)
+  }
+
   const loadProgress = async () => {
-    setLoading(true)
+    const now = Date.now()
+    const cacheInvalid = sessionStorage.getItem('lp-cache-invalid')
+
+    // Serve cached data instantly to avoid loading flash (stale-while-revalidate)
+    if (_cache) {
+      applyProgress(_cache.completed, _cache.stats)
+      setLoading(false)
+      // If cache is fresh and not invalidated, skip network call entirely
+      if (!cacheInvalid && now - _cacheTs < CACHE_TTL) return
+    }
+
+    // Fetch fresh data (silently if we already have cache to show)
+    sessionStorage.removeItem('lp-cache-invalid')
+    if (!_cache) setLoading(true)
     setError(false)
+
     try {
       const [progress, statsData] = await Promise.all([
         learningPathApi.getProgress(),
         learningPathApi.getStats(),
       ])
-      setCompleted(new Set(progress.map((r: LessonProgressRecord) => r.session_id)))
-      setStats(statsData)
-      // Auto-expand the first unit that's in progress
-      const units = CURRICULUM[1]
-      for (const u of units) {
-        const pct = unitProgress(u, new Set(progress.map((r: LessonProgressRecord) => r.session_id)))
-        if (pct > 0 && pct < 100) { setExpandedUnit(u.id); break }
-      }
-      if (!expandedUnit) setExpandedUnit(CURRICULUM[1][0]?.id ?? null)
+      const completedIds = progress.map((r: LessonProgressRecord) => r.session_id)
+      _cache = { completed: completedIds, stats: statsData }
+      _cacheTs = Date.now()
+      applyProgress(completedIds, statsData)
     } catch {
-      setError(true)
+      if (!_cache) setError(true)
     } finally {
       setLoading(false)
     }
