@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hanzi-narrative.vercel.app/sitemap.xml
