@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo, useRef, Fragment } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { learningApi } from '@/services/api'
@@ -274,23 +274,26 @@ export default function Dashboard() {
         {[
           { Icon: BookOpen, label: 'Total Words',  value: overallStats.total_words_learning, bg: 'bg-primary-600',  shadow: 'shadow-primary-500/20' },
           { Icon: Award,    label: 'Mastered',     value: overallStats.mastered_words,       bg: 'bg-success-600', shadow: 'shadow-success-500/20' },
-          { Icon: Calendar, label: 'Due Today',    value: overallStats.due_for_review,       bg: 'bg-orange-500',  shadow: 'shadow-orange-500/20' },
+          { Icon: Calendar, label: 'Due Today',    value: overallStats.due_for_review,       bg: 'bg-orange-500',  shadow: 'shadow-orange-500/20', to: '/review' },
           { Icon: Target,   label: 'Accuracy',     value: overallStats.accuracy, suffix: '%', decimals: 1, bg: 'bg-violet-600', shadow: 'shadow-violet-500/20' },
-        ].map(({ Icon, label, value, suffix, decimals, bg, shadow }, i) => (
-          <motion.div
-            key={label}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 + i * 0.05 }}
-            className={`${bg} rounded-2xl p-4 text-white shadow-lg ${shadow}`}
-          >
-            <Icon className="w-5 h-5 mb-2 opacity-80" />
-            <p className="text-2xl font-extrabold leading-none">
-              <CountUp to={value} duration={1.2} suffix={suffix} decimals={decimals} />
-            </p>
-            <p className="text-xs mt-1 opacity-75">{label}</p>
-          </motion.div>
-        ))}
+        ].map(({ Icon, label, value, suffix, decimals, bg, shadow, to }, i) => {
+          const card = (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + i * 0.05 }}
+              className={`${bg} rounded-2xl p-4 text-white shadow-lg ${shadow}${to ? ' hover:opacity-90 transition-opacity' : ''}`}
+            >
+              <Icon className="w-5 h-5 mb-2 opacity-80" />
+              <p className="text-2xl font-extrabold leading-none">
+                <CountUp to={value} duration={1.2} suffix={suffix} decimals={decimals} />
+              </p>
+              <p className="text-xs mt-1 opacity-75">{label}</p>
+            </motion.div>
+          )
+          if (to) return <Link key={label} to={to} className="block">{card}</Link>
+          return <Fragment key={label}>{card}</Fragment>
+        })}
       </div>
 
       {/* ── Charts: Progress by HSK + Mastery Pie ───────────────────────── */}

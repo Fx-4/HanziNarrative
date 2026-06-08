@@ -21,7 +21,6 @@ const MockTest = lazy(() => import('./pages/MockTest'))
 const SentenceScramble = lazy(() => import('./pages/SentenceScramble'))
 const MatchingGame = lazy(() => import('./pages/MatchingGame'))
 const ToneTrainer = lazy(() => import('./pages/ToneTrainer'))
-const Practice = lazy(() => import('./pages/Practice'))
 const Review = lazy(() => import('./pages/Review'))
 const Writing = lazy(() => import('./pages/Writing'))
 const Typing = lazy(() => import('./pages/Typing'))
@@ -231,7 +230,6 @@ function App() {
           }
         >
           <Route index element={<LazyPage name="Home"><Home /></LazyPage>} />
-          <Route path="practice" element={<LazyPage name="Practice"><Practice /></LazyPage>} />
           <Route path="review" element={<LazyPage name="Review"><Review /></LazyPage>} />
           <Route path="flashcards" element={<LazyPage name="Flashcards"><Flashcards /></LazyPage>} />
           <Route path="dashboard" element={<LazyPage name="Dashboard"><Dashboard /></LazyPage>} />

@@ -12,8 +12,6 @@ import {
   Trophy,
   ArrowRight,
   RefreshCw,
-  BarChart3,
-  Zap,
   Star
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
@@ -55,7 +53,6 @@ export default function Review() {
     wrong: 0
   })
   const [hskLevel, setHskLevel] = useState<number | undefined>(undefined)
-  const [stats, setStats] = useState<{ total_words_learning: number; mastered_words: number; due_for_review: number; total_reviews: number; accuracy: number } | null>(null)
 
   // Active testing states
   const [quizQuestion, setQuizQuestion] = useState<QuizQuestion | null>(null)
@@ -70,7 +67,6 @@ export default function Review() {
       return
     }
     loadReviewWords()
-    loadStats()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, hskLevel])
 
@@ -132,19 +128,6 @@ export default function Review() {
     setShowQuizResult(false)
     setIsCorrectAnswer(false)
     setShowAnswer(false)
-  }
-
-  const loadStats = async () => {
-    try {
-      const data = await learningApi.getStats(hskLevel)
-      setStats(data.stats)
-    } catch (error) {
-      const err = error as { response?: { status?: number } }
-      // Silently fail for stats - not critical
-      if (err.response?.status !== 401 && err.response?.status !== 403) {
-        console.error('Failed to load stats:', error)
-      }
-    }
   }
 
   const handleQuizAnswer = (answerIndex: number) => {
@@ -315,46 +298,6 @@ export default function Review() {
           </div>
         </div>
 
-        {/* Stats Bar */}
-        {stats && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 mb-4">
-            <div className="bg-primary-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg shadow-primary-500/20">
-              <div className="flex items-center gap-1.5 mb-1 opacity-80">
-                <BarChart3 className="w-4 h-4" />
-                <span className="text-xs font-medium">Learning</span>
-              </div>
-              <div className="text-xl sm:text-2xl font-bold">{stats.total_words_learning}</div>
-            </div>
-            <div className="bg-success-500 rounded-2xl p-3 sm:p-4 text-white shadow-lg shadow-success-500/20">
-              <div className="flex items-center gap-1.5 mb-1 opacity-80">
-                <Trophy className="w-4 h-4" />
-                <span className="text-xs font-medium">Mastered</span>
-              </div>
-              <div className="text-xl sm:text-2xl font-bold">{stats.mastered_words}</div>
-            </div>
-            <div className="bg-orange-500 rounded-2xl p-3 sm:p-4 text-white shadow-lg shadow-orange-500/20">
-              <div className="flex items-center gap-1.5 mb-1 opacity-80">
-                <Clock className="w-4 h-4" />
-                <span className="text-xs font-medium">Due Today</span>
-              </div>
-              <div className="text-xl sm:text-2xl font-bold">{stats.due_for_review}</div>
-            </div>
-            <div className="bg-violet-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg shadow-violet-500/20">
-              <div className="flex items-center gap-1.5 mb-1 opacity-80">
-                <Zap className="w-4 h-4" />
-                <span className="text-xs font-medium">Total Reviews</span>
-              </div>
-              <div className="text-xl sm:text-2xl font-bold">{stats.total_reviews}</div>
-            </div>
-            <div className="bg-pink-500 rounded-2xl p-3 sm:p-4 text-white shadow-lg shadow-pink-500/20 col-span-2 sm:col-span-1">
-              <div className="flex items-center gap-1.5 mb-1 opacity-80">
-                <CheckCircle className="w-4 h-4" />
-                <span className="text-xs font-medium">Accuracy</span>
-              </div>
-              <div className="text-xl sm:text-2xl font-bold">{stats.accuracy.toFixed(0)}%</div>
-            </div>
-          </div>
-        )}
       </div>
 
       {reviewItems.length === 0 ? (
@@ -368,10 +311,10 @@ export default function Review() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
-                onClick={() => navigate('/practice')}
+                onClick={() => navigate('/path')}
                 className="bg-primary-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-primary-700 transition-all cursor-pointer"
               >
-                Start Learning New Words
+                Buka Kursus
               </button>
               <button
                 onClick={() => navigate('/vocabulary')}
@@ -415,10 +358,10 @@ export default function Review() {
                 Start New Session
               </button>
               <button
-                onClick={() => navigate('/practice')}
+                onClick={() => navigate('/path')}
                 className="border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:border-primary-300 hover:bg-primary-50 transition-all cursor-pointer"
               >
-                Practice More Words
+                Lanjut Belajar
               </button>
             </div>
           </div>
