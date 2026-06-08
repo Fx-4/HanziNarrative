@@ -36,6 +36,25 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     const name = this.props.name ?? 'Unknown'
+
+    // Stale chunk after a new deployment — auto-reload once.
+    // vite:preloadError in main.tsx handles this first, but this is the safety net.
+    const isChunkError =
+      error.message.includes('Failed to fetch dynamically imported module') ||
+      error.message.includes('Loading chunk') ||
+      error.message.includes('Importing a module script failed')
+    if (isChunkError) {
+      const RELOAD_KEY = 'vite_chunk_reload'
+      const alreadyReloaded = sessionStorage.getItem(RELOAD_KEY)
+      if (!alreadyReloaded) {
+        sessionStorage.setItem(RELOAD_KEY, '1')
+        window.location.reload()
+        return
+      }
+      // Second crash on same session → clear flag and show error UI normally
+      sessionStorage.removeItem(RELOAD_KEY)
+    }
+
     // Always log to console — visible in browser DevTools
     console.group(`%c[ErrorBoundary] Crash in: ${name}`, 'color: #ef4444; font-weight: bold; font-size: 14px;')
     console.error('Error:', error.message)
