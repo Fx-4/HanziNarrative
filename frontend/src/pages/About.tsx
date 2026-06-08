@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
-  Github, Mail, Linkedin, Instagram, ArrowLeft,
+  Github, Mail, Linkedin, ArrowLeft,
   Code2, Database, Server, Globe, Zap, BookOpen,
   ExternalLink, Heart,
 } from 'lucide-react'
@@ -18,7 +18,12 @@ const TECH_STACK = [
   { label: 'SQLAlchemy + Alembic', category: 'Backend', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
   { label: 'PostgreSQL', category: 'Database', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
   { label: 'Supabase', category: 'Database', color: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' },
-  { label: 'Google Gemini AI', category: 'AI / APIs', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
+  { label: 'Google Gemini', category: 'AI / APIs', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
+  { label: 'Anthropic Claude', category: 'AI / APIs', color: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400' },
+  { label: 'Groq', category: 'AI / APIs', color: 'bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400' },
+  { label: 'Mistral', category: 'AI / APIs', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
+  { label: 'OpenRouter', category: 'AI / APIs', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400' },
+  { label: 'Cohere', category: 'AI / APIs', color: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' },
   { label: 'Edge TTS', category: 'AI / APIs', color: 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' },
   { label: 'Vercel + Koyeb', category: 'Deploy', color: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' },
 ]
@@ -31,31 +36,30 @@ const CATEGORY_ICONS: Record<string, React.ElementType> = {
   'Deploy': Globe,
 }
 
-// Social links — fill in your own URLs
 const SOCIAL_LINKS = [
+  {
+    label: 'Portfolio',
+    icon: Globe,
+    href: 'https://f-4-work.vercel.app/',
+    color: 'hover:text-primary-600 dark:hover:text-primary-400',
+  },
   {
     label: 'GitHub',
     icon: Github,
-    href: 'https://github.com/haikalhelmy',
+    href: 'https://github.com/Fx-4',
     color: 'hover:text-gray-900 dark:hover:text-gray-100',
   },
   {
     label: 'LinkedIn',
     icon: Linkedin,
-    href: 'https://linkedin.com/in/haikalhelmy',
+    href: 'https://www.linkedin.com/in/haikal-helmy-875787305/',
     color: 'hover:text-blue-600 dark:hover:text-blue-400',
-  },
-  {
-    label: 'Instagram',
-    icon: Instagram,
-    href: 'https://instagram.com/haikalhelmy',
-    color: 'hover:text-pink-600 dark:hover:text-pink-400',
   },
   {
     label: 'Email',
     icon: Mail,
-    href: 'mailto:haikalhelmy14@gmail.com',
-    color: 'hover:text-primary-600 dark:hover:text-primary-400',
+    href: 'mailto:f4.code.work@gmail.com',
+    color: 'hover:text-emerald-600 dark:hover:text-emerald-400',
   },
 ]
 
@@ -201,11 +205,11 @@ export default function About() {
               Feedback sangat diapresiasi!
             </p>
             <a
-              href="mailto:haikalhelmy14@gmail.com"
+              href="mailto:f4.code.work@gmail.com"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-primary-600 text-white hover:bg-primary-700 transition-colors"
             >
               <Mail className="w-4 h-4" />
-              haikalhelmy14@gmail.com
+              f4.code.work@gmail.com
             </a>
           </div>
         </motion.section>
