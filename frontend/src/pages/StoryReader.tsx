@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { pinyin } from 'pinyin-pro'
 import { storiesApi, vocabularyApi } from '@/services/api'
 import { Story, HanziWord } from '@/types'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import HanziWordPopup from '@/components/HanziWordPopup'
 import WordDetailsModal from '@/components/WordDetailsModal'
 import { PinyinText } from '@/components/PinyinText'
@@ -652,8 +651,27 @@ export default function StoryReader() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner size="lg" />
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 py-6">
+        {/* Back button */}
+        <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-lg h-8 w-24 mb-6" />
+        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
+          {/* Header */}
+          <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-gray-800 space-y-3">
+            <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded h-8 w-3/4" />
+            <div className="flex gap-2">
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-full h-6 w-16" />
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-full h-6 w-20" />
+            </div>
+          </div>
+          {/* Story body lines */}
+          <div className="p-6 sm:p-8 space-y-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded h-6"
+                style={{ width: `${75 + (i % 3) * 10}%` }} />
+            ))}
+            <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded h-6 w-1/2" />
+          </div>
+        </div>
       </div>
     )
   }

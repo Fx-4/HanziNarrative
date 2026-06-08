@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { storiesApi } from '@/services/api'
 import { Story } from '@/types'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Heart, Calendar, BookOpen } from 'lucide-react'
 
 export default function MyBookmarks() {
@@ -87,10 +86,22 @@ export default function MyBookmarks() {
       </motion.div>
 
       {loading ? (
-        <motion.div className="text-center py-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <LoadingSpinner size="lg" />
-          <p className="text-gray-600 mt-4">Loading bookmarks...</p>
-        </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 shadow-sm">
+              <div className="flex justify-between items-start mb-4 pr-8">
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded h-6 w-3/4" />
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-full h-5 w-12 shrink-0" />
+              </div>
+              <div className="space-y-2 mb-4">
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded h-4 w-full" />
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded h-4 w-5/6" />
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded h-4 w-2/3" />
+              </div>
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded h-4 w-28" />
+            </div>
+          ))}
+        </div>
       ) : filteredBookmarks.length === 0 ? (
         <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 text-center py-16 px-6">

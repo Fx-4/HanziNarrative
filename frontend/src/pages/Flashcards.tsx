@@ -3,7 +3,6 @@ import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-mo
 import { useNavigate } from 'react-router-dom'
 import { learningApi } from '@/services/api'
 import { HanziWord } from '@/types'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import FlashcardContainer from '@/components/flashcard/FlashcardContainer'
 import {
   Brain,
@@ -347,8 +346,24 @@ export default function Flashcards() {
   // ─── Loading State ─────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner size="lg" />
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        {/* Progress bar skeleton */}
+        <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-6" />
+        {/* Card skeleton */}
+        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden mb-6">
+          <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-1.5" />
+          <div className="p-8 sm:p-12 flex flex-col items-center gap-6">
+            <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-3xl h-40 w-40" />
+            <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded h-4 w-36" />
+            <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-xl h-10 w-48" />
+          </div>
+        </div>
+        {/* Buttons skeleton */}
+        <div className="grid grid-cols-2 gap-3">
+          {[0,1,2,3].map(i => (
+            <div key={i} className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-2xl h-14" />
+          ))}
+        </div>
       </div>
     )
   }

@@ -2,7 +2,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { learningApi } from '@/services/api'
 import { HanziWord } from '@/types'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import AudioButton from '@/components/AudioButton'
 import {
   Brain,
@@ -30,6 +29,45 @@ interface QuizQuestion {
   type: QuizMode
   options: string[]
   correctIndex: number
+}
+
+function Sk({ className }: { className: string }) {
+  return <div className={`animate-pulse bg-gray-200 dark:bg-gray-700 rounded-lg ${className}`} />
+}
+
+function ReviewSkeleton() {
+  return (
+    <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+          <div className="space-y-2">
+            <Sk className="h-8 w-60 rounded-xl" />
+            <Sk className="h-4 w-80" />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {[0,1,2,3,4].map(i => <Sk key={i} className="h-8 w-16 rounded-xl" />)}
+          </div>
+        </div>
+      </div>
+      {/* Card */}
+      <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+        <Sk className="h-1.5 rounded-none" />
+        <div className="p-8 md:p-10">
+          <div className="flex flex-col items-center gap-4 mb-8">
+            <Sk className="h-36 w-36 rounded-3xl" />
+            <Sk className="h-5 w-52" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+            {[0,1,2,3].map(i => <Sk key={i} className="h-16 rounded-2xl" />)}
+          </div>
+          <div className="flex justify-center">
+            <Sk className="h-12 w-52 rounded-2xl" />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function Review() {
@@ -256,13 +294,7 @@ export default function Review() {
     )
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner size="lg" />
-      </div>
-    )
-  }
+  if (loading) return <ReviewSkeleton />
 
   const currentItem = reviewItems[currentIndex]
   const isSessionComplete = sessionStats.completed >= reviewItems.length
