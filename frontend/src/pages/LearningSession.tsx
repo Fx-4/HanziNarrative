@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { getSession, getUnitWords, ALL_UNITS, Word, GrammarPoint, FillBlank } from '@/data/curriculum'
 import { learningPathApi, learningApi } from '@/services/api'
 import { fetchTTSAudio } from '@/utils/ttsHelper'
+import { pinyin as toPinyin } from 'pinyin-pro'
 import {
   Volume2, ChevronRight, CheckCircle, X, Star, Zap,
   ArrowLeft, Loader2, Trophy,
@@ -19,6 +20,11 @@ type StepMCQ = { kind: 'mcq'; question: string; promptZh?: string; options: stri
 type StepMatch = { kind: 'match'; pairs: { zh: string; en: string }[] }
 type StepFill = { kind: 'fill'; fb: FillBlank }
 type Step = StepIntro | StepGrammar | StepMCQ | StepMatch | StepFill
+
+// ── Session save / resume ─────────────────────────────────────────────────────
+const SESSION_SAVE_TTL = 2 * 60 * 60 * 1000 // 2 hours
+const getSaveKey = (id: string) => `session-save-${id}`
+type SessionSave = { steps: Step[]; currentIdx: number; correct: number; wrong: number; savedAt: number }
 
 // ── Exercise generation ────────────────────────────────────────────────────────
 
@@ -311,11 +317,14 @@ function FillCard({ step, onCorrect, onWrong }: { step: StepFill; onCorrect: () 
   }
 
   const highlighted = fb.sentence_zh.replace('___', '＿＿＿')
+  // Generate pinyin for the sentence; ___ stays as-is (non-Chinese)
+  const sentencePy = toPinyin(fb.sentence_zh, { toneType: 'symbol', type: 'string' })
 
   return (
     <motion.div key={fb.sentence_zh} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
       <div className="bg-primary-50 dark:bg-primary-950/30 rounded-2xl p-4 text-center space-y-1">
         <p className="font-chinese text-2xl font-bold text-gray-900 dark:text-gray-100">{highlighted}</p>
+        <p className="text-xs font-mono text-primary-500 leading-relaxed">{sentencePy}</p>
         <p className="text-xs text-gray-500 dark:text-gray-400 italic">{fb.sentence_en}</p>
       </div>
       <p className="text-center text-sm font-semibold text-gray-600 dark:text-gray-400">Choose the correct word:</p>
@@ -329,8 +338,13 @@ function FillCard({ step, onCorrect, onWrong }: { step: StepFill; onCorrect: () 
           else if (selected !== null && isCorr) cls = 'border-success-500 bg-success-50 text-success-700'
           return (
             <button key={i} onClick={() => pick(i)}
-              className={`py-3 rounded-xl font-chinese text-xl font-bold transition-all ${cls}`}
-            >{opt}</button>
+              className={`py-2 rounded-xl transition-all flex flex-col items-center gap-0.5 ${cls}`}
+            >
+              <span className="font-chinese text-xl font-bold leading-none">{opt}</span>
+              <span className="text-[10px] font-mono font-normal opacity-70">
+                {toPinyin(opt, { toneType: 'symbol', type: 'string' })}
+              </span>
+            </button>
           )
         })}
       </div>
@@ -361,29 +375,63 @@ export default function LearningSession() {
     if (!sessionId) return
     const found = getSession(sessionId)
     if (!found) return
-
     const { session, unit } = found
+
+    // ── Resume saved mid-session progress ──────────────────────────────────
+    try {
+      const raw = sessionStorage.getItem(getSaveKey(sessionId))
+      if (raw) {
+        const save: SessionSave = JSON.parse(raw)
+        const fresh = Date.now() - save.savedAt < SESSION_SAVE_TTL
+        const resumable = Array.isArray(save.steps) && save.currentIdx > 0 && save.currentIdx < save.steps.length
+        if (fresh && resumable) {
+          setSteps(save.steps)
+          setCurrentIdx(save.currentIdx)
+          setCorrect(save.correct ?? 0)
+          setWrong(save.wrong ?? 0)
+          setStepKey(save.currentIdx)
+          toast('▶ Melanjutkan sesi yang belum selesai', { duration: 2500 })
+          return
+        }
+        sessionStorage.removeItem(getSaveKey(sessionId))
+      }
+    } catch {
+      sessionStorage.removeItem(getSaveKey(sessionId))
+    }
+
+    // ── Fresh start ─────────────────────────────────────────────────────────
     const practicePool = getUnitWords(unit.id)
     const generated = generateSteps(session.type, session.words, session.grammarPoints, practicePool)
     setSteps(generated)
 
     // Pre-warm TTS for all intro words in this session (fire-and-forget)
-    // By the time user reaches each card, audio is likely already in IndexedDB
     const introWords = generated
       .filter((s): s is StepIntro => s.kind === 'intro')
       .map(s => s.word.zh)
     if (introWords.length > 0) {
       const token = localStorage.getItem('access_token')
       if (token) {
-        // Stagger requests 300ms apart to avoid hammering the backend
         introWords.forEach((zh, i) => {
           setTimeout(() => {
-            fetchTTSAudio({ text: zh }).catch(() => { /* silent — best-effort */ })
+            fetchTTSAudio({ text: zh }).catch(() => { /* silent */ })
           }, i * 300)
         })
       }
     }
   }, [sessionId])
+
+  // Auto-save progress after each step (skip idx=0 — nothing to resume from start)
+  useEffect(() => {
+    if (!sessionId || steps.length === 0 || done || currentIdx === 0) return
+    const save: SessionSave = { steps, currentIdx, correct, wrong, savedAt: Date.now() }
+    try { sessionStorage.setItem(getSaveKey(sessionId), JSON.stringify(save)) }
+    catch { /* storage quota */ }
+  }, [currentIdx]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Clear save when session is fully completed
+  useEffect(() => {
+    if (done && sessionId) sessionStorage.removeItem(getSaveKey(sessionId))
+  }, [done, sessionId])
 
   const goNext = useCallback(() => {
     setCurrentIdx(i => i + 1)
@@ -616,7 +664,10 @@ export default function LearningSession() {
 
             {/* Tertiary: replay */}
             <button
-              onClick={() => { setCurrentIdx(0); setCorrect(0); setWrong(0); setDone(false); setStepKey(k => k + 1) }}
+              onClick={() => {
+                if (sessionId) sessionStorage.removeItem(getSaveKey(sessionId))
+                setCurrentIdx(0); setCorrect(0); setWrong(0); setDone(false); setStepKey(k => k + 1)
+              }}
               className="w-full py-2.5 text-gray-500 dark:text-gray-400 font-medium rounded-xl hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm"
             >
               Ulangi Sesi
