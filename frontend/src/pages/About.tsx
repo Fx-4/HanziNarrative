@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Github, Mail, Linkedin, ArrowLeft,
@@ -10,41 +11,41 @@ import {
 
 const TECH_STACK = [
   // Frontend
-  { label: 'React 18 + TypeScript', category: 'Frontend', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400' },
-  { label: 'Vite 5', category: 'Frontend', color: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400' },
-  { label: 'Tailwind CSS 3', category: 'Frontend', color: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400' },
-  { label: 'Framer Motion', category: 'Frontend', color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' },
-  { label: 'React Router v6', category: 'Frontend', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' },
-  { label: 'Zustand', category: 'Frontend', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
-  { label: 'Axios', category: 'Frontend', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' },
-  { label: 'Radix UI', category: 'Frontend', color: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300' },
-  { label: 'hanzi-writer', category: 'Frontend', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
-  { label: 'pinyin-pro', category: 'Frontend', color: 'bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400' },
-  { label: 'Recharts', category: 'Frontend', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' },
+  { label: 'React 18 + TypeScript', category: 'Frontend', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400', desc: 'Component-based UI dengan type safety penuh — mencegah bug di runtime sebelum deploy.' },
+  { label: 'Vite 5', category: 'Frontend', color: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400', desc: 'Dev server dengan HMR instan — build jauh lebih cepat dibanding Create React App.' },
+  { label: 'Tailwind CSS 3', category: 'Frontend', color: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400', desc: 'Utility-first dengan custom design tokens. Dark mode dan responsive layout jadi jauh lebih mudah.' },
+  { label: 'Framer Motion', category: 'Frontend', color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400', desc: 'Animasi halus dengan API deklaratif. Dipakai untuk page transition, card flip, dan micro-interactions.' },
+  { label: 'React Router v6', category: 'Frontend', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400', desc: 'Client-side routing dengan nested routes dan lazy loading per halaman.' },
+  { label: 'Zustand', category: 'Frontend', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400', desc: 'State management minimalis tanpa boilerplate Redux. Dipakai untuk auth state dan theme.' },
+  { label: 'Axios', category: 'Frontend', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400', desc: 'HTTP client dengan interceptor — auto token refresh dan retry request saat 401.' },
+  { label: 'Radix UI', category: 'Frontend', color: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300', desc: 'Accessible primitives (dialog, select, tabs, toast) yang unstyled — tinggal tambah Tailwind.' },
+  { label: 'hanzi-writer', category: 'Frontend', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', desc: 'Animasi stroke order karakter Hanzi secara interaktif — fitur utama latihan menulis.' },
+  { label: 'pinyin-pro', category: 'Frontend', color: 'bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400', desc: 'Konversi teks Mandarin ke pinyin dengan akurat, termasuk tanda nada.' },
+  { label: 'Recharts', category: 'Frontend', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400', desc: 'Chart progress belajar dan statistik XP di dashboard — berbasis SVG dan mudah dikustomisasi.' },
   // Backend
-  { label: 'FastAPI + Python 3.12', category: 'Backend', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' },
-  { label: 'Uvicorn', category: 'Backend', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
-  { label: 'SQLAlchemy 2 + Alembic', category: 'Backend', color: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' },
-  { label: 'Pydantic v2', category: 'Backend', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400' },
-  { label: 'python-jose + bcrypt', category: 'Backend', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
+  { label: 'FastAPI + Python 3.12', category: 'Backend', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400', desc: 'Framework async modern dengan auto-docs Swagger. Cocok untuk AI endpoints yang butuh streaming.' },
+  { label: 'Uvicorn', category: 'Backend', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400', desc: 'ASGI server yang cepat untuk menjalankan FastAPI di production.' },
+  { label: 'SQLAlchemy 2 + Alembic', category: 'Backend', color: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', desc: 'ORM untuk query database yang type-safe, Alembic untuk migration schema yang terstruktur.' },
+  { label: 'Pydantic v2', category: 'Backend', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400', desc: 'Validasi request dan response otomatis via type hints — error terdeteksi sebelum sampai ke database.' },
+  { label: 'python-jose + bcrypt', category: 'Backend', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400', desc: 'JWT untuk access & refresh token, bcrypt untuk hashing password yang aman.' },
   // Database
-  { label: 'PostgreSQL', category: 'Database', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
-  { label: 'Supabase', category: 'Database', color: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' },
+  { label: 'PostgreSQL', category: 'Database', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400', desc: 'Database relasional andal untuk menyimpan data user, progress belajar, dan kata kosakata.' },
+  { label: 'Supabase', category: 'Database', color: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400', desc: 'Hosted PostgreSQL dengan dashboard visual dan free tier yang cukup untuk skala project ini.' },
   // AI / APIs
-  { label: 'Google Gemini', category: 'AI / APIs', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
-  { label: 'Anthropic Claude', category: 'AI / APIs', color: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400' },
-  { label: 'Groq', category: 'AI / APIs', color: 'bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400' },
-  { label: 'Mistral', category: 'AI / APIs', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
-  { label: 'OpenRouter', category: 'AI / APIs', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400' },
-  { label: 'Cohere', category: 'AI / APIs', color: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' },
-  { label: 'Edge TTS', category: 'AI / APIs', color: 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' },
-  { label: 'Google Cloud TTS', category: 'AI / APIs', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' },
-  { label: 'Google Cloud STT', category: 'AI / APIs', color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' },
-  { label: 'Pexels', category: 'AI / APIs', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
-  { label: 'Resend', category: 'AI / APIs', color: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300' },
+  { label: 'Google Gemini', category: 'AI / APIs', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', desc: 'Primary AI — dipakai untuk generate cerita, conversation, dan badge. Paling konsisten dan cepat.' },
+  { label: 'Anthropic Claude', category: 'AI / APIs', color: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400', desc: 'Last-resort AI fallback dengan kemampuan reasoning yang sangat baik.' },
+  { label: 'Groq', category: 'AI / APIs', color: 'bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400', desc: 'Secondary AI fallback — inference sangat cepat berkat hardware LPU khusus.' },
+  { label: 'Mistral', category: 'AI / APIs', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400', desc: 'Tertiary AI fallback — model open source yang efisien untuk teks pendek.' },
+  { label: 'OpenRouter', category: 'AI / APIs', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400', desc: 'Gateway ke berbagai model AI — satu API key untuk banyak provider sekaligus.' },
+  { label: 'Cohere', category: 'AI / APIs', color: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', desc: 'AI fallback tambahan untuk memastikan availability tinggi meski satu provider down.' },
+  { label: 'Edge TTS', category: 'AI / APIs', color: 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', desc: 'Primary TTS — suara natural Microsoft, gratis, dan di-cache agar tidak generate ulang.' },
+  { label: 'Google Cloud TTS', category: 'AI / APIs', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400', desc: 'TTS fallback dengan kualitas premium dan pilihan suara Mandarin yang beragam.' },
+  { label: 'Google Cloud STT', category: 'AI / APIs', color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400', desc: 'Speech-to-text untuk fitur pronunciation practice — mendeteksi akurasi pelafalan.' },
+  { label: 'Pexels', category: 'AI / APIs', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400', desc: 'Gambar ilustrasi kosakata free royalty — memperkuat konteks visual saat belajar kata baru.' },
+  { label: 'Resend', category: 'AI / APIs', color: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300', desc: 'Email transaksional untuk fitur reset password — API sederhana dan deliverability tinggi.' },
   // Deploy
-  { label: 'Vercel', category: 'Deploy', color: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' },
-  { label: 'Koyeb', category: 'Deploy', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' },
+  { label: 'Vercel', category: 'Deploy', color: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300', desc: 'Deploy frontend — CI/CD otomatis dari GitHub, CDN global, dan preview per branch.' },
+  { label: 'Koyeb', category: 'Deploy', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400', desc: 'Deploy backend Python — free tier yang mendukung always-on dengan cold start yang wajar.' },
 ]
 
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
@@ -82,7 +83,52 @@ const SOCIAL_LINKS = [
   },
 ]
 
-// ── Component ──────────────────────────────────────────────────────────────────
+// ── TechBadge with tooltip ─────────────────────────────────────────────────────
+
+function TechBadge({ label, color, desc }: { label: string; color: string; desc: string }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  // Close on outside click (mobile)
+  useEffect(() => {
+    if (!open) return
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [open])
+
+  return (
+    <div
+      ref={ref}
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      onClick={() => setOpen(v => !v)}
+    >
+      <span className={`px-2.5 py-1 rounded-lg text-xs font-medium cursor-default select-none ${color}`}>
+        {label}
+      </span>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: 6, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 6, scale: 0.95 }}
+            transition={{ duration: 0.15 }}
+            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-50 w-52 px-3 py-2.5 rounded-xl bg-gray-900 dark:bg-gray-800 border border-gray-700/50 text-white text-xs leading-relaxed shadow-2xl pointer-events-none text-center"
+          >
+            {desc}
+            <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-gray-900 dark:border-t-gray-800" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
 
 function fade(delay = 0) {
   return {
@@ -91,6 +137,8 @@ function fade(delay = 0) {
     transition: { delay, duration: 0.4 },
   }
 }
+
+// ── Page ───────────────────────────────────────────────────────────────────────
 
 export default function About() {
   const categories = [...new Set(TECH_STACK.map(t => t.category))]
@@ -112,7 +160,6 @@ export default function About() {
 
         {/* ── Hero ─────────────────────────────────────────────────── */}
         <motion.section {...fade(0)} className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
-          {/* Avatar */}
           <div className="shrink-0">
             <img
               src="/1000305954.jpg"
@@ -121,7 +168,6 @@ export default function About() {
             />
           </div>
 
-          {/* Name + bio */}
           <div className="text-center sm:text-left">
             <div className="flex items-center gap-2 justify-center sm:justify-start mb-1">
               <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Haikal</h1>
@@ -136,7 +182,6 @@ export default function About() {
               aplikasi yang bermanfaat. Setiap fitur di sini lahir dari pengalaman belajar saya sendiri.
             </p>
 
-            {/* Social links */}
             <div className="flex items-center gap-3 mt-5 justify-center sm:justify-start">
               {SOCIAL_LINKS.map(({ label, icon: Icon, href, color }) => (
                 <a
@@ -187,10 +232,11 @@ export default function About() {
 
         {/* ── Tech Stack ───────────────────────────────────────────── */}
         <motion.section {...fade(0.15)}>
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-1">
             <Code2 className="w-5 h-5 text-primary-500" />
             <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Tech Stack</h2>
           </div>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mb-4 ml-7">Hover atau tap badge untuk lihat alasan pemilihannya</p>
           <div className="space-y-4">
             {categories.map(cat => {
               const Icon = CATEGORY_ICONS[cat] ?? Code2
@@ -203,9 +249,7 @@ export default function About() {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {items.map(t => (
-                      <span key={t.label} className={`px-2.5 py-1 rounded-lg text-xs font-medium ${t.color}`}>
-                        {t.label}
-                      </span>
+                      <TechBadge key={t.label} label={t.label} color={t.color} desc={t.desc} />
                     ))}
                   </div>
                 </div>
