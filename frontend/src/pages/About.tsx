@@ -114,9 +114,11 @@ export default function About() {
         <motion.section {...fade(0)} className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
           {/* Avatar */}
           <div className="shrink-0">
-            <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-primary-500 to-violet-600 flex items-center justify-center shadow-xl shadow-primary-500/20">
-              <span className="text-5xl font-bold text-white select-none">H</span>
-            </div>
+            <img
+              src="/1000305954.jpg"
+              alt="Haikal"
+              className="w-28 h-28 rounded-3xl object-cover shadow-xl shadow-primary-500/20"
+            />
           </div>
 
           {/* Name + bio */}
