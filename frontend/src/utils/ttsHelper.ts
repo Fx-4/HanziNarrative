@@ -11,6 +11,30 @@ import { getVoiceName, getSpeakingRate } from '@/utils/voicePreference'
 import { buildCacheKey, getAudio, saveAudio } from '@/utils/ttsCache'
 import { API_URL } from '@/lib/env'
 
+// Wraps browser SpeechSynthesis as a fake HTMLAudioElement so callers
+// get a consistent interface even when the backend is unreachable.
+function createSpeechShim(text: string, lang: string): HTMLAudioElement {
+  const utter = new SpeechSynthesisUtterance(text)
+  utter.lang = lang
+  const voices = speechSynthesis.getVoices()
+  const match = voices.find(v => v.lang.startsWith('zh'))
+  if (match) utter.voice = match
+
+  return {
+    play: () => new Promise<void>(resolve => {
+      utter.onend = () => resolve()
+      utter.onerror = () => resolve()
+      speechSynthesis.cancel()
+      speechSynthesis.speak(utter)
+    }),
+    pause: () => { speechSynthesis.cancel() },
+    get currentTime() { return 0 },
+    set currentTime(_: number) {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
+  } as unknown as HTMLAudioElement
+}
+
 interface TTSOptions {
   text: string
   speakingRate?: number
@@ -50,11 +74,21 @@ export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioEleme
   }
 
   // Layer 2: Backend (file cache → edge-tts on miss)
-  const response = await axios.post(
-    `${API_URL}/tts/synthesize`,
-    { text, language, voice_name: voice, speaking_rate: rate },
-    { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' }
-  )
+  let response
+  try {
+    response = await axios.post(
+      `${API_URL}/tts/synthesize`,
+      { text, language, voice_name: voice, speaking_rate: rate },
+      { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' }
+    )
+  } catch (err) {
+    // Network error (backend unreachable) → silent fallback to browser TTS
+    if (axios.isAxiosError(err) && !err.response && typeof speechSynthesis !== 'undefined') {
+      console.warn('[TTS] Backend unreachable, using browser TTS')
+      return createSpeechShim(text, language)
+    }
+    throw err
+  }
 
   const blob = response.data instanceof Blob
     ? response.data

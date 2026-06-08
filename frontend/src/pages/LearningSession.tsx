@@ -493,14 +493,27 @@ export default function LearningSession() {
 
     // ── Save to backend in background ─────────────────────────────────────────
     // Spinner shows on the completion screen while saving; XP pops in on resolve.
+    // Retries once after 5 s to handle Koyeb cold-start / transient network blips.
     setSaving(true)
     try {
-      const res = await learningPathApi.completeSession({
+      const payload = {
         session_id: session.id,
         unit_id: unit.id,
         hsk_level: unit.hsk_level,
         score,
-      })
+      }
+      let res = null
+      let lastErr: unknown
+      for (let attempt = 0; attempt < 2; attempt++) {
+        if (attempt > 0) await new Promise(r => setTimeout(r, 5000))
+        try {
+          res = await learningPathApi.completeSession(payload)
+          break
+        } catch (err) {
+          lastErr = err
+        }
+      }
+      if (!res) throw lastErr
       setXpEarned(res.xp_earned)
       setIsNew(res.is_new)
       // Seed vocab words into SRS so they appear in Review tomorrow
