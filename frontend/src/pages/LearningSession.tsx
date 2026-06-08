@@ -465,41 +465,20 @@ export default function LearningSession() {
     const total = correct + wrong
     const score = total > 0 ? Math.round((correct / total) * 100) : 100
 
-    setSaving(true)
-    try {
-      const res = await learningPathApi.completeSession({
-        session_id: session.id,
-        unit_id: unit.id,
-        hsk_level: unit.hsk_level,
-        score,
-      })
-      setXpEarned(res.xp_earned)
-      setIsNew(res.is_new)
+    // ── Show completion screen IMMEDIATELY (optimistic) ───────────────────────
+    // Don't wait for the API — user sees stars + score instantly.
+    // XP banner will pop in once the backend responds.
+    setDone(true)
+    sessionStorage.setItem('lp-cache-invalid', '1')
 
-      // Seed vocab words into SRS so they appear in Review tomorrow
-      if (session.words && session.words.length > 0) {
-        learningApi.seedWords(session.words.map(w => w.zh)).catch(() => {})
-      }
-    } catch {
-      toast.error('Gagal menyimpan progress')
-    } finally {
-      setSaving(false)
-      setDone(true)
-      // Invalidate LearningPath cache so back-nav shows fresh progress
-      sessionStorage.setItem('lp-cache-invalid', '1')
-    }
-
-    // ── Compute next session ──────────────────────────────────────────────────
+    // Compute next-session navigation synchronously (no API needed)
     const currentSessionIdx = unit.sessions.findIndex(s => s.id === session.id)
     const nextInUnit = unit.sessions[currentSessionIdx + 1]
-
     if (nextInUnit) {
-      // More sessions remain in this unit
       setNextSessionId(nextInUnit.id)
       setIsLastInUnit(false)
       setNextUnitInfo(null)
     } else {
-      // Last session in the unit — look for the next unit
       setIsLastInUnit(true)
       const unlockedUnits = ALL_UNITS.filter(u => !u.locked)
       const currentUnitIdx = unlockedUnits.findIndex(u => u.id === unit.id)
@@ -510,6 +489,28 @@ export default function LearningSession() {
       } else {
         setNextSessionId(null)
       }
+    }
+
+    // ── Save to backend in background ─────────────────────────────────────────
+    // Spinner shows on the completion screen while saving; XP pops in on resolve.
+    setSaving(true)
+    try {
+      const res = await learningPathApi.completeSession({
+        session_id: session.id,
+        unit_id: unit.id,
+        hsk_level: unit.hsk_level,
+        score,
+      })
+      setXpEarned(res.xp_earned)
+      setIsNew(res.is_new)
+      // Seed vocab words into SRS so they appear in Review tomorrow
+      if (session.words && session.words.length > 0) {
+        learningApi.seedWords(session.words.map(w => w.zh)).catch(() => {})
+      }
+    } catch {
+      toast.error('Gagal menyimpan progress — coba ulangi sesi')
+    } finally {
+      setSaving(false)
     }
   }
 
