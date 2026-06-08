@@ -16,10 +16,8 @@ import {
     Send
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
-import axios from 'axios'
 import BlurText from '@/components/animations/BlurText'
-import { getVoiceName } from '@/utils/voicePreference'
-import { API_URL } from '@/lib/env'
+import { fetchTTSAudio } from '@/utils/ttsHelper'
 
 interface DictationSentence {
     text: string
@@ -75,41 +73,20 @@ export default function Dictation() {
         if (!currentSentence || isPlaying) return
         setIsPlaying(true)
 
-        const token = localStorage.getItem('access_token')
-        if (token) {
-            try {
-                const response = await axios.post(
-                    `${API_URL}/tts/synthesize`,
-                    { text: currentSentence.text, language: 'cmn-CN', voice_name: getVoiceName(), speaking_rate: 0.75 },
-                    { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' }
-                )
-                const url = URL.createObjectURL(new Blob([response.data], { type: 'audio/mpeg' }))
-                const audio = new Audio(url)
-                audioRef.current = audio
-                audio.onended = () => { setIsPlaying(false); URL.revokeObjectURL(url) }
-                audio.onerror = () => { setIsPlaying(false); URL.revokeObjectURL(url) }
-                await audio.play()
-                return
-            } catch {
-                // fall through to browser TTS
-            }
+        try {
+            const audio = await fetchTTSAudio({ text: currentSentence.text, speakingRate: 0.75 })
+            audioRef.current = audio
+            audio.onended = () => setIsPlaying(false)
+            audio.onerror = () => setIsPlaying(false)
+            await audio.play()
+        } catch {
+            setIsPlaying(false)
         }
-
-        // Browser TTS fallback
-        const utterance = new SpeechSynthesisUtterance(currentSentence.text)
-        utterance.lang = 'zh-CN'
-        utterance.rate = 0.7
-        utterance.onend = () => setIsPlaying(false)
-        utterance.onerror = () => setIsPlaying(false)
-        window.speechSynthesis.speak(utterance)
     }
 
     const stopAudio = () => {
-        if (audioRef.current) {
-            audioRef.current.pause()
-            audioRef.current = null
-        }
-        window.speechSynthesis.cancel()
+        audioRef.current?.pause()
+        audioRef.current = null
         setIsPlaying(false)
     }
 

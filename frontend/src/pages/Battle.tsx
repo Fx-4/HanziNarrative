@@ -528,27 +528,13 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
   
   const speakChinese = useCallback(async (text: string) => {
     if (!text) return
-    if (audioRef.current) {
-        audioRef.current.pause()
-        audioRef.current = null
-    }
-    if (window.speechSynthesis) window.speechSynthesis.cancel()
-    
+    audioRef.current?.pause()
+    audioRef.current = null
+
     try {
         const audio = await playTTS({ text, speakingRate: 0.85 })
         audioRef.current = audio
-        await audio.play()
-    } catch {
-        if (!window.speechSynthesis) return
-        const utt = new SpeechSynthesisUtterance(text)
-        utt.lang = 'zh-CN'
-        utt.rate = 0.85
-        // Prefer a Chinese voice if available
-        const voices = window.speechSynthesis.getVoices()
-        const zh = voices.find(v => v.lang.startsWith('zh'))
-        if (zh) utt.voice = zh
-        window.speechSynthesis.speak(utt)
-    }
+    } catch { /* silent — shim fallback handled inside playTTS */ }
   }, [])
 
   // Auto-play for tone_select (the whole point is to hear the word)

@@ -24,10 +24,8 @@ import {
     MapPin
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
-import axios from 'axios'
 import BlurText from '@/components/animations/BlurText'
-import { getVoiceName } from '@/utils/voicePreference'
-import { API_URL } from '@/lib/env'
+import { fetchTTSAudio } from '@/utils/ttsHelper'
 
 interface Choice {
     id: number
@@ -180,32 +178,15 @@ export default function Adventure() {
         }
 
         setIsPlaying(true)
-        const token = localStorage.getItem('access_token')
-
-        if (token) {
-            try {
-                const response = await axios.post(
-                    `${API_URL}/tts/synthesize`,
-                    { text, language: 'cmn-CN', voice_name: getVoiceName(), speaking_rate: 0.85 },
-                    { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' }
-                )
-                const url = URL.createObjectURL(new Blob([response.data], { type: 'audio/mpeg' }))
-                const audio = new Audio(url)
-                setAudioRef(audio)
-                audio.onended = () => { setIsPlaying(false); URL.revokeObjectURL(url) }
-                audio.onerror = () => { setIsPlaying(false); URL.revokeObjectURL(url) }
-                await audio.play()
-                return
-            } catch {
-                // fallback
-            }
+        try {
+            const audio = await fetchTTSAudio({ text, speakingRate: 0.85 })
+            setAudioRef(audio)
+            audio.onended = () => setIsPlaying(false)
+            audio.onerror = () => setIsPlaying(false)
+            await audio.play()
+        } catch {
+            setIsPlaying(false)
         }
-
-        const utterance = new SpeechSynthesisUtterance(text)
-        utterance.lang = 'zh-CN'
-        utterance.rate = 0.8
-        utterance.onend = () => setIsPlaying(false)
-        window.speechSynthesis.speak(utterance)
     }
 
     const resetAdventure = () => {
@@ -215,7 +196,6 @@ export default function Adventure() {
         setStreamingText(null)
         setLoading(false)
         if (audioRef) { audioRef.pause(); setAudioRef(null) }
-        window.speechSynthesis.cancel()
         setIsPlaying(false)
     }
 

@@ -7,6 +7,7 @@ import {
   AlertCircle, BookOpen, Volume2, RotateCcw,
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { fetchTTSAudio } from '@/utils/ttsHelper'
 
 interface ConversationMessage {
   role: 'user' | 'assistant'
@@ -207,11 +208,11 @@ export default function Conversation() {
     }
   }
 
-  const speakText = (text: string) => {
-    const utterance = new SpeechSynthesisUtterance(text)
-    utterance.lang = 'zh-CN'
-    utterance.rate = 0.8
-    speechSynthesis.speak(utterance)
+  const speakText = async (text: string) => {
+    try {
+      const audio = await fetchTTSAudio({ text, speakingRate: 0.8 })
+      await audio.play()
+    } catch { /* silent fallback via shim */ }
   }
 
   const resetConversation = () => {

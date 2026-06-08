@@ -269,7 +269,6 @@ export default function MockTest() {
     useEffect(() => {
         return () => {
             timerAbortRef.current?.abort()
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel()
         }
     }, [])
 
@@ -277,11 +276,8 @@ export default function MockTest() {
     const audioRef = useRef<HTMLAudioElement | null>(null)
 
     const stopSpeech = useCallback(() => {
-        if (audioRef.current) {
-            audioRef.current.pause()
-            audioRef.current = null
-        }
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel()
+        audioRef.current?.pause()
+        audioRef.current = null
         setIsSpeaking(false)
     }, [])
 
@@ -296,19 +292,7 @@ export default function MockTest() {
             await audio.play()
         } catch (e) {
             // Fallback to browser
-            if (!('speechSynthesis' in window)) {
-                toast.error('Text-to-speech not supported in this browser', { id: 'tts-unsupported' })
-                setIsSpeaking(false)
-                return
-            }
-            const utt = new SpeechSynthesisUtterance(text)
-            utt.lang = 'zh-CN'
-            utt.rate = 0.85
-            utt.pitch = 1.0
-            utt.onstart = () => setIsSpeaking(true)
-            utt.onend = () => setIsSpeaking(false)
-            utt.onerror = () => setIsSpeaking(false)
-            window.speechSynthesis.speak(utt)
+            setIsSpeaking(false)
         }
     }, [stopSpeech])
 

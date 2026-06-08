@@ -13,6 +13,7 @@ import { API_URL } from '@/lib/env'
 
 // Wraps browser SpeechSynthesis as a fake HTMLAudioElement so callers
 // get a consistent interface even when the backend is unreachable.
+// onended / onerror are properly fired so callers can track play state.
 function createSpeechShim(text: string, lang: string): HTMLAudioElement {
   const utter = new SpeechSynthesisUtterance(text)
   utter.lang = lang
@@ -20,10 +21,18 @@ function createSpeechShim(text: string, lang: string): HTMLAudioElement {
   const match = voices.find(v => v.lang.startsWith('zh'))
   if (match) utter.voice = match
 
-  return {
+  // Use closure vars so property setters actually take effect
+  let _onended: (() => void) | null = null
+  let _onerror:  (() => void) | null = null
+
+  const shim = {
+    get onended() { return _onended },
+    set onended(fn: (() => void) | null) { _onended = fn },
+    get onerror()  { return _onerror },
+    set onerror(fn:  (() => void) | null) { _onerror = fn },
     play: () => new Promise<void>(resolve => {
-      utter.onend = () => resolve()
-      utter.onerror = () => resolve()
+      utter.onend   = () => { _onended?.(); resolve() }
+      utter.onerror = () => { _onerror?.();  resolve() }
       speechSynthesis.cancel()
       speechSynthesis.speak(utter)
     }),
@@ -32,7 +41,8 @@ function createSpeechShim(text: string, lang: string): HTMLAudioElement {
     set currentTime(_: number) {},
     addEventListener: () => {},
     removeEventListener: () => {},
-  } as unknown as HTMLAudioElement
+  }
+  return shim as unknown as HTMLAudioElement
 }
 
 interface TTSOptions {
