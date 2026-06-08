@@ -315,3 +315,59 @@ class TypingStatsResponse(BaseModel):
     mastered_words: int  # mastery_level >= 8
     words_in_progress: int  # mastery_level 3-7
     new_words: int  # mastery_level 0-2
+
+
+# ── Feedback Schemas ───────────────────────────────────────────────────────────
+
+class FeedbackCreate(BaseModel):
+    type: str = "general"
+    subject: str
+    message: str
+    page_url: Optional[str] = None
+
+    @field_validator('subject')
+    @classmethod
+    def subject_valid(cls, v: str) -> str:
+        v = v.strip()
+        if len(v) < 3:
+            raise ValueError('Subject must be at least 3 characters')
+        if len(v) > 200:
+            raise ValueError('Subject must be 200 characters or fewer')
+        return v
+
+    @field_validator('message')
+    @classmethod
+    def message_valid(cls, v: str) -> str:
+        v = v.strip()
+        if len(v) < 10:
+            raise ValueError('Message must be at least 10 characters')
+        if len(v) > 2000:
+            raise ValueError('Message must be 2000 characters or fewer')
+        return v
+
+
+class FeedbackOut(BaseModel):
+    id: int
+    user_id: Optional[int] = None
+    username: Optional[str] = None
+    type: str
+    subject: str
+    message: str
+    page_url: Optional[str] = None
+    is_read: bool
+    is_resolved: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class FeedbackUpdate(BaseModel):
+    is_read: Optional[bool] = None
+    is_resolved: Optional[bool] = None
+
+
+class FeedbackListResponse(BaseModel):
+    feedbacks: List[FeedbackOut]
+    total: int
+    unread_count: int
