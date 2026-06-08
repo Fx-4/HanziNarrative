@@ -4,6 +4,7 @@ import { forwardRef, type FC } from 'react'
 import { useAuthStore } from '@/store/authStore'
 import type { User as UserProfile } from '@/types'
 import { useThemeStore } from '@/store/themeStore'
+import { useTranslation } from 'react-i18next'
 import {
   BookOpen, BookMarked, User, LogOut, PenTool, GraduationCap, Brain,
   BarChart3, Type, ChevronDown, Menu, X, Moon, Sun,
@@ -15,19 +16,19 @@ import toast from 'react-hot-toast'
 import { useState, useEffect, useRef } from 'react'
 import { learningApi } from '@/services/api'
 import VoiceSelector from '@/components/VoiceSelector'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 type NavIcon = FC<{ className?: string }>
 
 interface MenuItem {
   to: string
-  label: string
+  key: string
   icon: NavIcon
   badge?: boolean
-  description?: string
 }
 
 interface DropdownMenu {
-  label: string
+  key: string
   icon: NavIcon
   items: MenuItem[]
   cols?: 1 | 2
@@ -56,50 +57,55 @@ const itemVariants = {
 
 /* ─── Navigation data ─── */
 
-// Primary links — always visible in desktop bar
 const primaryLinks: MenuItem[] = [
-  { to: '/review',     label: 'Review',  icon: Brain,      badge: true },
-  { to: '/path',       label: 'Kursus',  icon: Route },
-  { to: '/stories',    label: 'Stories', icon: BookOpen },
-  { to: '/dashboard',  label: 'Stats',   icon: BarChart3 },
+  { to: '/review',    key: 'review',  icon: Brain,    badge: true },
+  { to: '/path',      key: 'course',  icon: Route },
+  { to: '/stories',   key: 'stories', icon: BookOpen },
+  { to: '/dashboard', key: 'stats',   icon: BarChart3 },
 ]
 
-// Dropdown menus
 const dropdownMenus: DropdownMenu[] = [
   {
-    label: 'Practice',
+    key: 'practice',
     icon: GraduationCap,
     cols: 2,
     items: [
-      { to: '/flashcards',      label: 'Flashcards',      icon: Layers,       description: 'Spaced repetition' },
-      { to: '/writing',         label: 'Writing',          icon: PenTool,      description: 'Stroke by stroke' },
-      { to: '/typing',          label: 'Typing',           icon: Keyboard,     description: 'Pinyin input' },
-      { to: '/speaking',        label: 'Speaking',         icon: Mic,          description: 'Pronunciation' },
-      { to: '/dictation',       label: 'Dictation',        icon: Headphones,   description: 'Listening' },
-      { to: '/quiz',            label: 'Quiz',             icon: Target,       description: 'Multiple choice' },
-      { to: '/tones',           label: 'Tones',            icon: Music,        description: 'Tone trainer' },
-      { to: '/mock-test',       label: 'Mock Test',        icon: GraduationCap,description: 'Exam simulation' },
-      { to: '/vocabulary',      label: 'Vocabulary',       icon: BookMarked,   description: 'Word browser' },
-      { to: '/explorer',        label: 'Story Blanks',     icon: HelpCircle,   description: 'Fill blanks from stories' },
+      { to: '/flashcards',       key: 'flashcards',      icon: Layers },
+      { to: '/writing',          key: 'writing',         icon: PenTool },
+      { to: '/typing',           key: 'typing',          icon: Keyboard },
+      { to: '/speaking',         key: 'speaking',        icon: Mic },
+      { to: '/dictation',        key: 'dictation',       icon: Headphones },
+      { to: '/quiz',             key: 'quiz',            icon: Target },
+      { to: '/tones',            key: 'tones',           icon: Music },
+      { to: '/mock-test',        key: 'mockTest',        icon: GraduationCap },
+      { to: '/vocabulary',       key: 'vocabulary',      icon: BookMarked },
+      { to: '/explorer',         key: 'storyBlanks',     icon: HelpCircle },
     ],
   },
   {
-    label: 'Play',
+    key: 'play',
     icon: Zap,
     cols: 1,
     items: [
-      { to: '/battle',          label: 'Battle',           icon: Swords,       description: 'Real-time duel' },
-      { to: '/adventure',       label: 'Adventure',        icon: Map,          description: 'AI branching story' },
-      { to: '/conversation',    label: 'AI Chat',          icon: MessageCircle,description: 'Conversation practice' },
-      { to: '/matching',        label: 'Match Game',       icon: Grid3X3,      description: 'Card matching' },
-      { to: '/sentence-builder',label: 'Sentence Builder', icon: Type,         description: 'Arrange words' },
-      { to: '/story-challenge',  label: 'Story Challenge',  icon: Lock,         description: 'Unlock stories' },
-      { to: '/daily-challenge', label: 'Daily Challenge',  icon: Calendar,     description: 'One story/day · +30 XP' },
+      { to: '/battle',           key: 'battle',          icon: Swords },
+      { to: '/adventure',        key: 'adventure',       icon: Map },
+      { to: '/conversation',     key: 'aiChat',          icon: MessageCircle },
+      { to: '/matching',         key: 'matchGame',       icon: Grid3X3 },
+      { to: '/sentence-builder', key: 'sentenceBuilder', icon: Type },
+      { to: '/story-challenge',  key: 'storyChallenge',  icon: Lock },
+      { to: '/daily-challenge',  key: 'dailyChallenge',  icon: Calendar },
     ],
   },
 ]
 
+const trackItems: MenuItem[] = [
+  { to: '/dashboard',   key: 'dashboard',   icon: BarChart3 },
+  { to: '/leaderboard', key: 'leaderboard', icon: Trophy },
+  { to: '/bookmarks',   key: 'bookmarks',   icon: Heart },
+]
+
 export default function Navbar() {
+  const { t } = useTranslation()
   const { isAuthenticated, user, logout } = useAuthStore()
   const { isDarkMode, toggleDarkMode } = useThemeStore()
   const location = useLocation()
@@ -107,13 +113,12 @@ export default function Navbar() {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  // Practice open by default so new users see it; Play collapsed to reduce overwhelm
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    Practice: true, Play: false, Track: false,
+    practice: true, play: false, track: false,
   })
 
-  const toggleSection = (label: string) =>
-    setOpenSections(prev => ({ ...prev, [label]: !prev[label] }))
+  const toggleSection = (key: string) =>
+    setOpenSections(prev => ({ ...prev, [key]: !prev[key] }))
 
   const userMenuRef = useRef<HTMLDivElement>(null)
   const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
@@ -147,7 +152,11 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
-  const handleLogout = () => { logout(); setShowUserMenu(false); toast.success('Logged out successfully') }
+  const handleLogout = () => {
+    logout()
+    setShowUserMenu(false)
+    toast.success(t('nav.user.loggedOut'))
+  }
   const isActive = (path: string) => location.pathname === path
   const isDropdownActive = (items: MenuItem[]) => items.some(i => isActive(i.to))
 
@@ -185,6 +194,7 @@ export default function Navbar() {
             {/* ── Desktop nav ── */}
             <div className="hidden md:flex items-center gap-0.5 lg:gap-1">
               <DarkModeButton isDarkMode={isDarkMode} toggle={toggleDarkMode} />
+              <LanguageSwitcher compact />
               <VoiceSelector compact />
 
               {primaryLinks.map(link => (
@@ -198,15 +208,15 @@ export default function Navbar() {
 
               {dropdownMenus.map(menu => (
                 <DesktopDropdown
-                  key={menu.label}
+                  key={menu.key}
                   menu={menu}
                   active={isDropdownActive(menu.items)}
-                  isOpen={activeDropdown === menu.label}
+                  isOpen={activeDropdown === menu.key}
                   reviewCount={reviewCount}
                   isActive={isActive}
-                  onToggle={() => setActiveDropdown(activeDropdown === menu.label ? null : menu.label)}
+                  onToggle={() => setActiveDropdown(activeDropdown === menu.key ? null : menu.key)}
                   onClose={() => setActiveDropdown(null)}
-                  ref={(el: HTMLDivElement | null) => { dropdownRefs.current[menu.label] = el }}
+                  ref={(el: HTMLDivElement | null) => { dropdownRefs.current[menu.key] = el }}
                 />
               ))}
 
@@ -222,10 +232,14 @@ export default function Navbar() {
               ) : (
                 <motion.div className="flex items-center gap-2 ml-2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
                   <Link to="/login">
-                    <span className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors inline-block">Login</span>
+                    <span className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors inline-block">
+                      {t('nav.auth.login')}
+                    </span>
                   </Link>
                   <Link to="/register">
-                    <span className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors inline-block">Register</span>
+                    <span className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors inline-block">
+                      {t('nav.auth.register')}
+                    </span>
                   </Link>
                 </motion.div>
               )}
@@ -257,7 +271,7 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(true)}
                 className="flex items-center justify-center w-9 h-9 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 whileTap={{ scale: 0.9 }}
-                aria-label="Open menu"
+                aria-label={t('nav.a11y.openMenu')}
               >
                 <Menu className="w-5 h-5 text-gray-700 dark:text-gray-300" />
               </motion.button>
@@ -307,7 +321,7 @@ export default function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                   whileTap={{ scale: 0.9 }}
-                  aria-label="Close menu"
+                  aria-label={t('nav.a11y.closeMenu')}
                 >
                   <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 </motion.button>
@@ -316,13 +330,13 @@ export default function Navbar() {
               {/* Drawer body */}
               <div className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
 
-                {/* ── Daily section — always visible at top, no collapse ── */}
+                {/* ── Daily section ── */}
                 <div className="mb-2">
                   <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
-                    Daily
+                    {t('nav.sections.daily')}
                   </p>
 
-                  {/* Review — hero item with count pill */}
+                  {/* Review */}
                   <motion.div custom={0} variants={itemVariants} initial="hidden" animate="visible">
                     <Link to="/review" onClick={() => setMobileMenuOpen(false)}>
                       <div className={`flex items-center justify-between px-3 py-3 rounded-xl transition-colors mb-0.5 ${
@@ -333,9 +347,11 @@ export default function Navbar() {
                         <div className="flex items-center gap-3">
                           <Brain className="w-4 h-4 flex-shrink-0" />
                           <div>
-                            <p className="text-sm font-semibold leading-none">Review</p>
+                            <p className="text-sm font-semibold leading-none">{t('nav.items.review.label')}</p>
                             <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
-                              {reviewCount > 0 ? `${reviewCount} due today` : 'Spaced repetition'}
+                              {reviewCount > 0
+                                ? t('nav.review.dueToday', { count: reviewCount })
+                                : t('nav.review.description')}
                             </p>
                           </div>
                         </div>
@@ -347,7 +363,7 @@ export default function Navbar() {
                     </Link>
                   </motion.div>
 
-                  {/* Kursus */}
+                  {/* Course */}
                   <motion.div custom={1} variants={itemVariants} initial="hidden" animate="visible">
                     <Link to="/path" onClick={() => setMobileMenuOpen(false)}>
                       <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
@@ -357,8 +373,8 @@ export default function Navbar() {
                       }`}>
                         <Route className="w-4 h-4 flex-shrink-0" />
                         <div>
-                          <p className="text-sm font-semibold leading-none">Kursus</p>
-                          <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">Learning path HSK</p>
+                          <p className="text-sm font-semibold leading-none">{t('nav.items.course.label')}</p>
+                          <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">{t('nav.items.course.desc')}</p>
                         </div>
                         {isActive('/path') && <ChevronRight className="w-3.5 h-3.5 ml-auto opacity-50" />}
                       </div>
@@ -374,7 +390,7 @@ export default function Navbar() {
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                       }`}>
                         <BookOpen className="w-4 h-4 flex-shrink-0" />
-                        <span className="text-sm font-medium">Stories</span>
+                        <span className="text-sm font-medium">{t('nav.items.stories.label')}</span>
                         {isActive('/stories') && <ChevronRight className="w-3.5 h-3.5 ml-auto opacity-50" />}
                       </div>
                     </Link>
@@ -383,9 +399,9 @@ export default function Navbar() {
 
                 {/* ── Practice section ── */}
                 <DrawerSection
-                  label="Practice"
-                  isOpen={openSections.Practice}
-                  onToggle={() => toggleSection('Practice')}
+                  label={t('nav.sections.practice')}
+                  isOpen={openSections.practice}
+                  onToggle={() => toggleSection('practice')}
                   hasActive={dropdownMenus[0].items.some(i => isActive(i.to))}
                   animIndex={3}
                 >
@@ -396,9 +412,9 @@ export default function Navbar() {
 
                 {/* ── Play section ── */}
                 <DrawerSection
-                  label="Play"
-                  isOpen={openSections.Play}
-                  onToggle={() => toggleSection('Play')}
+                  label={t('nav.sections.play')}
+                  isOpen={openSections.play}
+                  onToggle={() => toggleSection('play')}
                   hasActive={dropdownMenus[1].items.some(i => isActive(i.to))}
                   animIndex={12}
                 >
@@ -409,17 +425,13 @@ export default function Navbar() {
 
                 {/* ── Track section ── */}
                 <DrawerSection
-                  label="Track"
-                  isOpen={openSections.Track}
-                  onToggle={() => toggleSection('Track')}
+                  label={t('nav.sections.track')}
+                  isOpen={openSections.track}
+                  onToggle={() => toggleSection('track')}
                   hasActive={isActive('/dashboard') || isActive('/leaderboard')}
                   animIndex={18}
                 >
-                  {[
-                    { to: '/dashboard', label: 'Dashboard', icon: BarChart3, description: 'Your stats' },
-                    { to: '/leaderboard', label: 'Leaderboard', icon: Trophy, description: 'Rankings' },
-                    { to: '/bookmarks', label: 'Bookmarks', icon: Heart, description: 'Saved stories' },
-                  ].map((item) => (
+                  {trackItems.map((item) => (
                     <DrawerItem key={item.to} item={item} active={isActive(item.to)} onClose={() => setMobileMenuOpen(false)} />
                   ))}
                 </DrawerSection>
@@ -427,22 +439,23 @@ export default function Navbar() {
 
               {/* Drawer footer */}
               <div className="border-t border-gray-200 dark:border-gray-800 p-3 space-y-1">
-                <div className="px-3 py-2">
+                <div className="px-3 py-2 flex items-center justify-between gap-2">
                   <VoiceSelector />
+                  <LanguageSwitcher />
                 </div>
                 {isAuthenticated ? (
                   <>
                     <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
                       <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                         <User className="w-4 h-4" />
-                        <span className="text-sm font-medium">Profile</span>
+                        <span className="text-sm font-medium">{t('nav.items.profile.label')}</span>
                       </div>
                     </Link>
                     {user?.is_admin && (
                       <Link to="/admin" onClick={() => setMobileMenuOpen(false)}>
                         <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors">
                           <Shield className="w-4 h-4" />
-                          <span className="text-sm font-medium">Admin Panel</span>
+                          <span className="text-sm font-medium">{t('nav.user.adminPanel')}</span>
                         </div>
                       </Link>
                     )}
@@ -451,16 +464,20 @@ export default function Navbar() {
                       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-error-600 hover:bg-error-50 dark:hover:bg-error-950/30 transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
-                      <span className="text-sm font-medium">Logout</span>
+                      <span className="text-sm font-medium">{t('nav.user.logout')}</span>
                     </button>
                   </>
                 ) : (
                   <div className="flex flex-col gap-2 px-1">
                     <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="block">
-                      <span className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors w-full block text-center text-sm">Login</span>
+                      <span className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors w-full block text-center text-sm">
+                        {t('nav.auth.login')}
+                      </span>
                     </Link>
                     <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="block">
-                      <span className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors w-full block text-center text-sm">Register</span>
+                      <span className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors w-full block text-center text-sm">
+                        {t('nav.auth.register')}
+                      </span>
                     </Link>
                   </div>
                 )}
@@ -526,7 +543,9 @@ function DrawerSection({
 
 /* ─── Mobile drawer item ─── */
 function DrawerItem({ item, active, onClose }: { item: MenuItem; active: boolean; onClose: () => void }) {
+  const { t } = useTranslation()
   const Icon = item.icon
+  const desc = t(`nav.items.${item.key}.desc`)
   return (
     <Link to={item.to} onClick={onClose}>
       <div className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-colors ${
@@ -537,9 +556,9 @@ function DrawerItem({ item, active, onClose }: { item: MenuItem; active: boolean
         <div className="flex items-center gap-3 min-w-0">
           <Icon className="w-4 h-4 flex-shrink-0" />
           <div className="min-w-0">
-            <p className="text-sm font-medium leading-none">{item.label}</p>
-            {item.description && (
-              <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 truncate">{item.description}</p>
+            <p className="text-sm font-medium leading-none">{t(`nav.items.${item.key}.label`)}</p>
+            {desc && (
+              <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 truncate">{desc}</p>
             )}
           </div>
         </div>
@@ -551,14 +570,16 @@ function DrawerItem({ item, active, onClose }: { item: MenuItem; active: boolean
 
 /* ─── Dark mode button ─── */
 function DarkModeButton({ isDarkMode, toggle }: { isDarkMode: boolean; toggle: () => void }) {
+  const { t } = useTranslation()
+  const label = isDarkMode ? t('nav.a11y.lightMode') : t('nav.a11y.darkMode')
   return (
     <motion.button
       onClick={toggle}
       className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors overflow-hidden"
       whileHover={{ scale: 1.08 }}
       whileTap={{ scale: 0.92 }}
-      aria-label={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-      title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+      aria-label={label}
+      title={label}
     >
       <AnimatePresence mode="wait">
         {isDarkMode
@@ -574,6 +595,7 @@ function DarkModeButton({ isDarkMode, toggle }: { isDarkMode: boolean; toggle: (
 function DesktopNavLink({ link, active, badgeCount = 0 }: {
   link: MenuItem; active: boolean; badgeCount?: number
 }) {
+  const { t } = useTranslation()
   const Icon = link.icon
   return (
     <Link to={link.to}>
@@ -587,7 +609,7 @@ function DesktopNavLink({ link, active, badgeCount = 0 }: {
         whileTap={{ scale: 0.96 }}
       >
         <Icon className="w-4 h-4" />
-        <span className="hidden lg:inline">{link.label}</span>
+        <span className="hidden lg:inline">{t(`nav.items.${link.key}.label`)}</span>
         {badgeCount > 0 && (
           <span className="flex items-center justify-center min-w-[18px] h-[18px] bg-error-500 text-white text-[9px] font-bold rounded-full px-1 leading-none">
             {badgeCount > 99 ? '99+' : badgeCount}
@@ -609,6 +631,7 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
   menu: DropdownMenu; active: boolean; isOpen: boolean; reviewCount: number
   isActive: (p: string) => boolean; onToggle: () => void; onClose: () => void
 }>(function DesktopDropdown({ menu, active, isOpen, isActive, onToggle, onClose }, ref) {
+  const { t } = useTranslation()
   const Icon = menu.icon
   const isTwoCol = menu.cols === 2
 
@@ -625,7 +648,7 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
         onClick={onToggle}
       >
         <Icon className="w-4 h-4" />
-        <span>{menu.label}</span>
+        <span>{t(`nav.sections.${menu.key}`)}</span>
         <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
           <ChevronDown className="w-3.5 h-3.5" />
         </motion.div>
@@ -652,6 +675,7 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
               {menu.items.map((item, i) => {
                 const ItemIcon = item.icon
                 const itemActive = isActive(item.to)
+                const desc = t(`nav.items.${item.key}.desc`)
                 return (
                   <motion.div
                     key={item.to}
@@ -665,9 +689,9 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
                       }`}>
                         <ItemIcon className="w-3.5 h-3.5 flex-shrink-0" />
                         <div className="min-w-0">
-                          <p className="text-sm font-medium leading-none">{item.label}</p>
-                          {item.description && (
-                            <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">{item.description}</p>
+                          <p className="text-sm font-medium leading-none">{t(`nav.items.${item.key}.label`)}</p>
+                          {desc && (
+                            <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">{desc}</p>
                           )}
                         </div>
                       </div>
@@ -687,6 +711,7 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
 const UserMenu = forwardRef<HTMLDivElement, {
   user: UserProfile | null; showMenu: boolean; onToggle: () => void; onClose: () => void; onLogout: () => void
 }>(function UserMenu({ user, showMenu, onToggle, onClose, onLogout }, ref) {
+  const { t } = useTranslation()
   return (
     <div ref={ref} className="relative ml-1">
       <motion.div
@@ -720,19 +745,19 @@ const UserMenu = forwardRef<HTMLDivElement, {
               <Link to="/profile" onClick={onClose}>
                 <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300">
                   <User className="w-4 h-4" />
-                  <span className="text-sm">Profile</span>
+                  <span className="text-sm">{t('nav.items.profile.label')}</span>
                 </div>
               </Link>
               <Link to="/leaderboard" onClick={onClose}>
                 <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300">
                   <Trophy className="w-4 h-4" />
-                  <span className="text-sm">Leaderboard</span>
+                  <span className="text-sm">{t('nav.items.leaderboard.label')}</span>
                 </div>
               </Link>
               <Link to="/bookmarks" onClick={onClose}>
                 <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300">
                   <Heart className="w-4 h-4" />
-                  <span className="text-sm">Bookmarks</span>
+                  <span className="text-sm">{t('nav.items.bookmarks.label')}</span>
                 </div>
               </Link>
               {user?.is_admin && (
@@ -741,7 +766,7 @@ const UserMenu = forwardRef<HTMLDivElement, {
                   <Link to="/admin" onClick={onClose}>
                     <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors text-primary-600 dark:text-primary-400">
                       <Shield className="w-4 h-4" />
-                      <span className="text-sm font-medium">Admin Panel</span>
+                      <span className="text-sm font-medium">{t('nav.user.adminPanel')}</span>
                     </div>
                   </Link>
                 </>
@@ -752,7 +777,7 @@ const UserMenu = forwardRef<HTMLDivElement, {
                 className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-error-50 dark:hover:bg-error-950/30 transition-colors text-error-600"
               >
                 <LogOut className="w-4 h-4" />
-                <span className="text-sm">Logout</span>
+                <span className="text-sm">{t('nav.user.logout')}</span>
               </button>
             </div>
           </motion.div>
