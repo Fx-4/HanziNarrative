@@ -1,0 +1,15 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="HanziNarrative" style="color:#0f172a">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@900&amp;display=swap');
+      .hz{font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;font-weight:900;}
+    </style>
+    <mask id="knockout">
+      <rect x="2" y="2" width="116" height="116" rx="33" fill="#fff"/>
+      <text x="59" y="64" text-anchor="middle" dominant-baseline="central" class="hz" font-size="74" fill="#000">汉</text>
+      <path d="M93 21 L96.4 30.6 L106 34 L96.4 37.4 L93 47 L89.6 37.4 L80 34 L89.6 30.6 Z" fill="#000"/>
+    </mask>
+  </defs>
+  <!-- single-colour knockout version: inherits `color` (currentColor). Swap style color for light-on-dark. -->
+  <rect x="2" y="2" width="116" height="116" rx="33" fill="currentColor" mask="url(#knockout)"/>
+</svg>
