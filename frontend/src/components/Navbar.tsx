@@ -17,6 +17,7 @@ import { useState, useEffect, useRef } from 'react'
 import { learningApi } from '@/services/api'
 import VoiceSelector from '@/components/VoiceSelector'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
+import Logo from '@/components/Logo'
 
 type NavIcon = FC<{ className?: string }>
 
@@ -174,20 +175,10 @@ export default function Navbar() {
             {/* ── Logo ── */}
             <Link to="/" className="flex-shrink-0">
               <motion.div
-                className="flex items-center gap-1.5 sm:gap-2 text-primary-600 font-bold"
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
               >
-                <motion.span
-                  className="text-lg sm:text-xl font-chinese"
-                  animate={{ rotate: [0, 8, -8, 0] }}
-                  transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 4 }}
-                >
-                  汉字
-                </motion.span>
-                <span className="hidden sm:inline text-base sm:text-lg text-gray-800 dark:text-gray-200 font-bold">
-                  HanziNarrative
-                </span>
+                <Logo size={32} wordmarkClassName="hidden sm:inline" />
               </motion.div>
             </Link>
 
@@ -314,7 +305,7 @@ export default function Navbar() {
                     </div>
                   </div>
                 ) : (
-                  <span className="text-sm font-bold text-primary-600 font-chinese">汉字 HanziNarrative</span>
+                  <Logo size={28} />
                 )}
 
                 <motion.button

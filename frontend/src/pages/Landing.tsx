@@ -7,6 +7,7 @@ import {
   PenTool, Target, ChevronRight,
 } from 'lucide-react'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
+import Logo from '@/components/Logo'
 
 // ─── Floating background chars ───────────────────────────────────────────────
 const FLOATS = [
@@ -76,12 +77,7 @@ export default function Landing() {
       {/* ══ NAVBAR ══ */}
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 sm:gap-2.5">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary-600 flex items-center justify-center shadow-sm shadow-primary-500/30">
-              <span className="text-white text-sm sm:text-base font-bold font-chinese">汉</span>
-            </div>
-            <span className="text-base sm:text-lg font-bold tracking-tight text-gray-900">HanziNarrative</span>
-          </div>
+          <Logo size={32} />
 
           <nav className="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-medium text-gray-500">
             <a href="#why"      className="hover:text-gray-900 transition-colors cursor-pointer">{t('landing.nav.whyStories')}</a>
@@ -574,12 +570,7 @@ export default function Landing() {
       {/* ══ FOOTER ══ */}
       <footer className="border-t border-gray-100 py-6 sm:py-8 px-4 sm:px-6 bg-white">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-xs sm:text-sm text-gray-400">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-primary-600 flex items-center justify-center">
-              <span className="text-white text-xs font-bold font-chinese">汉</span>
-            </div>
-            <span className="font-semibold text-gray-600">HanziNarrative</span>
-          </div>
+          <Logo size={24} />
           <span>© {new Date().getFullYear()} HanziNarrative. {t('landing.footer.builtFor')}</span>
           <div className="flex items-center gap-4">
             <Link to="/about"    className="hover:text-gray-600 transition-colors">{t('landing.footer.about')}</Link>
