@@ -95,3 +95,6 @@ fix-dark-contrast.ps1
 
 # Claude Code worktrees
 .claude/worktrees/
+
+# Promo video render tooling (headless Edge + ffmpeg scratch)
+.render-tmp/

@@ -7,6 +7,13 @@
       "runtimeArgs": ["run", "dev"],
       "cwd": "D:\\uii\\belajar mandiri\\learn-HSK\\frontend",
       "port": 5173
+    },
+    {
+      "name": "promo",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "4321", "--directory", "marketing"],
+      "cwd": "D:\\uii\\belajar mandiri\\learn-HSK",
+      "port": 4321
     }
   ]
 }
