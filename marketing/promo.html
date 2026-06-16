@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HanziNarrative — Promo Reel (1:1)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --primary-50:#eef2ff; --primary-100:#e0e7ff; --primary-200:#c7d2fe;
+    --primary-500:#6366f1; --primary-600:#4f46e5; --primary-700:#4338ca; --primary-900:#312e81;
+    --violet-50:#f5f3ff; --violet-500:#8b5cf6; --violet-600:#7c3aed; --violet-700:#6d28d9;
+    --amber-100:#fef3c7; --amber-500:#f59e0b; --amber-600:#d97706; --amber-700:#b45309;
+    --success-100:#dcfce7; --success-500:#22c55e; --success-600:#16a34a; --success-700:#15803d;
+    --sky-600:#0284c7; --rose-600:#e11d48; --teal-600:#0d9488;
+    --g50:#f9fafb; --g100:#f3f4f6; --g200:#e5e7eb; --g400:#9ca3af; --g500:#6b7280; --g600:#4b5563; --g700:#374151; --g900:#111827;
+    --ease:cubic-bezier(.2,.7,.2,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;background:#0b0b12;font-family:'Inter',system-ui,sans-serif;overflow:hidden;}
+  .chinese{font-family:'Noto Sans SC',sans-serif;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  /* ── viewport letterbox + scaled square stage ── */
+  #viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 30%,#15151f,#070709);}
+  #stage{width:1080px;height:1080px;position:relative;overflow:hidden;background:#fff;transform-origin:center center;box-shadow:0 40px 120px rgba(0,0,0,.6);}
+
+  /* ── progress + brand chrome ── */
+  #bar{position:absolute;top:0;left:0;height:7px;width:0;background:linear-gradient(90deg,var(--primary-600),var(--violet-600));z-index:60;border-radius:0 4px 4px 0;}
+  #brandmark{position:absolute;bottom:34px;left:40px;z-index:55;display:flex;align-items:center;gap:12px;opacity:.0;transition:opacity .6s;}
+  #brandmark.on{opacity:.9;}
+  #brandmark .logo{width:42px;height:42px;border-radius:12px;background:var(--primary-600);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:24px;box-shadow:0 6px 18px rgba(79,70,229,.4);}
+  #brandmark .name{font-weight:800;font-size:24px;letter-spacing:-.02em;color:var(--g900);}
+  #brandmark.dark .name{color:#fff;}
+  #scenecount{position:absolute;bottom:36px;right:42px;z-index:55;font-size:18px;font-weight:600;color:var(--g400);opacity:0;transition:opacity .6s;}
+  #scenecount.on{opacity:.8;}
+  #scenecount.dark{color:rgba(255,255,255,.6);}
+
+  /* ── controls (auto-hide for clean recording) ── */
+  #controls{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:200;display:flex;gap:10px;opacity:0;transition:opacity .25s;}
+  #viewport:hover #controls{opacity:1;}
+  #controls button{font-family:inherit;font-size:14px;font-weight:600;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:8px 16px;border-radius:10px;cursor:pointer;backdrop-filter:blur(8px);}
+  #controls button:hover{background:rgba(255,255,255,.22);}
+
+  /* start overlay (autoplay-with-sound needs a user gesture) */
+  #startOverlay{position:absolute;inset:0;z-index:120;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:rgba(12,10,30,.55);backdrop-filter:blur(7px);}
+  #startBtn{display:flex;flex-direction:column;align-items:center;gap:6px;font-family:inherit;font-size:44px;font-weight:800;color:#fff;background:linear-gradient(90deg,var(--primary-600),var(--violet-600));border:none;border-radius:26px;padding:36px 64px;cursor:pointer;box-shadow:0 24px 70px rgba(79,70,229,.5);}
+  #startBtn small{font-size:24px;font-weight:600;opacity:.85;}
+  #startHint{color:rgba(255,255,255,.8);font-size:22px;font-weight:500;}
+
+  /* ── scene base ── */
+  .scene{position:absolute;inset:0;opacity:0;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:88px;transition:opacity .6s ease;}
+  .scene.active{opacity:1;}
+  .anim{opacity:0;transform:translateY(26px);transition:opacity .5s var(--ease),transform .5s var(--ease);}
+  .scene.active .anim{opacity:1;transform:none;}
+  .pop{opacity:0;transform:scale(.85);transition:opacity .45s var(--ease),transform .45s var(--ease);}
+  .scene.active .pop{opacity:1;transform:none;}
+
+  /* ── floating bg chars ── */
+  .floats{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+  .floats span{position:absolute;font-weight:700;}
+  @keyframes drift{0%,100%{transform:translateY(0)}50%{transform:translateY(-26px)}}
+
+  /* ── badges / pills ── */
+  .pill{display:inline-flex;align-items:center;gap:10px;padding:12px 22px;border-radius:999px;font-size:24px;font-weight:600;}
+
+  /* S1 */
+  .grad-text{background:linear-gradient(90deg,var(--primary-600),var(--violet-600));-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+  /* S3 story card */
+  .card{background:#fff;border:1px solid var(--g200);border-radius:30px;box-shadow:0 30px 80px rgba(79,70,229,.18);overflow:hidden;width:760px;}
+  .card-head{background:linear-gradient(90deg,var(--primary-600),var(--violet-600));padding:32px 36px;display:flex;justify-content:space-between;align-items:center;}
+  .word{display:inline-flex;flex-direction:column;align-items:center;}
+  .hl{background:var(--primary-100);color:var(--primary-700);border-radius:14px;padding:6px 14px;}
+
+  /* word popup */
+  #popup{position:absolute;z-index:40;background:#111827;color:#fff;border-radius:18px;padding:18px 22px;box-shadow:0 20px 50px rgba(0,0,0,.4);opacity:0;transform:translateY(10px) scale(.9);transition:all .5s var(--ease);text-align:center;}
+  .scene.active #popup.show{opacity:1;transform:none;}
+  #popup:after{content:'';position:absolute;top:-9px;left:50%;margin-left:-9px;border:9px solid transparent;border-bottom-color:#111827;border-top:0;}
+
+  /* S4 grid */
+  .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;width:840px;}
+  .mode{background:#fff;border:1px solid var(--g200);border-radius:22px;padding:26px 22px;display:flex;align-items:center;gap:16px;box-shadow:0 8px 24px rgba(17,24,39,.05);}
+  .mode .ico{font-size:38px;line-height:1;}
+  .mode .lbl{font-size:24px;font-weight:700;color:var(--g700);}
+
+  /* S5 */
+  .statcard{background:#fff;border:1px solid var(--g200);border-radius:24px;padding:30px 34px;box-shadow:0 14px 40px rgba(17,24,39,.08);}
+
+  /* S6 big stats */
+  .bignum{font-size:120px;font-weight:900;letter-spacing:-.04em;line-height:1;}
+
+  /* S7 cta */
+  .urlpill{display:inline-flex;align-items:center;gap:14px;background:#fff;color:var(--primary-700);font-weight:800;font-size:34px;padding:22px 40px;border-radius:999px;box-shadow:0 20px 50px rgba(0,0,0,.25);}
+</style>
+</head>
+<body>
+<div id="viewport">
+  <div id="stage">
+    <div id="bar"></div>
+
+    <!-- ════════ SCENE 1 — HOOK ════════ -->
+    <section class="scene" style="background:linear-gradient(135deg,var(--primary-50),#fff 55%,var(--violet-50));">
+      <div class="floats">
+        <span class="chinese" style="top:7%;left:5%;font-size:160px;color:var(--primary-900);opacity:.06;animation:drift 14s ease-in-out infinite;">汉</span>
+        <span class="chinese" style="top:16%;left:84%;font-size:120px;color:var(--violet-600);opacity:.06;animation:drift 18s ease-in-out infinite .4s;">字</span>
+        <span class="chinese" style="top:70%;left:8%;font-size:150px;color:var(--primary-600);opacity:.05;animation:drift 16s ease-in-out infinite 1s;">学</span>
+        <span class="chinese" style="top:76%;left:82%;font-size:130px;color:var(--violet-700);opacity:.06;animation:drift 20s ease-in-out infinite .8s;">习</span>
+      </div>
+      <div class="pill anim" style="background:var(--primary-100);color:var(--primary-700);border:1px solid var(--primary-200);transition-delay:.15s;">✨ AI-powered Chinese learning</div>
+      <div class="anim" style="display:flex;align-items:center;gap:22px;margin:46px 0 10px;transition-delay:.3s;">
+        <div style="width:104px;height:104px;border-radius:28px;background:var(--primary-600);display:flex;align-items:center;justify-content:center;box-shadow:0 18px 50px rgba(79,70,229,.45);">
+          <span class="chinese" style="color:#fff;font-size:62px;font-weight:700;">汉</span>
+        </div>
+        <span style="font-size:62px;font-weight:900;letter-spacing:-.03em;color:var(--g900);">HanziNarrative</span>
+      </div>
+      <h1 class="anim" style="font-size:104px;font-weight:900;letter-spacing:-.04em;line-height:1.02;text-align:center;color:var(--g900);margin-top:30px;transition-delay:.45s;">
+        Master Chinese<br /><span class="grad-text">through stories</span>
+      </h1>
+      <p class="anim" style="font-size:30px;color:var(--g500);margin-top:34px;max-width:760px;text-align:center;transition-delay:.6s;">Vocabulary that sticks through context — not rote memorization.</p>
+    </section>
+
+    <!-- ════════ SCENE 2 — THE SCIENCE ════════ -->
+    <section class="scene" style="background:#fff;">
+      <p class="pill anim" style="background:var(--violet-50);color:var(--violet-700);transition-delay:.1s;">Our core method</p>
+      <div class="anim" style="display:flex;align-items:center;gap:30px;margin-top:50px;transition-delay:.25s;">
+        <span style="font-size:64px;font-weight:800;color:var(--g400);text-decoration:line-through;">Flashcards fade.</span>
+      </div>
+      <div class="anim" style="font-size:76px;font-weight:900;color:var(--g900);margin-top:8px;letter-spacing:-.03em;transition-delay:.4s;">Stories <span class="grad-text">stick.</span></div>
+      <div class="pop" style="margin-top:64px;display:flex;align-items:baseline;gap:18px;transition-delay:.7s;">
+        <span class="bignum grad-text" data-count="3" data-suffix="×" style="font-size:170px;">0×</span>
+        <span style="font-size:40px;font-weight:800;color:var(--g700);max-width:320px;line-height:1.15;">better word retention in context</span>
+      </div>
+      <p class="anim" style="font-size:28px;color:var(--g500);margin-top:48px;max-width:780px;text-align:center;line-height:1.4;transition-delay:.9s;">Your brain retains words far better when they appear in meaningful stories than in disconnected lists.</p>
+    </section>
+
+    <!-- ════════ SCENE 3 — AI STORIES (HERO) ════════ -->
+    <section class="scene" style="background:linear-gradient(160deg,var(--primary-50),#fff);">
+      <p class="anim pill" style="background:var(--primary-100);color:var(--primary-700);margin-bottom:34px;transition-delay:.1s;">📖 AI writes a new story at YOUR level</p>
+      <div class="card pop" style="transition-delay:.25s;">
+        <div class="card-head">
+          <div>
+            <div style="color:rgba(255,255,255,.7);font-size:20px;font-weight:600;margin-bottom:4px;">HSK 2 · AI Story</div>
+            <div class="chinese" style="color:#fff;font-size:38px;font-weight:700;">在咖啡馆的一天</div>
+            <div style="color:rgba(255,255,255,.65);font-size:22px;">A Day at the Café</div>
+          </div>
+          <div style="width:60px;height:60px;border-radius:18px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:30px;">📖</div>
+        </div>
+        <div style="padding:40px;">
+          <div style="font-size:18px;font-weight:600;letter-spacing:.12em;color:var(--g400);text-transform:uppercase;margin-bottom:24px;">Story excerpt</div>
+          <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;">
+            <span class="word"><small class="mono" style="color:var(--primary-500);font-size:18px;">Xiǎo Míng</small><span class="chinese hl" style="font-size:46px;">小明</span><small style="color:var(--primary-500);font-size:18px;">Xiao Ming</small></span>
+            <span class="chinese" style="font-size:46px;color:var(--g700);padding-bottom:26px;">去</span>
+            <span class="word" id="anchor"><small class="mono" style="color:var(--primary-500);font-size:18px;">kāfēiguǎn</small><span class="chinese hl" style="font-size:46px;">咖啡馆</span><small style="color:var(--primary-500);font-size:18px;">café</small></span>
+            <span class="chinese" style="font-size:46px;color:var(--g700);padding-bottom:26px;">喝</span>
+            <span class="word"><small class="mono" style="color:var(--primary-500);font-size:18px;">kāfēi</small><span class="chinese hl" style="font-size:46px;">咖啡</span><small style="color:var(--primary-500);font-size:18px;">coffee</small></span>
+            <span class="chinese" style="font-size:46px;color:var(--g700);padding-bottom:26px;">。</span>
+          </div>
+          <div id="popup">
+            <div class="chinese" style="font-size:34px;font-weight:700;">咖啡馆</div>
+            <div class="mono" style="color:#a5b4fc;font-size:22px;margin-top:4px;">kāfēiguǎn</div>
+            <div style="font-size:22px;color:#e5e7eb;margin-top:2px;">café · 🔊 tap to hear</div>
+          </div>
+        </div>
+      </div>
+      <p class="anim" style="font-size:28px;color:var(--g500);margin-top:36px;text-align:center;transition-delay:.6s;">Tap any word for pinyin, meaning & native audio.</p>
+    </section>
+
+    <!-- ════════ SCENE 4 — PRACTICE MODES ════════ -->
+    <section class="scene" style="background:var(--g50);">
+      <h2 class="anim" style="font-size:74px;font-weight:900;color:var(--g900);letter-spacing:-.03em;transition-delay:.1s;">10+ ways to <span class="grad-text">practice</span></h2>
+      <p class="anim" style="font-size:28px;color:var(--g500);margin:18px 0 50px;transition-delay:.2s;">One platform, every tool — beginner to HSK 6.</p>
+      <div class="modes">
+        <div class="mode pop" style="transition-delay:.30s;"><span class="ico">🃏</span><span class="lbl">Flashcards</span></div>
+        <div class="mode pop" style="transition-delay:.36s;"><span class="ico">⌨️</span><span class="lbl">Typing</span></div>
+        <div class="mode pop" style="transition-delay:.42s;"><span class="ico">✍️</span><span class="lbl">Writing strokes</span></div>
+        <div class="mode pop" style="transition-delay:.48s;"><span class="ico">❓</span><span class="lbl">Quiz</span></div>
+        <div class="mode pop" style="transition-delay:.54s;"><span class="ico">🎯</span><span class="lbl">Tone trainer</span></div>
+        <div class="mode pop" style="transition-delay:.60s;"><span class="ico">🎧</span><span class="lbl">Dictation</span></div>
+        <div class="mode pop" style="transition-delay:.66s;"><span class="ico">🧩</span><span class="lbl">Sentence builder</span></div>
+        <div class="mode pop" style="transition-delay:.72s;"><span class="ico">🗣️</span><span class="lbl">Speaking</span></div>
+        <div class="mode pop" style="transition-delay:.78s;"><span class="ico">📝</span><span class="lbl">Mock HSK exam</span></div>
+      </div>
+    </section>
+
+    <!-- ════════ SCENE 5 — GAMIFY + SRS ════════ -->
+    <section class="scene" style="background:linear-gradient(160deg,#fff,var(--primary-50));">
+      <h2 class="anim" style="font-size:70px;font-weight:900;color:var(--g900);letter-spacing:-.03em;text-align:center;transition-delay:.1s;">Stay motivated.<br />Remember <span class="grad-text">more.</span></h2>
+      <div style="display:flex;gap:26px;margin-top:60px;">
+        <div class="statcard pop" style="transition-delay:.3s;text-align:center;">
+          <div style="font-size:30px;">🏆</div>
+          <div class="bignum" style="font-size:84px;color:var(--amber-600);"><span data-count="50" data-prefix="+">+0</span></div>
+          <div style="font-size:24px;font-weight:700;color:var(--g500);">XP per story</div>
+        </div>
+        <div class="statcard pop" style="transition-delay:.42s;text-align:center;">
+          <div style="font-size:30px;">🔥</div>
+          <div class="bignum" style="font-size:84px;color:var(--rose-600);"><span data-count="7">0</span></div>
+          <div style="font-size:24px;font-weight:700;color:var(--g500);">day streak</div>
+        </div>
+        <div class="statcard pop" style="transition-delay:.54s;text-align:center;">
+          <div style="font-size:30px;">🧠</div>
+          <div class="bignum" style="font-size:84px;color:var(--success-600);"><span data-count="92" data-suffix="%">0%</span></div>
+          <div style="font-size:24px;font-weight:700;color:var(--g500);">quiz score</div>
+        </div>
+      </div>
+      <p class="anim" style="font-size:30px;color:var(--g600);margin-top:60px;max-width:820px;text-align:center;line-height:1.4;transition-delay:.75s;">⏳ <b>Spaced repetition</b> resurfaces forgotten words at exactly the right moment — remember more in less time.</p>
+    </section>
+
+    <!-- ════════ SCENE 6 — STATS ════════ -->
+    <section class="scene" style="background:#fff;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:70px 110px;">
+        <div class="pop" style="text-align:center;transition-delay:.15s;"><div class="bignum grad-text"><span data-count="1536">0</span></div><div style="font-size:30px;font-weight:700;color:var(--g500);margin-top:14px;">HSK vocabulary words</div></div>
+        <div class="pop" style="text-align:center;transition-delay:.3s;"><div class="bignum grad-text">1–6</div><div style="font-size:30px;font-weight:700;color:var(--g500);margin-top:14px;">HSK levels covered</div></div>
+        <div class="pop" style="text-align:center;transition-delay:.45s;"><div class="bignum grad-text">AI</div><div style="font-size:30px;font-weight:700;color:var(--g500);margin-top:14px;">Unlimited story generation</div></div>
+        <div class="pop" style="text-align:center;transition-delay:.6s;"><div class="bignum grad-text"><span data-count="100" data-suffix="%">0%</span></div><div style="font-size:30px;font-weight:700;color:var(--g500);margin-top:14px;">Free to start</div></div>
+      </div>
+    </section>
+
+    <!-- ════════ SCENE 7 — CTA ════════ -->
+    <section class="scene" style="background:linear-gradient(150deg,var(--primary-600),var(--violet-700));">
+      <div class="floats">
+        <span class="chinese" style="top:8%;left:6%;font-size:150px;color:#fff;opacity:.08;animation:drift 16s ease-in-out infinite;">学</span>
+        <span class="chinese" style="top:18%;left:80%;font-size:120px;color:#fff;opacity:.08;animation:drift 19s ease-in-out infinite .5s;">习</span>
+        <span class="chinese" style="top:72%;left:10%;font-size:130px;color:#fff;opacity:.07;animation:drift 17s ease-in-out infinite 1s;">中</span>
+        <span class="chinese" style="top:78%;left:78%;font-size:140px;color:#fff;opacity:.08;animation:drift 21s ease-in-out infinite .7s;">文</span>
+      </div>
+      <div class="pop" style="width:140px;height:140px;border-radius:36px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;transition-delay:.1s;">
+        <span class="chinese" style="color:#fff;font-size:80px;font-weight:700;">学</span>
+      </div>
+      <h2 class="anim" style="font-size:80px;font-weight:900;color:#fff;letter-spacing:-.03em;text-align:center;margin-top:44px;transition-delay:.3s;">Start learning<br />for free today</h2>
+      <p class="anim" style="font-size:30px;color:var(--primary-100);margin-top:24px;transition-delay:.45s;">No credit card · No ads · HSK 1–6 included</p>
+      <div class="urlpill anim" style="margin-top:48px;transition-delay:.6s;">🌐 hanzi-narrative.vercel.app</div>
+      <p class="anim" style="font-size:26px;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:16px 28px;border-radius:18px;margin-top:46px;text-align:center;transition-delay:.8s;">🚀 Now in beta — looking for testers. <b>Your feedback shapes what's next.</b></p>
+    </section>
+
+    <div id="brandmark"><div class="logo chinese">汉</div><div class="name">HanziNarrative</div></div>
+    <div id="scenecount">1 / 7</div>
+
+    <div id="startOverlay">
+      <button id="startBtn">▶ Play promo<small>with sound 🔊</small></button>
+      <div id="startHint">tip: tekan ini lalu mulai rekam — musik &amp; animasi jalan bareng</div>
+    </div>
+  </div>
+</div>
+
+<audio id="bgm" loop preload="auto"><source src="assets/promo-music.mp3" type="audio/mpeg" /></audio>
+
+<div id="controls">
+  <button id="replay">↻ Replay</button>
+  <button id="pause">⏸ Pause</button>
+</div>
+
+<script>
+(function(){
+  const scenes   = Array.from(document.querySelectorAll('.scene'));
+  const durations = [3300, 3600, 5600, 3500, 4000, 3300, 4200]; // ms/scene (~27.5s) — snappy per-slide; scene 3 (story) longer = has popup motion
+  const bar      = document.getElementById('bar');
+  const popup    = document.getElementById('popup');
+  const anchor   = document.getElementById('anchor');
+  const brand    = document.getElementById('brandmark');
+  const counter  = document.getElementById('scenecount');
+  const bgm      = document.getElementById('bgm');
+  const overlay  = document.getElementById('startOverlay');
+  const darkScenes = new Set([6]); // 0-indexed: CTA scene has dark bg
+
+  let i = 0, timer = null, paused = false;
+
+  // fit the 1080² stage to the viewport
+  const stage = document.getElementById('stage');
+  function fit(){
+    const s = Math.min(window.innerWidth/1080, window.innerHeight/1080);
+    stage.style.transform = 'scale(' + s + ')';
+  }
+  window.addEventListener('resize', fit); fit();
+
+  function countUps(scene){
+    scene.querySelectorAll('[data-count]').forEach(el=>{
+      const end = parseFloat(el.dataset.count);
+      const pre = el.dataset.prefix || '', suf = el.dataset.suffix || '';
+      const dur = 1200, t0 = performance.now();
+      function step(now){
+        const p = Math.min((now - t0)/dur, 1);
+        const e = 1 - Math.pow(1 - p, 3); // easeOutCubic
+        const val = Math.round(end * e);
+        el.textContent = pre + val.toLocaleString('en-US') + suf;
+        if(p < 1) requestAnimationFrame(step);
+      }
+      el.textContent = pre + '0' + suf;
+      requestAnimationFrame(step);
+    });
+  }
+
+  function show(n){
+    scenes.forEach((s,k)=> s.classList.toggle('active', k===n));
+    counter.textContent = (n+1) + ' / ' + scenes.length;
+    const dark = darkScenes.has(n);
+    brand.classList.add('on'); brand.classList.toggle('dark', dark);
+    counter.classList.add('on'); counter.classList.toggle('dark', dark);
+
+    // progress bar reset + fill across this scene's duration
+    bar.style.transition = 'none'; bar.style.width = '0%';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      bar.style.transition = 'width ' + durations[n] + 'ms linear';
+      bar.style.width = '100%';
+    }));
+
+    setTimeout(()=>countUps(scenes[n]), 350);
+
+    // word-popup choreography inside the story scene
+    popup.classList.remove('show');
+    if(n === 2){
+      setTimeout(()=>{
+        const a = anchor.getBoundingClientRect(), st = stage.getBoundingClientRect(), sc = (st.width/1080)||1;
+        popup.style.left = ((a.left - st.left)/sc + a.width/sc/2 - 110) + 'px';
+        popup.style.top  = ((a.bottom - st.top)/sc + 16) + 'px';
+        popup.classList.add('show');
+      }, 2600);
+    }
+  }
+
+  function schedule(){ clearTimeout(timer); timer = setTimeout(advance, durations[i]); }
+  function advance(){ i = (i+1) % scenes.length; show(i); schedule(); }
+  function start(){ i = 0; paused = false; if(bgm){ bgm.currentTime = 0; bgm.play().catch(()=>{}); } show(0); schedule(); document.getElementById('pause').textContent='⏸ Pause'; }
+
+  document.getElementById('replay').addEventListener('click', start);
+  document.getElementById('pause').addEventListener('click', function(){
+    paused = !paused;
+    if(paused){ clearTimeout(timer); bar.style.transition='none'; if(bgm) bgm.pause(); this.textContent='▶ Play'; }
+    else { schedule(); if(bgm) bgm.play().catch(()=>{}); this.textContent='⏸ Pause'; }
+  });
+  document.addEventListener('keydown', e=>{ if(e.key.toLowerCase()==='r') start(); if(e.key===' '){e.preventDefault();document.getElementById('pause').click();} });
+
+  // show scene 1 behind the overlay; start (audio + animation) on the click gesture
+  function begin(){ if(overlay) overlay.style.display='none'; start(); }
+  document.getElementById('startBtn').addEventListener('click', begin);
+  function ready(){ scenes[0].classList.add('active'); brand.classList.add('on'); }
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(()=>setTimeout(ready,120)); }
+  else setTimeout(ready, 300);
+})();
+</script>
+</body>
+</html>
