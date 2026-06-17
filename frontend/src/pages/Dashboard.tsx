@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { learningApi } from '@/services/api'
 import { useAuthStore } from '@/store/authStore'
 import { useThemeStore } from '@/store/themeStore'
+import { useTranslation } from 'react-i18next'
 import GamificationWidget from '@/components/GamificationWidget'
 import WordOfTheDay from '@/components/WordOfTheDay'
 import DailyGoalsTracker from '@/components/DailyGoalsTracker'
@@ -103,6 +104,7 @@ function SectionCard({ title, icon: Icon, children }: {
 export default function Dashboard() {
   const { isAuthenticated } = useAuthStore()
   const isDarkMode = useThemeStore(s => s.isDarkMode)
+  const { t } = useTranslation()
 
   // Theme-aware chart styling so axes/grid/tooltips stay legible in dark mode
   const chartTheme = useMemo(() => ({
@@ -136,10 +138,10 @@ export default function Dashboard() {
   })), [hskLevelStats])
 
   const masteryDistribution = useMemo(() => overallStats ? [
-    { name: 'Mastered', value: overallStats.mastered_words },
-    { name: 'Learning', value: Math.max(0, overallStats.total_words_learning - overallStats.mastered_words) },
-    { name: 'Due for Review', value: overallStats.due_for_review },
-  ].filter(d => d.value > 0) : [], [overallStats])
+    { name: t('dashboard.charts.mastered'), value: overallStats.mastered_words },
+    { name: t('dashboard.charts.learning'), value: Math.max(0, overallStats.total_words_learning - overallStats.mastered_words) },
+    { name: t('dashboard.charts.due'), value: overallStats.due_for_review },
+  ].filter(d => d.value > 0) : [], [overallStats, t])
 
   const masteryRate = useMemo(() => overallStats && overallStats.total_words_learning > 0
     ? (overallStats.mastered_words / overallStats.total_words_learning) * 100
@@ -171,11 +173,11 @@ export default function Dashboard() {
     } catch (err) {
       const axiosError = err as { response?: { status?: number; data?: { detail?: string } }; message?: string }
       if (axiosError.response?.status === 401 || axiosError.response?.status === 403) {
-        setError('Please login to view your dashboard')
+        setError(t('dashboard.loginError'))
       } else {
         // If we already have cached data, don't show error — just keep stale
         if (!overallStats) {
-          setError(axiosError.response?.data?.detail || axiosError.message || 'Failed to load dashboard data')
+          setError(axiosError.response?.data?.detail || axiosError.message || t('dashboard.failedDefault'))
         }
       }
     } finally {
@@ -203,13 +205,13 @@ export default function Dashboard() {
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-violet-600 flex items-center justify-center mx-auto mb-5 shadow-lg shadow-primary-500/20">
             <LogIn className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-xl font-extrabold text-gray-900 dark:text-gray-100 mb-2">Login Required</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Please login to view your learning dashboard</p>
+          <h2 className="text-xl font-extrabold text-gray-900 dark:text-gray-100 mb-2">{t('dashboard.loginRequired')}</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{t('dashboard.loginPrompt')}</p>
           <Link
             to="/login"
             className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/20 transition-colors text-sm"
           >
-            Login Now
+            {t('dashboard.loginNow')}
           </Link>
         </motion.div>
       </div>
@@ -231,13 +233,13 @@ export default function Dashboard() {
           <div className="w-16 h-16 rounded-2xl bg-error-50 dark:bg-error-950/30 flex items-center justify-center mx-auto mb-5">
             <AlertTriangle className="w-8 h-8 text-error-500 dark:text-error-400" />
           </div>
-          <h2 className="text-xl font-extrabold text-gray-900 dark:text-gray-100 mb-2">Failed to Load</h2>
+          <h2 className="text-xl font-extrabold text-gray-900 dark:text-gray-100 mb-2">{t('dashboard.failedTitle')}</h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{error}</p>
           <button
             onClick={fetchDashboardData}
             className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-colors text-sm"
           >
-            <RotateCcw className="w-4 h-4" /> Try Again
+            <RotateCcw className="w-4 h-4" /> {t('dashboard.tryAgain')}
           </button>
         </motion.div>
       </div>
@@ -262,12 +264,12 @@ export default function Dashboard() {
               <span className="text-white text-xl font-bold font-chinese">学</span>
             </div>
             <div>
-              <h1 className="text-xl font-extrabold text-gray-900 dark:text-gray-100">Learning Dashboard</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Track your progress and achievements</p>
+              <h1 className="text-xl font-extrabold text-gray-900 dark:text-gray-100">{t('dashboard.title')}</h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t('dashboard.subtitle')}</p>
             </div>
           </div>
           {stale && (
-            <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">Cached · refreshing…</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">{t('dashboard.cached')}</span>
           )}
         </div>
       </motion.div>
@@ -288,10 +290,10 @@ export default function Dashboard() {
       {/* ── 4 Stat Cards ────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { Icon: BookOpen, label: 'Total Words',  value: overallStats.total_words_learning, bg: 'bg-primary-600',  shadow: 'shadow-primary-500/20' },
-          { Icon: Award,    label: 'Mastered',     value: overallStats.mastered_words,       bg: 'bg-success-600', shadow: 'shadow-success-500/20' },
-          { Icon: Calendar, label: 'Due Today',    value: overallStats.due_for_review,       bg: 'bg-orange-500',  shadow: 'shadow-orange-500/20', to: '/review' },
-          { Icon: Target,   label: 'Accuracy',     value: overallStats.accuracy, suffix: '%', decimals: 1, bg: 'bg-violet-600', shadow: 'shadow-violet-500/20' },
+          { Icon: BookOpen, label: t('dashboard.stats.totalWords'), value: overallStats.total_words_learning, bg: 'bg-primary-600',  shadow: 'shadow-primary-500/20' },
+          { Icon: Award,    label: t('dashboard.stats.mastered'),   value: overallStats.mastered_words,       bg: 'bg-success-600', shadow: 'shadow-success-500/20' },
+          { Icon: Calendar, label: t('dashboard.stats.dueToday'),   value: overallStats.due_for_review,       bg: 'bg-orange-500',  shadow: 'shadow-orange-500/20', to: '/review' },
+          { Icon: Target,   label: t('dashboard.stats.accuracy'),   value: overallStats.accuracy, suffix: '%', decimals: 1, bg: 'bg-violet-600', shadow: 'shadow-violet-500/20' },
         ].map(({ Icon, label, value, suffix, decimals, bg, shadow, to }, i) => {
           const card = (
             <motion.div
@@ -315,7 +317,7 @@ export default function Dashboard() {
       {/* ── Charts: Progress by HSK + Mastery Pie ───────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <SectionCard title="Progress by HSK Level" icon={TrendingUp}>
+          <SectionCard title={t('dashboard.charts.progressByHsk')} icon={TrendingUp}>
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={hskProgressData} barSize={16}>
                 <defs>
@@ -333,15 +335,15 @@ export default function Dashboard() {
                 <YAxis tick={{ fontSize: 11, fill: chartTheme.axis }} axisLine={false} tickLine={false} allowDecimals={false} />
                 <Tooltip cursor={{ fill: isDarkMode ? 'rgba(148,163,184,0.08)' : 'rgba(0,0,0,0.04)' }} contentStyle={chartTheme.tooltip} />
                 <Legend wrapperStyle={{ fontSize: 12, color: chartTheme.axis }} />
-                <Bar dataKey="learning" fill="url(#barLearning)" name="Learning" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="mastered" fill="url(#barMastered)" name="Mastered" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="learning" fill="url(#barLearning)" name={t('dashboard.charts.learning')} radius={[6, 6, 0, 0]} />
+                <Bar dataKey="mastered" fill="url(#barMastered)" name={t('dashboard.charts.mastered')} radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </SectionCard>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-          <SectionCard title="Mastery Distribution" icon={Target}>
+          <SectionCard title={t('dashboard.charts.masteryDist')} icon={Target}>
             <ResponsiveContainer width="100%" height={240}>
               <PieChart>
                 <Pie data={masteryDistribution} cx="50%" cy="50%" innerRadius={48} outerRadius={90} paddingAngle={2} dataKey="value" labelLine={false}
@@ -361,7 +363,7 @@ export default function Dashboard() {
 
       {/* ── Accuracy Line Chart ──────────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-        <SectionCard title="Accuracy by HSK Level" icon={Award}>
+        <SectionCard title={t('dashboard.charts.accuracyByHsk')} icon={Award}>
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={hskProgressData}>
               <defs>
@@ -373,9 +375,9 @@ export default function Dashboard() {
               <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.grid} vertical={false} />
               <XAxis dataKey="name" tick={{ fontSize: 11, fill: chartTheme.axis }} axisLine={{ stroke: chartTheme.grid }} tickLine={false} />
               <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: chartTheme.axis }} axisLine={false} tickLine={false} />
-              <Tooltip formatter={(val: number) => [`${val.toFixed(1)}%`, 'Accuracy']}
+              <Tooltip formatter={(val: number) => [`${val.toFixed(1)}%`, t('dashboard.stats.accuracy')]}
                 contentStyle={chartTheme.tooltip} />
-              <Line type="monotone" dataKey="accuracy" stroke="url(#lineAccuracy)" strokeWidth={3} name="Accuracy %"
+              <Line type="monotone" dataKey="accuracy" stroke="url(#lineAccuracy)" strokeWidth={3} name={t('dashboard.charts.accuracyName')}
                 dot={{ fill: '#8b5cf6', r: 5, strokeWidth: 2, stroke: chartTheme.dotStroke }} activeDot={{ r: 7 }} />
             </LineChart>
           </ResponsiveContainer>
@@ -384,13 +386,13 @@ export default function Dashboard() {
 
       {/* ── Overall Statistics ───────────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-        <SectionCard title="Overall Statistics" icon={BookOpen}>
+        <SectionCard title={t('dashboard.overall.title')} icon={BookOpen}>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { label: 'Total Reviews', value: overallStats.total_reviews, color: 'text-primary-600', bg: 'bg-primary-50' },
-              { label: 'Avg Mastery', value: overallStats.average_mastery, decimals: 1, color: 'text-success-600', bg: 'bg-success-50' },
-              { label: 'Mastery Rate', value: masteryRate, decimals: 1, suffix: '%', color: 'text-violet-600', bg: 'bg-violet-50' },
-              { label: 'Active Levels', value: activeLevels, color: 'text-orange-600', bg: 'bg-orange-50' },
+              { label: t('dashboard.overall.totalReviews'), value: overallStats.total_reviews, color: 'text-primary-600', bg: 'bg-primary-50' },
+              { label: t('dashboard.overall.avgMastery'), value: overallStats.average_mastery, decimals: 1, color: 'text-success-600', bg: 'bg-success-50' },
+              { label: t('dashboard.overall.masteryRate'), value: masteryRate, decimals: 1, suffix: '%', color: 'text-violet-600', bg: 'bg-violet-50' },
+              { label: t('dashboard.overall.activeLevels'), value: activeLevels, color: 'text-orange-600', bg: 'bg-orange-50' },
             ].map(({ label, value, decimals, suffix, color, bg }) => (
               <div key={label} className={`${bg} dark:bg-surface-card rounded-2xl p-4 text-center`}>
                 <p className={`text-2xl font-extrabold ${color} dark:text-gray-100`}>

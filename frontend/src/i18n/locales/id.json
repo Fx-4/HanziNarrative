@@ -193,5 +193,47 @@
         "googleFailed":       "Login Google gagal. Silakan coba lagi."
       }
     }
+  },
+
+  "notFound": {
+    "title":    "Halaman Tidak Ditemukan",
+    "subtitle": "Halaman yang kamu cari tidak ada atau sudah dipindahkan.",
+    "goBack":   "Kembali",
+    "home":     "Beranda"
+  },
+
+  "dashboard": {
+    "title":         "Dasbor Belajar",
+    "subtitle":      "Pantau perkembangan dan pencapaianmu",
+    "cached":        "Tersimpan · menyegarkan…",
+    "loginRequired": "Perlu Masuk",
+    "loginPrompt":   "Silakan masuk untuk melihat dasbor belajarmu",
+    "loginNow":      "Masuk Sekarang",
+    "loginError":    "Silakan masuk untuk melihat dasbormu",
+    "failedTitle":   "Gagal Memuat",
+    "failedDefault": "Gagal memuat data dasbor",
+    "tryAgain":      "Coba Lagi",
+    "stats": {
+      "totalWords": "Total Kata",
+      "mastered":   "Dikuasai",
+      "dueToday":   "Jatuh Tempo",
+      "accuracy":   "Akurasi"
+    },
+    "charts": {
+      "progressByHsk":  "Perkembangan per Level HSK",
+      "learning":       "Dipelajari",
+      "mastered":       "Dikuasai",
+      "masteryDist":    "Distribusi Penguasaan",
+      "due":            "Perlu Ditinjau",
+      "accuracyByHsk":  "Akurasi per Level HSK",
+      "accuracyName":   "Akurasi %"
+    },
+    "overall": {
+      "title":        "Statistik Keseluruhan",
+      "totalReviews": "Total Tinjauan",
+      "avgMastery":   "Rata-rata Penguasaan",
+      "masteryRate":  "Tingkat Penguasaan",
+      "activeLevels": "Level Aktif"
+    }
   }
 }

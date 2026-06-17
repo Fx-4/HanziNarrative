@@ -1,9 +1,11 @@
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Home, ArrowLeft } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export default function NotFound() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4">
@@ -34,13 +36,13 @@ export default function NotFound() {
           transition={{ delay: 0.2, duration: 0.4 }}
         >
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            没找到 · Page Not Found
+            没找到 · {t('notFound.title')}
           </h1>
           <p className="text-sm text-gray-400 dark:text-gray-500 mb-1 font-mono">
             méi zhǎo dào
           </p>
           <p className="text-gray-500 dark:text-gray-400 mt-4 mb-8">
-            The page you're looking for doesn't exist or has been moved.
+            {t('notFound.subtitle')}
           </p>
 
           <div className="flex items-center justify-center gap-3">
@@ -49,14 +51,14 @@ export default function NotFound() {
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
-              Go Back
+              {t('notFound.goBack')}
             </button>
             <button
               onClick={() => navigate('/')}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-primary-600 text-white hover:bg-primary-700 cursor-pointer transition-colors"
             >
               <Home className="w-4 h-4" />
-              Home
+              {t('notFound.home')}
             </button>
           </div>
         </motion.div>

@@ -193,5 +193,47 @@
         "googleFailed":       "Google sign-in failed. Please try again."
       }
     }
+  },
+
+  "notFound": {
+    "title":    "Page Not Found",
+    "subtitle": "The page you're looking for doesn't exist or has been moved.",
+    "goBack":   "Go Back",
+    "home":     "Home"
+  },
+
+  "dashboard": {
+    "title":         "Learning Dashboard",
+    "subtitle":      "Track your progress and achievements",
+    "cached":        "Cached · refreshing…",
+    "loginRequired": "Login Required",
+    "loginPrompt":   "Please login to view your learning dashboard",
+    "loginNow":      "Login Now",
+    "loginError":    "Please login to view your dashboard",
+    "failedTitle":   "Failed to Load",
+    "failedDefault": "Failed to load dashboard data",
+    "tryAgain":      "Try Again",
+    "stats": {
+      "totalWords": "Total Words",
+      "mastered":   "Mastered",
+      "dueToday":   "Due Today",
+      "accuracy":   "Accuracy"
+    },
+    "charts": {
+      "progressByHsk":  "Progress by HSK Level",
+      "learning":       "Learning",
+      "mastered":       "Mastered",
+      "masteryDist":    "Mastery Distribution",
+      "due":            "Due for Review",
+      "accuracyByHsk":  "Accuracy by HSK Level",
+      "accuracyName":   "Accuracy %"
+    },
+    "overall": {
+      "title":        "Overall Statistics",
+      "totalReviews": "Total Reviews",
+      "avgMastery":   "Avg Mastery",
+      "masteryRate":  "Mastery Rate",
+      "activeLevels": "Active Levels"
+    }
   }
 }
