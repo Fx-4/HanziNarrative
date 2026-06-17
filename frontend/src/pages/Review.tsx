@@ -17,6 +17,7 @@ import { toast } from 'react-hot-toast'
 import { useAuthStore } from '@/store/authStore'
 import { useNavigate } from 'react-router-dom'
 import { createLogger } from '@/utils/debugLogger'
+import { useTranslation } from 'react-i18next'
 
 const reviewLogger = createLogger('Review')
 
@@ -75,6 +76,7 @@ function ReviewSkeleton() {
 
 export default function Review() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { user } = useAuthStore()
   const isMountedRef = useRef(true)
   useEffect(() => {
@@ -127,7 +129,7 @@ export default function Review() {
       reviewLogger.error('Failed to load review words:', error)
       // Don't show error toast if user is not authenticated - they'll see the login prompt
       if (err.response?.status !== 401 && err.response?.status !== 403) {
-        toast.error('Failed to load review words')
+        toast.error(t('review.toasts.loadFailed'))
       }
     } finally {
       setLoading(false)
@@ -217,7 +219,7 @@ export default function Review() {
             return
           }
           if (isMountedRef.current) {
-            toast.error('Review sync failed. Check your connection and try again.')
+            toast.error(t('review.toasts.syncFailed'))
           }
         }
       }
@@ -236,15 +238,7 @@ export default function Review() {
       })
 
       // Show feedback
-      const feedbackMessages = {
-        5: 'Perfect! You mastered this word!',
-        4: 'Excellent! Great recall!',
-        3: 'Good job! Keep it up!',
-        2: 'Not bad, needs more practice',
-        1: 'Hard, but you got it',
-        0: 'Keep trying! Practice makes perfect'
-      }
-      toast.success(feedbackMessages[finalQuality as keyof typeof feedbackMessages])
+      toast.success(t(`review.toasts.fb${finalQuality}`))
 
       // Move to next word
       setTimeout(() => {
@@ -254,14 +248,14 @@ export default function Review() {
           generateQuizQuestion(nextIndex, reviewItems)
         } else {
           // Session complete
-          toast.success(`Review session complete! You reviewed ${reviewItems.length} words.`)
+          toast.success(t('review.toasts.sessionDone', { count: reviewItems.length }))
         }
         setIsSubmittingReview(false)
       }, 1000)
 
     } catch (error) {
       reviewLogger.error('Failed to record review:', error)
-      toast.error('Failed to record review')
+      toast.error(t('review.toasts.recordFailed'))
       setIsSubmittingReview(false)
     }
   }
@@ -282,15 +276,15 @@ export default function Review() {
   if (!user) {
     return (
       <div className="max-w-md mx-auto text-center py-20 px-4">
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+        <div className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-8">
           <Brain className="w-16 h-16 text-primary-300 mx-auto mb-4" />
-          <h2 className="text-2xl font-extrabold text-gray-900 mb-2">Please Login</h2>
-          <p className="text-gray-500 mb-6 text-sm">You need to be logged in to access the review feature.</p>
+          <h2 className="text-2xl font-extrabold text-gray-900 dark:text-gray-50 mb-2">{t('review.loginTitle')}</h2>
+          <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">{t('review.loginPrompt')}</p>
           <button
             onClick={() => navigate('/login')}
             className="bg-primary-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-primary-700 transition-all cursor-pointer"
           >
-            Go to Login
+            {t('review.goToLogin')}
           </button>
         </div>
       </div>
@@ -308,24 +302,24 @@ export default function Review() {
       <div className="mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-1 flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-50 mb-1 flex items-center gap-2">
               <Brain className="w-6 h-6 sm:w-7 sm:h-7 text-primary-500" />
-              Spaced Repetition Review
+              {t('review.title')}
             </h1>
-            <p className="text-sm text-gray-500">Review words at optimal intervals for maximum retention</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{t('review.subtitle')}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setHskLevel(undefined)}
-              className={`px-3 py-1.5 rounded-xl font-semibold text-sm transition-all cursor-pointer ${hskLevel === undefined ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              className={`px-3 py-1.5 rounded-xl font-semibold text-sm transition-all cursor-pointer ${hskLevel === undefined ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
             >
-              All Levels
+              {t('review.allLevels')}
             </button>
             {[1, 2, 3, 4].map((level) => (
               <button
                 key={level}
                 onClick={() => setHskLevel(level)}
-                className={`px-3 py-1.5 rounded-xl font-semibold text-sm transition-all cursor-pointer ${hskLevel === level ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                className={`px-3 py-1.5 rounded-xl font-semibold text-sm transition-all cursor-pointer ${hskLevel === level ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
               >
                 HSK {level}
               </button>
@@ -336,52 +330,52 @@ export default function Review() {
       </div>
 
       {reviewItems.length === 0 ? (
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+        <div className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
           <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
           <div className="p-8 sm:p-12 text-center">
             <Star className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-extrabold text-gray-900 mb-2">All Caught Up!</h2>
-            <p className="text-gray-500 mb-6 text-sm sm:text-base">
-              You have no words due for review right now. Great job!
+            <h2 className="text-2xl font-extrabold text-gray-900 dark:text-gray-50 mb-2">{t('review.caughtUpTitle')}</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm sm:text-base">
+              {t('review.caughtUpDesc')}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={() => navigate('/path')}
                 className="bg-primary-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-primary-700 transition-all cursor-pointer"
               >
-                Buka Kursus
+                {t('review.openCourse')}
               </button>
               <button
                 onClick={() => navigate('/vocabulary')}
-                className="border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:border-primary-300 hover:bg-primary-50 transition-all cursor-pointer"
+                className="border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl px-6 py-3 font-semibold hover:border-primary-300 hover:bg-primary-50 dark:hover:bg-primary-950/30 transition-all cursor-pointer"
               >
-                Browse Vocabulary
+                {t('review.browseVocab')}
               </button>
             </div>
           </div>
         </div>
       ) : isSessionComplete ? (
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+        <div className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
           <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
           <div className="p-8 sm:p-12 text-center">
             <Trophy className="w-16 h-16 sm:w-20 sm:h-20 text-yellow-500 mx-auto mb-4" />
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-6">Session Complete!</h2>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-50 mb-6">{t('review.sessionCompleteTitle')}</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8 max-w-lg mx-auto">
               <div className="bg-success-500 rounded-2xl p-4 text-white text-center">
                 <div className="text-2xl sm:text-3xl font-bold">{sessionStats.perfect}</div>
-                <div className="text-xs sm:text-sm opacity-90 mt-0.5">Perfect</div>
+                <div className="text-xs sm:text-sm opacity-90 mt-0.5">{t('review.labels.perfect')}</div>
               </div>
               <div className="bg-primary-500 rounded-2xl p-4 text-white text-center">
                 <div className="text-2xl sm:text-3xl font-bold">{sessionStats.good}</div>
-                <div className="text-xs sm:text-sm opacity-90 mt-0.5">Good</div>
+                <div className="text-xs sm:text-sm opacity-90 mt-0.5">{t('review.labels.good')}</div>
               </div>
               <div className="bg-orange-500 rounded-2xl p-4 text-white text-center">
                 <div className="text-2xl sm:text-3xl font-bold">{sessionStats.hard}</div>
-                <div className="text-xs sm:text-sm opacity-90 mt-0.5">Hard</div>
+                <div className="text-xs sm:text-sm opacity-90 mt-0.5">{t('review.labels.hard')}</div>
               </div>
               <div className="bg-error-500 rounded-2xl p-4 text-white text-center">
                 <div className="text-2xl sm:text-3xl font-bold">{sessionStats.wrong}</div>
-                <div className="text-xs sm:text-sm opacity-90 mt-0.5">Wrong</div>
+                <div className="text-xs sm:text-sm opacity-90 mt-0.5">{t('review.labels.wrong')}</div>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -390,13 +384,13 @@ export default function Review() {
                 className="bg-primary-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-primary-700 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4" />
-                Start New Session
+                {t('review.startNew')}
               </button>
               <button
                 onClick={() => navigate('/dashboard')}
-                className="border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:border-primary-300 hover:bg-primary-50 transition-all cursor-pointer"
+                className="border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl px-6 py-3 font-semibold hover:border-primary-300 hover:bg-primary-50 dark:hover:bg-primary-950/30 transition-all cursor-pointer"
               >
-                Lihat Progress
+                {t('review.viewProgress')}
               </button>
             </div>
           </div>
@@ -405,11 +399,11 @@ export default function Review() {
         <>
           {/* Progress Bar */}
           <div className="mb-4">
-            <div className="flex justify-between text-sm text-gray-500 mb-2">
-              <span>Progress: {sessionStats.completed} / {sessionStats.total}</span>
+            <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-2">
+              <span>{t('review.progress', { completed: sessionStats.completed, total: sessionStats.total })}</span>
               <span>{Math.round((sessionStats.completed / sessionStats.total) * 100)}%</span>
             </div>
-            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
               <motion.div
                 className="h-full bg-gradient-to-r from-primary-500 to-violet-500 rounded-full"
                 initial={{ width: 0 }}
@@ -428,29 +422,29 @@ export default function Review() {
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+              <div className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
                 <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
                 <div className="p-6 sm:p-8 md:p-10">
                   {/* Days Overdue Badge */}
                   {currentItem && currentItem.days_overdue > 0 && (
                     <div className="mb-4">
-                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300">
                         <Clock className="w-3.5 h-3.5" />
-                        {currentItem.days_overdue} day{currentItem.days_overdue > 1 ? 's' : ''} overdue
+                        {t('review.overdue', { count: currentItem.days_overdue })}
                       </span>
                     </div>
                   )}
 
                   {/* Question */}
                   <div className="text-center mb-6 sm:mb-8">
-                    <div className="text-7xl sm:text-8xl md:text-9xl font-bold mb-4 text-gray-900"
+                    <div className="text-7xl sm:text-8xl md:text-9xl font-bold mb-4 text-gray-900 dark:text-gray-50"
                       style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}>
                       {currentItem?.word.simplified}
                     </div>
-                    <div className="text-base sm:text-lg text-gray-500">
+                    <div className="text-base sm:text-lg text-gray-500 dark:text-gray-400">
                       {quizQuestion?.type === 'meaning'
-                        ? 'What does this character mean?'
-                        : 'What is the pinyin pronunciation?'}
+                        ? t('review.qMeaning')
+                        : t('review.qPinyin')}
                     </div>
                   </div>
 

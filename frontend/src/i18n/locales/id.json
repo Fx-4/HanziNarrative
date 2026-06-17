@@ -389,5 +389,45 @@
     "retry":        "Coba lagi",
     "start":        "Mulai",
     "review":       "Tinjau"
+  },
+
+  "review": {
+    "loginTitle":    "Silakan Masuk",
+    "loginPrompt":   "Kamu harus masuk untuk mengakses fitur tinjauan.",
+    "goToLogin":     "Ke Halaman Masuk",
+    "title":         "Tinjauan Spaced Repetition",
+    "subtitle":      "Tinjau kata pada interval optimal untuk retensi maksimal",
+    "allLevels":     "Semua Level",
+    "caughtUpTitle": "Semua Beres!",
+    "caughtUpDesc":  "Tidak ada kata yang perlu ditinjau sekarang. Kerja bagus!",
+    "openCourse":    "Buka Kursus",
+    "browseVocab":   "Jelajahi Kosakata",
+    "sessionCompleteTitle": "Sesi Selesai!",
+    "startNew":      "Mulai Sesi Baru",
+    "viewProgress":  "Lihat Progress",
+    "progress":      "Progress: {{completed}} / {{total}}",
+    "overdue_one":   "Terlambat {{count}} hari",
+    "overdue_other": "Terlambat {{count}} hari",
+    "qMeaning":      "Apa arti karakter ini?",
+    "qPinyin":       "Apa pelafalan pinyin-nya?",
+    "correct":       "Benar!",
+    "incorrect":     "Salah – Lihat jawaban di bawah",
+    "hearPronunciation": "Dengar pelafalan",
+    "skipQuiz":      "Lewati Kuis – Tampilkan Jawaban",
+    "howWell":       "Seberapa baik kamu mengingatnya?",
+    "labels":        { "wrong": "Salah", "hard": "Sulit", "good": "Baik", "easy": "Mudah", "perfect": "Sempurna" },
+    "ratingDesc":    { "wrong": "Benar-benar lupa", "hard": "Sulit diingat", "good": "Ingat dengan usaha", "easy": "Cepat ingat", "perfect": "Ingat seketika" },
+    "toasts": {
+      "loadFailed":   "Gagal memuat kata tinjauan",
+      "syncFailed":   "Sinkronisasi tinjauan gagal. Cek koneksimu dan coba lagi.",
+      "recordFailed": "Gagal menyimpan tinjauan",
+      "sessionDone":  "Sesi tinjauan selesai! Kamu meninjau {{count}} kata.",
+      "fb5": "Sempurna! Kamu menguasai kata ini!",
+      "fb4": "Luar biasa! Ingatan yang bagus!",
+      "fb3": "Kerja bagus! Pertahankan!",
+      "fb2": "Lumayan, perlu latihan lagi",
+      "fb1": "Sulit, tapi kamu berhasil",
+      "fb0": "Terus coba! Latihan membuat sempurna"
+    }
   }
 }

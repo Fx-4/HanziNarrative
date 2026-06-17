@@ -389,5 +389,45 @@
     "retry":        "Try again",
     "start":        "Start",
     "review":       "Review"
+  },
+
+  "review": {
+    "loginTitle":    "Please Login",
+    "loginPrompt":   "You need to be logged in to access the review feature.",
+    "goToLogin":     "Go to Login",
+    "title":         "Spaced Repetition Review",
+    "subtitle":      "Review words at optimal intervals for maximum retention",
+    "allLevels":     "All Levels",
+    "caughtUpTitle": "All Caught Up!",
+    "caughtUpDesc":  "You have no words due for review right now. Great job!",
+    "openCourse":    "Open Course",
+    "browseVocab":   "Browse Vocabulary",
+    "sessionCompleteTitle": "Session Complete!",
+    "startNew":      "Start New Session",
+    "viewProgress":  "View Progress",
+    "progress":      "Progress: {{completed}} / {{total}}",
+    "overdue_one":   "{{count}} day overdue",
+    "overdue_other": "{{count}} days overdue",
+    "qMeaning":      "What does this character mean?",
+    "qPinyin":       "What is the pinyin pronunciation?",
+    "correct":       "Correct!",
+    "incorrect":     "Incorrect – See the answer below",
+    "hearPronunciation": "Hear the pronunciation",
+    "skipQuiz":      "Skip Quiz – Show Answer",
+    "howWell":       "How well did you know this?",
+    "labels":        { "wrong": "Wrong", "hard": "Hard", "good": "Good", "easy": "Easy", "perfect": "Perfect" },
+    "ratingDesc":    { "wrong": "Completely forgot", "hard": "Difficult to recall", "good": "Remembered with effort", "easy": "Quick recall", "perfect": "Instant recall" },
+    "toasts": {
+      "loadFailed":   "Failed to load review words",
+      "syncFailed":   "Review sync failed. Check your connection and try again.",
+      "recordFailed": "Failed to record review",
+      "sessionDone":  "Review session complete! You reviewed {{count}} words.",
+      "fb5": "Perfect! You mastered this word!",
+      "fb4": "Excellent! Great recall!",
+      "fb3": "Good job! Keep it up!",
+      "fb2": "Not bad, needs more practice",
+      "fb1": "Hard, but you got it",
+      "fb0": "Keep trying! Practice makes perfect"
+    }
   }
 }
