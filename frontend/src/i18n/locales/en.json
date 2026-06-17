@@ -279,5 +279,87 @@
     "contactText":  "Have a suggestion, a bug report, or just want to say hi? Reach out via email or the social links above. Feedback is much appreciated!",
     "madeWith":     "Made with",
     "by":           "by Haikal · 2025"
+  },
+
+  "onboarding": {
+    "loading":    "Loading your profile…",
+    "toastGoals": "Goals may not have saved — check your connection.",
+    "toastSaved": "Setup saved locally — some rewards may take a moment to apply.",
+    "back":       "Back",
+    "steps":      { "goals": "Goals", "level": "Level", "preferences": "Preferences" },
+    "welcome": {
+      "title":    "Welcome to",
+      "subtitle": "Let's set up your personalized Chinese learning experience. It only takes a minute.",
+      "cta":      "Let's Get Started",
+      "features": {
+        "vocab":   { "title": "HSK 1–6 Vocabulary",   "desc": "1,536 words with pinyin and example sentences." },
+        "stories": { "title": "AI-Generated Stories", "desc": "Gemini AI writes stories tailored to your level." },
+        "srs":     { "title": "Spaced Repetition",    "desc": "Smart scheduling surfaces words at the right moment." }
+      }
+    },
+    "goals": {
+      "title":       "Set your learning goals",
+      "subtitle":    "You can change these anytime in your profile.",
+      "dailyTime":   "Daily Practice Time",
+      "minPerDay":   "min / day",
+      "dailyWords":  "New Words Daily",
+      "wordsPerDay": "words / day",
+      "targetHsk":   "Target HSK Level",
+      "levelLabels": { "1": "Beginner", "2": "Elementary", "3": "Intermediate", "4": "Upper-Int.", "5": "Advanced", "6": "Mastery" },
+      "weeklyXp":    "Weekly XP Target",
+      "xpLabels":    { "100": "Casual · ~15 min/day", "300": "Regular · ~30 min/day", "500": "Dedicated · ~1 hr/day", "1000": "Intensive · ~2 hr/day" },
+      "continue":    "Continue"
+    },
+    "level": {
+      "title":          "What's your Chinese level?",
+      "subtitle":       "We'll use this to match content to your skill. You can adjust it later.",
+      "recommended":    "Recommended",
+      "testTitle":      "Take a Quick Test",
+      "testMeta":       "~5 minutes · adaptive difficulty",
+      "testBenefits":   ["Personalized placement", "Adaptive difficulty", "Earn XP while testing", "Start at your true level"],
+      "startTest":      "Start Test",
+      "scratchTitle":   "Start from Scratch",
+      "scratchMeta":    "Begin with HSK 1 · no pressure",
+      "scratchBenefits":["No testing required", "Start from the basics", "Build a strong foundation", "Perfect for beginners"],
+      "skipToHsk1":     "Skip to HSK 1"
+    },
+    "preferences": {
+      "title":          "Personalize your experience",
+      "subtitle":       "These help us tailor content to how you learn best.",
+      "learningStyle":  "Learning style",
+      "styles": {
+        "visual":   { "label": "Visual",   "desc": "Images & characters" },
+        "auditory": { "label": "Auditory", "desc": "Listening & speaking" },
+        "reading":  { "label": "Reading",  "desc": "Text & stories" }
+      },
+      "difficulty":     "Difficulty preference",
+      "difficulties": {
+        "easy":   { "label": "Relaxed",   "desc": "Take it slow" },
+        "medium": { "label": "Balanced",  "desc": "Steady progress" },
+        "hard":   { "label": "Challenge", "desc": "Push your limits" }
+      },
+      "showPinyin":     "Show Pinyin by default",
+      "showPinyinDesc": "Display romanization with Chinese characters",
+      "reminders":      "Daily reminders",
+      "remindersDesc":  "Get notified to practice every day",
+      "complete":       "Complete Setup"
+    },
+    "completion": {
+      "title":        "You're all set!",
+      "subtitle":     "Your Chinese learning journey begins now.",
+      "startingLevel":"Starting Level",
+      "xpEarned":     "XP Earned",
+      "achievementUnlocked": "Achievement unlocked!",
+      "playerLevel":  "Player Level",
+      "levelUp":      "Level Up!",
+      "wordsReady":   "Words Ready",
+      "toLearn":      "to learn",
+      "whatsNext":    "What's next?",
+      "next1":        "Start learning {{words}} words at HSK {{level}}",
+      "next2":        "Track progress on your dashboard",
+      "next3":        "Earn XP and unlock achievements",
+      "next4":        "Practice with exercises and AI stories",
+      "cta":          "Start Learning Now"
+    }
   }
 }

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { ChevronLeft, Check } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface ProgressIndicatorProps {
   currentStep: number   // internal step 2–5
@@ -8,10 +9,10 @@ interface ProgressIndicatorProps {
 }
 
 const STEPS = [
-  { label: 'Goals' },
-  { label: 'Level' },
-  { label: 'Preferences' },
-]
+  { key: 'goals' },
+  { key: 'level' },
+  { key: 'preferences' },
+] as const
 
 // Maps internal step numbers to visual progress (1–3)
 function getVisualStep(currentStep: number): number {
@@ -26,6 +27,7 @@ const ProgressIndicator = ({
   onBack,
   showBackButton = true,
 }: ProgressIndicatorProps) => {
+  const { t } = useTranslation()
   const visual = getVisualStep(currentStep)
 
   return (
@@ -39,7 +41,7 @@ const ProgressIndicator = ({
               className="flex items-center gap-1 px-2 py-1.5 text-sm text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
-              Back
+              {t('onboarding.back')}
             </button>
           )}
         </div>
@@ -52,7 +54,7 @@ const ProgressIndicator = ({
             const isCurrent   = stepVisual === visual
 
             return (
-              <div key={s.label} className="flex items-center gap-1.5">
+              <div key={s.key} className="flex items-center gap-1.5">
                 <div
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${
                     isCompleted
@@ -66,7 +68,7 @@ const ProgressIndicator = ({
                     ? <Check className="w-3 h-3 shrink-0" />
                     : <span className="w-3 h-3 flex items-center justify-center font-bold text-[10px]">{stepVisual}</span>
                   }
-                  {s.label}
+                  {t(`onboarding.steps.${s.key}`)}
                 </div>
                 {idx < STEPS.length - 1 && (
                   <div className={`h-px w-3 transition-colors ${stepVisual < visual ? 'bg-primary-300' : 'bg-gray-200'}`} />

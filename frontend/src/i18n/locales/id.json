@@ -279,5 +279,87 @@
     "contactText":  "Punya saran, laporan bug, atau sekadar ingin menyapa? Silakan hubungi lewat email atau social media di atas. Feedback sangat diapresiasi!",
     "madeWith":     "Dibuat dengan",
     "by":           "oleh Haikal · 2025"
+  },
+
+  "onboarding": {
+    "loading":    "Memuat profilmu…",
+    "toastGoals": "Tujuan mungkin belum tersimpan — cek koneksimu.",
+    "toastSaved": "Pengaturan tersimpan lokal — beberapa hadiah mungkin butuh waktu sebentar.",
+    "back":       "Kembali",
+    "steps":      { "goals": "Tujuan", "level": "Level", "preferences": "Preferensi" },
+    "welcome": {
+      "title":    "Selamat datang di",
+      "subtitle": "Ayo siapkan pengalaman belajar Mandarin yang dipersonalisasi untukmu. Hanya butuh semenit.",
+      "cta":      "Ayo Mulai",
+      "features": {
+        "vocab":   { "title": "Kosakata HSK 1–6",   "desc": "1.536 kata dengan pinyin dan contoh kalimat." },
+        "stories": { "title": "Cerita Buatan AI",   "desc": "Gemini AI menulis cerita sesuai levelmu." },
+        "srs":     { "title": "Spaced Repetition",  "desc": "Penjadwalan pintar memunculkan kata di saat yang tepat." }
+      }
+    },
+    "goals": {
+      "title":       "Tetapkan tujuan belajarmu",
+      "subtitle":    "Kamu bisa mengubahnya kapan saja di profil.",
+      "dailyTime":   "Waktu Belajar Harian",
+      "minPerDay":   "menit / hari",
+      "dailyWords":  "Kata Baru Harian",
+      "wordsPerDay": "kata / hari",
+      "targetHsk":   "Target Level HSK",
+      "levelLabels": { "1": "Pemula", "2": "Dasar", "3": "Menengah", "4": "Menengah Atas", "5": "Lanjutan", "6": "Mahir" },
+      "weeklyXp":    "Target XP Mingguan",
+      "xpLabels":    { "100": "Santai · ~15 mnt/hari", "300": "Reguler · ~30 mnt/hari", "500": "Tekun · ~1 jam/hari", "1000": "Intensif · ~2 jam/hari" },
+      "continue":    "Lanjut"
+    },
+    "level": {
+      "title":          "Apa level Mandarinmu?",
+      "subtitle":       "Kami pakai ini untuk menyesuaikan konten dengan kemampuanmu. Bisa diubah nanti.",
+      "recommended":    "Direkomendasikan",
+      "testTitle":      "Ikuti Tes Singkat",
+      "testMeta":       "~5 menit · tingkat kesulitan adaptif",
+      "testBenefits":   ["Penempatan personal", "Kesulitan adaptif", "Dapat XP sambil tes", "Mulai dari level yang sesungguhnya"],
+      "startTest":      "Mulai Tes",
+      "scratchTitle":   "Mulai dari Awal",
+      "scratchMeta":    "Mulai dari HSK 1 · santai saja",
+      "scratchBenefits":["Tanpa tes", "Mulai dari dasar", "Bangun fondasi yang kuat", "Cocok untuk pemula"],
+      "skipToHsk1":     "Lewati ke HSK 1"
+    },
+    "preferences": {
+      "title":          "Personalisasi pengalamanmu",
+      "subtitle":       "Ini membantu kami menyesuaikan konten dengan cara belajarmu.",
+      "learningStyle":  "Gaya belajar",
+      "styles": {
+        "visual":   { "label": "Visual",    "desc": "Gambar & karakter" },
+        "auditory": { "label": "Auditori",  "desc": "Mendengar & berbicara" },
+        "reading":  { "label": "Membaca",   "desc": "Teks & cerita" }
+      },
+      "difficulty":     "Preferensi kesulitan",
+      "difficulties": {
+        "easy":   { "label": "Santai",    "desc": "Pelan-pelan saja" },
+        "medium": { "label": "Seimbang",  "desc": "Progres stabil" },
+        "hard":   { "label": "Tantangan", "desc": "Dorong batasmu" }
+      },
+      "showPinyin":     "Tampilkan Pinyin secara default",
+      "showPinyinDesc": "Tampilkan romanisasi bersama karakter Mandarin",
+      "reminders":      "Pengingat harian",
+      "remindersDesc":  "Dapatkan notifikasi untuk berlatih setiap hari",
+      "complete":       "Selesaikan Pengaturan"
+    },
+    "completion": {
+      "title":        "Semua siap!",
+      "subtitle":     "Perjalanan belajar Mandarinmu dimulai sekarang.",
+      "startingLevel":"Level Awal",
+      "xpEarned":     "XP Didapat",
+      "achievementUnlocked": "Pencapaian terbuka!",
+      "playerLevel":  "Level Pemain",
+      "levelUp":      "Naik Level!",
+      "wordsReady":   "Kata Siap",
+      "toLearn":      "dipelajari",
+      "whatsNext":    "Selanjutnya apa?",
+      "next1":        "Mulai belajar {{words}} kata di HSK {{level}}",
+      "next2":        "Pantau progres di dasbormu",
+      "next3":        "Kumpulkan XP dan buka pencapaian",
+      "next4":        "Berlatih dengan latihan dan cerita AI",
+      "cta":          "Mulai Belajar Sekarang"
+    }
   }
 }

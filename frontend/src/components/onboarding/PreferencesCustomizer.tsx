@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Eye, Volume2, BookText, Bell, Clock, ArrowRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { Preferences } from '@/types'
 
 interface PreferencesCustomizerProps {
@@ -9,18 +10,19 @@ interface PreferencesCustomizerProps {
 }
 
 const LEARNING_STYLES = [
-  { id: 'visual',   Icon: Eye,      label: 'Visual',   desc: 'Images & characters',  color: 'text-sky-500',    bg: 'bg-sky-50',    border: 'border-sky-200' },
-  { id: 'auditory', Icon: Volume2,  label: 'Auditory', desc: 'Listening & speaking',  color: 'text-violet-500', bg: 'bg-violet-50', border: 'border-violet-200' },
-  { id: 'reading',  Icon: BookText, label: 'Reading',  desc: 'Text & stories',        color: 'text-emerald-500',bg: 'bg-emerald-50',border: 'border-emerald-200' },
-]
+  { id: 'visual',   Icon: Eye,      color: 'text-sky-500',    bg: 'bg-sky-50',    border: 'border-sky-200' },
+  { id: 'auditory', Icon: Volume2,  color: 'text-violet-500', bg: 'bg-violet-50', border: 'border-violet-200' },
+  { id: 'reading',  Icon: BookText, color: 'text-emerald-500',bg: 'bg-emerald-50',border: 'border-emerald-200' },
+] as const
 
 const DIFFICULTIES = [
-  { id: 'easy',   label: 'Relaxed',   desc: 'Take it slow' },
-  { id: 'medium', label: 'Balanced',  desc: 'Steady progress' },
-  { id: 'hard',   label: 'Challenge', desc: 'Push your limits' },
-]
+  { id: 'easy' },
+  { id: 'medium' },
+  { id: 'hard' },
+] as const
 
 const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustomizerProps) => {
+  const { t } = useTranslation()
   const [prefs, setPrefs] = useState<Preferences>({
     learning_style:        initialPreferences?.learning_style        || 'visual',
     difficulty_preference: initialPreferences?.difficulty_preference || 'medium',
@@ -38,17 +40,17 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
         className="text-center mb-8"
       >
         <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
-          Personalize your experience
+          {t('onboarding.preferences.title')}
         </h2>
-        <p className="text-gray-500 text-sm">These help us tailor content to how you learn best.</p>
+        <p className="text-gray-500 text-sm">{t('onboarding.preferences.subtitle')}</p>
       </motion.div>
 
       <div className="w-full space-y-6">
         {/* Learning style */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <p className="text-sm font-semibold text-gray-700 mb-3">Learning style</p>
+          <p className="text-sm font-semibold text-gray-700 mb-3">{t('onboarding.preferences.learningStyle')}</p>
           <div className="grid grid-cols-3 gap-3">
-            {LEARNING_STYLES.map(({ id, Icon, label, desc, color, bg, border }) => (
+            {LEARNING_STYLES.map(({ id, Icon, color, bg, border }) => (
               <button
                 key={id}
                 onClick={() => setPrefs({ ...prefs, learning_style: id })}
@@ -61,8 +63,8 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2 ${prefs.learning_style === id ? bg : 'bg-gray-100'}`}>
                   <Icon className={`w-4 h-4 ${prefs.learning_style === id ? color : 'text-gray-400'}`} />
                 </div>
-                <p className="font-semibold text-gray-900 text-sm">{label}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
+                <p className="font-semibold text-gray-900 text-sm">{t(`onboarding.preferences.styles.${id}.label`)}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{t(`onboarding.preferences.styles.${id}.desc`)}</p>
               </button>
             ))}
           </div>
@@ -70,9 +72,9 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
 
         {/* Difficulty */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <p className="text-sm font-semibold text-gray-700 mb-3">Difficulty preference</p>
+          <p className="text-sm font-semibold text-gray-700 mb-3">{t('onboarding.preferences.difficulty')}</p>
           <div className="grid grid-cols-3 gap-3">
-            {DIFFICULTIES.map(({ id, label, desc }) => (
+            {DIFFICULTIES.map(({ id }) => (
               <button
                 key={id}
                 onClick={() => setPrefs({ ...prefs, difficulty_preference: id })}
@@ -82,8 +84,8 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
                     : 'bg-white border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <p className={`font-semibold text-sm ${prefs.difficulty_preference === id ? 'text-primary-700' : 'text-gray-900'}`}>{label}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
+                <p className={`font-semibold text-sm ${prefs.difficulty_preference === id ? 'text-primary-700' : 'text-gray-900'}`}>{t(`onboarding.preferences.difficulties.${id}.label`)}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{t(`onboarding.preferences.difficulties.${id}.desc`)}</p>
               </button>
             ))}
           </div>
@@ -99,8 +101,8 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
           {/* Show pinyin */}
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
             <div>
-              <p className="font-semibold text-gray-900 text-sm">Show Pinyin by default</p>
-              <p className="text-xs text-gray-500">Display romanization with Chinese characters</p>
+              <p className="font-semibold text-gray-900 text-sm">{t('onboarding.preferences.showPinyin')}</p>
+              <p className="text-xs text-gray-500">{t('onboarding.preferences.showPinyinDesc')}</p>
             </div>
             <button
               onClick={() => setPrefs({ ...prefs, show_pinyin_by_default: !prefs.show_pinyin_by_default })}
@@ -116,8 +118,8 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
               <div className="flex items-center gap-2">
                 <Bell className="w-4 h-4 text-gray-500" />
                 <div>
-                  <p className="font-semibold text-gray-900 text-sm">Daily reminders</p>
-                  <p className="text-xs text-gray-500">Get notified to practice every day</p>
+                  <p className="font-semibold text-gray-900 text-sm">{t('onboarding.preferences.reminders')}</p>
+                  <p className="text-xs text-gray-500">{t('onboarding.preferences.remindersDesc')}</p>
                 </div>
               </div>
               <button
@@ -155,7 +157,7 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
         onClick={() => onNext(prefs)}
         className="mt-8 inline-flex items-center gap-2 px-8 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/20 transition-colors"
       >
-        Complete Setup
+        {t('onboarding.preferences.complete')}
         <ArrowRight className="w-4 h-4" />
       </motion.button>
     </div>

@@ -1,35 +1,19 @@
 import { motion } from 'framer-motion'
 import { BookOpen, Sparkles, Zap, ArrowRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface WelcomeScreenProps {
   onNext: () => void
 }
 
 const FEATURES = [
-  {
-    icon: BookOpen,
-    title: 'HSK 1–6 Vocabulary',
-    desc: '1,536 words with pinyin and example sentences.',
-    color: 'text-sky-500',
-    bg: 'bg-sky-50',
-  },
-  {
-    icon: Sparkles,
-    title: 'AI-Generated Stories',
-    desc: 'Gemini AI writes stories tailored to your level.',
-    color: 'text-violet-500',
-    bg: 'bg-violet-50',
-  },
-  {
-    icon: Zap,
-    title: 'Spaced Repetition',
-    desc: 'Smart scheduling surfaces words at the right moment.',
-    color: 'text-emerald-500',
-    bg: 'bg-emerald-50',
-  },
-]
+  { icon: BookOpen, key: 'vocab',   color: 'text-sky-500',     bg: 'bg-sky-50' },
+  { icon: Sparkles, key: 'stories', color: 'text-violet-500',  bg: 'bg-violet-50' },
+  { icon: Zap,      key: 'srs',     color: 'text-emerald-500', bg: 'bg-emerald-50' },
+] as const
 
 const WelcomeScreen = ({ onNext }: WelcomeScreenProps) => {
+  const { t } = useTranslation()
   return (
     <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
       {/* Logo badge */}
@@ -49,7 +33,7 @@ const WelcomeScreen = ({ onNext }: WelcomeScreenProps) => {
         transition={{ delay: 0.15 }}
         className="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900 mb-4"
       >
-        Welcome to{' '}
+        {t('onboarding.welcome.title')}{' '}
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-violet-600">
           HanziNarrative
         </span>
@@ -61,7 +45,7 @@ const WelcomeScreen = ({ onNext }: WelcomeScreenProps) => {
         transition={{ delay: 0.25 }}
         className="text-lg text-gray-500 max-w-md mb-10 leading-relaxed"
       >
-        Let's set up your personalized Chinese learning experience. It only takes a minute.
+        {t('onboarding.welcome.subtitle')}
       </motion.p>
 
       {/* Feature chips */}
@@ -75,14 +59,14 @@ const WelcomeScreen = ({ onNext }: WelcomeScreenProps) => {
           const Icon = f.icon
           return (
             <div
-              key={f.title}
+              key={f.key}
               className={`${f.bg} rounded-2xl p-4 border border-gray-100 text-left`}
             >
               <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center mb-3 shadow-sm">
                 <Icon className={`w-4 h-4 ${f.color}`} />
               </div>
-              <p className="font-semibold text-gray-900 text-sm mb-1">{f.title}</p>
-              <p className="text-xs text-gray-500 leading-relaxed">{f.desc}</p>
+              <p className="font-semibold text-gray-900 text-sm mb-1">{t(`onboarding.welcome.features.${f.key}.title`)}</p>
+              <p className="text-xs text-gray-500 leading-relaxed">{t(`onboarding.welcome.features.${f.key}.desc`)}</p>
             </div>
           )
         })}
@@ -96,7 +80,7 @@ const WelcomeScreen = ({ onNext }: WelcomeScreenProps) => {
         onClick={onNext}
         className="inline-flex items-center gap-2 px-8 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/25 transition-colors text-base"
       >
-        Let's Get Started
+        {t('onboarding.welcome.cta')}
         <ArrowRight className="w-4 h-4" />
       </motion.button>
     </div>

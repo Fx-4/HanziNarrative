@@ -16,11 +16,13 @@ import PreferencesCustomizer from '@/components/onboarding/PreferencesCustomizer
 import CompletionScreen from '@/components/onboarding/CompletionScreen'
 import { Loader2 } from 'lucide-react'
 import { createLogger } from '@/utils/debugLogger'
+import { useTranslation } from 'react-i18next'
 
 const onboardingLogger = createLogger('Onboarding')
 
 const Onboarding = () => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   // (checkOnboardingStatus not needed here — we setState directly for instant sync)
 
   const [loading, setLoading] = useState(true)
@@ -84,7 +86,7 @@ const Onboarding = () => {
     setCurrentStep(3)
     // Fire-and-forget — failure is non-blocking (user can still proceed)
     onboardingApi.saveGoals(selectedGoals).catch(() =>
-      toast('Goals may not have saved — check your connection.', { icon: '⚠️', duration: 3000 })
+      toast(t('onboarding.toastGoals'), { icon: '⚠️', duration: 3000 })
     )
   }
 
@@ -131,7 +133,7 @@ const Onboarding = () => {
       preferences: selectedPreferences,
     }).then(result => setCompletionData(result))
       .catch(() => {
-        toast('Setup saved locally — some rewards may take a moment to apply.', { icon: '⚠️', duration: 4000 })
+        toast(t('onboarding.toastSaved'), { icon: '⚠️', duration: 4000 })
       })
   }
 
@@ -153,7 +155,7 @@ const Onboarding = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-primary-50 via-white to-violet-50 gap-3">
         <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
-        <p className="text-sm text-gray-500">Loading your profile…</p>
+        <p className="text-sm text-gray-500">{t('onboarding.loading')}</p>
       </div>
     )
   }

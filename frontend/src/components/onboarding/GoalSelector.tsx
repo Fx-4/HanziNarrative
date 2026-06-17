@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Clock, BookMarked, Trophy, Zap, ArrowRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { Goals } from '@/types'
 
 interface GoalSelectorProps {
@@ -9,28 +10,13 @@ interface GoalSelectorProps {
 }
 
 const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
+  const { t } = useTranslation()
   const [goals, setGoals] = useState<Goals>({
     daily_time_minutes: initialGoals?.daily_time_minutes || 15,
     daily_words: initialGoals?.daily_words || 10,
     target_hsk_level: initialGoals?.target_hsk_level || 3,
     weekly_xp: initialGoals?.weekly_xp || 300,
   })
-
-  const LEVEL_LABELS: Record<number, string> = {
-    1: 'Beginner',
-    2: 'Elementary',
-    3: 'Intermediate',
-    4: 'Upper-Int.',
-    5: 'Advanced',
-    6: 'Mastery',
-  }
-
-  const XP_LABELS: Record<number, string> = {
-    100: 'Casual · ~15 min/day',
-    300: 'Regular · ~30 min/day',
-    500: 'Dedicated · ~1 hr/day',
-    1000: 'Intensive · ~2 hr/day',
-  }
 
   return (
     <div className="flex flex-col items-center px-2 max-w-3xl mx-auto w-full">
@@ -41,9 +27,9 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
         className="text-center mb-8"
       >
         <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
-          Set your learning goals
+          {t('onboarding.goals.title')}
         </h2>
-        <p className="text-gray-500 text-sm">You can change these anytime in your profile.</p>
+        <p className="text-gray-500 text-sm">{t('onboarding.goals.subtitle')}</p>
       </motion.div>
 
       {/* Goal Cards */}
@@ -60,7 +46,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
             <div className="w-9 h-9 bg-sky-50 rounded-xl flex items-center justify-center">
               <Clock className="w-4.5 h-4.5 text-sky-500" />
             </div>
-            <span className="font-semibold text-gray-900 text-sm">Daily Practice Time</span>
+            <span className="font-semibold text-gray-900 text-sm">{t('onboarding.goals.dailyTime')}</span>
           </div>
           <input
             type="range" min="5" max="60" step="5"
@@ -70,7 +56,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
           />
           <div className="mt-3 text-center">
             <span className="text-2xl font-extrabold text-primary-600">{goals.daily_time_minutes}</span>
-            <span className="ml-1.5 text-sm text-gray-500">min / day</span>
+            <span className="ml-1.5 text-sm text-gray-500">{t('onboarding.goals.minPerDay')}</span>
           </div>
         </motion.div>
 
@@ -85,7 +71,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
             <div className="w-9 h-9 bg-violet-50 rounded-xl flex items-center justify-center">
               <BookMarked className="w-4.5 h-4.5 text-violet-500" />
             </div>
-            <span className="font-semibold text-gray-900 text-sm">New Words Daily</span>
+            <span className="font-semibold text-gray-900 text-sm">{t('onboarding.goals.dailyWords')}</span>
           </div>
           <input
             type="range" min="5" max="50" step="5"
@@ -95,7 +81,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
           />
           <div className="mt-3 text-center">
             <span className="text-2xl font-extrabold text-primary-600">{goals.daily_words}</span>
-            <span className="ml-1.5 text-sm text-gray-500">words / day</span>
+            <span className="ml-1.5 text-sm text-gray-500">{t('onboarding.goals.wordsPerDay')}</span>
           </div>
         </motion.div>
 
@@ -110,7 +96,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
             <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center">
               <Trophy className="w-4.5 h-4.5 text-amber-500" />
             </div>
-            <span className="font-semibold text-gray-900 text-sm">Target HSK Level</span>
+            <span className="font-semibold text-gray-900 text-sm">{t('onboarding.goals.targetHsk')}</span>
           </div>
           <div className="flex gap-1.5">
             {[1, 2, 3, 4, 5, 6].map((level) => (
@@ -128,7 +114,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
             ))}
           </div>
           <p className="mt-2 text-xs text-center text-gray-400">
-            HSK {goals.target_hsk_level} — {LEVEL_LABELS[goals.target_hsk_level || 3]}
+            HSK {goals.target_hsk_level} — {t(`onboarding.goals.levelLabels.${goals.target_hsk_level || 3}`)}
           </p>
         </motion.div>
 
@@ -143,7 +129,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
             <div className="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center">
               <Zap className="w-4.5 h-4.5 text-emerald-500" />
             </div>
-            <span className="font-semibold text-gray-900 text-sm">Weekly XP Target</span>
+            <span className="font-semibold text-gray-900 text-sm">{t('onboarding.goals.weeklyXp')}</span>
           </div>
           <div className="flex gap-1.5">
             {[100, 300, 500, 1000].map((xp) => (
@@ -161,7 +147,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
             ))}
           </div>
           <p className="mt-2 text-xs text-center text-gray-400">
-            {XP_LABELS[goals.weekly_xp || 300]}
+            {t(`onboarding.goals.xpLabels.${goals.weekly_xp || 300}`)}
           </p>
         </motion.div>
       </div>
@@ -174,7 +160,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
         onClick={() => onNext(goals)}
         className="mt-8 inline-flex items-center gap-2 px-8 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/20 transition-colors"
       >
-        Continue
+        {t('onboarding.goals.continue')}
         <ArrowRight className="w-4 h-4" />
       </motion.button>
     </div>

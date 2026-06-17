@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import Confetti from 'react-confetti'
 import { Trophy, Target, Award, TrendingUp, ArrowRight, Check } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 interface CompletionScreenProps {
   determinedLevel: number
@@ -21,19 +22,20 @@ const CompletionScreen = ({
   initialWordsCount,
 }: CompletionScreenProps) => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const STATS = [
-    { Icon: Trophy,    label: 'Starting Level', value: `HSK ${determinedLevel}`,    bg: 'bg-primary-600' },
-    { Icon: Award,     label: 'XP Earned',       value: `${xpEarned} XP`,            bg: 'bg-violet-600', note: achievementUnlocked ? 'Achievement unlocked!' : undefined },
-    { Icon: TrendingUp,label: 'Player Level',    value: `Level ${currentLevel}`,     bg: 'bg-primary-500', note: leveledUp ? 'Level Up!' : undefined },
-    { Icon: Target,    label: 'Words Ready',     value: `${initialWordsCount}`,      bg: 'bg-primary-700', note: 'to learn' },
+    { Icon: Trophy,     label: t('onboarding.completion.startingLevel'), value: `HSK ${determinedLevel}`, bg: 'bg-primary-600' },
+    { Icon: Award,      label: t('onboarding.completion.xpEarned'),      value: `${xpEarned} XP`,         bg: 'bg-violet-600',  note: achievementUnlocked ? t('onboarding.completion.achievementUnlocked') : undefined },
+    { Icon: TrendingUp, label: t('onboarding.completion.playerLevel'),   value: `Level ${currentLevel}`,  bg: 'bg-primary-500', note: leveledUp ? t('onboarding.completion.levelUp') : undefined },
+    { Icon: Target,     label: t('onboarding.completion.wordsReady'),    value: `${initialWordsCount}`,   bg: 'bg-primary-700', note: t('onboarding.completion.toLearn') },
   ]
 
   const NEXT_STEPS = [
-    `Start learning ${initialWordsCount} words at HSK ${determinedLevel}`,
-    'Track progress on your dashboard',
-    'Earn XP and unlock achievements',
-    'Practice with exercises and AI stories',
+    t('onboarding.completion.next1', { words: initialWordsCount, level: determinedLevel }),
+    t('onboarding.completion.next2'),
+    t('onboarding.completion.next3'),
+    t('onboarding.completion.next4'),
   ]
 
   return (
@@ -62,7 +64,7 @@ const CompletionScreen = ({
         transition={{ delay: 0.2 }}
         className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-3"
       >
-        You're all set!
+        {t('onboarding.completion.title')}
       </motion.h1>
 
       <motion.p
@@ -71,7 +73,7 @@ const CompletionScreen = ({
         transition={{ delay: 0.3 }}
         className="text-gray-500 text-lg mb-10"
       >
-        Your Chinese learning journey begins now.
+        {t('onboarding.completion.subtitle')}
       </motion.p>
 
       {/* Stats */}
@@ -98,7 +100,7 @@ const CompletionScreen = ({
         transition={{ delay: 0.5 }}
         className="w-full max-w-md text-left bg-gray-50 border border-gray-200 rounded-2xl p-5 mb-8"
       >
-        <p className="font-semibold text-gray-900 text-sm mb-3">What's next?</p>
+        <p className="font-semibold text-gray-900 text-sm mb-3">{t('onboarding.completion.whatsNext')}</p>
         <ul className="space-y-2">
           {NEXT_STEPS.map(step => (
             <li key={step} className="flex items-start gap-2 text-sm text-gray-600">
@@ -117,7 +119,7 @@ const CompletionScreen = ({
         onClick={() => navigate('/dashboard')}
         className="inline-flex items-center gap-2 px-10 py-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl shadow-xl shadow-primary-500/25 transition-colors text-base"
       >
-        Start Learning Now
+        {t('onboarding.completion.cta')}
         <ArrowRight className="w-4 h-4" />
       </motion.button>
     </div>
