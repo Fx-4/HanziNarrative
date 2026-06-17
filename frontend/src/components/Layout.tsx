@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import Navbar from './Navbar'
 import PageTransition from './animations/PageTransition'
 import FeedbackButton from './FeedbackButton'
+import FloatingStudyTimer from './FloatingStudyTimer'
 
 export default function Layout() {
   const location = useLocation()
@@ -29,6 +30,7 @@ export default function Layout() {
         </div>
       </footer>
       <FeedbackButton />
+      <FloatingStudyTimer />
     </div>
   )
 }
