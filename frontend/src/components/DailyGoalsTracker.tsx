@@ -47,7 +47,7 @@ export default function DailyGoalsTracker() {
         storiesRead: gamificationData.total_stories_read || 0,
       })
     } catch (error) {
-      dailyGoalsTrackerLogger.error('Failed to load goals:', error)
+      dailyGoalsTrackerLogger.warn('Could not load goals or progress (server might be waking up)')
     } finally {
       setLoading(false)
     }

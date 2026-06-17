@@ -38,7 +38,7 @@ export default function GamificationWidget() {
       const data = await gamificationApi.getStats()
       setStats(data)
     } catch (error) {
-      gamificationWidgetLogger.error('Failed to load gamification stats:', error)
+      gamificationWidgetLogger.warn('Could not load gamification stats (server might be waking up)')
     } finally {
       setLoading(false)
     }
