@@ -192,6 +192,35 @@
         "invalidCredentials": "Nama pengguna atau kata sandi salah",
         "googleFailed":       "Login Google gagal. Silakan coba lagi."
       }
+    },
+    "register": {
+      "panelTitle":         "Mulai Belajar",
+      "panelSubtitle":      "Mulai perjalanan HSK-mu hari ini",
+      "panelFree":          "Gratis · Tanpa kartu kredit",
+      "badges":             { "aiStories": "Cerita AI", "gamification": "Gamifikasi" },
+      "title":              "Buat akun",
+      "subtitle":           "Bergabung dengan ribuan pembelajar yang menguasai Mandarin",
+      "username":           "Nama pengguna",
+      "usernamePlaceholder":"Pilih nama pengguna",
+      "email":              "Email",
+      "emailPlaceholder":   "kamu@contoh.com",
+      "password":           "Kata sandi",
+      "passwordPlaceholder":"Buat kata sandi",
+      "confirmPassword":    "Konfirmasi Kata Sandi",
+      "confirmPlaceholder": "Ulangi kata sandimu",
+      "showPassword":       "Tampilkan kata sandi",
+      "hidePassword":       "Sembunyikan kata sandi",
+      "passwordsMatch":     "Kata sandi cocok",
+      "passwordsNoMatch":   "Kata sandi tidak cocok",
+      "strength":           { "weak": "Lemah", "fair": "Cukup", "strong": "Kuat" },
+      "creating":           "Membuat akun…",
+      "submit":             "Buat akun",
+      "haveAccount":        "Sudah punya akun?",
+      "signIn":             "Masuk",
+      "errors": {
+        "mismatch": "Kata sandi tidak cocok",
+        "failed":   "Pendaftaran gagal. Nama pengguna atau email mungkin sudah dipakai."
+      }
     }
   },
 
@@ -235,5 +264,20 @@
       "masteryRate":  "Tingkat Penguasaan",
       "activeLevels": "Level Aktif"
     }
+  },
+
+  "about": {
+    "back":         "Kembali ke aplikasi",
+    "role":         "Builder · Mahasiswa · Penggemar Bahasa Mandarin",
+    "bio":          "Saya mahasiswa yang membangun HanziNarrative sebagai proyek belajar mandiri — menggabungkan passion belajar bahasa Mandarin dengan keinginan membuat aplikasi yang benar-benar bermanfaat. Setiap fitur di sini lahir dari pengalaman belajar saya sendiri.",
+    "projectTitle": "Tentang HanziNarrative",
+    "projectP1":    "HanziNarrative adalah aplikasi belajar Mandarin berbasis HSK level 1–6 yang dibangun dengan pendekatan storytelling — belajar kosakata dan tata bahasa lewat cerita interaktif, bukan hafalan membosankan.",
+    "projectP2":    "Fitur mencakup flashcard spaced repetition, penulisan karakter, latihan typing pinyin, AI conversation, battle mode multiplayer, gamification dengan XP & badge, dan banyak lagi — semua dalam satu platform.",
+    "techTitle":    "Tech Stack",
+    "techHint":     "Arahkan kursor atau tap badge untuk lihat alasan pemilihannya",
+    "contactTitle": "Hubungi Saya",
+    "contactText":  "Punya saran, laporan bug, atau sekadar ingin menyapa? Silakan hubungi lewat email atau social media di atas. Feedback sangat diapresiasi!",
+    "madeWith":     "Dibuat dengan",
+    "by":           "oleh Haikal · 2025"
   }
 }

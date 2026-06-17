@@ -192,6 +192,35 @@
         "invalidCredentials": "Invalid username or password",
         "googleFailed":       "Google sign-in failed. Please try again."
       }
+    },
+    "register": {
+      "panelTitle":         "Start Learning",
+      "panelSubtitle":      "Begin your HSK journey today",
+      "panelFree":          "Free · No credit card",
+      "badges":             { "aiStories": "AI Stories", "gamification": "Gamification" },
+      "title":              "Create account",
+      "subtitle":           "Join thousands of learners mastering Chinese",
+      "username":           "Username",
+      "usernamePlaceholder":"Choose a username",
+      "email":              "Email",
+      "emailPlaceholder":   "you@example.com",
+      "password":           "Password",
+      "passwordPlaceholder":"Create a password",
+      "confirmPassword":    "Confirm Password",
+      "confirmPlaceholder": "Repeat your password",
+      "showPassword":       "Show password",
+      "hidePassword":       "Hide password",
+      "passwordsMatch":     "Passwords match",
+      "passwordsNoMatch":   "Passwords do not match",
+      "strength":           { "weak": "Weak", "fair": "Fair", "strong": "Strong" },
+      "creating":           "Creating account…",
+      "submit":             "Create account",
+      "haveAccount":        "Already have an account?",
+      "signIn":             "Sign in",
+      "errors": {
+        "mismatch": "Passwords do not match",
+        "failed":   "Registration failed. Username or email may already exist."
+      }
     }
   },
 
@@ -235,5 +264,20 @@
       "masteryRate":  "Mastery Rate",
       "activeLevels": "Active Levels"
     }
+  },
+
+  "about": {
+    "back":         "Back to app",
+    "role":         "Builder · Student · Chinese Language Enthusiast",
+    "bio":          "I'm a student who built HanziNarrative as a self-learning project — combining a passion for learning Mandarin with the desire to build something genuinely useful. Every feature here grew out of my own learning experience.",
+    "projectTitle": "About HanziNarrative",
+    "projectP1":    "HanziNarrative is an HSK 1–6 Mandarin learning app built around storytelling — you learn vocabulary and grammar through interactive stories, not boring rote memorization.",
+    "projectP2":    "Features include spaced-repetition flashcards, character writing, pinyin typing practice, AI conversation, multiplayer battle mode, gamification with XP & badges, and much more — all in one platform.",
+    "techTitle":    "Tech Stack",
+    "techHint":     "Hover or tap a badge to see why it was chosen",
+    "contactTitle": "Get in Touch",
+    "contactText":  "Have a suggestion, a bug report, or just want to say hi? Reach out via email or the social links above. Feedback is much appreciated!",
+    "madeWith":     "Made with",
+    "by":           "by Haikal · 2025"
   }
 }

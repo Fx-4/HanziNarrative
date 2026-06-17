@@ -6,6 +6,7 @@ import {
   Code2, Database, Server, Globe, Zap, BookOpen,
   ExternalLink, Heart,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 // ── Tech stack data ────────────────────────────────────────────────────────────
 
@@ -163,7 +164,8 @@ function fade(delay = 0) {
 // ── Page ───────────────────────────────────────────────────────────────────────
 
 export default function About() {
-  const categories = [...new Set(TECH_STACK.map(t => t.category))]
+  const { t } = useTranslation()
+  const categories = [...new Set(TECH_STACK.map(item => item.category))]
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
@@ -174,7 +176,7 @@ export default function About() {
           className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to app
+          {t('about.back')}
         </Link>
       </div>
 
@@ -196,12 +198,10 @@ export default function About() {
               <span className="text-2xl">👋</span>
             </div>
             <p className="text-primary-600 dark:text-primary-400 font-medium mb-4">
-              Builder · Student · Chinese Language Enthusiast
+              {t('about.role')}
             </p>
             <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed max-w-lg">
-              Saya adalah mahasiswa yang membangun <span className="font-semibold text-gray-900 dark:text-gray-100">HanziNarrative</span> sebagai
-              proyek belajar mandiri — menggabungkan passion dalam belajar bahasa Mandarin dengan keinginan untuk membuat
-              aplikasi yang bermanfaat. Setiap fitur di sini lahir dari pengalaman belajar saya sendiri.
+              {t('about.bio')}
             </p>
 
             <div className="flex items-center gap-3 mt-5 justify-center sm:justify-start">
@@ -225,17 +225,14 @@ export default function About() {
         <motion.section {...fade(0.1)}>
           <div className="flex items-center gap-2 mb-4">
             <BookOpen className="w-5 h-5 text-primary-500" />
-            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">About HanziNarrative</h2>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">{t('about.projectTitle')}</h2>
           </div>
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm space-y-3">
             <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-              <strong className="text-gray-900 dark:text-gray-100">HanziNarrative</strong> adalah aplikasi belajar Mandarin berbasis HSK level 1–6
-              yang dibangun dengan pendekatan storytelling — belajar kosakata dan tata bahasa melalui cerita interaktif,
-              bukan hafalan membosankan.
+              {t('about.projectP1')}
             </p>
             <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-              Fitur mencakup flashcard spaced repetition, penulisan karakter, latihan typing pinyin, AI conversation,
-              battle mode multiplayer, gamification dengan XP & badges, dan banyak lagi — semua dalam satu platform.
+              {t('about.projectP2')}
             </p>
             <div className="flex items-center gap-2 pt-2">
               <a
@@ -256,9 +253,9 @@ export default function About() {
         <motion.section {...fade(0.15)}>
           <div className="flex items-center gap-2 mb-1">
             <Code2 className="w-5 h-5 text-primary-500" />
-            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Tech Stack</h2>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">{t('about.techTitle')}</h2>
           </div>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mb-4 ml-7">Hover atau tap badge untuk lihat alasan pemilihannya</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mb-4 ml-7">{t('about.techHint')}</p>
           <div className="space-y-4">
             {categories.map(cat => {
               const Icon = CATEGORY_ICONS[cat] ?? Code2
@@ -284,12 +281,11 @@ export default function About() {
         <motion.section {...fade(0.2)}>
           <div className="flex items-center gap-2 mb-4">
             <Mail className="w-5 h-5 text-primary-500" />
-            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Get in Touch</h2>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">{t('about.contactTitle')}</h2>
           </div>
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
             <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
-              Punya saran, laporan bug, atau sekadar ingin say hi? Silakan hubungi lewat email atau social media di atas.
-              Feedback sangat diapresiasi!
+              {t('about.contactText')}
             </p>
             <a
               href="mailto:f4.code.work@gmail.com"
@@ -303,9 +299,9 @@ export default function About() {
 
         {/* ── Footer ───────────────────────────────────────────────── */}
         <motion.div {...fade(0.25)} className="flex items-center justify-center gap-1.5 text-sm text-gray-400 dark:text-gray-600 pb-4">
-          <span>Made with</span>
+          <span>{t('about.madeWith')}</span>
           <Heart className="w-3.5 h-3.5 text-error-400 fill-error-400" />
-          <span>by Haikal · 2025</span>
+          <span>{t('about.by')}</span>
         </motion.div>
       </div>
     </div>

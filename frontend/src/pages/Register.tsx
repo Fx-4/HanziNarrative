@@ -4,6 +4,7 @@ import { authApi } from '@/services/api'
 import { useAuthStore } from '@/store/authStore'
 import { motion, AnimatePresence } from 'framer-motion'
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight, BookOpen, Sparkles, Trophy } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 // ---------------------------------------------------------------------------
 // Floating character config — positions are fixed to avoid layout thrash
@@ -37,10 +38,10 @@ const FLOAT_CONFIG: FloatItem[] = [
 
 // Feature badges shown in the left panel
 const FEATURE_BADGES = [
-  { Icon: BookOpen, label: 'HSK 1-6' },
-  { Icon: Sparkles, label: 'AI Stories' },
-  { Icon: Trophy,   label: 'Gamification' },
-]
+  { Icon: BookOpen, key: 'hsk' },
+  { Icon: Sparkles, key: 'aiStories' },
+  { Icon: Trophy,   key: 'gamification' },
+] as const
 
 // ---------------------------------------------------------------------------
 // Password strength helper
@@ -48,14 +49,14 @@ const FEATURE_BADGES = [
 interface StrengthResult {
   width: string
   colorClass: string
-  label: string
+  labelKey: '' | 'weak' | 'fair' | 'strong'
 }
 
 function getPasswordStrength(pwd: string): StrengthResult {
-  if (pwd.length === 0) return { width: '0%',   colorClass: 'bg-gray-200', label: '' }
-  if (pwd.length < 6)   return { width: '33%',  colorClass: 'bg-error-500',    label: 'Weak' }
-  if (pwd.length <= 10) return { width: '66%',  colorClass: 'bg-yellow-500', label: 'Fair' }
-  return                       { width: '100%', colorClass: 'bg-success-500',  label: 'Strong' }
+  if (pwd.length === 0) return { width: '0%',   colorClass: 'bg-gray-200', labelKey: '' }
+  if (pwd.length < 6)   return { width: '33%',  colorClass: 'bg-error-500',    labelKey: 'weak' }
+  if (pwd.length <= 10) return { width: '66%',  colorClass: 'bg-yellow-500', labelKey: 'fair' }
+  return                       { width: '100%', colorClass: 'bg-success-500',  labelKey: 'strong' }
 }
 
 // ---------------------------------------------------------------------------
@@ -63,6 +64,7 @@ function getPasswordStrength(pwd: string): StrengthResult {
 // ---------------------------------------------------------------------------
 export default function Register() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -77,7 +79,7 @@ export default function Register() {
     setError('')
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
+      setError(t('auth.register.errors.mismatch'))
       return
     }
 
@@ -90,7 +92,7 @@ export default function Register() {
       await fetchUser()
       navigate('/onboarding')
     } catch {
-      setError('Registration failed. Username or email may already exist.')
+      setError(t('auth.register.errors.failed'))
     } finally {
       setLoading(false)
     }
@@ -148,10 +150,10 @@ export default function Register() {
           </motion.div>
 
           <h1 className="text-5xl font-extrabold text-white tracking-tight mb-3">
-            Start Learning
+            {t('auth.register.panelTitle')}
           </h1>
           <p className="text-success-100 text-lg font-medium mb-10">
-            Begin your HSK journey today
+            {t('auth.register.panelSubtitle')}
           </p>
 
           {/* Feature badges */}
@@ -163,14 +165,14 @@ export default function Register() {
           >
             {FEATURE_BADGES.map((badge, i) => (
               <motion.div
-                key={badge.label}
+                key={badge.key}
                 className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 text-white text-sm font-medium"
                 initial={{ opacity: 0, scale: 0.85 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.5 + i * 0.1 }}
               >
                 <badge.Icon className="w-3.5 h-3.5" />
-                <span>{badge.label}</span>
+                <span>{badge.key === 'hsk' ? 'HSK 1-6' : t(`auth.register.badges.${badge.key}`)}</span>
               </motion.div>
             ))}
           </motion.div>
@@ -183,7 +185,7 @@ export default function Register() {
             transition={{ delay: 0.65 }}
           >
             <div className="h-px w-16 bg-white/30" />
-            <span className="text-white/50 text-sm tracking-widest uppercase">Free · No credit card</span>
+            <span className="text-white/50 text-sm tracking-widest uppercase">{t('auth.register.panelFree')}</span>
             <div className="h-px w-16 bg-white/30" />
           </motion.div>
         </motion.div>
@@ -220,10 +222,10 @@ export default function Register() {
             transition={{ delay: 0.15 }}
           >
             <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
-              Create account
+              {t('auth.register.title')}
             </h2>
             <p className="mt-2 text-gray-600 dark:text-gray-400">
-              Join thousands of learners mastering Chinese
+              {t('auth.register.subtitle')}
             </p>
           </motion.div>
 
@@ -252,7 +254,7 @@ export default function Register() {
               transition={{ delay: 0.2 }}
             >
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Username
+                {t('auth.register.username')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -265,7 +267,7 @@ export default function Register() {
                   autoComplete="username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Choose a username"
+                  placeholder={t('auth.register.usernamePlaceholder')}
                   className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 />
               </div>
@@ -277,8 +279,8 @@ export default function Register() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
             >
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                {t('auth.register.email')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -291,7 +293,7 @@ export default function Register() {
                   autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
+                  placeholder={t('auth.register.emailPlaceholder')}
                   className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 />
               </div>
@@ -303,8 +305,8 @@ export default function Register() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                {t('auth.register.password')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -317,14 +319,14 @@ export default function Register() {
                   autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Create a password"
+                  placeholder={t('auth.register.passwordPlaceholder')}
                   className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
                   className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showPassword ? t('auth.register.hidePassword') : t('auth.register.showPassword')}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -349,7 +351,7 @@ export default function Register() {
                         />
                       </div>
                       <span className="text-xs text-gray-500 dark:text-gray-400 w-12 text-right">
-                        {strength.label}
+                        {strength.labelKey ? t(`auth.register.strength.${strength.labelKey}`) : ''}
                       </span>
                     </div>
                   </motion.div>
@@ -363,8 +365,8 @@ export default function Register() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.35 }}
             >
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                {t('auth.register.confirmPassword')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -377,14 +379,14 @@ export default function Register() {
                   autoComplete="new-password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Repeat your password"
+                  placeholder={t('auth.register.confirmPlaceholder')}
                   className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword((v) => !v)}
                   className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showConfirmPassword ? t('auth.register.hidePassword') : t('auth.register.showPassword')}
                 >
                   {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -403,7 +405,7 @@ export default function Register() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    {password === confirmPassword ? 'Passwords match' : 'Passwords do not match'}
+                    {password === confirmPassword ? t('auth.register.passwordsMatch') : t('auth.register.passwordsNoMatch')}
                   </motion.p>
                 )}
               </AnimatePresence>
@@ -426,11 +428,11 @@ export default function Register() {
                 {loading ? (
                   <>
                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Creating account…
+                    {t('auth.register.creating')}
                   </>
                 ) : (
                   <>
-                    Create account
+                    {t('auth.register.submit')}
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
@@ -444,12 +446,12 @@ export default function Register() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.48 }}
             >
-              Already have an account?{' '}
+              {t('auth.register.haveAccount')}{' '}
               <Link
                 to="/login"
                 className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold transition-colors"
               >
-                Sign in
+                {t('auth.register.signIn')}
               </Link>
             </motion.p>
           </form>
