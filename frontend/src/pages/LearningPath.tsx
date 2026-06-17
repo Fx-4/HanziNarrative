@@ -9,13 +9,14 @@ import {
   RefreshCw,
 } from 'lucide-react'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { useTranslation } from 'react-i18next'
 
 const HSK_LEVELS = [1, 2, 3, 4, 5, 6]
 
 const SESSION_TYPE_META = {
-  vocab:    { label: 'Vocabulary', icon: BookOpen, color: 'text-primary-500' },
-  grammar:  { label: 'Grammar',    icon: Brain,    color: 'text-violet-500' },
-  practice: { label: 'Practice',   icon: Dumbbell, color: 'text-orange-500' },
+  vocab:    { icon: BookOpen, color: 'text-primary-500' },
+  grammar:  { icon: Brain,    color: 'text-violet-500' },
+  practice: { icon: Dumbbell, color: 'text-orange-500' },
 }
 
 function sessionStatus(
@@ -45,6 +46,7 @@ let _cacheTs = 0
 const CACHE_TTL = 60_000 // 60 s — fresh enough, avoids loading flash on back-nav
 
 export default function LearningPath() {
+  const { t } = useTranslation()
   const [activeLevel, setActiveLevel] = useState(1)
   const [completed, setCompleted] = useState<Set<string>>(new Set())
   const [stats, setStats] = useState<{ total_sessions: number; total_xp: number; by_hsk_level: Record<string, number> } | null>(null)
@@ -114,10 +116,10 @@ export default function LearningPath() {
       {/* ── Header ── */}
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="pt-2">
         <h1 className="text-2xl font-extrabold text-gray-900 dark:text-gray-50">
-          📚 Kursus HSK
+          {t('learningPath.title')}
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-          Belajar bertahap dari HSK 1 — teori, kosakata, dan latihan terintegrasi.
+          {t('learningPath.subtitle')}
         </p>
       </motion.div>
 
@@ -129,9 +131,9 @@ export default function LearningPath() {
           className="grid grid-cols-3 gap-3"
         >
           {[
-            { label: 'Sesi Selesai', value: stats.total_sessions, icon: CheckCircle, color: 'text-success-500' },
-            { label: 'Total XP',     value: stats.total_xp,       icon: Star,         color: 'text-amber-500' },
-            { label: 'Level Aktif',  value: `HSK ${activeLevel}`, icon: Trophy,       color: 'text-primary-500', str: true },
+            { label: t('learningPath.sessionsDone'), value: stats.total_sessions, icon: CheckCircle, color: 'text-success-500' },
+            { label: t('learningPath.totalXp'),      value: stats.total_xp,       icon: Star,         color: 'text-amber-500' },
+            { label: t('learningPath.activeLevel'),  value: `HSK ${activeLevel}`, icon: Trophy,       color: 'text-primary-500', str: true },
           ].map(({ label, value, icon: Icon, color, str }) => (
             <div key={label} className="bg-white dark:bg-surface-card rounded-2xl p-3 border border-gray-100 dark:border-gray-800 text-center shadow-sm">
               <Icon className={`w-4 h-4 ${color} mx-auto mb-1`} />
@@ -193,9 +195,9 @@ export default function LearningPath() {
       )}
       {error && (
         <div className="text-center py-10 space-y-3">
-          <p className="text-sm text-gray-500">Gagal memuat progress.</p>
-          <button onClick={loadProgress} className="inline-flex items-center gap-2 text-sm text-primary-600 border border-primary-200 px-3 py-1.5 rounded-xl hover:bg-primary-50 transition-colors">
-            <RefreshCw className="w-3.5 h-3.5" /> Coba lagi
+          <p className="text-sm text-gray-500 dark:text-gray-400">{t('learningPath.loadError')}</p>
+          <button onClick={loadProgress} className="inline-flex items-center gap-2 text-sm text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-800 px-3 py-1.5 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-950/30 transition-colors">
+            <RefreshCw className="w-3.5 h-3.5" /> {t('learningPath.retry')}
           </button>
         </div>
       )}
@@ -287,7 +289,7 @@ export default function LearningPath() {
                                 }`}>{session.title}</p>
                                 <div className="flex items-center gap-1.5 mt-0.5">
                                   <Icon className={`w-3 h-3 ${status === 'locked' ? 'text-gray-300' : meta.color}`} />
-                                  <span className="text-[11px] text-gray-500 dark:text-gray-400">{meta.label}</span>
+                                  <span className="text-[11px] text-gray-500 dark:text-gray-400">{t(`learningPath.sessionType.${session.type}`)}</span>
                                   <span className="text-[11px] text-gray-300">·</span>
                                   <Zap className="w-3 h-3 text-amber-400" />
                                   <span className="text-[11px] text-gray-500 dark:text-gray-400">{session.xp} XP</span>
@@ -300,7 +302,7 @@ export default function LearningPath() {
                                   to={`/path/session/${session.id}`}
                                   className="flex-shrink-0 px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold rounded-lg transition-colors"
                                 >
-                                  Mulai
+                                  {t('learningPath.start')}
                                 </Link>
                               )}
                               {status === 'completed' && (
@@ -308,7 +310,7 @@ export default function LearningPath() {
                                   to={`/path/session/${session.id}`}
                                   className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 border border-gray-200 dark:border-gray-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 text-xs font-semibold rounded-lg transition-colors"
                                 >
-                                  <RotateCcw className="w-3 h-3" /> Review
+                                  <RotateCcw className="w-3 h-3" /> {t('learningPath.review')}
                                 </Link>
                               )}
                             </div>

@@ -361,5 +361,33 @@
       "next4":        "Practice with exercises and AI stories",
       "cta":          "Start Learning Now"
     }
+  },
+
+  "stories": {
+    "title":             "Interactive Stories",
+    "tabBrowse":         "Browse Stories",
+    "tabGenerate":       "Generate Story",
+    "filterLevel":       "Filter by HSK Level",
+    "allLevels":         "All Levels",
+    "filterCategory":    "Filter by Category",
+    "catAll":            "All Stories",
+    "catCurated":        "📚 Curated",
+    "catAi":             "✨ AI Generated",
+    "searchPlaceholder": "Search stories by title...",
+    "noMatch":           "No stories match \"{{query}}\".",
+    "empty":             "No stories found for this level. Check back soon!"
+  },
+
+  "learningPath": {
+    "title":        "📚 HSK Course",
+    "subtitle":     "Learn step by step from HSK 1 — theory, vocabulary, and practice integrated.",
+    "sessionsDone": "Sessions Done",
+    "totalXp":      "Total XP",
+    "activeLevel":  "Active Level",
+    "sessionType":  { "vocab": "Vocabulary", "grammar": "Grammar", "practice": "Practice" },
+    "loadError":    "Failed to load progress.",
+    "retry":        "Try again",
+    "start":        "Start",
+    "review":       "Review"
   }
 }

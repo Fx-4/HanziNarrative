@@ -361,5 +361,33 @@
       "next4":        "Berlatih dengan latihan dan cerita AI",
       "cta":          "Mulai Belajar Sekarang"
     }
+  },
+
+  "stories": {
+    "title":             "Cerita Interaktif",
+    "tabBrowse":         "Jelajahi Cerita",
+    "tabGenerate":       "Buat Cerita",
+    "filterLevel":       "Filter berdasarkan Level HSK",
+    "allLevels":         "Semua Level",
+    "filterCategory":    "Filter berdasarkan Kategori",
+    "catAll":            "Semua Cerita",
+    "catCurated":        "📚 Kurasi",
+    "catAi":             "✨ Buatan AI",
+    "searchPlaceholder": "Cari cerita berdasarkan judul...",
+    "noMatch":           "Tidak ada cerita yang cocok dengan \"{{query}}\".",
+    "empty":             "Belum ada cerita untuk level ini. Cek lagi nanti!"
+  },
+
+  "learningPath": {
+    "title":        "📚 Kursus HSK",
+    "subtitle":     "Belajar bertahap dari HSK 1 — teori, kosakata, dan latihan terintegrasi.",
+    "sessionsDone": "Sesi Selesai",
+    "totalXp":      "Total XP",
+    "activeLevel":  "Level Aktif",
+    "sessionType":  { "vocab": "Kosakata", "grammar": "Tata Bahasa", "practice": "Latihan" },
+    "loadError":    "Gagal memuat progress.",
+    "retry":        "Coba lagi",
+    "start":        "Mulai",
+    "review":       "Tinjau"
   }
 }

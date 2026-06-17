@@ -6,6 +6,7 @@ import { Story } from '@/types'
 import { BookOpen, Calendar, Sparkles, Search } from 'lucide-react'
 import StoryGenerator from '@/components/StoryGenerator'
 import { createLogger } from '@/utils/debugLogger'
+import { useTranslation } from 'react-i18next'
 
 const storiesLogger = createLogger('Stories')
 
@@ -32,6 +33,7 @@ function StoryCardSkeleton() {
 }
 
 export default function Stories() {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState<TabType>('browse')
   const [stories, setStories] = useState<Story[]>([])
   const [selectedLevel, setSelectedLevel] = useState<number | undefined>()
@@ -98,7 +100,7 @@ export default function Stories() {
     })
 
   const levels = [
-    { value: undefined, label: 'All Levels' },
+    { value: undefined, label: t('stories.allLevels') },
     ...Array.from({ length: 6 }, (_, i) => ({ value: i + 1, label: `HSK ${i + 1}` }))
   ]
 
@@ -116,7 +118,7 @@ export default function Stories() {
         transition={{ delay: 0.1 }}
       >
         <BookOpen className="w-8 h-8 sm:w-10 sm:h-10 text-primary-600 dark:text-primary-400" />
-        Interactive Stories
+        {t('stories.title')}
       </motion.h1>
 
       {/* Tabs */}
@@ -137,7 +139,7 @@ export default function Stories() {
           >
             <div className="flex items-center gap-1.5 sm:gap-2">
               <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
-              Browse Stories
+              {t('stories.tabBrowse')}
             </div>
           </button>
           <button
@@ -150,7 +152,7 @@ export default function Stories() {
           >
             <div className="flex items-center gap-1.5 sm:gap-2">
               <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
-              Generate Story
+              {t('stories.tabGenerate')}
             </div>
           </button>
         </div>
@@ -170,7 +172,7 @@ export default function Stories() {
             transition={{ delay: 0.2 }}
           >
             <p className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Filter by HSK Level
+              {t('stories.filterLevel')}
             </p>
             <div className="flex flex-wrap gap-2 mb-4">
               {levels.map((level, index) => (
@@ -196,13 +198,13 @@ export default function Stories() {
 
             {/* Category filter */}
             <p className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Filter by Category
+              {t('stories.filterCategory')}
             </p>
             <div className="flex flex-wrap gap-2 mb-4">
               {([
-                { value: 'all', label: 'All Stories' },
-                { value: 'curated', label: '📚 Curated' },
-                { value: 'ai_generated', label: '✨ AI Generated' },
+                { value: 'all', label: t('stories.catAll') },
+                { value: 'curated', label: t('stories.catCurated') },
+                { value: 'ai_generated', label: t('stories.catAi') },
               ] as const).map((cat) => (
                 <button
                   key={cat.value}
@@ -227,7 +229,7 @@ export default function Stories() {
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search stories by title..."
+                placeholder={t('stories.searchPlaceholder')}
                 className="w-full pl-9 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
               />
             </div>
@@ -252,8 +254,8 @@ export default function Stories() {
                 <BookOpen className="w-16 h-16 text-gray-500 dark:text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-600 dark:text-gray-400 text-lg">
                   {searchQuery.trim()
-                    ? `No stories match "${searchQuery}".`
-                    : 'No stories found for this level. Check back soon!'}
+                    ? t('stories.noMatch', { query: searchQuery })
+                    : t('stories.empty')}
                 </p>
               </div>
             </motion.div>
@@ -280,11 +282,11 @@ export default function Stories() {
                       <div className="mb-3">
                         {(story.category ?? 'curated') === 'ai_generated' ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300">
-                            ✨ AI Generated
+                            {t('stories.catAi')}
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-success-100 dark:bg-success-950/40 text-success-700 dark:text-success-300">
-                            📚 Curated
+                            {t('stories.catCurated')}
                           </span>
                         )}
                       </div>
