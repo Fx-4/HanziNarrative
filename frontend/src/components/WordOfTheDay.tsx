@@ -20,7 +20,7 @@ export default function WordOfTheDay() {
       const data = await vocabularyApi.getWordOfTheDay()
       setWordData(data)
     } catch (error) {
-      wordOfTheDayLogger.error('Failed to load word of the day:', error)
+      wordOfTheDayLogger.warn('Could not load word of the day (server might be waking up)')
     } finally {
       setLoading(false)
     }
