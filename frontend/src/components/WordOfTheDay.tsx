@@ -3,6 +3,9 @@ import { motion } from 'framer-motion'
 import { vocabularyApi } from '@/services/api'
 import { HanziWord } from '@/types'
 import { Sparkles, BookOpen } from 'lucide-react'
+import { createLogger } from '@/utils/debugLogger'
+
+const wordOfTheDayLogger = createLogger('WordOfTheDay')
 
 export default function WordOfTheDay() {
   const [wordData, setWordData] = useState<{ word: HanziWord; date: string; message: string } | null>(null)
@@ -17,7 +20,7 @@ export default function WordOfTheDay() {
       const data = await vocabularyApi.getWordOfTheDay()
       setWordData(data)
     } catch (error) {
-      console.error('Failed to load word of the day:', error)
+      wordOfTheDayLogger.error('Failed to load word of the day:', error)
     } finally {
       setLoading(false)
     }

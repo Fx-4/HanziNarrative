@@ -11,6 +11,9 @@ import PinyinTypingMode from '@/components/typing/PinyinTypingMode'
 import IMEPracticeMode from '@/components/typing/IMEPracticeMode'
 import SpeedTypingMode from '@/components/typing/SpeedTypingMode'
 import TypingModeSelection from './typing/TypingModeSelection'
+import { createLogger } from '@/utils/debugLogger'
+
+const typingLogger = createLogger('Typing')
 
 export default function Typing() {
   const navigate = useNavigate()
@@ -48,7 +51,7 @@ export default function Typing() {
           new_words: 0
         })
       } else {
-        console.error('Failed to load stats:', error)
+        typingLogger.error('Failed to load stats:', error)
       }
     } finally {
       setStatsLoading(false)
@@ -73,7 +76,7 @@ export default function Typing() {
         toast.error('Please log in to practice typing')
         setMode(null)
       } else {
-        console.error('Failed to load words:', error)
+        typingLogger.error('Failed to load words:', error)
         toast.error('Failed to load words')
       }
     } finally {

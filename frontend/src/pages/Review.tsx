@@ -16,6 +16,9 @@ import {
 import { toast } from 'react-hot-toast'
 import { useAuthStore } from '@/store/authStore'
 import { useNavigate } from 'react-router-dom'
+import { createLogger } from '@/utils/debugLogger'
+
+const reviewLogger = createLogger('Review')
 
 interface ReviewItem {
   word: HanziWord
@@ -121,7 +124,7 @@ export default function Review() {
       }
     } catch (error) {
       const err = error as { response?: { status?: number } }
-      console.error('Failed to load review words:', error)
+      reviewLogger.error('Failed to load review words:', error)
       // Don't show error toast if user is not authenticated - they'll see the login prompt
       if (err.response?.status !== 401 && err.response?.status !== 403) {
         toast.error('Failed to load review words')
@@ -257,7 +260,7 @@ export default function Review() {
       }, 1000)
 
     } catch (error) {
-      console.error('Failed to record review:', error)
+      reviewLogger.error('Failed to record review:', error)
       toast.error('Failed to record review')
       setIsSubmittingReview(false)
     }

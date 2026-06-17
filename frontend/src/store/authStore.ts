@@ -2,6 +2,9 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { User } from '@/types'
 import { authApi, onboardingApi } from '@/services/api'
+import { createLogger } from '@/utils/debugLogger'
+
+const authStoreLogger = createLogger('authStore')
 
 interface AuthState {
   user: User | null
@@ -88,7 +91,7 @@ export const useAuthStore = create<AuthState>()(
           set({ onboardingCompleted: status.onboarding_completed })
           return status.onboarding_completed
         } catch (error) {
-          console.error('Failed to check onboarding status:', error)
+          authStoreLogger.error('Failed to check onboarding status:', error)
           return false
         }
       },

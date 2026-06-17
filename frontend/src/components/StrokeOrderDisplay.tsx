@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import HanziWriter from 'hanzi-writer'
 import { appLogger } from '@/utils/debugLogger'
 import { Play, RotateCcw, Pencil, Eye } from 'lucide-react'
+import { createLogger } from '@/utils/debugLogger'
+
+const strokeOrderDisplayLogger = createLogger('StrokeOrderDisplay')
 
 interface StrokeOrderDisplayProps {
   character: string
@@ -58,12 +61,12 @@ export default function StrokeOrderDisplay({
             })
         },
         onLoadCharDataError: (err: unknown) => {
-          console.warn(`Failed to load character data for ${character}:`, err)
+          strokeOrderDisplayLogger.warn(`Failed to load character data for ${character}:`, err)
           // Don't show error to user, just log it
         }
       })
     } catch (error) {
-      console.error('Failed to create HanziWriter:', error)
+      strokeOrderDisplayLogger.error('Failed to create HanziWriter:', error)
     }
 
     return () => {
@@ -117,7 +120,7 @@ export default function StrokeOrderDisplay({
             })
         },
         onLoadCharDataError: (err: unknown) => {
-          console.warn(`Failed to load character data for ${character}:`, err)
+          strokeOrderDisplayLogger.warn(`Failed to load character data for ${character}:`, err)
         }
       })
     }

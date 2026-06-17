@@ -4,6 +4,9 @@ import type { HanziWord, TypingAttempt } from '@/types'
 import { typingApi } from '@/services/api'
 import { toast } from 'react-hot-toast'
 import { Target, CheckCircle, XCircle, ArrowRight } from 'lucide-react'
+import { createLogger } from '@/utils/debugLogger'
+
+const iMEPracticeModeLogger = createLogger('IMEPracticeMode')
 
 interface Props {
   words: HanziWord[]
@@ -105,7 +108,7 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
       }
       await typingApi.recordAttempt(attempt)
     } catch (error) {
-      console.error('Failed to record attempt:', error)
+      iMEPracticeModeLogger.error('Failed to record attempt:', error)
     }
 
     if (correct) {

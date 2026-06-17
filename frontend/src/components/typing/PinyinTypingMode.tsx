@@ -5,6 +5,9 @@ import { typingApi } from '@/services/api'
 import { comparePinyin } from '@/utils/pinyinInput'
 import { toast } from 'react-hot-toast'
 import { CheckCircle, XCircle, ArrowRight, Sparkles } from 'lucide-react'
+import { createLogger } from '@/utils/debugLogger'
+
+const pinyinTypingModeLogger = createLogger('PinyinTypingMode')
 
 interface Props {
   words: HanziWord[]
@@ -54,7 +57,7 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
       }
       await typingApi.recordAttempt(attempt)
     } catch (error) {
-      console.error('Failed to record attempt:', error)
+      pinyinTypingModeLogger.error('Failed to record attempt:', error)
     }
 
     if (correct) {

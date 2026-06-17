@@ -15,6 +15,9 @@ import {
   Zap
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { createLogger } from '@/utils/debugLogger'
+
+const flashcardsLogger = createLogger('Flashcards')
 
 type DifficultyRating = 0 | 1 | 2 | 3 | 4 | 5
 
@@ -89,7 +92,7 @@ export default function Flashcards() {
       setWords(shuffled)
       setLoading(false)
     } catch (error) {
-      console.error('Failed to load words:', error)
+      flashcardsLogger.error('Failed to load words:', error)
       toast.error('Failed to load words')
       setLoading(false)
     }
@@ -129,7 +132,7 @@ export default function Flashcards() {
 
     // Fire API call in background — don't block UI
     learningApi.recordReview(currentWord.id, quality).catch(err => {
-      console.error('Failed to record review:', err)
+      flashcardsLogger.error('Failed to record review:', err)
     })
   }
 

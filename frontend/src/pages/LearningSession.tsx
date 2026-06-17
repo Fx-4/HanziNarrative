@@ -16,6 +16,9 @@ import {
 } from 'lucide-react'
 import { Skeleton } from '@/components/ui/Skeleton'
 import toast from 'react-hot-toast'
+import { createLogger } from '@/utils/debugLogger'
+
+const learningSessionLogger = createLogger('LearningSession')
 
 // ── Step types ────────────────────────────────────────────────────────────────
 
@@ -109,7 +112,7 @@ function IntroCard({ step, onNext }: { step: StepIntro; onNext: () => void }) {
       // Auto-play (fires-and-forgets; NotAllowedError is fine here)
       audio.play().catch(() => { /* autoplay blocked — user can click */ })
     }).catch(err => {
-      if (!cancelled) console.error('[TTS] prefetch failed:', err)
+      if (!cancelled) learningSessionLogger.error('[TTS] prefetch failed:', err)
     })
 
     return () => {
@@ -136,7 +139,7 @@ function IntroCard({ step, onNext }: { step: StepIntro; onNext: () => void }) {
         await audio.play()
       }
     } catch (err) {
-      console.error('[TTS] play failed:', err)
+      learningSessionLogger.error('[TTS] play failed:', err)
       toast.error('Gagal memutar audio', { duration: 2000 })
     }
     setPlaying(false)

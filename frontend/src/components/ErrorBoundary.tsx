@@ -1,4 +1,7 @@
 import { Component, ErrorInfo, ReactNode } from 'react'
+import { createLogger } from '@/utils/debugLogger'
+
+const errorBoundaryLogger = createLogger('ErrorBoundary')
 
 interface Props {
   children: ReactNode
@@ -57,9 +60,9 @@ export default class ErrorBoundary extends Component<Props, State> {
 
     // Always log to console — visible in browser DevTools
     console.group(`%c[ErrorBoundary] Crash in: ${name}`, 'color: #ef4444; font-weight: bold; font-size: 14px;')
-    console.error('Error:', error.message)
-    console.error('Stack:', error.stack)
-    console.error('Component stack:', errorInfo.componentStack)
+    errorBoundaryLogger.error('Error:', error.message)
+    errorBoundaryLogger.error('Stack:', error.stack)
+    errorBoundaryLogger.error('Component stack:', errorInfo.componentStack)
     console.groupEnd()
 
     this.setState({ errorInfo })

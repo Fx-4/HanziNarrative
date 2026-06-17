@@ -4,6 +4,9 @@ import { onboardingApi } from '@/services/api'
 import type { QuestionData, AssessmentAnswer } from '@/types'
 import { Loader2, Award, Check, X, AlertCircle, RefreshCw } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { createLogger } from '@/utils/debugLogger'
+
+const adaptiveAssessmentLogger = createLogger('AdaptiveAssessment')
 
 interface AdaptiveAssessmentProps {
   onComplete: (determinedLevel: number, xpEarned: number) => void
@@ -66,7 +69,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
       setQuestionsPool(data.questions_pool)
       setLoading(false)
     } catch (error) {
-      console.error('Failed to load questions:', error)
+      adaptiveAssessmentLogger.error('Failed to load questions:', error)
       setLoadError(true)
       setLoading(false)
     }
@@ -154,7 +157,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
       })
       onComplete(result.determined_level, result.xp_earned)
     } catch (error) {
-      console.error('Failed to submit assessment:', error)
+      adaptiveAssessmentLogger.error('Failed to submit assessment:', error)
       submittedRef.current = false // Allow retry
       toast.error('Failed to save results. Tap "Retry" to try again.')
     }

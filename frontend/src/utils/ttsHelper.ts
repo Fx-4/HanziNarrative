@@ -10,6 +10,14 @@ import axios from 'axios'
 import { getVoiceName, getSpeakingRate } from '@/utils/voicePreference'
 import { buildCacheKey, getAudio, saveAudio } from '@/utils/ttsCache'
 import { API_URL } from '@/lib/env'
+import { createLogger } from '@/utils/debugLogger'
+
+const ttsHelperLogger = createLogger('TTS')
+
+// Browser-TTS fallback is expected behaviour (e.g. backend sleeping on free tier),
+// not an error. Log it once per session at debug level so the console isn't spammed
+// with one warning per word/sentence the user plays.
+let _fallbackLogged = false
 
 // Wraps browser SpeechSynthesis as a fake HTMLAudioElement so callers
 // get a consistent interface even when the backend is unreachable.
@@ -94,9 +102,13 @@ export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioEleme
   } catch (err) {
     // Network error (backend unreachable) → silent fallback to browser TTS
     if (axios.isAxiosError(err) && !err.response && typeof speechSynthesis !== 'undefined') {
-      console.warn('[TTS] Backend unreachable, using browser TTS')
+      if (!_fallbackLogged) {
+        _fallbackLogged = true
+        ttsHelperLogger.debug('Backend unreachable — falling back to browser TTS for this session')
+      }
       return createSpeechShim(text, language)
     }
+    ttsHelperLogger.error('TTS synthesis failed', err)
     throw err
   }
 

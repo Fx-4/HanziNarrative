@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 import { Trophy, Zap, Flame, Star, Award } from 'lucide-react'
 import { gamificationApi } from '@/services/api'
+import { createLogger } from '@/utils/debugLogger'
+
+const gamificationWidgetLogger = createLogger('GamificationWidget')
 
 interface GamificationStats {
   total_xp: number
@@ -35,7 +38,7 @@ export default function GamificationWidget() {
       const data = await gamificationApi.getStats()
       setStats(data)
     } catch (error) {
-      console.error('Failed to load gamification stats:', error)
+      gamificationWidgetLogger.error('Failed to load gamification stats:', error)
     } finally {
       setLoading(false)
     }

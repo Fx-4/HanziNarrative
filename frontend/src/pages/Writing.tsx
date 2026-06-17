@@ -6,6 +6,9 @@ import { toast } from 'react-hot-toast'
 import { useAuthStore } from '@/store/authStore'
 import WritingModeSelection from './writing/WritingModeSelection'
 import WritingSession from './writing/WritingSession'
+import { createLogger } from '@/utils/debugLogger'
+
+const writingLogger = createLogger('Writing')
 
 type WritingMode = 'practice' | 'timed' | 'mastery' | null
 
@@ -80,7 +83,7 @@ export default function Writing() {
           new_characters: 0
         })
       } else {
-        console.error('Failed to load stats:', error)
+        writingLogger.error('Failed to load stats:', error)
       }
     } finally {
       setStatsLoading(false)
@@ -96,7 +99,7 @@ export default function Writing() {
       if (err.response?.status === 401) {
         setProgressData([])
       } else {
-        console.error('Failed to load progress:', error)
+        writingLogger.error('Failed to load progress:', error)
       }
     }
   }
@@ -155,7 +158,7 @@ export default function Writing() {
         toast.error('Please log in to practice writing')
         setMode(null)
       } else {
-        console.error('Failed to load characters:', error)
+        writingLogger.error('Failed to load characters:', error)
         toast.error('Failed to load characters')
       }
     } finally {
@@ -187,7 +190,7 @@ export default function Writing() {
       const timeTaken = Math.max(0, result.timeTaken || 0)
 
       if (!currentCharacter.id || typeof currentCharacter.id !== 'number') {
-        console.error('Invalid word_id:', currentCharacter.id)
+        writingLogger.error('Invalid word_id:', currentCharacter.id)
         return
       }
 
@@ -208,9 +211,9 @@ export default function Writing() {
           duration: 3000
         })
       } else {
-        console.error('Failed to record attempt:', error)
-        console.error('Error response:', err.response?.data)
-        console.error('Attempt data:', {
+        writingLogger.error('Failed to record attempt:', error)
+        writingLogger.error('Error response:', err.response?.data)
+        writingLogger.error('Attempt data:', {
           word_id: currentCharacter.id,
           accuracy: result.accuracy,
           timeTaken: result.timeTaken

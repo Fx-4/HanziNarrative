@@ -15,6 +15,9 @@ import AdaptiveAssessment from '@/components/onboarding/AdaptiveAssessment'
 import PreferencesCustomizer from '@/components/onboarding/PreferencesCustomizer'
 import CompletionScreen from '@/components/onboarding/CompletionScreen'
 import { Loader2 } from 'lucide-react'
+import { createLogger } from '@/utils/debugLogger'
+
+const onboardingLogger = createLogger('Onboarding')
 
 const Onboarding = () => {
   const navigate = useNavigate()
@@ -65,7 +68,7 @@ const Onboarding = () => {
 
       setLoading(false)
     } catch (error) {
-      console.error('Failed to check onboarding status:', error)
+      onboardingLogger.error('Failed to check onboarding status:', error)
       setLoading(false)
     }
   }, [navigate])

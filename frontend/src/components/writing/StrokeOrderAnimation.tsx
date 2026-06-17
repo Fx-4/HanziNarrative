@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import HanziWriter from 'hanzi-writer'
 import { Play, Pause, RotateCcw } from 'lucide-react'
+import { createLogger } from '@/utils/debugLogger'
+
+const strokeOrderAnimationLogger = createLogger('StrokeOrderAnimation')
 
 interface StrokeOrderAnimationProps {
   character: string
@@ -90,12 +93,12 @@ export default function StrokeOrderAnimation({
           if (autoPlay) runAnimation(writer)
         },
         onLoadCharDataError: (err: unknown) => {
-          console.warn(`HanziWriter: failed to load "${character}"`, err)
+          strokeOrderAnimationLogger.warn(`HanziWriter: failed to load "${character}"`, err)
         }
       })
       writerRef.current = writer
     } catch (err) {
-      console.error(`HanziWriter: create error for "${character}"`, err)
+      strokeOrderAnimationLogger.error(`HanziWriter: create error for "${character}"`, err)
     }
 
     return () => {

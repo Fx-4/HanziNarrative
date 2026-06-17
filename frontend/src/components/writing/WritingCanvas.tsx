@@ -21,6 +21,9 @@ import {
   XCircle,
   Sparkles
 } from 'lucide-react'
+import { createLogger } from '@/utils/debugLogger'
+
+const writingCanvasLogger = createLogger('WritingCanvas')
 
 interface WritingCanvasProps {
   character: HanziWord
@@ -135,7 +138,7 @@ export default function WritingCanvas({
         strokeAnimationSpeed: 1,
         delayBetweenStrokes: 200,
         onLoadCharDataError: (err: unknown) => {
-          console.warn(`HanziWriter: failed to load "${char}"`, err)
+          writingCanvasLogger.warn(`HanziWriter: failed to load "${char}"`, err)
           setLoadError(true)
         }
       })
@@ -171,7 +174,7 @@ export default function WritingCanvas({
         }
       })
     } catch (error) {
-      console.error(`Error creating HanziWriter for ${character.simplified}:`, error)
+      writingCanvasLogger.error(`Error creating HanziWriter for ${character.simplified}:`, error)
     }
 
     return () => {

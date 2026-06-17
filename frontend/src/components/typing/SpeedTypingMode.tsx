@@ -5,6 +5,9 @@ import { typingApi } from '@/services/api'
 import { calculateWPM } from '@/utils/pinyinInput'
 import { toast } from 'react-hot-toast'
 import { Clock, Zap, Trophy, TrendingUp } from 'lucide-react'
+import { createLogger } from '@/utils/debugLogger'
+
+const speedTypingModeLogger = createLogger('SpeedTypingMode')
 
 interface Props {
   words: HanziWord[]
@@ -91,7 +94,7 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
       }
       await typingApi.recordAttempt(attempt)
     } catch (error) {
-      console.error('Failed to record attempt:', error)
+      speedTypingModeLogger.error('Failed to record attempt:', error)
     }
 
     // Move to next

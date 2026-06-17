@@ -24,6 +24,9 @@ import {
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import BlurText from '@/components/animations/BlurText'
+import { createLogger } from '@/utils/debugLogger'
+
+const mockTestLogger = createLogger('MockTest')
 
 type TestSection = 'listening' | 'reading' | 'writing'
 
@@ -356,7 +359,7 @@ export default function MockTest() {
             })
             .catch(err => {
                 if (err?.name !== 'AbortError') {
-                    console.error('Timer SSE error — falling back to local countdown', err)
+                    mockTestLogger.error('Timer SSE error — falling back to local countdown', err)
                     let remaining = seconds
                     const id = setInterval(() => {
                         remaining -= 1

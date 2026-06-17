@@ -34,6 +34,9 @@ import {
   Heart
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { createLogger } from '@/utils/debugLogger'
+
+const storyReaderLogger = createLogger('StoryReader')
 
 interface ComprehensionQuestion {
   question: string
@@ -101,7 +104,7 @@ export default function StoryReader() {
       setStory(storyData)
       setIsBookmarked(bm.is_bookmarked)
     } catch (error) {
-      console.error('Failed to load story:', error)
+      storyReaderLogger.error('Failed to load story:', error)
       toast.error('Failed to load story')
     } finally {
       setLoading(false)
@@ -211,7 +214,7 @@ export default function StoryReader() {
       navigate('/stories')
     } catch (error) {
       const err = error as { response?: { status?: number } }
-      console.error('Failed to delete story:', error)
+      storyReaderLogger.error('Failed to delete story:', error)
       if (err.response?.status === 404) {
         toast.error('Story not found')
       } else if (err.response?.status === 401) {
@@ -231,7 +234,7 @@ export default function StoryReader() {
       setQuestions(quizData.questions)
       toast.success('Quiz loaded successfully!')
     } catch (error) {
-      console.error('Failed to load quiz:', error)
+      storyReaderLogger.error('Failed to load quiz:', error)
       toast.error('Failed to load quiz questions')
       // Set fallback generic question
       setQuestions([
@@ -323,7 +326,7 @@ export default function StoryReader() {
         toast('Word not found in vocabulary', { icon: '📚' })
       }
     } catch (error) {
-      console.error('Failed to lookup word:', error)
+      storyReaderLogger.error('Failed to lookup word:', error)
     }
   }, [])
 

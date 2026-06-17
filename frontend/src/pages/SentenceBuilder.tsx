@@ -14,6 +14,9 @@ import BlurText from '@/components/animations/BlurText';
 import { FadeInOnMount } from '@/components/animations/FadeIn';
 import { StaggerOnMount } from '@/components/animations/StaggerContainer';
 import StaggerItem from '@/components/animations/StaggerItem';
+import { createLogger } from '@/utils/debugLogger'
+
+const sentenceBuilderLogger = createLogger('SentenceBuilder')
 
 interface HanziWord {
   id: number;
@@ -75,7 +78,7 @@ export default function SentenceBuilder() {
       const e = err as { response?: { status?: number } }
       // Only log error if it's not a 401/422 (not authenticated)
       if (e?.response?.status !== 401 && e?.response?.status !== 422) {
-        console.error('Failed to load usage stats:', err);
+        sentenceBuilderLogger.error('Failed to load usage stats:', err);
       }
       // Set empty stats on error so it doesn't show "Loading..." forever
       setUsageStats({});
@@ -95,7 +98,7 @@ export default function SentenceBuilder() {
         setTargetSentence(words.slice(0, 3).map(w => w.simplified).join(''));
       }
     } catch (error) {
-      console.error('Failed to fetch vocabulary:', error);
+      sentenceBuilderLogger.error('Failed to fetch vocabulary:', error);
       toast.error('Failed to load vocabulary');
     }
   };
@@ -181,7 +184,7 @@ export default function SentenceBuilder() {
       }
     } catch (error) {
       const err = error as { response?: { status?: number; data?: { detail?: string } }; message?: string }
-      console.error('Validation failed:', error);
+      sentenceBuilderLogger.error('Validation failed:', error);
       if (err.response?.status === 401 || err.response?.status === 403) {
         toast.error('Authentication error. Please login again.');
       } else if (err.response?.status === 429) {

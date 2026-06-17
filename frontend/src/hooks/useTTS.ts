@@ -4,6 +4,13 @@ import axios from 'axios'
 import { buildCacheKey, getAudio, saveAudio } from '@/utils/ttsCache'
 import { getVoiceName, getSpeakingRate } from '@/utils/voicePreference'
 import { API_URL } from '@/lib/env'
+import { createLogger } from '@/utils/debugLogger'
+
+const useTTSLogger = createLogger('useTTS')
+
+// Network fallback (backend sleeping) is expected — notify the user only once
+// per session instead of toasting on every word played.
+let _ttsFallbackToasted = false
 
 interface UseTTSOptions {
   language?: string
@@ -125,10 +132,20 @@ export function useTTS(options: UseTTSOptions = {}): UseTTSReturn {
 
       await playBlob(audioBlob)
     } catch (error) {
-      console.error('TTS failed, falling back to browser TTS:', error)
+      // A missing response = network error (backend asleep / offline). That's an
+      // expected fallback, not a real failure — log quietly and toast once.
+      const isNetworkError = axios.isAxiosError(error) && !error.response
+      if (isNetworkError) {
+        useTTSLogger.debug('Backend unreachable — using browser voice', { text: text.slice(0, 20) })
+      } else {
+        useTTSLogger.error('TTS synthesis failed, falling back to browser voice', error)
+      }
       setIsSpeaking(false)
       speakFallback(text)
-      toast.error('TTS unavailable, using browser voice')
+      if (!_ttsFallbackToasted) {
+        _ttsFallbackToasted = true
+        toast('Using your browser voice for audio', { icon: '🔊' })
+      }
     }
   }, [language, rate, voiceName, stop, speakFallback, playBlob])
 

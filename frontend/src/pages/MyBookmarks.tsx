@@ -4,6 +4,9 @@ import { motion } from 'framer-motion'
 import { storiesApi } from '@/services/api'
 import { Story } from '@/types'
 import { Heart, Calendar, BookOpen } from 'lucide-react'
+import { createLogger } from '@/utils/debugLogger'
+
+const myBookmarksLogger = createLogger('MyBookmarks')
 
 export default function MyBookmarks() {
   const [bookmarks, setBookmarks] = useState<Story[]>([])
@@ -20,7 +23,7 @@ export default function MyBookmarks() {
       const data = await storiesApi.getMyBookmarks()
       setBookmarks(data)
     } catch (error) {
-      console.error('Failed to load bookmarks:', error)
+      myBookmarksLogger.error('Failed to load bookmarks:', error)
     } finally {
       setLoading(false)
     }

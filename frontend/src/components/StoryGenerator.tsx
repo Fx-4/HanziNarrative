@@ -26,6 +26,9 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react'
+import { createLogger } from '@/utils/debugLogger'
+
+const storyGeneratorLogger = createLogger('StoryGenerator')
 
 // ─── Types ───────────────────────────────────────────────────────────
 interface GeneratedStory {
@@ -245,7 +248,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
 
       if (!res.ok) {
         const errData = await res.json().catch(() => null)
-        console.error('[SSE] Error response:', res.status, errData)
+        storyGeneratorLogger.error('SSE error response', { status: res.status, errData })
         throw new Error(errData?.detail || `Server error ${res.status}`)
       }
 
@@ -301,7 +304,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
         }
       }
     } catch (err: unknown) {
-      console.error('[SSE] Generation error:', err)
+      storyGeneratorLogger.error('[SSE] Generation error:', err)
       setError((err instanceof Error ? err.message : null) || 'Failed to generate story')
     } finally {
       setLoading(false)

@@ -9,6 +9,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import BlurText from '@/components/animations/BlurText'
 import CountUp from '@/components/animations/CountUp'
 import { Search, X, LayoutGrid, List, BookOpen, SlidersHorizontal } from 'lucide-react'
+import { createLogger } from '@/utils/debugLogger'
+
+const vocabularyLogger = createLogger('Vocabulary')
 
 // ── HSK level config ────────────────────────────────────────────
 const HSK_LEVELS = [
@@ -83,7 +86,7 @@ export default function Vocabulary() {
       const data = await vocabularyApi.getCategories(selectedLevel)
       setCategories(data)
     } catch (error) {
-      console.error('Failed to load categories:', error)
+      vocabularyLogger.error('Failed to load categories:', error)
     }
   }, [selectedLevel])
 
@@ -94,7 +97,7 @@ export default function Vocabulary() {
       const data = await vocabularyApi.getByHSKLevel(selectedLevel, selectedCategory || undefined)
       setWords(data)
     } catch (error) {
-      console.error('Failed to load vocabulary:', error)
+      vocabularyLogger.error('Failed to load vocabulary:', error)
     } finally {
       setLoading(false)
     }
@@ -108,7 +111,7 @@ export default function Vocabulary() {
       const data = await vocabularyApi.searchWords(searchQuery, selectedLevel)
       setWords(data)
     } catch (error) {
-      console.error('Failed to search vocabulary:', error)
+      vocabularyLogger.error('Failed to search vocabulary:', error)
     } finally {
       setLoading(false)
     }

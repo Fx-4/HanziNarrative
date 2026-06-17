@@ -20,7 +20,9 @@ function formatMessage(component: string, message: string, level: LogLevel): str
   return `[${timestamp}] [${level.toUpperCase()}] [${component}] ${message}`
 }
 
-type LogData = Record<string, unknown> | unknown[] | string | number | boolean | null | undefined
+// Anything printable by console — most call sites pass a caught `unknown` error,
+// a context object, or nothing at all.
+type LogData = unknown
 
 function log(level: LogLevel, component: string, message: string, data?: LogData): void {
   if (!isDev && (level === 'debug' || level === 'info')) return

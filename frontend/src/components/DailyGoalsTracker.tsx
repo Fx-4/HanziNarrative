@@ -3,6 +3,9 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Target, Clock, BookOpen, TrendingUp, CheckCircle } from 'lucide-react'
 import { onboardingApi, gamificationApi } from '@/services/api'
+import { createLogger } from '@/utils/debugLogger'
+
+const dailyGoalsTrackerLogger = createLogger('DailyGoalsTracker')
 
 interface Goals {
   daily_time_minutes?: number
@@ -44,7 +47,7 @@ export default function DailyGoalsTracker() {
         storiesRead: gamificationData.total_stories_read || 0,
       })
     } catch (error) {
-      console.error('Failed to load goals:', error)
+      dailyGoalsTrackerLogger.error('Failed to load goals:', error)
     } finally {
       setLoading(false)
     }

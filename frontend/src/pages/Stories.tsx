@@ -5,6 +5,9 @@ import { storiesApi } from '@/services/api'
 import { Story } from '@/types'
 import { BookOpen, Calendar, Sparkles, Search } from 'lucide-react'
 import StoryGenerator from '@/components/StoryGenerator'
+import { createLogger } from '@/utils/debugLogger'
+
+const storiesLogger = createLogger('Stories')
 
 type TabType = 'browse' | 'generate'
 
@@ -46,7 +49,7 @@ export default function Stories() {
       const data = await storiesApi.getAll(selectedLevel)
       setStories(data)
     } catch (error) {
-      console.error('Failed to load stories:', error)
+      storiesLogger.error('Failed to load stories:', error)
     } finally {
       setLoading(false)
     }
