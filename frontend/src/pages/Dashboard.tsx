@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { learningApi } from '@/services/api'
 import { useAuthStore } from '@/store/authStore'
+import { useThemeStore } from '@/store/themeStore'
 import GamificationWidget from '@/components/GamificationWidget'
 import WordOfTheDay from '@/components/WordOfTheDay'
 import DailyGoalsTracker from '@/components/DailyGoalsTracker'
@@ -101,6 +102,21 @@ function SectionCard({ title, icon: Icon, children }: {
 
 export default function Dashboard() {
   const { isAuthenticated } = useAuthStore()
+  const isDarkMode = useThemeStore(s => s.isDarkMode)
+
+  // Theme-aware chart styling so axes/grid/tooltips stay legible in dark mode
+  const chartTheme = useMemo(() => ({
+    grid: isDarkMode ? '#334155' : '#e5e7eb',
+    axis: isDarkMode ? '#94a3b8' : '#6b7280',
+    tooltip: {
+      borderRadius: 12,
+      border: isDarkMode ? '1px solid #334155' : 'none',
+      boxShadow: '0 4px 20px rgba(0,0,0,0.18)',
+      backgroundColor: isDarkMode ? '#1e293b' : '#fff',
+      color: isDarkMode ? '#e5e7eb' : '#111827',
+    } as React.CSSProperties,
+    dotStroke: isDarkMode ? '#1e293b' : '#fff',
+  }), [isDarkMode])
 
   // Initialise from cache so first paint is instant on repeat visits
   const cached = useMemo(() => readCache(), [])
@@ -301,14 +317,24 @@ export default function Dashboard() {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <SectionCard title="Progress by HSK Level" icon={TrendingUp}>
             <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={hskProgressData} barSize={14}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
-                <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#6b7280' }} />
-                <YAxis tick={{ fontSize: 11, fill: '#6b7280' }} />
-                <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#fff' }} />
-                <Legend />
-                <Bar dataKey="learning" fill="#4f46e5" name="Learning" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="mastered" fill="#10b981" name="Mastered" radius={[4, 4, 0, 0]} />
+              <BarChart data={hskProgressData} barSize={16}>
+                <defs>
+                  <linearGradient id="barLearning" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#6366f1" />
+                    <stop offset="100%" stopColor="#4f46e5" />
+                  </linearGradient>
+                  <linearGradient id="barMastered" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#34d399" />
+                    <stop offset="100%" stopColor="#16a34a" />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.grid} vertical={false} />
+                <XAxis dataKey="name" tick={{ fontSize: 11, fill: chartTheme.axis }} axisLine={{ stroke: chartTheme.grid }} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: chartTheme.axis }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <Tooltip cursor={{ fill: isDarkMode ? 'rgba(148,163,184,0.08)' : 'rgba(0,0,0,0.04)' }} contentStyle={chartTheme.tooltip} />
+                <Legend wrapperStyle={{ fontSize: 12, color: chartTheme.axis }} />
+                <Bar dataKey="learning" fill="url(#barLearning)" name="Learning" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="mastered" fill="url(#barMastered)" name="Mastered" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </SectionCard>
@@ -318,14 +344,15 @@ export default function Dashboard() {
           <SectionCard title="Mastery Distribution" icon={Target}>
             <ResponsiveContainer width="100%" height={240}>
               <PieChart>
-                <Pie data={masteryDistribution} cx="50%" cy="50%" outerRadius={90} dataKey="value" labelLine={false}
+                <Pie data={masteryDistribution} cx="50%" cy="50%" innerRadius={48} outerRadius={90} paddingAngle={2} dataKey="value" labelLine={false}
+                  stroke={chartTheme.dotStroke} strokeWidth={2}
                   label={({ name, value }) => value > 0 ? `${name}: ${value}` : ''}>
                   {masteryDistribution.map((_entry, i) => (
                     <Cell key={`cell-${i}`} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#fff' }} />
-                <Legend />
+                <Tooltip contentStyle={chartTheme.tooltip} />
+                <Legend wrapperStyle={{ fontSize: 12, color: chartTheme.axis }} />
               </PieChart>
             </ResponsiveContainer>
           </SectionCard>
@@ -337,13 +364,19 @@ export default function Dashboard() {
         <SectionCard title="Accuracy by HSK Level" icon={Award}>
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={hskProgressData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#6b7280' }} />
-              <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: '#6b7280' }} />
+              <defs>
+                <linearGradient id="lineAccuracy" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#6366f1" />
+                  <stop offset="100%" stopColor="#a855f7" />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.grid} vertical={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 11, fill: chartTheme.axis }} axisLine={{ stroke: chartTheme.grid }} tickLine={false} />
+              <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: chartTheme.axis }} axisLine={false} tickLine={false} />
               <Tooltip formatter={(val: number) => [`${val.toFixed(1)}%`, 'Accuracy']}
-                contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#fff' }} />
-              <Line type="monotone" dataKey="accuracy" stroke="#8b5cf6" strokeWidth={2.5} name="Accuracy %"
-                dot={{ fill: '#8b5cf6', r: 5, strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 7 }} />
+                contentStyle={chartTheme.tooltip} />
+              <Line type="monotone" dataKey="accuracy" stroke="url(#lineAccuracy)" strokeWidth={3} name="Accuracy %"
+                dot={{ fill: '#8b5cf6', r: 5, strokeWidth: 2, stroke: chartTheme.dotStroke }} activeDot={{ r: 7 }} />
             </LineChart>
           </ResponsiveContainer>
         </SectionCard>

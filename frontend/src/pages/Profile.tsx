@@ -11,6 +11,9 @@ import {
 import { Skeleton } from '@/components/ui/Skeleton'
 import { motion, AnimatePresence } from 'framer-motion'
 import CountUp from '@/components/animations/CountUp'
+import { createLogger } from '@/utils/debugLogger'
+
+const profileLogger = createLogger('Profile')
 
 // ─── Achievement Card ───────────────────────────────────────────────────────
 
@@ -53,21 +56,21 @@ function AchievementCard({ achievement }: AchievementCardProps) {
   }
 
   return (
-    <div className="flex flex-col bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
+    <div className="flex flex-col bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow dark:bg-surface-card dark:border-gray-800">
       {/* Badge / Icon */}
       <div className="flex items-start justify-between mb-3">
         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-100 to-violet-100 flex items-center justify-center shrink-0">
           {badgeImage
             ? <img src={badgeImage} alt={achievement.name} className="w-full h-full object-contain rounded-xl" />
-            : <Trophy className="w-6 h-6 text-primary-500" />
+            : <Trophy className="w-6 h-6 text-primary-500 dark:text-primary-400" />
           }
         </div>
-        <span className="text-xs font-semibold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">+{achievement.xp} XP</span>
+        <span className="text-xs font-semibold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full dark:text-primary-300 dark:bg-primary-900/30">+{achievement.xp} XP</span>
       </div>
 
       {/* Info */}
-      <p className="font-semibold text-gray-900 text-sm mb-0.5 leading-tight">{achievement.name}</p>
-      <p className="text-xs text-gray-500 mb-3 leading-relaxed flex-1">{achievement.description}</p>
+      <p className="font-semibold text-gray-900 text-sm mb-0.5 leading-tight dark:text-gray-50">{achievement.name}</p>
+      <p className="text-xs text-gray-500 mb-3 leading-relaxed flex-1 dark:text-gray-400">{achievement.description}</p>
 
       {/* Error */}
       {error && <p className="text-xs text-error-500 mb-2">{error}</p>}
@@ -75,7 +78,7 @@ function AchievementCard({ achievement }: AchievementCardProps) {
       {/* Actions */}
       {!badgeImage ? (
         <div className="space-y-2">
-          <p className="text-xs text-gray-400 flex items-center gap-1">
+          <p className="text-xs text-gray-400 flex items-center gap-1 dark:text-gray-500">
             <Sparkles className="w-3 h-3" /> Generate badge
           </p>
           <div className="grid grid-cols-2 gap-1">
@@ -84,7 +87,7 @@ function AchievementCard({ achievement }: AchievementCardProps) {
                 key={s}
                 onClick={() => generateBadge(s)}
                 disabled={loading}
-                className="px-2 py-1.5 text-xs rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 transition-colors disabled:opacity-50 capitalize"
+                className="px-2 py-1.5 text-xs rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 transition-colors disabled:opacity-50 capitalize dark:border-gray-700"
               >
                 {loading && activeStyle === s
                   ? <Loader2 className="w-3 h-3 animate-spin mx-auto" />
@@ -103,7 +106,7 @@ function AchievementCard({ achievement }: AchievementCardProps) {
           </button>
           <button
             onClick={() => setBadgeImage(null)}
-            className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors dark:border-gray-700"
           >
             Reset
           </button>
@@ -141,7 +144,7 @@ export default function Profile() {
       setGamification(gamificationData)
       setOnboarding(onboardingData)
     } catch (err) {
-      console.error('Failed to load profile data:', err)
+      profileLogger.error('Failed to load profile data:', err)
       setLoadError(true)
     } finally {
       setLoading(false)
@@ -177,7 +180,7 @@ export default function Profile() {
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="text-gray-500">Please log in to view your profile.</p>
+        <p className="text-gray-500 dark:text-gray-400">Please log in to view your profile.</p>
       </div>
     )
   }
@@ -199,7 +202,7 @@ export default function Profile() {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden"
+        className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden dark:bg-surface-card dark:border-gray-800"
       >
         {/* Gradient banner */}
         <div className="h-24 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
@@ -214,10 +217,10 @@ export default function Profile() {
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.1 }}
             >
-              <div className="w-20 h-20 rounded-2xl ring-4 ring-white bg-primary-100 flex items-center justify-center overflow-hidden shadow-lg">
+              <div className="w-20 h-20 rounded-2xl ring-4 ring-white bg-primary-100 flex items-center justify-center overflow-hidden shadow-lg dark:ring-surface-card dark:bg-primary-900/40">
                 {user.profile_picture
                   ? <img src={user.profile_picture} alt={user.username} className="w-full h-full object-cover" />
-                  : <span className="text-3xl font-bold text-primary-600">{user.username.charAt(0).toUpperCase()}</span>
+                  : <span className="text-3xl font-bold text-primary-600 dark:text-primary-300">{user.username.charAt(0).toUpperCase()}</span>
                 }
               </div>
               {/* Upload overlay */}
@@ -238,7 +241,7 @@ export default function Profile() {
             {/* Logout */}
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-500 hover:text-error-600 hover:bg-error-50 border border-gray-200 rounded-xl transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-500 hover:text-error-600 hover:bg-error-50 border border-gray-200 rounded-xl transition-colors dark:text-gray-400 dark:border-gray-700"
             >
               <LogOut className="w-4 h-4" />
               Logout
@@ -247,10 +250,10 @@ export default function Profile() {
 
           {/* User info */}
           <div>
-            <h1 className="text-xl font-extrabold text-gray-900">{user.full_name || user.username}</h1>
-            {user.full_name && <p className="text-sm text-gray-500">@{user.username}</p>}
-            <p className="text-sm text-gray-500">{user.email}</p>
-            <p className="text-xs text-gray-400 mt-1">
+            <h1 className="text-xl font-extrabold text-gray-900 dark:text-gray-50">{user.full_name || user.username}</h1>
+            {user.full_name && <p className="text-sm text-gray-500 dark:text-gray-400">@{user.username}</p>}
+            <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
+            <p className="text-xs text-gray-400 mt-1 dark:text-gray-500">
               Member since {new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
             </p>
           </div>
@@ -268,7 +271,7 @@ export default function Profile() {
             className="space-y-6"
           >
             {/* Level / XP card */}
-            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 space-y-4">
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 space-y-4 dark:bg-surface-card dark:border-gray-800">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Skeleton className="w-12 h-12 rounded-2xl" />
@@ -303,7 +306,7 @@ export default function Profile() {
             </div>
 
             {/* HSK Journey */}
-            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 space-y-3">
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 space-y-3 dark:bg-surface-card dark:border-gray-800">
               <div className="flex items-center gap-2 mb-4">
                 <Skeleton className="w-5 h-5 rounded" />
                 <Skeleton className="h-5 w-28" />
@@ -315,14 +318,14 @@ export default function Profile() {
             </div>
 
             {/* Learning Progress */}
-            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 space-y-3">
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 space-y-3 dark:bg-surface-card dark:border-gray-800">
               <div className="flex items-center gap-2 mb-4">
                 <Skeleton className="w-5 h-5 rounded" />
                 <Skeleton className="h-5 w-36" />
               </div>
               <div className="grid grid-cols-3 gap-3">
                 {[0, 1, 2].map(i => (
-                  <div key={i} className="space-y-2 text-center p-4 rounded-2xl bg-gray-50 animate-pulse">
+                  <div key={i} className="space-y-2 text-center p-4 rounded-2xl bg-gray-50 animate-pulse dark:bg-gray-800/50">
                     <Skeleton className="h-8 w-12 mx-auto" />
                     <Skeleton className="h-3 w-16 mx-auto" />
                   </div>
@@ -338,18 +341,18 @@ export default function Profile() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center py-12 gap-4 bg-white rounded-3xl border border-error-100 shadow-sm"
+          className="flex flex-col items-center py-12 gap-4 bg-white rounded-3xl border border-error-100 shadow-sm dark:bg-surface-card"
         >
-          <div className="w-12 h-12 rounded-2xl bg-error-50 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-2xl bg-error-50 flex items-center justify-center dark:bg-error-900/30">
             <TrendingUp className="w-6 h-6 text-error-400" />
           </div>
           <div className="text-center">
-            <p className="font-semibold text-gray-800">Could not load stats</p>
-            <p className="text-sm text-gray-400 mt-1">Check your connection and try again.</p>
+            <p className="font-semibold text-gray-800 dark:text-gray-200">Could not load stats</p>
+            <p className="text-sm text-gray-400 mt-1 dark:text-gray-500">Check your connection and try again.</p>
           </div>
           <button
             onClick={loadData}
-            className="px-4 py-2 text-sm font-semibold text-primary-600 border border-primary-200 rounded-xl hover:bg-primary-50 transition-colors"
+            className="px-4 py-2 text-sm font-semibold text-primary-600 border border-primary-200 rounded-xl hover:bg-primary-50 transition-colors dark:text-primary-300 dark:border-primary-800"
           >
             Retry
           </button>
@@ -366,7 +369,7 @@ export default function Profile() {
 
           {/* ── Level / XP card ─────────────────────────────────────────── */}
           {gamification && (
-            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 dark:bg-surface-card dark:border-gray-800">
               <div className="flex items-center justify-between mb-5">
                 {/* Level */}
                 <div className="flex items-center gap-3">
@@ -374,28 +377,28 @@ export default function Profile() {
                     <Trophy className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Player Level</p>
-                    <p className="text-2xl font-extrabold text-gray-900">
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wide dark:text-gray-400">Player Level</p>
+                    <p className="text-2xl font-extrabold text-gray-900 dark:text-gray-50">
                       Level <CountUp to={gamification.level} duration={0.8} />
                     </p>
                   </div>
                 </div>
                 {/* Total XP */}
                 <div className="text-right">
-                  <p className="text-3xl font-extrabold text-primary-600">
+                  <p className="text-3xl font-extrabold text-primary-600 dark:text-primary-300">
                     <CountUp to={gamification.total_xp} duration={1.2} />
                   </p>
-                  <p className="text-xs text-gray-400 font-medium">Total XP</p>
+                  <p className="text-xs text-gray-400 font-medium dark:text-gray-500">Total XP</p>
                 </div>
               </div>
 
               {/* XP bar */}
               <div className="space-y-1.5">
-                <div className="flex justify-between text-xs text-gray-400">
+                <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500">
                   <span>{gamification.current_xp_in_level} XP</span>
                   <span>{gamification.xp_to_next_level} XP to Level {gamification.level + 1}</span>
                 </div>
-                <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-3 bg-gray-100 rounded-full overflow-hidden dark:bg-gray-800">
                   <motion.div
                     className="h-full bg-gradient-to-r from-primary-500 to-violet-500 rounded-full"
                     initial={{ width: 0 }}
@@ -403,7 +406,7 @@ export default function Profile() {
                     transition={{ duration: 1.2, ease: [0.25, 0.4, 0.25, 1], delay: 0.3 }}
                   />
                 </div>
-                <p className="text-xs text-right text-gray-400">{Math.round(xpPct)}% complete</p>
+                <p className="text-xs text-right text-gray-400 dark:text-gray-500">{Math.round(xpPct)}% complete</p>
               </div>
             </div>
           )}
@@ -454,38 +457,38 @@ export default function Profile() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
-              className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6"
+              className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 dark:bg-surface-card dark:border-gray-800"
             >
-              <h2 className="font-extrabold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <Star className="w-5 h-5 text-primary-500" /> HSK Journey
+              <h2 className="font-extrabold text-gray-900 text-lg mb-4 flex items-center gap-2 dark:text-gray-50">
+                <Star className="w-5 h-5 text-primary-500 dark:text-primary-400" /> HSK Journey
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {/* Current HSK */}
-                <div className="bg-gradient-to-br from-primary-50 to-violet-50 border border-primary-100 rounded-2xl p-4">
-                  <p className="text-xs text-primary-500 font-semibold uppercase tracking-wide mb-1">Current Level</p>
-                  <p className="text-4xl font-extrabold text-primary-700">
+                <div className="bg-gradient-to-br from-primary-50 to-violet-50 border border-primary-100 rounded-2xl p-4 dark:from-primary-900/30 dark:to-violet-900/30 dark:border-primary-900/40">
+                  <p className="text-xs text-primary-500 font-semibold uppercase tracking-wide mb-1 dark:text-primary-400">Current Level</p>
+                  <p className="text-4xl font-extrabold text-primary-700 dark:text-primary-300">
                     HSK <CountUp to={onboarding.determined_hsk_level || 1} duration={0.8} />
                   </p>
                 </div>
 
                 {/* Goals */}
                 {onboarding.goals && (
-                  <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 space-y-2">
-                    <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Daily Goals</p>
+                  <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 space-y-2 dark:bg-gray-800/50 dark:border-gray-800">
+                    <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide dark:text-gray-400">Daily Goals</p>
                     {onboarding.goals.daily_time_minutes && (
-                      <p className="flex items-center gap-2 text-sm text-gray-700">
+                      <p className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
                         <Timer className="w-4 h-4 text-primary-400 shrink-0" />
                         {onboarding.goals.daily_time_minutes} min practice
                       </p>
                     )}
                     {onboarding.goals.daily_words && (
-                      <p className="flex items-center gap-2 text-sm text-gray-700">
+                      <p className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
                         <BookOpen className="w-4 h-4 text-primary-400 shrink-0" />
                         {onboarding.goals.daily_words} new words
                       </p>
                     )}
                     {onboarding.goals.target_hsk_level && (
-                      <p className="flex items-center gap-2 text-sm text-gray-700">
+                      <p className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
                         <Target className="w-4 h-4 text-primary-400 shrink-0" />
                         Target: HSK {onboarding.goals.target_hsk_level}
                       </p>
@@ -501,19 +504,19 @@ export default function Profile() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6"
+            className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 dark:bg-surface-card dark:border-gray-800"
           >
-            <h2 className="font-extrabold text-gray-900 text-lg mb-4 flex items-center gap-2">
-              <Zap className="w-5 h-5 text-primary-500" /> Learning Progress
+            <h2 className="font-extrabold text-gray-900 text-lg mb-4 flex items-center gap-2 dark:text-gray-50">
+              <Zap className="w-5 h-5 text-primary-500 dark:text-primary-400" /> Learning Progress
             </h2>
             {wordsLearned === 0 ? (
-              <p className="text-sm text-gray-400 py-4 text-center">Start reading stories to track your progress!</p>
+              <p className="text-sm text-gray-400 py-4 text-center dark:text-gray-500">Start reading stories to track your progress!</p>
             ) : (
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { label: 'Words Learned', value: wordsLearned, color: 'text-primary-600', bg: 'bg-primary-50' },
-                  { label: 'Total Reviews', value: totalReviews, color: 'text-violet-600', bg: 'bg-violet-50' },
-                  { label: 'Avg. Familiarity', value: avgFamiliarity, suffix: '%', color: 'text-success-600', bg: 'bg-success-50' },
+                  { label: 'Words Learned', value: wordsLearned, color: 'text-primary-600 dark:text-primary-300', bg: 'bg-primary-50 dark:bg-primary-900/30' },
+                  { label: 'Total Reviews', value: totalReviews, color: 'text-violet-600 dark:text-violet-300', bg: 'bg-violet-50 dark:bg-violet-900/30' },
+                  { label: 'Avg. Familiarity', value: avgFamiliarity, suffix: '%', color: 'text-success-600 dark:text-success-300', bg: 'bg-success-50 dark:bg-success-900/30' },
                 ].map(({ label, value, suffix, color, bg }, i) => (
                   <motion.div
                     key={label}
@@ -525,7 +528,7 @@ export default function Profile() {
                     <p className={`text-3xl font-extrabold ${color}`}>
                       <CountUp to={value} duration={1.2} suffix={suffix} />
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">{label}</p>
+                    <p className="text-xs text-gray-500 mt-1 dark:text-gray-400">{label}</p>
                   </motion.div>
                 ))}
               </div>
@@ -538,18 +541,18 @@ export default function Profile() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.35 }}
-              className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6"
+              className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 dark:bg-surface-card dark:border-gray-800"
             >
               <div className="flex items-center justify-between mb-2">
-                <h2 className="font-extrabold text-gray-900 text-lg flex items-center gap-2">
-                  <Award className="w-5 h-5 text-primary-500" />
+                <h2 className="font-extrabold text-gray-900 text-lg flex items-center gap-2 dark:text-gray-50">
+                  <Award className="w-5 h-5 text-primary-500 dark:text-primary-400" />
                   Achievements
-                  <span className="text-sm font-semibold text-primary-500 bg-primary-50 px-2 py-0.5 rounded-full">
+                  <span className="text-sm font-semibold text-primary-500 bg-primary-50 px-2 py-0.5 rounded-full dark:text-primary-400 dark:bg-primary-900/30">
                     {gamification.achievements.length}
                   </span>
                 </h2>
               </div>
-              <p className="text-xs text-gray-400 mb-4 flex items-center gap-1">
+              <p className="text-xs text-gray-400 mb-4 flex items-center gap-1 dark:text-gray-500">
                 <CheckCircle2 className="w-3.5 h-3.5 text-primary-400" />
                 Generate custom badge art for each achievement (10/day, 3/hour)
               </p>
