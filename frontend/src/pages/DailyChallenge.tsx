@@ -53,7 +53,8 @@ export default function DailyChallenge() {
       setChallenge(c)
       setStats(s)
       setCompleted(c.completed)
-    } catch {
+    } catch (err) {
+      console.warn('[DailyChallenge] Could not load challenge data (server might be waking up)');
       setError(true)
     } finally {
       setLoading(false)

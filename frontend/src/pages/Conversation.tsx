@@ -43,7 +43,14 @@ export default function Conversation() {
   useEffect(() => {
     conversationApi.getTopics()
       .then(setTopics)
-      .catch(() => toast.error('Failed to load topics'))
+      .catch((err) => {
+        const isNetworkError = !err.response && (err.message === 'Network Error' || !err.status);
+        if (isNetworkError) {
+          console.warn('[Conversation] Could not load topics (server might be waking up)');
+        } else {
+          toast.error('Failed to load topics');
+        }
+      })
       .finally(() => setTopicsLoading(false))
   }, [])
 

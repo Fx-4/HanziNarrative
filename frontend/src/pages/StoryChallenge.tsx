@@ -63,7 +63,8 @@ export default function StoryChallenge() {
             const data = await storiesApi.getAll(hskLevel)
             setStories(data.filter((s: { is_published: boolean }) => s.is_published))
         } catch {
-            toast.error('Failed to load stories')
+            console.warn('[StoryChallenge] Could not load stories (server might be waking up)');
+            // Suppress toast for background initial load failure
         } finally {
             setLoading(false)
         }
@@ -108,6 +109,7 @@ export default function StoryChallenge() {
             setHiddenWords(new Set(wordsToHide))
             setUnlockedWords(new Set())
         } catch {
+            console.warn('[StoryChallenge] Could not load story details (server might be waking up)');
             toast.error('Failed to load story')
         } finally {
             setLoading(false)

@@ -76,9 +76,9 @@ export default function SentenceBuilder() {
       setUsageStats(stats);
     } catch (err) {
       const e = err as { response?: { status?: number } }
-      // Only log error if it's not a 401/422 (not authenticated)
+      // Only log if it's not a 401/422 (not authenticated)
       if (e?.response?.status !== 401 && e?.response?.status !== 422) {
-        sentenceBuilderLogger.error('Failed to load usage stats:', err);
+        sentenceBuilderLogger.warn('Could not load usage stats (server might be waking up)');
       }
       // Set empty stats on error so it doesn't show "Loading..." forever
       setUsageStats({});
@@ -98,8 +98,9 @@ export default function SentenceBuilder() {
         setTargetSentence(words.slice(0, 3).map(w => w.simplified).join(''));
       }
     } catch (error) {
-      sentenceBuilderLogger.error('Failed to fetch vocabulary:', error);
-      toast.error('Failed to load vocabulary');
+      sentenceBuilderLogger.warn('Could not fetch vocabulary (server might be waking up)');
+      // Only show toast for manual refreshes, not on initial mount if network error
+      // toast.error('Failed to load vocabulary'); 
     }
   };
 
