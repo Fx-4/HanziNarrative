@@ -251,7 +251,7 @@ export default function Conversation() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl border border-gray-200 p-5 mb-4 shadow-sm dark:bg-surface-card dark:border-gray-700"
+          className="bg-white rounded-2xl border border-gray-200 p-5 mb-4 shadow-sm dark:bg-surface-card dark:border-surface-border"
         >
           <h2 className="font-bold text-gray-900 text-sm mb-3 dark:text-gray-50">Select Your Level</h2>
           <div className="grid grid-cols-6 gap-2">
@@ -262,7 +262,7 @@ export default function Conversation() {
                 className={`py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${
                   hskLevel === level
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-surface-card dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
                 HSK {level}
@@ -276,7 +276,7 @@ export default function Conversation() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-2xl border border-gray-200 p-5 mb-6 shadow-sm dark:bg-surface-card dark:border-gray-700"
+          className="bg-white rounded-2xl border border-gray-200 p-5 mb-6 shadow-sm dark:bg-surface-card dark:border-surface-border"
         >
           <h2 className="font-bold text-gray-900 text-sm mb-3 dark:text-gray-50">Choose a Topic</h2>
           {topicsLoading ? (
@@ -358,7 +358,7 @@ export default function Conversation() {
           </button>
           <button
             onClick={resetConversation}
-            className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors cursor-pointer dark:bg-gray-800 dark:text-gray-400"
+            className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors cursor-pointer dark:bg-surface-card dark:text-gray-400"
             title="New conversation"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -379,7 +379,7 @@ export default function Conversation() {
               <div className={`max-w-[85%] ${
                 msg.role === 'user'
                   ? 'bg-blue-600 text-white rounded-2xl rounded-br-md'
-                  : 'bg-white dark:bg-surface-card border border-gray-200 dark:border-gray-700 rounded-2xl rounded-bl-md shadow-sm'
+                  : 'bg-white dark:bg-surface-card border border-gray-200 dark:border-surface-border rounded-2xl rounded-bl-md shadow-sm'
               } p-3.5`}>
                 {/* Main text — show typing dots only if streaming with no content yet */}
                 {msg.isStreaming && !msg.content ? (
@@ -460,7 +460,7 @@ export default function Conversation() {
       </div>
 
       {/* Input Area */}
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-2 flex items-center gap-2 dark:bg-surface-card dark:border-gray-700">
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-2 flex items-center gap-2 dark:bg-surface-card dark:border-surface-border">
         <input
           id="chat-input"
           name="chat-input"

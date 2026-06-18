@@ -269,7 +269,7 @@ export default function SentenceBuilder() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="inline-block bg-white dark:bg-gray-900 rounded-xl shadow-md p-4 mt-4 border border-gray-100 dark:border-gray-800"
+              className="inline-block bg-white dark:bg-surface-card rounded-xl shadow-md p-4 mt-4 border border-gray-100 dark:border-surface-border"
             >
               <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">AI Validation Limits:</div>
               <div className="flex gap-6 text-sm">
@@ -301,7 +301,7 @@ export default function SentenceBuilder() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.4 }}
-          className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-3 sm:p-4 mb-4 sm:mb-6 border border-gray-100 dark:border-gray-800"
+          className="bg-white dark:bg-surface-card rounded-xl shadow-md p-3 sm:p-4 mb-4 sm:mb-6 border border-gray-100 dark:border-surface-border"
         >
           <p className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             HSK Level:
@@ -316,7 +316,7 @@ export default function SentenceBuilder() {
                   className={`px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base rounded-lg font-medium transition-colors cursor-pointer ${
                     hskLevel === level
                       ? 'bg-orange-500 text-white shadow-md shadow-orange-300/40'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      : 'bg-gray-100 dark:bg-surface-card text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                   }`}
                 >
                   HSK {level}
@@ -332,7 +332,7 @@ export default function SentenceBuilder() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.45, duration: 0.4 }}
-            className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 mb-6 border border-gray-100 dark:border-gray-800"
+            className="bg-white dark:bg-surface-card rounded-xl shadow-lg p-6 mb-6 border border-gray-100 dark:border-surface-border"
           >
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
@@ -448,7 +448,7 @@ export default function SentenceBuilder() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.4 }}
-            className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 border border-gray-100 dark:border-gray-800"
+            className="bg-white dark:bg-surface-card rounded-xl shadow-lg p-6 border border-gray-100 dark:border-surface-border"
           >
             <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
               Word Bank 词库

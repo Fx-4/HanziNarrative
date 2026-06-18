@@ -235,7 +235,7 @@ export default function Adventure() {
                         transition={{ delay: 0.1 }}
                         className="mb-6"
                     >
-                        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:bg-surface-card dark:border-gray-800">
+                        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:bg-surface-card dark:border-surface-border">
                             <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 dark:text-gray-50">HSK Level</h3>
                             <div className="flex flex-wrap gap-2">
                                 {[1, 2, 3, 4, 5, 6].map((level) => (
@@ -244,7 +244,7 @@ export default function Adventure() {
                                         onClick={() => setHskLevel(level)}
                                         className={`rounded-2xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${hskLevel === level
                                             ? 'bg-success-600 hover:bg-success-700 text-white'
-                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-surface-card dark:text-gray-300 dark:hover:bg-gray-700'
                                             }`}
                                     >
                                         HSK {level}
@@ -261,7 +261,7 @@ export default function Adventure() {
                         transition={{ delay: 0.15 }}
                         className="mb-6"
                     >
-                        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:bg-surface-card dark:border-gray-800">
+                        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:bg-surface-card dark:border-surface-border">
                             <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 dark:text-gray-50">Choose a Topic</h3>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                 {TOPICS.map((t) => (
@@ -495,7 +495,7 @@ export default function Adventure() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
                     >
-                        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:bg-surface-card dark:border-gray-800">
+                        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:bg-surface-card dark:border-surface-border">
                             <div className="flex items-center gap-2 mb-4">
                                 <Sparkles className="w-5 h-5 text-success-600 dark:text-success-400" />
                                 <h3 className="font-semibold text-gray-900 dark:text-gray-50">What do you do?</h3>
@@ -506,7 +506,7 @@ export default function Adventure() {
                                         key={choice.id}
                                         onClick={() => handleChoice(choice)}
                                         disabled={loading}
-                                        className="w-full text-left bg-gray-50 hover:bg-success-50 border-2 border-gray-100 hover:border-success-300 rounded-2xl p-4 cursor-pointer transition-all disabled:opacity-50 group dark:bg-gray-800/50 dark:border-gray-800 dark:hover:bg-success-950/30"
+                                        className="w-full text-left bg-gray-50 hover:bg-success-50 border-2 border-gray-100 hover:border-success-300 rounded-2xl p-4 cursor-pointer transition-all disabled:opacity-50 group dark:bg-surface-card/50 dark:border-surface-border dark:hover:bg-success-950/30"
                                     >
                                         <div className="flex items-start gap-3">
                                             <span className="w-7 h-7 bg-success-100 text-success-700 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 group-hover:bg-success-200 dark:bg-success-900/40 dark:text-success-300">

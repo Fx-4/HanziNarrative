@@ -134,12 +134,12 @@ export default function MatchingGame() {
                     </motion.div>
 
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="mb-6">
-                        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
+                        <div className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-surface-border p-4 sm:p-6">
                             <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Select HSK Level</h3>
                             <div className="flex flex-wrap gap-2">
                                 {[1, 2, 3, 4, 5, 6].map(level => (
                                     <button key={level} onClick={() => setHskLevel(level)}
-                                        className={`rounded-2xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${hskLevel === level ? 'bg-rose-600 hover:bg-rose-700 text-white' : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
+                                        className={`rounded-2xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${hskLevel === level ? 'bg-rose-600 hover:bg-rose-700 text-white' : 'bg-gray-100 dark:bg-surface-card hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
                                         HSK {level}
                                     </button>
                                 ))}
@@ -179,12 +179,12 @@ export default function MatchingGame() {
                             <Trophy className="w-12 h-12 text-amber-500 mx-auto mb-3" />
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">All Matched!</h2>
                             <div className="grid grid-cols-2 gap-4 mt-4 max-w-xs mx-auto">
-                                <div className="bg-white/80 dark:bg-gray-800/80 rounded-xl p-3">
+                                <div className="bg-white/80 dark:bg-surface-card/80 rounded-xl p-3">
                                     <Clock className="w-5 h-5 text-rose-600 mx-auto mb-1 dark:text-rose-400" />
                                     <p className="text-lg font-bold text-rose-700 dark:text-rose-300">{formatTime(timer)}</p>
                                     <p className="text-xs text-gray-600">Time</p>
                                 </div>
-                                <div className="bg-white/80 dark:bg-gray-800/80 rounded-xl p-3">
+                                <div className="bg-white/80 dark:bg-surface-card/80 rounded-xl p-3">
                                     <Zap className="w-5 h-5 text-amber-500 mx-auto mb-1" />
                                     <p className="text-lg font-bold text-amber-700 dark:text-amber-300">{moves}</p>
                                     <p className="text-xs text-gray-600">Moves</p>
@@ -211,18 +211,18 @@ export default function MatchingGame() {
                         ← Back
                     </button>
                     <div className="flex items-center gap-3">
-                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 px-3 py-1.5 flex items-center gap-1.5">
+                        <div className="bg-white dark:bg-surface-card rounded-xl shadow-sm border dark:border-surface-border px-3 py-1.5 flex items-center gap-1.5">
                             <Zap className="w-4 h-4 text-amber-500" />
                             <span className="font-bold text-gray-900 dark:text-gray-100">{moves} moves</span>
                         </div>
-                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 px-3 py-1.5 flex items-center gap-1.5 font-mono">
+                        <div className="bg-white dark:bg-surface-card rounded-xl shadow-sm border dark:border-surface-border px-3 py-1.5 flex items-center gap-1.5 font-mono">
                             <Clock className="w-4 h-4 text-rose-500" />
                             <span className="font-bold text-gray-900 dark:text-gray-100">{formatTime(timer)}</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
+                <div className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-surface-border p-4 sm:p-6">
                     <p className="text-center text-sm text-gray-500 mb-4">{matchedPairs}/6 pairs found</p>
                     <div className="grid grid-cols-3 gap-2 sm:gap-3">
                         <AnimatePresence>
@@ -233,7 +233,7 @@ export default function MatchingGame() {
                                     whileTap={{ scale: 0.95 }}
                                     className={`aspect-square rounded-xl sm:rounded-2xl font-medium cursor-pointer transition-all text-center flex items-center justify-center p-2 ${card.matched ? 'bg-success-100 border-2 border-success-300 text-success-800 dark:bg-success-900/40 dark:text-success-300'
                                         : card.flipped ? 'bg-rose-100 border-2 border-rose-300 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300'
-                                            : 'bg-gray-100 dark:bg-gray-800 hover:bg-rose-50 dark:hover:bg-rose-950/30 border-2 border-gray-200 dark:border-gray-700 hover:border-rose-200 text-transparent'
+                                            : 'bg-gray-100 dark:bg-surface-card hover:bg-rose-50 dark:hover:bg-rose-950/30 border-2 border-gray-200 dark:border-surface-border hover:border-rose-200 text-transparent'
                                         }`}>
                                     <span className={`${card.type === 'chinese' ? 'text-2xl sm:text-3xl font-chinese' : 'text-xs sm:text-sm'}`}>
                                         {card.flipped || card.matched ? card.content : '?'}

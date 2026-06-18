@@ -283,7 +283,7 @@ export default function StoryChallenge() {
                         transition={{ delay: 0.1 }}
                         className="mb-6"
                     >
-                        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:bg-surface-card dark:border-gray-800">
+                        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:bg-surface-card dark:border-surface-border">
                             <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 dark:text-gray-50">Select HSK Level</h3>
                             <div className="flex flex-wrap gap-2">
                                 {[1, 2, 3, 4, 5, 6].map((level) => (
@@ -292,7 +292,7 @@ export default function StoryChallenge() {
                                         onClick={() => setHskLevel(level)}
                                         className={`rounded-2xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${hskLevel === level
                                             ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-md shadow-amber-500/25'
-                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-surface-card dark:text-gray-300 dark:hover:bg-gray-700'
                                             }`}
                                     >
                                         HSK {level}
@@ -311,7 +311,7 @@ export default function StoryChallenge() {
                         {loading ? (
                             <div className="flex justify-center py-12"><LoadingSpinner size="lg" /></div>
                         ) : stories.length === 0 ? (
-                            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 text-center dark:bg-surface-card dark:border-gray-800">
+                            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 text-center dark:bg-surface-card dark:border-surface-border">
                                 <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                                 <p className="text-gray-600 dark:text-gray-400">No stories available for HSK {hskLevel}.</p>
                                 <p className="text-sm text-gray-400 mt-1 dark:text-gray-500">Generate some stories first!</p>
@@ -327,7 +327,7 @@ export default function StoryChallenge() {
                                     >
                                         <button
                                             onClick={() => selectStory(story.id)}
-                                            className="w-full text-left bg-white rounded-2xl shadow-md border border-gray-100 p-4 hover:border-amber-300 hover:shadow-lg cursor-pointer transition-all group dark:bg-surface-card dark:border-gray-800"
+                                            className="w-full text-left bg-white rounded-2xl shadow-md border border-gray-100 p-4 hover:border-amber-300 hover:shadow-lg cursor-pointer transition-all group dark:bg-surface-card dark:border-surface-border"
                                         >
                                             <div className="flex items-start gap-3">
                                                 <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-amber-200 dark:bg-amber-900/40">
@@ -361,7 +361,7 @@ export default function StoryChallenge() {
                         transition={{ delay: 0.3 }}
                         className="mt-8"
                     >
-                        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:border-gray-800 dark:from-amber-950/30 dark:to-yellow-950/30">
+                        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:border-surface-border dark:from-amber-950/30 dark:to-yellow-950/30">
                             <h4 className="font-semibold text-gray-900 mb-3 dark:text-gray-50">How it works</h4>
                             <div className="grid sm:grid-cols-3 gap-4">
                                 <div className="flex items-start gap-3">
@@ -452,14 +452,14 @@ export default function StoryChallenge() {
                     transition={{ delay: 0.1 }}
                     className="mb-6"
                 >
-                    <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-5 sm:p-8 dark:bg-surface-card dark:border-gray-800">
+                    <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-5 sm:p-8 dark:bg-surface-card dark:border-surface-border">
                         <div className="leading-[3rem] select-none">
                             {renderStoryWithBlanks()}
                         </div>
 
                         {/* Hint for hidden words */}
                         {!allUnlocked && (
-                            <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
+                            <div className="mt-6 pt-4 border-t border-gray-100 dark:border-surface-border">
                                 <p className="text-sm text-gray-500 mb-2 flex items-center gap-1 dark:text-gray-400">
                                     <Lock className="w-3.5 h-3.5" /> Click a blank to write and unlock:
                                 </p>
