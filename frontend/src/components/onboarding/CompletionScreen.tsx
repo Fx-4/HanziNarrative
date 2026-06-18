@@ -98,7 +98,7 @@ const CompletionScreen = ({
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        <div className="w-full max-w-md text-left bg-gray-50 dark:bg-surface-elevated border border-gray-200 dark:border-surface-border rounded-2xl p-5 mb-8">
+        className="w-full max-w-md text-left bg-gray-50 dark:bg-surface-elevated border border-gray-200 dark:border-surface-border rounded-2xl p-5 mb-8"
       >
         <p className="font-semibold text-gray-900 text-sm mb-3">{t('onboarding.completion.whatsNext')}</p>
         <ul className="space-y-2">

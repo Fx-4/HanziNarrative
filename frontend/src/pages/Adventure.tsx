@@ -270,7 +270,7 @@ export default function Adventure() {
                                         onClick={() => setTopic(t.value)}
                                         className={`rounded-2xl px-3 py-3 text-sm font-medium cursor-pointer transition-all text-center ${topic === t.value
                                             ? 'bg-success-100 border-2 border-success-500 text-success-800 dark:bg-success-900/40 dark:text-success-300'
-                                            : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100 text-gray-700'
+                                            : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100 text-gray-700 dark:bg-surface-page dark:text-gray-300 dark:hover:bg-surface-elevated'
                                             }`}
                                     >
                                         {(() => { const Icon = TOPIC_ICONS[t.value]; return Icon ? <Icon className="w-5 h-5 mx-auto mb-1" /> : null })()}
