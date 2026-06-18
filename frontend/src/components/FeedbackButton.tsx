@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { MessageSquarePlus, X, Bug, Lightbulb, MessageSquare, AlertTriangle, Loader2, CheckCircle, Sparkles, RefreshCw, Image as ImageIcon, MousePointer2, Trash2 } from 'lucide-react'
 import { feedbackApi } from '@/services/api'
 import { useLocation } from 'react-router-dom'
+import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -57,7 +58,8 @@ export default function FeedbackButton() {
   const [type, setType] = useState<FeedbackType>('general')
   const [subject, setSubject] = useState('')
   const [messages, setMessages] = useState<Record<FeedbackType, string>>({ ...TEMPLATES })
-  const [attachment, setAttachment] = useState<string | null>(null)
+  const [attachment, setAttachment] = useState<File | string | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [selector, setSelector] = useState<string | null>(null)
   const [isSelecting, setIsSelecting] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -74,6 +76,7 @@ export default function FeedbackButton() {
     setSubject('')
     setMessages({ ...TEMPLATES })
     setAttachment(null)
+    setPreviewUrl(null)
     setSelector(null)
     setError(null)
     setSubmitted(false)
@@ -108,9 +111,10 @@ export default function FeedbackButton() {
       return
     }
 
+    setAttachment(file)
     const reader = new FileReader()
     reader.onloadend = () => {
-      setAttachment(reader.result as string)
+      setPreviewUrl(reader.result as string)
     }
     reader.readAsDataURL(file)
   }
@@ -124,9 +128,10 @@ export default function FeedbackButton() {
         const file = item.getAsFile()
         if (!file) continue
         
+        setAttachment(file)
         const reader = new FileReader()
         reader.onloadend = () => {
-          setAttachment(reader.result as string)
+          setPreviewUrl(reader.result as string)
         }
         reader.readAsDataURL(file)
         toast.success('Screenshot pasted!')
@@ -208,23 +213,54 @@ export default function FeedbackButton() {
     }
   }
 
+  const uploadToSupabase = async (file: File | string): Promise<string> => {
+    const fileExt = typeof file === 'string' ? 'png' : file.name.split('.').pop()
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${fileExt}`
+    const filePath = `feedback/${fileName}`
+
+    let fileToUpload: File | Blob = file as File
+    if (typeof file === 'string') {
+      // Convert base64 to blob if needed (though we currently handle raw File)
+      const res = await fetch(file)
+      fileToUpload = await res.blob()
+    }
+
+    const { error: uploadError } = await supabase.storage
+      .from('feedback-attachments')
+      .upload(filePath, fileToUpload)
+
+    if (uploadError) throw uploadError
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('feedback-attachments')
+      .getPublicUrl(filePath)
+
+    return publicUrl
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!subject.trim() || !currentMessage.trim()) return
     setSubmitting(true)
     setError(null)
     try {
+      let finalAttachmentUrl = undefined
+      if (attachment) {
+        finalAttachmentUrl = await uploadToSupabase(attachment)
+      }
+
       await feedbackApi.submit({
         type,
         subject: subject.trim(),
         message: currentMessage.trim(),
         page_url: location.pathname,
-        attachment_url: attachment || undefined,
+        attachment_url: finalAttachmentUrl,
         element_selector: selector || undefined,
       })
       setSubmitted(true)
       setTimeout(handleClose, 2000)
-    } catch {
+    } catch (err) {
+      console.error('Feedback error:', err)
       setError('Failed to send feedback. Please try again.')
     } finally {
       setSubmitting(false)
@@ -419,7 +455,7 @@ export default function FeedbackButton() {
                       {attachment && (
                         <X 
                           className="w-3 h-3 ml-auto hover:text-error-500" 
-                          onClick={(e) => { e.stopPropagation(); setAttachment(null); }}
+                          onClick={(e) => { e.stopPropagation(); setAttachment(null); setPreviewUrl(null); }}
                         />
                       )}
                     </button>
@@ -433,12 +469,12 @@ export default function FeedbackButton() {
                   </div>
 
                   {/* Preview of attachment if any */}
-                  {attachment && (
+                  {previewUrl && (
                     <div className="relative group rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
-                      <img src={attachment} alt="Attachment preview" className="w-full h-32 object-cover" />
+                      <img src={previewUrl} alt="Attachment preview" className="w-full h-32 object-cover" />
                       <button
                         type="button"
-                        onClick={() => setAttachment(null)}
+                        onClick={() => { setAttachment(null); setPreviewUrl(null); }}
                         className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
