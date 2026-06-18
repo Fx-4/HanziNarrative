@@ -344,19 +344,50 @@ export default function Dashboard() {
 
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
           <SectionCard title={t('dashboard.charts.masteryDist')} icon={Target}>
-            <ResponsiveContainer width="100%" height={240}>
-              <PieChart>
-                <Pie data={masteryDistribution} cx="50%" cy="50%" innerRadius={48} outerRadius={90} paddingAngle={2} dataKey="value" labelLine={false}
-                  stroke={chartTheme.dotStroke} strokeWidth={2}
-                  label={({ name, value }) => value > 0 ? `${name}: ${value}` : ''}>
-                  {masteryDistribution.map((_entry, i) => (
-                    <Cell key={`cell-${i}`} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip contentStyle={chartTheme.tooltip} />
-                <Legend wrapperStyle={{ fontSize: 12, color: chartTheme.axis }} />
-              </PieChart>
-            </ResponsiveContainer>
+            <div className="relative">
+              <ResponsiveContainer width="100%" height={240}>
+                <PieChart>
+                  <Pie 
+                    data={masteryDistribution} 
+                    cx="50%" 
+                    cy="50%" 
+                    innerRadius={60} 
+                    outerRadius={85} 
+                    paddingAngle={6} 
+                    cornerRadius={6}
+                    dataKey="value" 
+                    labelLine={false}
+                    minAngle={15}
+                    stroke="none"
+                    label={({ name, value, percent }) => value > 0 && percent > 0.05 ? `${name}` : ''}
+                  >
+                    {masteryDistribution.map((_entry, i) => (
+                      <Cell key={`cell-${i}`} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={chartTheme.tooltip}
+                    itemStyle={{ fontSize: '12px', fontWeight: 600 }}
+                    formatter={(value: number) => [value, t('dashboard.charts.words')]}
+                  />
+                  <Legend 
+                    verticalAlign="bottom" 
+                    align="center"
+                    iconType="circle"
+                    iconSize={8}
+                    wrapperStyle={{ fontSize: 11, paddingTop: 10, color: chartTheme.axis }} 
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              
+              {/* Central mastery percentage display */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -mt-4 text-center pointer-events-none">
+                <p className="text-xl font-bold text-gray-900 dark:text-gray-100 leading-none">
+                  {masteryRate.toFixed(0)}%
+                </p>
+                <p className="text-[10px] text-gray-400 font-medium uppercase tracking-tighter">Mastery</p>
+              </div>
+            </div>
           </SectionCard>
         </motion.div>
       </div>
@@ -389,10 +420,10 @@ export default function Dashboard() {
         <SectionCard title={t('dashboard.overall.title')} icon={BookOpen}>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { label: t('dashboard.overall.totalReviews'), value: overallStats.total_reviews, color: 'text-primary-600', bg: 'bg-primary-50' },
-              { label: t('dashboard.overall.avgMastery'), value: overallStats.average_mastery, decimals: 1, color: 'text-success-600', bg: 'bg-success-50' },
-              { label: t('dashboard.overall.masteryRate'), value: masteryRate, decimals: 1, suffix: '%', color: 'text-violet-600', bg: 'bg-violet-50' },
-              { label: t('dashboard.overall.activeLevels'), value: activeLevels, color: 'text-orange-600', bg: 'bg-orange-50' },
+              { label: t('dashboard.overall.totalReviews'), value: overallStats.total_reviews, color: 'text-primary-600 dark:text-primary-400', bg: 'bg-primary-50 dark:bg-primary-950/30' },
+              { label: t('dashboard.overall.avgMastery'), value: overallStats.average_mastery, decimals: 1, color: 'text-success-600 dark:text-success-400', bg: 'bg-success-50 dark:bg-success-950/30' },
+              { label: t('dashboard.overall.masteryRate'), value: masteryRate, decimals: 1, suffix: '%', color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-50 dark:bg-violet-950/30' },
+              { label: t('dashboard.overall.activeLevels'), value: activeLevels, color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50 dark:bg-orange-950/30' },
             ].map(({ label, value, decimals, suffix, color, bg }) => (
               <div key={label} className={`${bg} dark:bg-surface-card rounded-2xl p-4 text-center`}>
                 <p className={`text-2xl font-extrabold ${color} dark:text-gray-100`}>
