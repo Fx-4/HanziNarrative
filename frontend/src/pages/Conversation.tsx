@@ -262,7 +262,7 @@ export default function Conversation() {
                 className={`py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${
                   hskLevel === level
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
                 HSK {level}
