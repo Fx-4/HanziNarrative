@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageSquarePlus, X, Bug, Lightbulb, MessageSquare, AlertTriangle, Loader2, CheckCircle, Sparkles } from 'lucide-react'
+import { MessageSquarePlus, X, Bug, Lightbulb, MessageSquare, AlertTriangle, Loader2, CheckCircle, Sparkles, RefreshCw } from 'lucide-react'
 import { feedbackApi } from '@/services/api'
 import { useLocation } from 'react-router-dom'
 
@@ -28,17 +28,19 @@ export default function FeedbackButton() {
   const [open, setOpen] = useState(false)
   const [type, setType] = useState<FeedbackType>('general')
   const [subject, setSubject] = useState('')
-  const [message, setMessage] = useState('')
+  const [messages, setMessages] = useState<Record<FeedbackType, string>>({ ...TEMPLATES })
   const [submitting, setSubmitting] = useState(false)
   const [improving, setImproving] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const location = useLocation()
 
+  const currentMessage = messages[type]
+
   const reset = () => {
     setType('general')
     setSubject('')
-    setMessage('')
+    setMessages({ ...TEMPLATES })
     setError(null)
     setSubmitted(false)
   }
@@ -50,18 +52,25 @@ export default function FeedbackButton() {
 
   const handleTypeChange = (newType: FeedbackType) => {
     setType(newType)
-    if (!message.trim()) {
-      setMessage(TEMPLATES[newType])
-    }
+  }
+
+  const handleResetTemplate = () => {
+    setMessages(prev => ({
+      ...prev,
+      [type]: TEMPLATES[type]
+    }))
   }
 
   const handleImprove = async () => {
-    if (!message.trim() || improving) return
+    if (!currentMessage.trim() || improving) return
     setImproving(true)
     setError(null)
     try {
-      const result = await feedbackApi.improve({ type, subject, message })
-      setMessage(result.message)
+      const result = await feedbackApi.improve({ type, subject, message: currentMessage })
+      setMessages(prev => ({
+        ...prev,
+        [type]: result.message
+      }))
       if (result.subject && !subject.trim()) setSubject(result.subject)
     } catch {
       setError('AI improvement failed. Please try again.')
@@ -72,14 +81,14 @@ export default function FeedbackButton() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!subject.trim() || !message.trim()) return
+    if (!subject.trim() || !currentMessage.trim()) return
     setSubmitting(true)
     setError(null)
     try {
       await feedbackApi.submit({
         type,
         subject: subject.trim(),
-        message: message.trim(),
+        message: currentMessage.trim(),
         page_url: location.pathname,
       })
       setSubmitted(true)
@@ -200,8 +209,8 @@ export default function FeedbackButton() {
                       Message
                     </label>
                     <textarea
-                      value={message}
-                      onChange={e => setMessage(e.target.value)}
+                      value={currentMessage}
+                      onChange={e => setMessages(prev => ({ ...prev, [type]: e.target.value }))}
                       placeholder="Describe in detail…"
                       rows={3}
                       maxLength={2000}
@@ -209,20 +218,34 @@ export default function FeedbackButton() {
                       className="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-shadow resize-none"
                     />
                     <div className="flex items-center justify-between mt-1">
-                      <button
-                        type="button"
-                        onClick={handleImprove}
-                        disabled={improving || !message.trim() || submitting}
-                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                      >
-                        {improving ? (
-                          <Loader2 className="w-3 h-3 animate-spin" />
-                        ) : (
-                          <Sparkles className="w-3 h-3" />
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={handleImprove}
+                          disabled={improving || !currentMessage.trim() || submitting}
+                          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                        >
+                          {improving ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <Sparkles className="w-3 h-3" />
+                          )}
+                          {improving ? 'Improving…' : 'Improve with AI'}
+                        </button>
+                        
+                        {TEMPLATES[type] && (
+                          <button
+                            type="button"
+                            onClick={handleResetTemplate}
+                            disabled={submitting || currentMessage === TEMPLATES[type]}
+                            title="Reset to template"
+                            className="p-1 rounded-lg text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                          >
+                            <RefreshCw className="w-3 h-3" />
+                          </button>
                         )}
-                        {improving ? 'Improving…' : 'Improve with AI'}
-                      </button>
-                      <span className="text-xs text-gray-400">{message.length}/2000</span>
+                      </div>
+                      <span className="text-xs text-gray-400">{currentMessage.length}/2000</span>
                     </div>
                   </div>
 
@@ -232,7 +255,7 @@ export default function FeedbackButton() {
 
                   <button
                     type="submit"
-                    disabled={submitting || !subject.trim() || !message.trim()}
+                    disabled={submitting || !subject.trim() || !currentMessage.trim()}
                     className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
                   >
                     {submitting ? (
