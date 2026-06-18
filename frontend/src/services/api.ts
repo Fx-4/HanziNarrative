@@ -1035,8 +1035,8 @@ export const feedbackApi = {
     subject: string
     message: string
     page_url?: string
-    attachment_url?: string
-    element_selector?: string
+    attachment_urls?: string[]
+    element_selectors?: string[]
   }) => {
     const response = await api.post('/feedback/', data)
     return response.data as FeedbackItem
@@ -1056,8 +1056,8 @@ export interface FeedbackItem {
   subject: string
   message: string
   page_url: string | null
-  attachment_url: string | null
-  element_selector: string | null
+  attachment_urls: string[] | null
+  element_selectors: string[] | null
   is_read: boolean
   is_resolved: boolean
   created_at: string

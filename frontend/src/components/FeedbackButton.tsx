@@ -58,9 +58,9 @@ export default function FeedbackButton() {
   const [type, setType] = useState<FeedbackType>('general')
   const [subject, setSubject] = useState('')
   const [messages, setMessages] = useState<Record<FeedbackType, string>>({ ...TEMPLATES })
-  const [attachment, setAttachment] = useState<File | string | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [selector, setSelector] = useState<string | null>(null)
+  const [attachments, setAttachments] = useState<(File | string)[]>([])
+  const [previewUrls, setPreviewUrls] = useState<string[]>([])
+  const [selectors, setSelectors] = useState<string[]>([])
   const [isSelecting, setIsSelecting] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [improving, setImproving] = useState(false)
@@ -75,9 +75,9 @@ export default function FeedbackButton() {
     setType('general')
     setSubject('')
     setMessages({ ...TEMPLATES })
-    setAttachment(null)
-    setPreviewUrl(null)
-    setSelector(null)
+    setAttachments([])
+    setPreviewUrls([])
+    setSelectors([])
     setError(null)
     setSubmitted(false)
     setIsSelecting(false)
@@ -103,20 +103,24 @@ export default function FeedbackButton() {
   // ── Image Handling ───────────────────────────────────────────────────────────
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
     
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('Image must be smaller than 2MB')
-      return
-    }
+    files.forEach(file => {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error(`Image ${file.name} is larger than 2MB and was skipped`)
+        return
+      }
 
-    setAttachment(file)
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      setPreviewUrl(reader.result as string)
-    }
-    reader.readAsDataURL(file)
+      setAttachments(prev => [...prev, file])
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreviewUrls(prev => [...prev, reader.result as string])
+      }
+      reader.readAsDataURL(file)
+    })
+    
+    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   const handlePaste = (e: React.ClipboardEvent) => {
@@ -128,10 +132,10 @@ export default function FeedbackButton() {
         const file = item.getAsFile()
         if (!file) continue
         
-        setAttachment(file)
+        setAttachments(prev => [...prev, file])
         const reader = new FileReader()
         reader.onloadend = () => {
-          setPreviewUrl(reader.result as string)
+          setPreviewUrls(prev => [...prev, reader.result as string])
         }
         reader.readAsDataURL(file)
         toast.success('Screenshot pasted!')
@@ -165,7 +169,10 @@ export default function FeedbackButton() {
       if (target.id === 'feedback-modal-root' || target.closest('#feedback-modal-root')) return
 
       const sel = getElementSelector(target)
-      setSelector(sel)
+      setSelectors(prev => {
+        if (!prev.includes(sel)) return [...prev, sel]
+        return prev
+      })
       setIsSelecting(false)
       setOpen(true)
       
@@ -173,7 +180,7 @@ export default function FeedbackButton() {
       target.style.outline = ''
       target.style.outlineOffset = ''
       
-      toast.success('Element selected!')
+      toast.success('Element added!')
     }
 
     document.addEventListener('mouseover', handleMouseOver)
@@ -247,12 +254,15 @@ export default function FeedbackButton() {
     setSubmitting(true)
     setError(null)
     try {
-      let finalAttachmentUrl = undefined
-      if (attachment) {
+      const finalAttachmentUrls: string[] = []
+      
+      if (attachments.length > 0) {
         try {
-          finalAttachmentUrl = await uploadToSupabase(attachment)
+          const uploadPromises = attachments.map(att => uploadToSupabase(att))
+          const urls = await Promise.all(uploadPromises)
+          finalAttachmentUrls.push(...urls)
         } catch (uploadErr) {
-          console.warn('Failed to upload image, submitting feedback without it:', uploadErr)
+          console.warn('Failed to upload some images, submitting feedback without them:', uploadErr)
           toast.error('Image upload failed. Submitting text only.')
         }
       }
@@ -262,8 +272,8 @@ export default function FeedbackButton() {
         subject: subject.trim(),
         message: currentMessage.trim(),
         page_url: location.pathname,
-        attachment_url: finalAttachmentUrl,
-        element_selector: selector || undefined,
+        attachment_urls: finalAttachmentUrls.length > 0 ? finalAttachmentUrls : undefined,
+        element_selectors: selectors.length > 0 ? selectors : undefined,
       })
       setSubmitted(true)
       setTimeout(handleClose, 2000)
@@ -433,17 +443,17 @@ export default function FeedbackButton() {
                       type="button"
                       onClick={startSelection}
                       className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${
-                        selector 
+                        selectors.length > 0
                           ? 'border-indigo-200 bg-indigo-50 text-indigo-700 dark:border-indigo-900/40 dark:bg-indigo-900/20 dark:text-indigo-400'
                           : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400'
                       }`}
                     >
                       <MousePointer2 className="w-3.5 h-3.5" />
-                      {selector ? 'Element Linked' : 'Select Element'}
-                      {selector && (
+                      {selectors.length > 0 ? `${selectors.length} Linked` : 'Select Element'}
+                      {selectors.length > 0 && (
                         <X 
                           className="w-3 h-3 ml-auto hover:text-error-500" 
-                          onClick={(e) => { e.stopPropagation(); setSelector(null); }}
+                          onClick={(e) => { e.stopPropagation(); setSelectors([]); }}
                         />
                       )}
                     </button>
@@ -453,22 +463,23 @@ export default function FeedbackButton() {
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${
-                        attachment 
+                        attachments.length > 0 
                           ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-400'
                           : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400'
                       }`}
                     >
                       <ImageIcon className="w-3.5 h-3.5" />
-                      {attachment ? 'Image Attached' : 'Attach Image'}
-                      {attachment && (
+                      {attachments.length > 0 ? `${attachments.length} Attached` : 'Attach Image'}
+                      {attachments.length > 0 && (
                         <X 
                           className="w-3 h-3 ml-auto hover:text-error-500" 
-                          onClick={(e) => { e.stopPropagation(); setAttachment(null); setPreviewUrl(null); }}
+                          onClick={(e) => { e.stopPropagation(); setAttachments([]); setPreviewUrls([]); }}
                         />
                       )}
                     </button>
                     <input 
                       type="file" 
+                      multiple
                       ref={fileInputRef} 
                       className="hidden" 
                       accept="image/*" 
@@ -476,28 +487,47 @@ export default function FeedbackButton() {
                     />
                   </div>
 
-                  {/* Preview of attachment if any */}
-                  {previewUrl && (
-                    <div className="relative group rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
-                      <img src={previewUrl} alt="Attachment preview" className="w-full h-32 object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => { setAttachment(null); setPreviewUrl(null); }}
-                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                  {/* Previews of attachments if any */}
+                  {previewUrls.length > 0 && (
+                    <div className="grid grid-cols-3 gap-2">
+                      {previewUrls.map((url, idx) => (
+                        <div key={idx} className="relative group rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 h-20">
+                          <img src={url} alt={`Attachment ${idx + 1}`} className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setAttachments(prev => prev.filter((_, i) => i !== idx));
+                              setPreviewUrls(prev => prev.filter((_, i) => i !== idx));
+                            }}
+                            className="absolute top-1 right-1 p-1 rounded-lg bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   )}
 
-                  {/* Show selector breadcrumb if any */}
-                  {selector && (
-                    <div className="px-2 py-1.5 rounded-lg bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-900/30">
-                      <p className="text-[10px] font-mono text-indigo-600 dark:text-indigo-400 truncate">
-                        {selector}
-                      </p>
+                  {/* Show selector breadcrumbs if any */}
+                  {selectors.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {selectors.map((sel, idx) => (
+                        <div key={idx} className="flex items-center gap-1 max-w-full px-2 py-1.5 rounded-lg bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-900/30">
+                          <p className="text-[10px] font-mono text-indigo-600 dark:text-indigo-400 truncate flex-1">
+                            {sel}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => setSelectors(prev => prev.filter((_, i) => i !== idx))}
+                            className="text-indigo-400 hover:text-error-500"
+                          >
+                            <X className="w-2.5 h-2.5" />
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   )}
+
 
                   {error && (
                     <p className="text-xs text-error-600 dark:text-error-400">{error}</p>

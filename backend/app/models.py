@@ -351,8 +351,8 @@ class Feedback(Base):
     subject = Column(String(200), nullable=False)
     message = Column(Text, nullable=False)
     page_url = Column(String, nullable=True)
-    attachment_url = Column(Text, nullable=True)  # URL or base64 data URI
-    element_selector = Column(String, nullable=True)  # CSS selector of the highlighted element
+    attachment_urls = Column(JSON, nullable=True)  # Array of URLs
+    element_selectors = Column(JSON, nullable=True)  # Array of CSS selectors
     is_read = Column(Boolean, default=False, server_default='false', nullable=False)
     is_resolved = Column(Boolean, default=False, server_default='false', nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

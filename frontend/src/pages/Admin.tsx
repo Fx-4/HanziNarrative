@@ -1273,37 +1273,46 @@ function InboxTab({ onUnreadChange }: { onUnreadChange: (n: number) => void }) {
                             Page: <span className="font-mono bg-gray-100 dark:bg-gray-800 px-1 rounded">{item.page_url}</span>
                           </div>
                         )}
-                        {item.element_selector && (
-                          <div className="text-xs text-indigo-500 flex items-center gap-1 group/sel cursor-pointer" onClick={() => handleCopy(item.element_selector!, `sel-${item.id}`)}>
-                            <MousePointer2 className="w-3 h-3" />
-                            Element: <span className="font-mono bg-indigo-50 dark:bg-indigo-900/20 px-1 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors flex items-center gap-1">
-                              {item.element_selector}
-                              {copiedId === `sel-${item.id}` ? <Check className="w-2.5 h-2.5 text-success-500" /> : <Copy className="w-2.5 h-2.5 opacity-0 group-hover/sel:opacity-100" />}
-                            </span>
+                        {item.element_selectors && item.element_selectors.length > 0 && (
+                          <div className="flex flex-wrap items-center gap-2">
+                            {item.element_selectors.map((sel, idx) => (
+                              <div key={idx} className="text-xs text-indigo-500 flex items-center gap-1 group/sel cursor-pointer" onClick={() => handleCopy(sel, `sel-${item.id}-${idx}`)}>
+                                <MousePointer2 className="w-3 h-3" />
+                                Element: <span className="font-mono bg-indigo-50 dark:bg-indigo-900/20 px-1 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors flex items-center gap-1">
+                                  {sel}
+                                  {copiedId === `sel-${item.id}-${idx}` ? <Check className="w-2.5 h-2.5 text-success-500" /> : <Copy className="w-2.5 h-2.5 opacity-0 group-hover/sel:opacity-100" />}
+                                </span>
+                              </div>
+                            ))}
                           </div>
                         )}
                       </div>
 
-                      {item.attachment_url && (
+                      {item.attachment_urls && item.attachment_urls.length > 0 && (
                         <div className="mb-4">
-                          <p className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1">
-                            <ImageIcon className="w-3 h-3" /> Attachment
+                          <p className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1">
+                            <ImageIcon className="w-3 h-3" /> Attachments
                           </p>
-                          <a 
-                            href={item.attachment_url} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="block w-fit group relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-primary-500 transition-colors"
-                          >
-                            <img 
-                              src={item.attachment_url} 
-                              alt="Feedback attachment" 
-                              className="max-h-64 rounded-lg object-contain bg-black/5" 
-                            />
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                              <span className="text-white text-xs font-medium px-2 py-1 bg-black/50 rounded-lg">View Full Size</span>
-                            </div>
-                          </a>
+                          <div className="flex flex-wrap gap-3">
+                            {item.attachment_urls.map((url, idx) => (
+                              <a 
+                                key={idx}
+                                href={url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="block w-40 group relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-primary-500 transition-colors"
+                              >
+                                <img 
+                                  src={url} 
+                                  alt={`Feedback attachment ${idx + 1}`} 
+                                  className="w-full h-24 rounded-lg object-cover bg-black/5" 
+                                />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                  <span className="text-white text-[10px] font-medium px-2 py-1 bg-black/50 rounded-lg">View Full</span>
+                                </div>
+                              </a>
+                            ))}
+                          </div>
                         </div>
                       )}
 

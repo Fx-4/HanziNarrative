@@ -21,8 +21,8 @@ async def submit_feedback(
         subject=body.subject,
         message=body.message,
         page_url=body.page_url,
-        attachment_url=body.attachment_url,
-        element_selector=body.element_selector,
+        attachment_urls=body.attachment_urls,
+        element_selectors=body.element_selectors,
     )
     db.add(fb)
     db.commit()
