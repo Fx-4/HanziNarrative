@@ -1056,6 +1056,8 @@ export interface FeedbackItem {
   subject: string
   message: string
   page_url: string | null
+  attachment_url: string | null
+  element_selector: string | null
   is_read: boolean
   is_resolved: boolean
   created_at: string

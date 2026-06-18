@@ -9,7 +9,7 @@ import {
   Trash2, ChevronLeft, ChevronRight, Eye, EyeOff, ShieldCheck, ShieldOff,
   TrendingUp, FileText, Loader2, RefreshCw, AlertTriangle, Menu, X,
   RotateCcw, Clock, Inbox, Bug, Lightbulb, MessageSquare, CheckCircle2,
-  Circle, Filter, ExternalLink,
+  Circle, Filter, ExternalLink, MousePointer2, Image as ImageIcon,
 } from 'lucide-react'
 import { adminApi } from '@/services/api'
 import type { FeedbackItem } from '@/services/api'
@@ -1245,12 +1245,45 @@ function InboxTab({ onUnreadChange }: { onUnreadChange: (n: number) => void }) {
                       <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed bg-gray-50 dark:bg-gray-800 rounded-xl p-3 mb-3">
                         {item.message}
                       </p>
-                      {item.page_url && (
-                        <p className="text-xs text-gray-400 flex items-center gap-1 mb-3">
-                          <ExternalLink className="w-3 h-3" />
-                          From page: <span className="font-mono">{item.page_url}</span>
-                        </p>
+
+                      <div className="flex flex-wrap items-center gap-4 mb-3">
+                        {item.page_url && (
+                          <div className="text-xs text-gray-400 flex items-center gap-1">
+                            <ExternalLink className="w-3 h-3" />
+                            Page: <span className="font-mono bg-gray-100 dark:bg-gray-800 px-1 rounded">{item.page_url}</span>
+                          </div>
+                        )}
+                        {item.element_selector && (
+                          <div className="text-xs text-indigo-500 flex items-center gap-1">
+                            <MousePointer2 className="w-3 h-3" />
+                            Element: <span className="font-mono bg-indigo-50 dark:bg-indigo-900/20 px-1 rounded">{item.element_selector}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {item.attachment_url && (
+                        <div className="mb-4">
+                          <p className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1">
+                            <ImageIcon className="w-3 h-3" /> Attachment
+                          </p>
+                          <a 
+                            href={item.attachment_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="block w-fit group relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-primary-500 transition-colors"
+                          >
+                            <img 
+                              src={item.attachment_url} 
+                              alt="Feedback attachment" 
+                              className="max-h-64 rounded-lg object-contain bg-black/5" 
+                            />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                              <span className="text-white text-xs font-medium px-2 py-1 bg-black/50 rounded-lg">View Full Size</span>
+                            </div>
+                          </a>
+                        </div>
                       )}
+
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleMarkRead(item)}
