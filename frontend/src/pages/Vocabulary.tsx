@@ -10,6 +10,7 @@ import BlurText from '@/components/animations/BlurText'
 import CountUp from '@/components/animations/CountUp'
 import { Search, X, LayoutGrid, List, BookOpen, SlidersHorizontal } from 'lucide-react'
 import { createLogger } from '@/utils/debugLogger'
+import { useTranslation } from 'react-i18next'
 
 const vocabularyLogger = createLogger('Vocabulary')
 
@@ -66,6 +67,7 @@ function VocabListRowSkeleton() {
 }
 
 export default function Vocabulary() {
+  const { t } = useTranslation()
   const [searchParams] = useSearchParams()
   const [words, setWords]                       = useState<HanziWord[]>([])
   const [selectedLevel, setSelectedLevel]       = useState(1)
@@ -142,10 +144,10 @@ export default function Vocabulary() {
           className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2"
           wordDelay={0.07}
         >
-          HSK Vocabulary
+          {t('vocabulary.title')}
         </BlurText>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Browse, search, and study Chinese vocabulary from HSK levels 1–6.
+          {t('vocabulary.subtitle')}
         </p>
       </div>
 
@@ -195,12 +197,12 @@ export default function Vocabulary() {
                   <CountUp to={words.length} duration={0.8} />
                 </div>
                 <div className="text-xs text-white/80 mt-0.5">
-                  {selectedCategory ? `"${selectedCategory}" words` : 'total words'} · HSK {selectedLevel}
+                  {selectedCategory ? t('vocabulary.categoryWords', { category: selectedCategory }) : t('vocabulary.totalWords')} · HSK {selectedLevel}
                 </div>
               </div>
             </div>
             <div className="text-right text-xs text-white/70 hidden sm:block font-medium">
-              {currentLevel.label}
+              {t(`vocabulary.levels.${selectedLevel}`)}
             </div>
           </motion.div>
         )}
@@ -222,7 +224,7 @@ export default function Vocabulary() {
                 if (!e.target.value.trim()) loadVocabulary()
               }}
               onKeyDown={e => e.key === 'Enter' && handleSearch()}
-              placeholder="Search character, pinyin, or English…"
+              placeholder={t('vocabulary.searchPlaceholder')}
               className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700
                 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
                 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
@@ -248,7 +250,7 @@ export default function Vocabulary() {
               }`}
           >
             <SlidersHorizontal className="w-4 h-4" />
-            <span className="hidden sm:inline">Filter</span>
+            <span className="hidden sm:inline">{t('vocabulary.filter')}</span>
             {selectedCategory && <span className="w-2 h-2 rounded-full bg-primary-500" />}
           </button>
 
@@ -287,7 +289,7 @@ export default function Vocabulary() {
                       : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-primary-400 dark:hover:border-primary-600 hover:text-primary-600 dark:hover:text-primary-400'
                     }`}
                 >
-                  All
+                  {t('vocabulary.all')}
                 </button>
                 {categories.map(cat => (
                   <button
@@ -315,15 +317,15 @@ export default function Vocabulary() {
             className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400"
           >
             <span>
-              {isSearchMode ? `Results for "${searchQuery}"` : selectedCategory ? `HSK ${selectedLevel} · ${selectedCategory}` : ''}
-              {' '}— <span className="font-semibold">{words.length} words</span>
+              {isSearchMode ? t('vocabulary.resultsFor', { query: searchQuery }) : selectedCategory ? `HSK ${selectedLevel} · ${selectedCategory}` : ''}
+              {' '}— <span className="font-semibold">{t('vocabulary.wordsCount', { n: words.length })}</span>
             </span>
             <button
               onClick={clearFilters}
               className="flex items-center gap-1 text-primary-600 hover:underline cursor-pointer text-xs dark:text-primary-400"
             >
               <X className="w-3 h-3" />
-              Clear
+              {t('vocabulary.clear')}
             </button>
           </motion.div>
         )}
@@ -376,18 +378,20 @@ export default function Vocabulary() {
             className="flex flex-col items-center justify-center py-20 text-center gap-3"
           >
             <div className="text-5xl">📚</div>
-            <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">No words found</p>
+            <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">{t('vocabulary.noWordsFound')}</p>
             <p className="text-sm text-gray-600 dark:text-gray-400 max-w-sm">
               {isSearchMode
-                ? `No results for "${searchQuery}". Try a different keyword.`
-                : `No vocabulary in${selectedCategory ? ` "${selectedCategory}"` : ''} HSK Level ${selectedLevel}.`}
+                ? t('vocabulary.noResults', { query: searchQuery })
+                : selectedCategory
+                  ? t('vocabulary.noVocabCategory', { category: selectedCategory, level: selectedLevel })
+                  : t('vocabulary.noVocab', { level: selectedLevel })}
             </p>
             {hasActiveFilter && (
               <button
                 onClick={clearFilters}
                 className="mt-2 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors cursor-pointer"
               >
-                Clear Filters
+                {t('vocabulary.clearFilters')}
               </button>
             )}
           </motion.div>
@@ -428,11 +432,11 @@ export default function Vocabulary() {
           >
             {/* Column headers */}
             <div className="grid grid-cols-12 gap-3 px-4 py-3 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-              <div className="col-span-2 sm:col-span-1">Char</div>
-              <div className="col-span-3 sm:col-span-2">Pinyin</div>
-              <div className="col-span-7 sm:col-span-5">English</div>
-              <div className="hidden sm:block sm:col-span-2">Category</div>
-              <div className="hidden sm:block sm:col-span-2 text-right">Action</div>
+              <div className="col-span-2 sm:col-span-1">{t('vocabulary.colChar')}</div>
+              <div className="col-span-3 sm:col-span-2">{t('vocabulary.colPinyin')}</div>
+              <div className="col-span-7 sm:col-span-5">{t('vocabulary.colEnglish')}</div>
+              <div className="hidden sm:block sm:col-span-2">{t('vocabulary.colCategory')}</div>
+              <div className="hidden sm:block sm:col-span-2 text-right">{t('vocabulary.colAction')}</div>
             </div>
 
             {words.map((word, index) => (
@@ -493,7 +497,7 @@ export default function Vocabulary() {
                       bg-primary-50 text-primary-700
                       hover:bg-primary-100 font-medium cursor-pointer dark:bg-primary-950/30 dark:text-primary-300 dark:hover:bg-primary-900/40"
                   >
-                    Details
+                    {t('vocabulary.details')}
                   </button>
                 </div>
               </motion.div>

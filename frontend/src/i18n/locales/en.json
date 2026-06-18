@@ -475,5 +475,30 @@
       "flipFirst":  "Flip the card first to see the answer!",
       "shuffled":   "Cards shuffled!"
     }
+  },
+
+  "vocabulary": {
+    "title":             "HSK Vocabulary",
+    "subtitle":          "Browse, search, and study Chinese vocabulary from HSK levels 1–6.",
+    "levels":            { "1": "Beginner", "2": "Elementary", "3": "Intermediate", "4": "Upper-Int.", "5": "Advanced", "6": "Mastery" },
+    "totalWords":        "total words",
+    "categoryWords":     "\"{{category}}\" words",
+    "searchPlaceholder": "Search character, pinyin, or English…",
+    "filter":            "Filter",
+    "all":               "All",
+    "resultsFor":        "Results for \"{{query}}\"",
+    "wordsCount":        "{{n}} words",
+    "clear":             "Clear",
+    "noWordsFound":      "No words found",
+    "noResults":         "No results for \"{{query}}\". Try a different keyword.",
+    "noVocabCategory":   "No vocabulary in \"{{category}}\" HSK Level {{level}}.",
+    "noVocab":           "No vocabulary in HSK Level {{level}}.",
+    "clearFilters":      "Clear Filters",
+    "colChar":           "Char",
+    "colPinyin":         "Pinyin",
+    "colEnglish":        "English",
+    "colCategory":       "Category",
+    "colAction":         "Action",
+    "details":           "Details"
   }
 }

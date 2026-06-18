@@ -475,5 +475,30 @@
       "flipFirst":  "Balik kartunya dulu untuk lihat jawaban!",
       "shuffled":   "Kartu diacak!"
     }
+  },
+
+  "vocabulary": {
+    "title":             "Kosakata HSK",
+    "subtitle":          "Jelajahi, cari, dan pelajari kosakata Mandarin dari HSK level 1–6.",
+    "levels":            { "1": "Pemula", "2": "Dasar", "3": "Menengah", "4": "Menengah Atas", "5": "Lanjutan", "6": "Mahir" },
+    "totalWords":        "total kata",
+    "categoryWords":     "kata \"{{category}}\"",
+    "searchPlaceholder": "Cari karakter, pinyin, atau Inggris…",
+    "filter":            "Filter",
+    "all":               "Semua",
+    "resultsFor":        "Hasil untuk \"{{query}}\"",
+    "wordsCount":        "{{n}} kata",
+    "clear":             "Hapus",
+    "noWordsFound":      "Tidak ada kata",
+    "noResults":         "Tidak ada hasil untuk \"{{query}}\". Coba kata kunci lain.",
+    "noVocabCategory":   "Tidak ada kosakata di \"{{category}}\" HSK Level {{level}}.",
+    "noVocab":           "Tidak ada kosakata di HSK Level {{level}}.",
+    "clearFilters":      "Hapus Filter",
+    "colChar":           "Karakter",
+    "colPinyin":         "Pinyin",
+    "colEnglish":        "Inggris",
+    "colCategory":       "Kategori",
+    "colAction":         "Aksi",
+    "details":           "Detail"
   }
 }
