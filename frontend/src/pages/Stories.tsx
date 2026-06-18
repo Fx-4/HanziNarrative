@@ -41,11 +41,7 @@ export default function Stories() {
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'curated' | 'ai_generated'>('all')
 
-  useEffect(() => {
-    loadStories()
-  }, [selectedLevel])
-
-  const loadStories = async () => {
+  const loadStories = useCallback(async () => {
     setLoading(true)
     try {
       const data = await storiesApi.getAll(selectedLevel)
@@ -55,7 +51,11 @@ export default function Stories() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [selectedLevel])
+
+  useEffect(() => {
+    loadStories()
+  }, [loadStories])
 
   // Called by StoryGenerator when a story finishes generating — adds it to the
   // top of the list instantly without re-fetching the full list.

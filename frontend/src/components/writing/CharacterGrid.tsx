@@ -60,10 +60,10 @@ export default function CharacterGrid({
   const filteredCharacters = getFilteredCharacters()
 
   const getAccuracyColor = (accuracy: number) => {
-    if (accuracy >= 90) return 'text-success-600'
-    if (accuracy >= 70) return 'text-blue-600'
-    if (accuracy >= 50) return 'text-yellow-600'
-    return 'text-orange-600'
+    if (accuracy >= 90) return 'text-success-600 dark:text-success-400'
+    if (accuracy >= 70) return 'text-blue-600 dark:text-blue-400'
+    if (accuracy >= 50) return 'text-yellow-600 dark:text-yellow-400'
+    return 'text-orange-600 dark:text-orange-400'
   }
 
   const filters = [
@@ -120,7 +120,7 @@ export default function CharacterGrid({
                   className={`relative rounded-xl border-2 p-2 text-center overflow-hidden
                     transition-all duration-200 hover:shadow-md active:scale-95
                     ${isSelected
-                      ? 'border-primary-500 bg-primary-50 shadow-md'
+                      ? 'border-primary-500 bg-primary-50 shadow-md dark:bg-primary-950/30'
                       : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-card hover:border-primary-300'
                     }`}
                 >
@@ -189,7 +189,7 @@ export default function CharacterGrid({
           </p>
           <button
             onClick={() => setFilter('all')}
-            className="mt-2 text-xs text-primary-600 hover:text-primary-700 font-medium dark:text-primary-400"
+            className="mt-2 text-xs text-primary-600 hover:text-primary-700 font-medium dark:text-primary-400 dark:hover:text-primary-300"
           >
             View all →
           </button>

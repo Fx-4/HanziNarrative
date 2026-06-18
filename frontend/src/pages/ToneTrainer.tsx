@@ -170,10 +170,10 @@ export default function ToneTrainer() {
                             <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">The Four Tones</h4>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 {[1, 2, 3, 4].map(t => (
-                                    <div key={t} className="bg-white dark:bg-gray-800 rounded-xl p-3 text-center border border-gray-100 dark:border-gray-700">
+                                    <div key={t} className="bg-white dark:bg-gray-800 rounded-xl p-3 text-center border border-gray-100 dark:border-gray-700 shadow-sm">
                                         <p className="text-2xl font-bold text-teal-700 mb-1 dark:text-teal-300">Tone {t}</p>
                                         <p className="text-sm text-gray-600 dark:text-gray-400">{TONE_LABELS[t]}</p>
-                                        <p className="text-lg text-gray-800 mt-1">ma{TONE_MARKS[t]}</p>
+                                        <p className="text-lg text-gray-800 dark:text-gray-200 mt-1">ma{TONE_MARKS[t]}</p>
                                     </div>
                                 ))}
                             </div>
@@ -202,7 +202,7 @@ export default function ToneTrainer() {
                         <div className="bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-950/30 dark:to-cyan-950/30 rounded-3xl shadow-xl border border-teal-200 dark:border-teal-800 p-6 sm:p-8 text-center">
                             <Trophy className="w-12 h-12 text-amber-500 mx-auto mb-3" />
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Session Complete!</h2>
-                            <p className="text-xl text-gray-700">{score}/{questions.length} correct ({pct}%)</p>
+                            <p className="text-xl text-gray-700 dark:text-gray-300">{score}/{questions.length} correct ({pct}%)</p>
                             <div className="flex justify-center gap-3 mt-6">
                                 <button onClick={() => { setQuestions([]); setSessionStarted(false) }}
                                     className="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl px-5 py-3 font-semibold cursor-pointer transition-colors inline-flex items-center gap-2">
@@ -235,7 +235,7 @@ export default function ToneTrainer() {
                     </div>
                 </div>
 
-                <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-6">
                     <motion.div className="bg-gradient-to-r from-teal-500 to-cyan-500 h-2 rounded-full"
                         animate={{ width: `${((currentQ + 1) / questions.length) * 100}%` }} transition={{ duration: 0.3 }} />
                 </div>
@@ -244,28 +244,28 @@ export default function ToneTrainer() {
                     <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-6 sm:p-8">
                         <div className="text-center mb-6">
                             <p className="text-6xl font-chinese text-gray-900 dark:text-gray-100 mb-2">{q.word.simplified}</p>
-                            <p className="text-sm text-gray-500">{q.word.english}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">{q.word.english}</p>
                             <button onClick={() => playWord(q.word.simplified)}
-                                className="mt-2 text-teal-600 hover:text-teal-700 cursor-pointer inline-flex items-center gap-1 text-sm dark:text-teal-400">
+                                className="mt-2 text-teal-600 hover:text-teal-700 cursor-pointer inline-flex items-center gap-1 text-sm dark:text-teal-400 dark:hover:text-teal-300">
                                 <Volume2 className="w-4 h-4" /> Listen
                             </button>
                         </div>
 
-                        <p className="text-center text-sm text-gray-600 mb-4">What tone is the first syllable?</p>
+                        <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-4">What tone is the first syllable?</p>
 
                         <div className="grid grid-cols-2 gap-3">
                             {q.options.map(tone => {
-                                let btnClass = 'bg-gray-50 dark:bg-gray-800 hover:bg-teal-50 dark:hover:bg-teal-950/30 border-2 border-gray-100 dark:border-gray-700 hover:border-teal-300 text-gray-800 dark:text-gray-200'
+                                let btnClass = 'bg-gray-50 dark:bg-gray-800 hover:bg-teal-50 dark:hover:bg-teal-950/30 border-2 border-gray-100 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-600 text-gray-800 dark:text-gray-200'
                                 if (selected !== null) {
-                                    if (tone === q.correctTone) btnClass = 'bg-success-50 border-2 border-green-400 text-success-800'
-                                    else if (tone === selected) btnClass = 'bg-error-50 border-2 border-error-400 text-error-800'
-                                    else btnClass = 'bg-gray-50 border-2 border-gray-100 text-gray-400'
+                                    if (tone === q.correctTone) btnClass = 'bg-success-50 border-2 border-green-400 dark:bg-success-950/30 dark:border-green-800 text-success-800 dark:text-success-300'
+                                    else if (tone === selected) btnClass = 'bg-error-50 border-2 border-error-400 dark:bg-error-950/30 dark:border-error-800 text-error-800 dark:text-error-300'
+                                    else btnClass = 'bg-gray-50 dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-gray-400 dark:text-gray-500'
                                 }
                                 return (
                                     <button key={tone} onClick={() => handleAnswer(tone)} disabled={selected !== null}
                                         className={`rounded-2xl p-4 font-medium cursor-pointer transition-all text-center ${btnClass} disabled:cursor-default`}>
                                         <p className="text-lg font-bold">Tone {tone}</p>
-                                        <p className="text-sm text-gray-500">{TONE_LABELS[tone]}</p>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">{TONE_LABELS[tone]}</p>
                                         {selected !== null && tone === q.correctTone && <CheckCircle className="w-4 h-4 text-success-600 mx-auto mt-1 dark:text-success-400" />}
                                         {selected !== null && tone === selected && tone !== q.correctTone && <XCircle className="w-4 h-4 text-error-500 mx-auto mt-1" />}
                                     </button>

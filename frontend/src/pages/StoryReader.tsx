@@ -140,18 +140,19 @@ export default function StoryReader() {
   }, [])
 
   // Play a single chunk via Edge TTS and wait until done
-  const playChunk = (text: string): Promise<void> =>
-    new Promise(async (resolve) => {
-      try {
-        const audio = await fetchTTSAudio({ text, speakingRate: 0.85 })
-        storyAudioRef.current = audio
+  const playChunk = async (text: string): Promise<void> => {
+    try {
+      const audio = await fetchTTSAudio({ text, speakingRate: 0.85 })
+      storyAudioRef.current = audio
+      await new Promise<void>((resolve) => {
         audio.onended = () => resolve()
         audio.onerror = () => resolve()
-        await audio.play()
-      } catch {
-        resolve()
-      }
-    })
+        audio.play().catch(() => resolve())
+      })
+    } catch {
+      // ignore
+    }
+  }
 
   // Split story content into chunks ≤ 900 chars at sentence boundaries
   const chunkContent = (content: string): string[] => {
@@ -441,8 +442,8 @@ export default function StoryReader() {
                     onClick={() => setSelectedChar(isExpanded ? null : char)}
                     className={`p-4 rounded-2xl cursor-pointer transition-all border-2 ${
                       isExpanded
-                        ? 'bg-primary-100 border-primary-500 shadow-lg'
-                        : 'bg-gradient-to-r from-gray-50 to-primary-50 hover:from-primary-100 hover:to-purple-100 border-gray-200 hover:border-primary-300'
+                        ? 'bg-primary-100 border-primary-500 shadow-lg dark:bg-primary-900/40'
+                        : 'bg-gradient-to-r from-gray-50 to-primary-50 hover:from-primary-100 hover:to-purple-100 border-gray-200 hover:border-primary-300 dark:to-primary-950/30'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -492,7 +493,7 @@ export default function StoryReader() {
                                 navigate(`/vocabulary?search=${char}`)
                                 toast.success('Opening vocabulary page...')
                               }}
-                              className="w-full bg-gray-100 hover:bg-primary-50 text-gray-700 hover:text-primary-700 rounded-2xl px-4 py-2 font-semibold cursor-pointer transition-colors text-sm dark:bg-gray-800 dark:text-gray-300"
+                              className="w-full bg-gray-100 hover:bg-primary-50 text-gray-700 hover:text-primary-700 rounded-2xl px-4 py-2 font-semibold cursor-pointer transition-colors text-sm dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-primary-950/30 dark:hover:text-primary-300"
                             >
                               View in Vocabulary
                             </button>
@@ -547,11 +548,11 @@ export default function StoryReader() {
                         disabled={showResults}
                         className={`w-full text-left p-3 rounded-xl border-2 transition-all ${
                           showAnswer && isCorrect
-                            ? 'border-green-500 bg-success-50'
+                            ? 'border-green-500 bg-success-50 dark:bg-success-950/30'
                             : showAnswer && isSelected && !isCorrect
-                            ? 'border-error-500 bg-error-50'
+                            ? 'border-error-500 bg-error-50 dark:bg-error-950/30'
                             : isSelected
-                            ? 'border-purple-500 bg-purple-50'
+                            ? 'border-purple-500 bg-purple-50 dark:bg-purple-950/30'
                             : 'border-gray-200 hover:border-purple-300 hover:bg-gray-50'
                         } ${showResults ? 'cursor-default' : 'cursor-pointer'}`}
                       >
@@ -617,7 +618,7 @@ export default function StoryReader() {
                   setQuizAnswers([])
                   setShowResults(false)
                 }}
-                className="bg-gray-100 hover:bg-primary-50 text-gray-700 hover:text-primary-700 rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors dark:bg-gray-800 dark:text-gray-300"
+                className="bg-gray-100 hover:bg-primary-50 text-gray-700 hover:text-primary-700 rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-primary-950/30 dark:hover:text-primary-300"
               >
                 Retry Quiz
               </button>
@@ -681,7 +682,7 @@ export default function StoryReader() {
         <div className="flex items-center justify-between mb-4 gap-2">
           <button
             onClick={() => navigate('/stories')}
-            className="flex items-center gap-1.5 text-gray-600 hover:text-primary-600 font-medium px-3 py-2 rounded-2xl hover:bg-primary-50 cursor-pointer transition-colors text-sm sm:text-base dark:text-gray-400"
+            className="flex items-center gap-1.5 text-gray-600 hover:text-primary-600 font-medium px-3 py-2 rounded-2xl hover:bg-primary-50 cursor-pointer transition-colors text-sm sm:text-base dark:text-gray-400 dark:hover:text-primary-400 dark:hover:bg-primary-950/30"
           >
             <ArrowLeft className="w-4 h-4 shrink-0" />
             <span className="hidden sm:inline">Back to Stories</span>
@@ -690,7 +691,7 @@ export default function StoryReader() {
 
           <button
             onClick={handleDeleteStory}
-            className="flex items-center gap-1.5 text-error-600 hover:text-error-700 hover:bg-error-50 font-medium px-3 py-2 rounded-2xl cursor-pointer transition-colors text-sm sm:text-base dark:text-error-400"
+            className="flex items-center gap-1.5 text-error-600 hover:text-error-700 hover:bg-error-50 font-medium px-3 py-2 rounded-2xl cursor-pointer transition-colors text-sm sm:text-base dark:text-error-400 dark:hover:text-error-300 dark:hover:bg-error-950/30"
           >
             <Trash2 className="w-4 h-4 shrink-0" />
             <span className="hidden sm:inline">Delete Story</span>
@@ -732,7 +733,7 @@ export default function StoryReader() {
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
                 showPinyin
                   ? 'bg-primary-600 hover:bg-primary-700 text-white'
-                  : 'bg-white dark:bg-surface-card hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 border border-gray-200 dark:border-gray-700'
+                  : 'bg-white dark:bg-surface-card hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 border border-gray-200 dark:border-gray-700 dark:hover:text-primary-300'
               }`}
             >
               <Type className="w-4 h-4 shrink-0" />
@@ -744,7 +745,7 @@ export default function StoryReader() {
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
                 showTranslation
                   ? 'bg-primary-600 hover:bg-primary-700 text-white'
-                  : 'bg-white dark:bg-surface-card hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 border border-gray-200 dark:border-gray-700'
+                  : 'bg-white dark:bg-surface-card hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 border border-gray-200 dark:border-gray-700 dark:hover:text-primary-300'
               }`}
             >
               {showTranslation
@@ -758,7 +759,7 @@ export default function StoryReader() {
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
                 isReading
                   ? 'bg-primary-600 hover:bg-primary-700 text-white'
-                  : 'bg-white dark:bg-surface-card hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 border border-gray-200 dark:border-gray-700'
+                  : 'bg-white dark:bg-surface-card hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 border border-gray-200 dark:border-gray-700 dark:hover:text-primary-300'
               }`}
             >
               {isReading
@@ -772,7 +773,7 @@ export default function StoryReader() {
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
                 showVocabulary
                   ? 'bg-primary-600 hover:bg-primary-700 text-white'
-                  : 'bg-white dark:bg-surface-card hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 border border-gray-200 dark:border-gray-700'
+                  : 'bg-white dark:bg-surface-card hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 border border-gray-200 dark:border-gray-700 dark:hover:text-primary-300'
               }`}
             >
               <BookMarked className="w-4 h-4 shrink-0" />
@@ -790,7 +791,7 @@ export default function StoryReader() {
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm disabled:opacity-60 disabled:cursor-not-allowed ${
                 showQuiz
                   ? 'bg-primary-600 hover:bg-primary-700 text-white'
-                  : 'bg-white dark:bg-surface-card hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 border border-gray-200 dark:border-gray-700'
+                  : 'bg-white dark:bg-surface-card hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 border border-gray-200 dark:border-gray-700 dark:hover:text-primary-300'
               }`}
             >
               <HelpCircle className="w-4 h-4 shrink-0" />
@@ -803,7 +804,7 @@ export default function StoryReader() {
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm disabled:opacity-60 disabled:cursor-not-allowed ${
                 isBookmarked
                   ? 'bg-rose-500 hover:bg-rose-600 text-white'
-                  : 'bg-white dark:bg-surface-card hover:bg-rose-50 dark:hover:bg-rose-950/30 text-gray-700 dark:text-gray-300 hover:text-rose-600 border border-gray-200 dark:border-gray-700'
+                  : 'bg-white dark:bg-surface-card hover:bg-rose-50 dark:hover:bg-rose-950/30 text-gray-700 dark:text-gray-300 hover:text-rose-600 border border-gray-200 dark:border-gray-700 dark:hover:text-rose-400'
               }`}
             >
               <Heart className={`w-4 h-4 shrink-0 ${isBookmarked ? 'fill-current' : ''}`} />

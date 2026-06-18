@@ -40,8 +40,8 @@ export default function TranslationTooltip({
     <span className="relative inline-block">
       <span
         className={`
-          ${mode === 'hover' ? 'hover:bg-primary-100' : 'cursor-pointer hover:bg-primary-50'}
-          ${isVisible ? 'bg-primary-100' : ''}
+          ${mode === 'hover' ? 'hover:bg-primary-100 dark:hover:bg-primary-900/40' : 'cursor-pointer hover:bg-primary-50 dark:hover:bg-primary-950/30'}
+          ${isVisible ? 'bg-primary-100 dark:bg-primary-900/40' : ''}
           transition-colors duration-200 rounded px-0.5
         `}
         onMouseEnter={handleMouseEnter}

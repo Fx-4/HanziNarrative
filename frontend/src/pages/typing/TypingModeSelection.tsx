@@ -162,7 +162,7 @@ export default function TypingModeSelection({
                   </button>
                   <button
                     onClick={() => onNavigate('/register')}
-                    className="inline-flex items-center border border-primary-600 text-primary-600 hover:bg-primary-50 rounded-2xl px-5 py-2.5 sm:px-6 sm:py-3 font-semibold cursor-pointer text-sm sm:text-base transition-colors dark:text-primary-400"
+                    className="inline-flex items-center border border-primary-600 text-primary-600 hover:bg-primary-50 rounded-2xl px-5 py-2.5 sm:px-6 sm:py-3 font-semibold cursor-pointer text-sm sm:text-base transition-colors dark:text-primary-400 dark:hover:bg-primary-950/30"
                   >
                     Create Account
                   </button>
@@ -188,7 +188,7 @@ export default function TypingModeSelection({
                 className={`rounded-2xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${
                   hskLevel === level
                     ? 'bg-primary-600 text-white shadow-md'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
               >
                 HSK {level}

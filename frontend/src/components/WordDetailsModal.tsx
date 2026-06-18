@@ -101,22 +101,22 @@ const hskLabel: Record<number, string> = {
 }
 
 const categoryColors: Record<string, string> = {
-  noun:        'bg-success-50 text-success-700 border-success-200',
-  verb:        'bg-blue-50 text-blue-700 border-blue-200',
-  adjective:   'bg-purple-50 text-purple-700 border-purple-200',
-  adverb:      'bg-orange-50 text-orange-700 border-orange-200',
-  pronoun:     'bg-pink-50 text-pink-700 border-pink-200',
+  noun:        'bg-success-50 text-success-700 border-success-200 dark:bg-success-950/30 dark:text-success-300 dark:border-success-800',
+  verb:        'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-300 dark:border-blue-800',
+  adjective:   'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/30 dark:text-purple-300 dark:border-purple-800',
+  adverb:      'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950/30 dark:text-orange-300 dark:border-orange-800',
+  pronoun:     'bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-950/30 dark:text-pink-300 dark:border-pink-800',
   particle:    'bg-gray-50 text-gray-600 border-gray-200',
-  preposition: 'bg-primary-50 text-primary-700 border-primary-200',
-  conjunction: 'bg-teal-50 text-teal-700 border-teal-200',
-  number:      'bg-amber-50 text-amber-700 border-amber-200',
+  preposition: 'bg-primary-50 text-primary-700 border-primary-200 dark:bg-primary-950/30 dark:text-primary-300 dark:border-primary-800',
+  conjunction: 'bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/30 dark:text-teal-300 dark:border-teal-800',
+  number:      'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-800',
 }
 
 function getCatStyle(cat?: string) {
   if (!cat) return ''
   return (
     categoryColors[cat.toLowerCase()] ??
-    'bg-primary-50 text-primary-700 border-primary-200'
+    'bg-primary-50 text-primary-700 border-primary-200 dark:bg-primary-950/30 dark:text-primary-300 dark:border-primary-800'
   )
 }
 

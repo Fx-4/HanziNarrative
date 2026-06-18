@@ -46,11 +46,11 @@ export const AudioButton: FC<AudioButtonProps> = ({
     },
     secondary: {
       idle:     'bg-gray-100 text-gray-700 hover:bg-gray-200',
-      speaking: 'bg-primary-100 text-primary-600',
+      speaking: 'bg-primary-100 text-primary-600 dark:bg-primary-900/40 dark:text-primary-400',
     },
     ghost: {
-      idle:     'text-gray-500 hover:bg-primary-50 hover:text-primary-600',
-      speaking: 'bg-primary-50 text-primary-600',
+      idle:     'text-gray-500 hover:bg-primary-50 hover:text-primary-600 dark:hover:bg-primary-950/30 dark:hover:text-primary-400',
+      speaking: 'bg-primary-50 text-primary-600 dark:bg-primary-950/30 dark:text-primary-400',
     },
   }
 

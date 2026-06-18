@@ -58,8 +58,9 @@ export default function Dictation() {
             setTotalAttempted(0)
             setStreak(0)
             setSessionStarted(true)
-        } catch (error: any) {
-            if (error.response?.status === 404) {
+        } catch (error: unknown) {
+            const axiosError = error as { response?: { status: number } }
+            if (axiosError.response?.status === 404) {
                 toast.error(`No stories available for HSK ${hskLevel}. Generate some stories first!`)
             } else {
                 toast.error('Failed to load sentences')
@@ -193,7 +194,7 @@ export default function Dictation() {
                                         onClick={() => setHskLevel(level)}
                                         className={`rounded-2xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${hskLevel === level
                                             ? 'bg-cyan-600 hover:bg-cyan-700 text-white'
-                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                            : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                                             }`}
                                     >
                                         HSK {level}
@@ -389,7 +390,7 @@ export default function Dictation() {
                         <div className="text-center mb-4">
                             <button
                                 onClick={() => setShowHint(!showHint)}
-                                className="text-sm text-cyan-600 hover:text-cyan-700 font-medium cursor-pointer flex items-center gap-1 mx-auto dark:text-cyan-400"
+                                className="text-sm text-cyan-600 hover:text-cyan-700 font-medium cursor-pointer flex items-center gap-1 mx-auto dark:text-cyan-400 dark:hover:text-cyan-300"
                             >
                                 <Eye className="w-3.5 h-3.5" />
                                 {showHint ? 'Hide hint' : 'Show English hint'}
@@ -454,8 +455,8 @@ export default function Dictation() {
                                             <span
                                                 key={i}
                                                 className={`text-2xl font-chinese px-1 py-0.5 rounded ${item.correct
-                                                    ? 'text-success-700 bg-success-100'
-                                                    : 'text-error-700 bg-error-100'
+                                                    ? 'text-success-700 bg-success-100 dark:text-success-300 dark:bg-success-900/40'
+                                                    : 'text-error-700 bg-error-100 dark:text-error-300 dark:bg-error-900/40'
                                                     }`}
                                                 title={item.correct ? 'Correct!' : `Expected: ${item.expected}`}
                                             >

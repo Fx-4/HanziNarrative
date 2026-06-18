@@ -121,7 +121,6 @@ function IntroCard({ step, onNext }: { step: StepIntro; onNext: () => void }) {
       audioRef.current = null
       fetchPromiseRef.current = null
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step.word.zh])
 
   const play = async () => {
@@ -150,7 +149,7 @@ function IntroCard({ step, onNext }: { step: StepIntro; onNext: () => void }) {
       className="flex flex-col items-center text-center gap-5 py-6"
     >
       <button onClick={play} disabled={playing}
-        className="w-16 h-16 rounded-2xl bg-primary-50 dark:bg-primary-950/40 flex items-center justify-center hover:bg-primary-100 transition-colors disabled:opacity-60"
+        className="w-16 h-16 rounded-2xl bg-primary-50 dark:bg-primary-950/40 flex items-center justify-center hover:bg-primary-100 transition-colors disabled:opacity-60 dark:hover:bg-primary-900/40"
       >
         {playing ? <Loader2 className="w-5 h-5 text-primary-500 animate-spin" /> : <Volume2 className="w-5 h-5 text-primary-500" />}
       </button>
@@ -228,7 +227,7 @@ function MCQCard({ step, onCorrect, onWrong }: { step: StepMCQ; onCorrect: () =>
           let cls = 'border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-surface-card text-gray-800 dark:text-gray-100'
           if (isSelected && isCorrect) cls = 'border-success-500 bg-success-50 dark:bg-success-950/40 text-success-700 dark:text-success-300'
           else if (isSelected && !isCorrect) cls = 'border-error-400 bg-error-50 dark:bg-error-950/40 text-error-700 dark:text-error-300'
-          else if (selected !== null && isCorrect) cls = 'border-success-500 bg-success-50 dark:bg-success-950/40 text-success-700'
+          else if (selected !== null && isCorrect) cls = 'border-success-500 bg-success-50 dark:bg-success-950/40 text-success-700 dark:text-success-300'
 
           return (
             <button key={i} onClick={() => pick(i)}
@@ -272,7 +271,7 @@ function MatchCard({ step, onNext }: { step: StepMatch; onNext: () => void }) {
     const zhKey = side === 'l' ? val : step.pairs.find(p => p.en === val)?.zh ?? ''
     const enKey = side === 'r' ? val : step.pairs.find(p => p.zh === val)?.en ?? ''
     if (matched.has(val)) return 'border-success-400 bg-success-50 dark:bg-success-950/40 text-success-700 dark:text-success-300 opacity-60'
-    if (flash === zhKey || flash === enKey) return 'border-error-400 bg-error-50 dark:bg-error-950/30 text-error-600'
+    if (flash === zhKey || flash === enKey) return 'border-error-400 bg-error-50 dark:bg-error-950/30 text-error-600 dark:text-error-400'
     if (side === 'l' && leftSel === val) return 'border-primary-500 bg-primary-50 dark:bg-primary-950/50 text-primary-700 dark:text-primary-300'
     return 'border-gray-200 dark:border-gray-600 bg-white dark:bg-surface-card text-gray-700 dark:text-gray-300 hover:border-primary-300 hover:bg-primary-50 dark:hover:bg-primary-950/30'
   }
@@ -341,9 +340,9 @@ function FillCard({ step, onCorrect, onWrong }: { step: StepFill; onCorrect: () 
           const isSel = selected === i
           const isCorr = i === fb.correct
           let cls = 'border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-surface-card text-gray-800 dark:text-gray-100'
-          if (isSel && isCorr) cls = 'border-success-500 bg-success-50 dark:bg-success-950/40 text-success-700'
-          else if (isSel && !isCorr) cls = 'border-error-400 bg-error-50 dark:bg-error-950/40 text-error-700'
-          else if (selected !== null && isCorr) cls = 'border-success-500 bg-success-50 text-success-700'
+          if (isSel && isCorr) cls = 'border-success-500 bg-success-50 dark:bg-success-950/40 text-success-700 dark:text-success-300'
+          else if (isSel && !isCorr) cls = 'border-error-400 bg-error-50 dark:bg-error-950/40 text-error-700 dark:text-error-300'
+          else if (selected !== null && isCorr) cls = 'border-success-500 bg-success-50 text-success-700 dark:bg-success-950/30 dark:text-success-300'
           return (
             <button key={i} onClick={() => pick(i)}
               className={`py-2 rounded-xl transition-all flex flex-col items-center gap-0.5 ${cls}`}
@@ -606,8 +605,8 @@ export default function LearningSession() {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-3">
             {[
-              { label: 'Skor',   value: `${score}%`,   color: score >= 70 ? 'text-success-600' : 'text-orange-600' },
-              { label: 'Benar', value: correct,         color: 'text-success-600' },
+              { label: 'Skor',   value: `${score}%`,   color: score >= 70 ? 'text-success-600 dark:text-success-400' : 'text-orange-600 dark:text-orange-400' },
+              { label: 'Benar', value: correct,         color: 'text-success-600 dark:text-success-400' },
               { label: 'Salah', value: wrong,           color: wrong > 0 ? 'text-error-500' : 'text-gray-500 dark:text-gray-400' },
             ].map(({ label, value, color }) => (
               <div key={label} className="bg-gray-50 dark:bg-surface-card rounded-2xl p-3 text-center">

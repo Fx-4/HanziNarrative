@@ -203,31 +203,31 @@ const SECTION_META = {
     listening: {
         label: '听力', labelEn: 'Listening', timePerQ: 45, total: 10,
         color: 'indigo', gradient: 'from-primary-500 to-blue-600',
-        gradientLight: 'from-primary-50 to-blue-50',
+        gradientLight: 'from-primary-50 to-blue-50 dark:from-primary-950/30 dark:to-blue-950/30',
         gradientDark: 'from-primary-950/30 to-blue-950/30',
         badge: 'bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300',
         border: 'border-primary-200 dark:border-primary-800',
-        accent: 'text-primary-600', bar: 'bg-primary-500', icon: Headphones,
+        accent: 'text-primary-600 dark:text-primary-400', bar: 'bg-primary-500', icon: Headphones,
         desc: 'Listen to the spoken word/sentence and choose the correct answer.',
     },
     reading: {
         label: '阅读', labelEn: 'Reading', timePerQ: 30, total: 10,
         color: 'emerald', gradient: 'from-success-500 to-success-600',
-        gradientLight: 'from-success-50 to-success-50',
+        gradientLight: 'from-success-50 to-success-50 dark:from-success-950/30 dark:to-success-950/30',
         gradientDark: 'from-success-950/30 to-success-950/30',
         badge: 'bg-success-100 text-success-700 dark:bg-success-900/40 dark:text-success-300',
         border: 'border-success-200 dark:border-success-800',
-        accent: 'text-success-600', bar: 'bg-success-500', icon: Eye,
+        accent: 'text-success-600 dark:text-success-400', bar: 'bg-success-500', icon: Eye,
         desc: 'Read the Chinese text and choose the correct word or meaning.',
     },
     writing: {
         label: '书写', labelEn: 'Writing', timePerQ: 60, total: 5,
         color: 'purple', gradient: 'from-purple-500 to-violet-600',
-        gradientLight: 'from-purple-50 to-violet-50',
+        gradientLight: 'from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/30',
         gradientDark: 'from-purple-950/30 to-violet-950/30',
         badge: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
         border: 'border-purple-200 dark:border-purple-800',
-        accent: 'text-purple-600', bar: 'bg-purple-500', icon: PenTool,
+        accent: 'text-purple-600 dark:text-purple-400', bar: 'bg-purple-500', icon: PenTool,
         desc: 'Select the correct Chinese character or pinyin pronunciation.',
     },
 }
@@ -489,11 +489,11 @@ export default function MockTest() {
 
     const getGrade = (score: number, total: number) => {
         const pct = (score / total) * 100
-        if (pct >= 90) return { grade: 'A+', color: 'text-success-600', bg: 'bg-success-50 dark:bg-success-950/30' }
-        if (pct >= 80) return { grade: 'A', color: 'text-success-600', bg: 'bg-success-50 dark:bg-success-950/30' }
-        if (pct >= 70) return { grade: 'B', color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950/30' }
-        if (pct >= 60) return { grade: 'C', color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-950/30' }
-        return { grade: 'D', color: 'text-error-600', bg: 'bg-error-50 dark:bg-error-950/30' }
+        if (pct >= 90) return { grade: 'A+', color: 'text-success-600 dark:text-success-400', bg: 'bg-success-50 dark:bg-success-950/30' }
+        if (pct >= 80) return { grade: 'A', color: 'text-success-600 dark:text-success-400', bg: 'bg-success-50 dark:bg-success-950/30' }
+        if (pct >= 70) return { grade: 'B', color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-950/30' }
+        if (pct >= 60) return { grade: 'C', color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-950/30' }
+        return { grade: 'D', color: 'text-error-600 dark:text-error-400', bg: 'bg-error-50 dark:bg-error-950/30' }
     }
 
     // ── Breadcrumb ────────────────────────────────────────────────────────────
@@ -709,7 +709,7 @@ export default function MockTest() {
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
                             {meta.labelEn} Complete!
                         </h2>
-                        <p className={`text-sm font-semibold mb-6 ${passed ? 'text-success-600' : 'text-amber-600'}`}>
+                        <p className={`text-sm font-semibold mb-6 ${passed ? 'text-success-600 dark:text-success-400' : 'text-amber-600 dark:text-amber-400'}`}>
                             {passed ? '✓ Section passed — Keep going!' : '✗ Below 60% — Keep practicing!'}
                         </p>
 
@@ -724,7 +724,7 @@ export default function MockTest() {
                                     <p className="text-xs text-gray-500 mt-0.5">Accuracy</p>
                                 </div>
                                 <div className={`rounded-2xl px-6 py-4 ${passed ? 'bg-success-50 dark:bg-success-950/30' : 'bg-error-50 dark:bg-error-950/30'}`}>
-                                    <p className={`text-3xl font-bold ${passed ? 'text-success-600' : 'text-error-600'}`}>{passed ? 'PASS' : 'FAIL'}</p>
+                                    <p className={`text-3xl font-bold ${passed ? 'text-success-600 dark:text-success-400' : 'text-error-600 dark:text-error-400'}`}>{passed ? 'PASS' : 'FAIL'}</p>
                                     <p className="text-xs text-gray-500 mt-0.5">≥ 60% needed</p>
                                 </div>
                             </div>
@@ -792,7 +792,7 @@ export default function MockTest() {
                                             <p className={`font-chinese font-bold ${m.accent}`}>{m.label}</p>
                                             <p className="text-lg font-bold text-gray-800 dark:text-gray-200">{r.correct}/{r.total}</p>
                                             <p className="text-xs text-gray-500">{secPct}%</p>
-                                            <span className={`text-xs font-semibold ${secPassed ? 'text-success-600' : 'text-error-500'}`}>
+                                            <span className={`text-xs font-semibold ${secPassed ? 'text-success-600 dark:text-success-400' : 'text-error-500'}`}>
                                                 {secPassed ? '✓ Pass' : '✗ Fail'}
                                             </span>
                                         </div>

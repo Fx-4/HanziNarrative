@@ -48,19 +48,19 @@ export default function WritingFeedback({
   const improvement = previousAccuracy !== undefined ? accuracy - previousAccuracy : 0
 
   const cardColorClasses = {
-    emerald: 'bg-gradient-to-br from-success-50 to-success-50 border-success-300',
-    green: 'bg-gradient-to-br from-success-50 to-success-50 border-success-300',
-    blue: 'bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-300',
-    yellow: 'bg-gradient-to-br from-yellow-50 to-amber-50 border-yellow-300',
-    orange: 'bg-gradient-to-br from-orange-50 to-red-50 border-orange-300'
+    emerald: 'bg-gradient-to-br from-success-50 to-success-50 border-success-300 dark:from-success-950/30 dark:to-success-950/30',
+    green: 'bg-gradient-to-br from-success-50 to-success-50 border-success-300 dark:from-success-950/30 dark:to-success-950/30',
+    blue: 'bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-300 dark:from-blue-950/30 dark:to-cyan-950/30',
+    yellow: 'bg-gradient-to-br from-yellow-50 to-amber-50 border-yellow-300 dark:from-yellow-950/30 dark:to-amber-950/30',
+    orange: 'bg-gradient-to-br from-orange-50 to-red-50 border-orange-300 dark:from-orange-950/30 dark:to-red-950/30'
   }
 
   const iconColorClasses = {
-    emerald: 'text-success-600 bg-success-100',
-    green: 'text-success-600 bg-success-100',
-    blue: 'text-blue-600 bg-blue-100',
-    yellow: 'text-yellow-600 bg-yellow-100',
-    orange: 'text-orange-600 bg-orange-100'
+    emerald: 'text-success-600 bg-success-100 dark:text-success-400 dark:bg-success-900/40',
+    green: 'text-success-600 bg-success-100 dark:text-success-400 dark:bg-success-900/40',
+    blue: 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/40',
+    yellow: 'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/40',
+    orange: 'text-orange-600 bg-orange-100 dark:text-orange-400 dark:bg-orange-900/40'
   }
 
   const SpeedIcon = speedRating.icon
@@ -158,7 +158,7 @@ export default function WritingFeedback({
           {improvement !== 0 && (
             <div>
               <div className="text-xs text-gray-600 mb-1">Improvement</div>
-              <div className={`text-xl font-bold ${improvement > 0 ? 'text-success-600' : 'text-error-600'}`}>
+              <div className={`text-xl font-bold ${improvement > 0 ? 'text-success-600 dark:text-success-400' : 'text-error-600 dark:text-error-400'}`}>
                 {improvement > 0 ? '+' : ''}{improvement}%
               </div>
             </div>

@@ -220,18 +220,18 @@ export default function Flashcards() {
                     onClick={() => setStudyMode('review')}
                     className={`p-4 rounded-2xl border-2 text-center transition-all cursor-pointer ${
                       studyMode === 'review'
-                        ? 'border-primary-500 bg-primary-50'
+                        ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30'
                         : 'border-gray-200 hover:border-primary-200'
                     }`}
                   >
                     <Brain
                       className={`w-6 h-6 mx-auto mb-2 ${
-                        studyMode === 'review' ? 'text-primary-600' : 'text-gray-400'
+                        studyMode === 'review' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400'
                       }`}
                     />
                     <div
                       className={`text-sm font-semibold ${
-                        studyMode === 'review' ? 'text-primary-700' : 'text-gray-700'
+                        studyMode === 'review' ? 'text-primary-700 dark:text-primary-300' : 'text-gray-700'
                       }`}
                     >
                       {t('flashcards.modeReview')}
@@ -244,7 +244,7 @@ export default function Flashcards() {
                     onClick={() => setStudyMode('learn')}
                     className={`p-4 rounded-2xl border-2 text-center transition-all cursor-pointer ${
                       studyMode === 'learn'
-                        ? 'border-orange-500 bg-orange-50'
+                        ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/30'
                         : 'border-gray-200 hover:border-orange-200'
                     }`}
                   >
@@ -255,7 +255,7 @@ export default function Flashcards() {
                     />
                     <div
                       className={`text-sm font-semibold ${
-                        studyMode === 'learn' ? 'text-orange-600' : 'text-gray-700'
+                        studyMode === 'learn' ? 'text-orange-600 dark:text-orange-400' : 'text-gray-700'
                       }`}
                     >
                       {t('flashcards.modeLearn')}
@@ -268,18 +268,18 @@ export default function Flashcards() {
                     onClick={() => setStudyMode('all')}
                     className={`p-4 rounded-2xl border-2 text-center transition-all cursor-pointer ${
                       studyMode === 'all'
-                        ? 'border-violet-500 bg-violet-50'
+                        ? 'border-violet-500 bg-violet-50 dark:bg-violet-950/30'
                         : 'border-gray-200 hover:border-violet-200'
                     }`}
                   >
                     <Shuffle
                       className={`w-6 h-6 mx-auto mb-2 ${
-                        studyMode === 'all' ? 'text-violet-600' : 'text-gray-400'
+                        studyMode === 'all' ? 'text-violet-600 dark:text-violet-400' : 'text-gray-400'
                       }`}
                     />
                     <div
                       className={`text-sm font-semibold ${
-                        studyMode === 'all' ? 'text-violet-700' : 'text-gray-700'
+                        studyMode === 'all' ? 'text-violet-700 dark:text-violet-300' : 'text-gray-700'
                       }`}
                     >
                       {t('flashcards.modeMixed')}
@@ -302,8 +302,8 @@ export default function Flashcards() {
                         onClick={() => setSelectedHSK(level)}
                         className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all ${
                           selectedHSK === level
-                            ? 'bg-primary-600 text-white shadow-md shadow-primary-200'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            ? 'bg-primary-600 text-white shadow-md shadow-primary-200 dark:shadow-primary-900/20'
+                            : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                         }`}
                       >
                         HSK {level}
@@ -563,7 +563,7 @@ export default function Flashcards() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <button
                 onClick={() => handleSwipe('left')}
-                className="border-2 border-error-200 text-gray-700 rounded-2xl px-6 sm:px-8 py-3 font-semibold hover:bg-error-50 transition-all flex items-center gap-2 dark:text-gray-300 dark:border-error-800"
+                className="border-2 border-error-200 text-gray-700 rounded-2xl px-6 sm:px-8 py-3 font-semibold hover:bg-error-50 transition-all flex items-center gap-2 dark:text-gray-300 dark:border-error-800 dark:hover:bg-error-950/30"
               >
                 <XCircle className="w-5 h-5 text-error-400" />
                 {t('flashcards.again')}
@@ -595,13 +595,13 @@ export default function Flashcards() {
             <div className="grid grid-cols-3 gap-2">
               <button
                 onClick={() => recordReview(1)}
-                className="rounded-xl py-3 text-sm font-semibold transition-all bg-error-50 dark:bg-error-950/40 text-error-600 dark:text-error-400 hover:bg-error-100 border border-error-100 dark:border-error-900/50"
+                className="rounded-xl py-3 text-sm font-semibold transition-all bg-error-50 dark:bg-error-950/40 text-error-600 dark:text-error-400 hover:bg-error-100 border border-error-100 dark:border-error-900/50 dark:hover:bg-error-900/40"
               >
                 {t('flashcards.hard')}
               </button>
               <button
                 onClick={() => recordReview(3)}
-                className="rounded-xl py-3 text-sm font-semibold transition-all bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-100 border border-amber-100 dark:border-amber-900/50"
+                className="rounded-xl py-3 text-sm font-semibold transition-all bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-100 border border-amber-100 dark:border-amber-900/50 dark:hover:bg-amber-900/40"
               >
                 {t('flashcards.good')}
               </button>

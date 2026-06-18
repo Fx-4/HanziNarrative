@@ -147,7 +147,7 @@ export default function DailyChallenge() {
         <p className="text-gray-500 dark:text-gray-400">Gagal memuat daily challenge.</p>
         <button
           onClick={load}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-primary-600 border border-primary-200 rounded-xl hover:bg-primary-50 transition-colors dark:text-primary-400 dark:border-primary-800"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-primary-600 border border-primary-200 rounded-xl hover:bg-primary-50 transition-colors dark:text-primary-400 dark:border-primary-800 dark:hover:bg-primary-950/30"
         >
           <RefreshCw className="w-4 h-4" /> Coba lagi
         </button>
@@ -244,7 +244,7 @@ export default function DailyChallenge() {
                 onClick={() => setShowPinyin(!showPinyin)}
                 className={`text-xs font-semibold px-3 py-1 rounded-full transition-colors ${
                   showPinyin
-                    ? 'bg-white text-amber-700'
+                    ? 'bg-white text-amber-700 dark:text-amber-300'
                     : 'bg-white/25 text-white hover:bg-white/40'
                 }`}
               >
@@ -264,7 +264,7 @@ export default function DailyChallenge() {
 
           {story.english_translation && (
             <details className="border-t border-gray-100 dark:border-gray-800 pt-3">
-              <summary className="text-xs text-primary-500 cursor-pointer hover:text-primary-700 font-semibold select-none">
+              <summary className="text-xs text-primary-500 cursor-pointer hover:text-primary-700 font-semibold select-none dark:hover:text-primary-300">
                 Tampilkan terjemahan
               </summary>
               <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 leading-relaxed italic">
@@ -275,7 +275,7 @@ export default function DailyChallenge() {
 
           <Link
             to={`/stories/${story.id}`}
-            className="inline-flex items-center gap-1.5 text-xs text-primary-500 hover:text-primary-700 dark:text-primary-400 font-semibold transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-primary-500 hover:text-primary-700 dark:text-primary-400 font-semibold transition-colors dark:hover:text-primary-300"
           >
             <BookOpen className="w-3.5 h-3.5" />
             Buka di Story Reader

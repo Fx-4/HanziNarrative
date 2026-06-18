@@ -23,13 +23,13 @@ export default function SentenceDropZone({ words, onRemoveWord }: SentenceDropZo
     <div className="w-full space-y-3">
       {/* Zone Label */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-700">
+        <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
           Your Sentence / 你的句子
         </h3>
         {words.length > 0 && (
           <button
             onClick={() => words.forEach(w => onRemoveWord(w.id))}
-            className="text-sm text-error-500 hover:text-error-700 transition-colors"
+            className="text-sm text-error-500 hover:text-error-700 transition-colors dark:hover:text-error-300"
           >
             Clear All
           </button>
@@ -43,14 +43,14 @@ export default function SentenceDropZone({ words, onRemoveWord }: SentenceDropZo
           min-h-[120px] p-6 rounded-2xl border-3 border-dashed
           transition-all duration-300 ease-in-out
           ${isOver
-            ? 'border-blue-500 bg-blue-50 scale-[1.02]'
-            : 'border-gray-300 bg-gray-50'
+            ? 'border-blue-500 bg-blue-50 scale-[1.02] dark:bg-blue-950/30 dark:border-blue-400'
+            : 'border-gray-300 bg-gray-50 dark:bg-gray-800/50 dark:border-gray-700'
           }
           ${words.length === 0 ? 'flex items-center justify-center' : ''}
         `}
       >
         {words.length === 0 ? (
-          <div className="text-center text-gray-400">
+          <div className="text-center text-gray-400 dark:text-gray-500">
             <div className="text-4xl mb-2">📝</div>
             <p className="text-sm">Drag words here to build your sentence</p>
             <p className="text-xs mt-1">拖动汉字到这里组成句子</p>

@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
 // We use a helper to safely get env vars to avoid any build-time issues
 const getEnv = (key: string): string => {
@@ -13,7 +13,7 @@ const getEnv = (key: string): string => {
 const supabaseUrl = getEnv('VITE_SUPABASE_URL')
 const supabaseAnonKey = getEnv('VITE_SUPABASE_ANON_KEY')
 
-let supabaseClient = null
+let supabaseClient: SupabaseClient | null = null
 
 // Final safety check: Only call createClient if we have both values
 if (supabaseUrl && supabaseAnonKey) {
@@ -28,4 +28,4 @@ if (!supabaseClient) {
   console.warn('Supabase is not configured. Some features will be disabled, but the app should run.')
 }
 
-export const supabase = supabaseClient as any
+export const supabase = supabaseClient as SupabaseClient

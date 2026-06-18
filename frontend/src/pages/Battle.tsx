@@ -275,7 +275,7 @@ function HomeView({ onCreated, onJoined }: { onCreated: (c: string) => void; onJ
         <div className="flex gap-2">
           <input value={joinCode} onChange={e => setJoinCode(e.target.value.toUpperCase())} maxLength={6} placeholder="ABC123"
             className="flex-1 px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl text-center text-xl font-mono font-bold tracking-widest bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-primary-400 uppercase" />
-          <button onClick={handleJoin} className="px-4 bg-gray-900 dark:bg-gray-100 hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-gray-900 font-semibold rounded-xl transition-all flex items-center gap-1.5 text-sm sm:text-base shadow-sm">
+          <button onClick={handleJoin} className="px-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-all flex items-center gap-1.5 text-sm sm:text-base shadow-md shadow-primary-500/25">
             Join <ArrowRight className="w-4 h-4" />
           </button>
         </div>

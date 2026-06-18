@@ -89,20 +89,20 @@ function calcPosition(x: number, y: number) {
    Category pill styling
 ───────────────────────────────────── */
 const categoryColors: Record<string, string> = {
-  noun:        'bg-success-50 text-success-700',
-  verb:        'bg-blue-50 text-blue-700',
-  adjective:   'bg-purple-50 text-purple-700',
-  adverb:      'bg-orange-50 text-orange-700',
-  pronoun:     'bg-pink-50 text-pink-700',
+  noun:        'bg-success-50 text-success-700 dark:bg-success-950/30 dark:text-success-300',
+  verb:        'bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-300',
+  adjective:   'bg-purple-50 text-purple-700 dark:bg-purple-950/30 dark:text-purple-300',
+  adverb:      'bg-orange-50 text-orange-700 dark:bg-orange-950/30 dark:text-orange-300',
+  pronoun:     'bg-pink-50 text-pink-700 dark:bg-pink-950/30 dark:text-pink-300',
   particle:    'bg-gray-100 text-gray-600',
-  preposition: 'bg-primary-50 text-primary-700',
-  conjunction: 'bg-teal-50 text-teal-700',
-  number:      'bg-amber-50 text-amber-700',
+  preposition: 'bg-primary-50 text-primary-700 dark:bg-primary-950/30 dark:text-primary-300',
+  conjunction: 'bg-teal-50 text-teal-700 dark:bg-teal-950/30 dark:text-teal-300',
+  number:      'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-300',
 }
 
 function getCategoryColor(cat?: string) {
   if (!cat) return 'bg-gray-100 text-gray-600'
-  return categoryColors[cat.toLowerCase()] ?? 'bg-primary-50 text-primary-700'
+  return categoryColors[cat.toLowerCase()] ?? 'bg-primary-50 text-primary-700 dark:bg-primary-950/30 dark:text-primary-300'
 }
 
 /* ─────────────────────────────────────

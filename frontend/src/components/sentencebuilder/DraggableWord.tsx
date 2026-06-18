@@ -38,18 +38,18 @@ export default function DraggableWord({ id, word, pinyin, english, isInSentence 
         hover:scale-105 hover:shadow-lg
         ${isInSentence
           ? 'bg-gradient-to-br from-blue-500 to-purple-600 border-blue-400 text-white'
-          : 'bg-white border-gray-300 hover:border-blue-400'
+          : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500'
         }
         ${isDragging ? 'shadow-2xl scale-110 rotate-2' : ''}
       `}
     >
       {/* Chinese Character - Large and centered */}
-      <div className="text-2xl font-bold text-center mb-1">
+      <div className="text-2xl font-bold text-center mb-1 text-gray-900 dark:text-gray-100">
         {word}
       </div>
 
       {/* Pinyin - Small and subtle */}
-      <div className={`text-xs text-center ${isInSentence ? 'text-blue-100' : 'text-gray-600'}`}>
+      <div className={`text-xs text-center ${isInSentence ? 'text-blue-100' : 'text-gray-600 dark:text-gray-400'}`}>
         {pinyin}
       </div>
 

@@ -239,7 +239,7 @@ export default function SpeakingPractice() {
                                         onClick={() => setHskLevel(level)}
                                         className={`rounded-2xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${hskLevel === level
                                             ? 'bg-rose-600 hover:bg-rose-700 text-white'
-                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                            : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                                             }`}
                                     >
                                         HSK {level}
@@ -259,7 +259,7 @@ export default function SpeakingPractice() {
                         <div className="bg-white rounded-3xl shadow-xl border border-amber-100 overflow-hidden dark:bg-surface-card dark:border-amber-900/40">
                             <button
                                 onClick={() => setShowNeutralGuide(prev => !prev)}
-                                className="w-full flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-amber-50 transition-colors"
+                                className="w-full flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-amber-50 transition-colors dark:hover:bg-amber-950/30"
                             >
                                 <div className="flex items-center gap-3">
                                     <div className="w-9 h-9 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-amber-900/40">
@@ -532,7 +532,7 @@ export default function SpeakingPractice() {
                                         ) : (
                                             <button
                                                 onClick={handleRevealHint}
-                                                className="inline-flex items-center gap-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 rounded-2xl px-4 py-2 text-sm font-medium cursor-pointer transition-colors dark:bg-amber-950/30 dark:border-amber-800 dark:text-amber-300"
+                                                className="inline-flex items-center gap-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 rounded-2xl px-4 py-2 text-sm font-medium cursor-pointer transition-colors dark:bg-amber-950/30 dark:border-amber-800 dark:text-amber-300 dark:hover:bg-amber-900/40"
                                             >
                                                 <Lightbulb className="w-4 h-4" />
                                                 Reveal pinyin hint
@@ -612,11 +612,11 @@ export default function SpeakingPractice() {
                         ) : (
                             /* Results */
                             <div className="space-y-4">
-                                <div className={`rounded-2xl p-5 ${result?.is_correct ? 'bg-success-50 border border-green-200' : 'bg-orange-50 border border-orange-200'}`}>
+                                <div className={`rounded-2xl p-5 ${result?.is_correct ? 'bg-success-50 border border-green-200 dark:bg-success-950/30 dark:border-green-800' : 'bg-orange-50 border border-orange-200 dark:bg-orange-950/30 dark:border-orange-800'}`}>
 
                                     {/* Score circle */}
                                     <div className="flex justify-center mb-3">
-                                        <div className={`w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold ${result?.is_correct ? 'bg-success-100 text-success-700' : 'bg-orange-100 text-orange-700'}`}>
+                                        <div className={`w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold ${result?.is_correct ? 'bg-success-100 text-success-700 dark:bg-success-900/40 dark:text-success-300' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300'}`}>
                                             {result?.accuracy_score}%
                                         </div>
                                     </div>
@@ -624,11 +624,11 @@ export default function SpeakingPractice() {
                                     {/* Vocabulary + Tone breakdown for vocab mode */}
                                     {isVocabMode && (
                                         <div className="flex justify-center gap-4 mb-3">
-                                            <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold ${result?.is_correct ? 'bg-success-100 text-success-700' : 'bg-error-100 text-error-700'}`}>
+                                            <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold ${result?.is_correct ? 'bg-success-100 text-success-700 dark:bg-success-900/40 dark:text-success-300' : 'bg-error-100 text-error-700 dark:bg-error-900/40 dark:text-error-300'}`}>
                                                 {result?.is_correct ? '✅' : '❌'}
                                                 Vocabulary: {result?.is_correct ? 'Correct' : 'Wrong'}
                                             </div>
-                                            <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold ${(result?.accuracy_score ?? 0) >= 70 ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'}`}>
+                                            <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold ${(result?.accuracy_score ?? 0) >= 70 ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'}`}>
                                                 🎵 Tone: {(result?.accuracy_score ?? 0) >= 70 ? 'Perfect' : 'Needs work'}
                                             </div>
                                         </div>

@@ -56,7 +56,7 @@ export default function LearningPath() {
 
   useEffect(() => {
     loadProgress()
-  }, [])
+  }, [loadProgress])
 
   const applyProgress = (completedIds: string[], statsData: ProgressCache['stats']) => {
     const set = new Set(completedIds)
@@ -75,7 +75,7 @@ export default function LearningPath() {
     if (!expanded) setExpandedUnit(CURRICULUM[1][0]?.id ?? null)
   }
 
-  const loadProgress = async () => {
+  const loadProgress = useCallback(async () => {
     const now = Date.now()
     const cacheInvalid = sessionStorage.getItem('lp-cache-invalid')
 
@@ -106,7 +106,7 @@ export default function LearningPath() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   const units = CURRICULUM[activeLevel] ?? []
 

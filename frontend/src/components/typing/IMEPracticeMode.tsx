@@ -209,7 +209,7 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: index * 0.05 }}
                     onClick={() => handleCandidateSelect(candidate)}
-                    className="text-4xl font-chinese h-20 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-all active:scale-95 cursor-pointer dark:bg-surface-card dark:border-gray-600"
+                    className="text-4xl font-chinese h-20 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-all active:scale-95 cursor-pointer dark:bg-surface-card dark:border-gray-600 dark:hover:bg-primary-950/30"
                   >
                     {candidate}
                   </motion.button>
@@ -226,8 +226,8 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
             >
               <div className={`p-6 rounded-lg ${
                 isCorrect
-                  ? 'bg-success-50 border-2 border-success-200'
-                  : 'bg-error-50 border-2 border-error-200'
+                  ? 'bg-success-50 border-2 border-success-200 dark:bg-success-950/30 dark:border-success-800'
+                  : 'bg-error-50 border-2 border-error-200 dark:bg-error-950/30 dark:border-error-800'
               }`}>
                 <div className="flex items-center justify-center gap-3 mb-4">
                   {isCorrect ? (

@@ -87,7 +87,7 @@ function AchievementCard({ achievement }: AchievementCardProps) {
                 key={s}
                 onClick={() => generateBadge(s)}
                 disabled={loading}
-                className="px-2 py-1.5 text-xs rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 transition-colors disabled:opacity-50 capitalize dark:border-gray-700"
+                className="px-2 py-1.5 text-xs rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 transition-colors disabled:opacity-50 capitalize dark:border-gray-700 dark:hover:bg-primary-950/30 dark:hover:text-primary-300"
               >
                 {loading && activeStyle === s
                   ? <Loader2 className="w-3 h-3 animate-spin mx-auto" />
@@ -241,7 +241,7 @@ export default function Profile() {
             {/* Logout */}
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-500 hover:text-error-600 hover:bg-error-50 border border-gray-200 rounded-xl transition-colors dark:text-gray-400 dark:border-gray-700"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-500 hover:text-error-600 hover:bg-error-50 border border-gray-200 rounded-xl transition-colors dark:text-gray-400 dark:border-gray-700 dark:hover:text-error-400 dark:hover:bg-error-950/30"
             >
               <LogOut className="w-4 h-4" />
               Logout
@@ -352,7 +352,7 @@ export default function Profile() {
           </div>
           <button
             onClick={loadData}
-            className="px-4 py-2 text-sm font-semibold text-primary-600 border border-primary-200 rounded-xl hover:bg-primary-50 transition-colors dark:text-primary-300 dark:border-primary-800"
+            className="px-4 py-2 text-sm font-semibold text-primary-600 border border-primary-200 rounded-xl hover:bg-primary-50 transition-colors dark:text-primary-300 dark:border-primary-800 dark:hover:bg-primary-950/30"
           >
             Retry
           </button>

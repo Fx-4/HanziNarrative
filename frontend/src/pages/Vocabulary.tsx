@@ -474,10 +474,10 @@ export default function Vocabulary() {
                 <div className="hidden sm:flex sm:col-span-2 items-center">
                   {word.category && (
                     <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full capitalize
-                      ${word.category.toLowerCase() === 'verb'        ? 'bg-blue-100 text-blue-800'
-                      : word.category.toLowerCase() === 'noun'        ? 'bg-success-100 text-success-800'
-                      : word.category.toLowerCase() === 'adjective'   ? 'bg-purple-100 text-purple-800'
-                      : word.category.toLowerCase() === 'adverb'      ? 'bg-orange-100 text-orange-800'
+                      ${word.category.toLowerCase() === 'verb'        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300'
+                      : word.category.toLowerCase() === 'noun'        ? 'bg-success-100 text-success-800 dark:bg-success-900/40 dark:text-success-300'
+                      : word.category.toLowerCase() === 'adjective'   ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300'
+                      : word.category.toLowerCase() === 'adverb'      ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300'
                       : 'bg-gray-100 text-gray-700'}`}
                     >
                       {word.category}
@@ -491,7 +491,7 @@ export default function Vocabulary() {
                     onClick={() => setListDetail(word)}
                     className="opacity-0 group-hover:opacity-100 transition-opacity text-xs px-3 py-1.5 rounded-lg
                       bg-primary-50 text-primary-700
-                      hover:bg-primary-100 font-medium cursor-pointer dark:bg-primary-950/30 dark:text-primary-300"
+                      hover:bg-primary-100 font-medium cursor-pointer dark:bg-primary-950/30 dark:text-primary-300 dark:hover:bg-primary-900/40"
                   >
                     Details
                   </button>

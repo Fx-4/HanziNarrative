@@ -175,8 +175,8 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
           >
             <div className={`p-6 rounded-lg ${
               isCorrect
-                ? 'bg-success-50 border-2 border-success-200'
-                : 'bg-error-50 border-2 border-error-200'
+                ? 'bg-success-50 border-2 border-success-200 dark:bg-success-950/30 dark:border-success-800'
+                : 'bg-error-50 border-2 border-error-200 dark:bg-error-950/30 dark:border-error-800'
             }`}>
               <div className="flex items-center justify-center gap-3 mb-4">
                 {isCorrect ? (
@@ -194,7 +194,7 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
               <div className="text-center space-y-2">
                 <p className="text-lg">
                   <span className="font-semibold">You typed:</span>{' '}
-                  <span className={isCorrect ? 'text-success-700' : 'text-error-700'}>
+                  <span className={isCorrect ? 'text-success-700 dark:text-success-300' : 'text-error-700 dark:text-error-300'}>
                     {inputValue}
                   </span>
                 </p>

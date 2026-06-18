@@ -332,7 +332,7 @@ export default function Navbar() {
                     <Link to="/review" onClick={() => setMobileMenuOpen(false)}>
                       <div className={`flex items-center justify-between px-3 py-3 rounded-xl transition-colors mb-0.5 ${
                         isActive('/review')
-                          ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600'
+                          ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600 dark:text-primary-400'
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                       }`}>
                         <div className="flex items-center gap-3">
@@ -359,7 +359,7 @@ export default function Navbar() {
                     <Link to="/path" onClick={() => setMobileMenuOpen(false)}>
                       <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
                         isActive('/path')
-                          ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600'
+                          ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600 dark:text-primary-400'
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                       }`}>
                         <Route className="w-4 h-4 flex-shrink-0" />
@@ -377,7 +377,7 @@ export default function Navbar() {
                     <Link to="/stories" onClick={() => setMobileMenuOpen(false)}>
                       <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
                         isActive('/stories')
-                          ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600'
+                          ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600 dark:text-primary-400'
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                       }`}>
                         <BookOpen className="w-4 h-4 flex-shrink-0" />
@@ -502,7 +502,7 @@ function DrawerSection({
         onClick={onToggle}
         className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition-colors ${
           hasActive
-            ? 'text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/50'
+            ? 'text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/50 dark:text-primary-400'
             : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200'
         }`}
       >
@@ -541,7 +541,7 @@ function DrawerItem({ item, active, onClose }: { item: MenuItem; active: boolean
     <Link to={item.to} onClick={onClose}>
       <div className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-colors ${
         active
-          ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600'
+          ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600 dark:text-primary-400'
           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
       }`}>
         <div className="flex items-center gap-3 min-w-0">
@@ -593,8 +593,8 @@ function DesktopNavLink({ link, active, badgeCount = 0 }: {
       <motion.div
         className={`relative flex items-center gap-1.5 px-2 lg:px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
           active
-            ? 'text-primary-600 bg-primary-50 dark:bg-primary-950/50'
-            : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+            ? 'text-primary-600 bg-primary-50 dark:bg-primary-950/50 dark:text-primary-400'
+            : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 hover:bg-gray-50 dark:hover:bg-gray-800/50 dark:hover:text-primary-400'
         }`}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
@@ -631,8 +631,8 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
       <motion.div
         className={`flex items-center gap-1 px-2 lg:px-3 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
           active || isOpen
-            ? 'text-primary-600 bg-primary-50 dark:bg-primary-950/50'
-            : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+            ? 'text-primary-600 bg-primary-50 dark:bg-primary-950/50 dark:text-primary-400'
+            : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 hover:bg-gray-50 dark:hover:bg-gray-800/50 dark:hover:text-primary-400'
         }`}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
@@ -676,7 +676,7 @@ const DesktopDropdown = forwardRef<HTMLDivElement, {
                   >
                     <Link to={item.to} onClick={onClose}>
                       <div className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
-                        itemActive ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600' : 'text-gray-700 dark:text-gray-300'
+                        itemActive ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600 dark:text-primary-400' : 'text-gray-700 dark:text-gray-300'
                       }`}>
                         <ItemIcon className="w-3.5 h-3.5 flex-shrink-0" />
                         <div className="min-w-0">

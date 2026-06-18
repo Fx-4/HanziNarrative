@@ -142,7 +142,7 @@ export default function Leaderboard() {
   const [selectedMetric, setSelectedMetric] = useState<MetricType>('total_xp')
   const [period, setPeriod]                 = useState<PeriodType>('all_time')
 
-  const loadLeaderboardRealtime = async (signal?: AbortSignal) => {
+  const loadLeaderboardRealtime = useCallback(async (signal?: AbortSignal) => {
     setData(null)
     setLoading(true)
     setError(null)
@@ -178,10 +178,14 @@ export default function Leaderboard() {
       const decoder = new TextDecoder()
       let buffer = ''
       let gotDone = false
+      let isReading = true
 
-      while (true) {
+      while (isReading) {
         const { done, value } = await reader.read()
-        if (done) break
+        if (done) {
+          isReading = false
+          break
+        }
 
         buffer += decoder.decode(value, { stream: true })
         const parts = buffer.split('\n\n')
@@ -208,19 +212,20 @@ export default function Leaderboard() {
       if (!gotDone) {
         throw new Error('Leaderboard stream closed before completion')
       }
-    } catch (err: any) {
-      if (err?.name === 'AbortError') return
-      setError(err?.message || 'Failed to load leaderboard')
+    } catch (err: unknown) {
+      const error = err as Error
+      if (error?.name === 'AbortError') return
+      setError(error?.message || 'Failed to load leaderboard')
       setLoading(false)
       setLoadingMessage('')
     }
-  }
+  }, [selectedMetric, period])
 
   useEffect(() => {
     const controller = new AbortController()
     loadLeaderboardRealtime(controller.signal)
     return () => { controller.abort() }
-  }, [selectedMetric, period])
+  }, [loadLeaderboardRealtime])
 
   const fetchLeaderboard = () => {
     loadLeaderboardRealtime()

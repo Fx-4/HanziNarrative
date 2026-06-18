@@ -340,7 +340,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             }`}
           >
             <div className="flex items-center gap-2 mb-1.5">
-              <Zap className={`w-5 h-5 ${!isAdvanced ? 'text-success-600' : 'text-gray-500 dark:text-gray-400'}`} />
+              <Zap className={`w-5 h-5 ${!isAdvanced ? 'text-success-600 dark:text-success-400' : 'text-gray-500 dark:text-gray-400'}`} />
               <span className={`font-bold text-sm ${!isAdvanced ? 'text-success-700 dark:text-success-400' : 'text-gray-700 dark:text-gray-300'}`}>
                 Quick
               </span>
@@ -363,7 +363,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             }`}
           >
             <div className="flex items-center gap-2 mb-1.5">
-              <SlidersHorizontal className={`w-5 h-5 ${isAdvanced ? 'text-primary-600' : 'text-gray-500 dark:text-gray-400'}`} />
+              <SlidersHorizontal className={`w-5 h-5 ${isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400'}`} />
               <span className={`font-bold text-sm ${isAdvanced ? 'text-primary-700 dark:text-primary-400' : 'text-gray-700 dark:text-gray-300'}`}>
                 Advanced
               </span>
@@ -396,7 +396,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
               <div className="flex gap-3 text-sm">
                 <div className="text-center">
                   <div className={`font-bold text-base leading-none ${
-                    usageStats.used_today >= usageStats.limit_daily ? 'text-error-600' : isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-success-600 dark:text-success-400'
+                    usageStats.used_today >= usageStats.limit_daily ? 'text-error-600 dark:text-error-400' : isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-success-600 dark:text-success-400'
                   }`}>
                     {usageStats.limit_daily - usageStats.used_today}
                   </div>
@@ -405,7 +405,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                 <div className="w-px bg-gray-200 dark:bg-gray-700 self-stretch" />
                 <div className="text-center">
                   <div className={`font-bold text-base leading-none ${
-                    usageStats.used_this_hour >= usageStats.limit_hourly ? 'text-error-600' : isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-success-600 dark:text-success-400'
+                    usageStats.used_this_hour >= usageStats.limit_hourly ? 'text-error-600 dark:text-error-400' : isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-success-600 dark:text-success-400'
                   }`}>
                     {usageStats.limit_hourly - usageStats.used_this_hour}
                   </div>
@@ -435,7 +435,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
       <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }}>
         <div className="bg-white dark:bg-surface-card rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-5">
           <h3 className="text-lg font-bold mb-5 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-            <Sparkles className={`w-5 h-5 ${isAdvanced ? 'text-primary-600' : 'text-success-600'}`} />
+            <Sparkles className={`w-5 h-5 ${isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-success-600 dark:text-success-400'}`} />
             {isAdvanced ? 'Advanced Story Settings' : 'Story Settings'}
           </h3>
 

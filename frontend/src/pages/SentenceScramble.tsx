@@ -171,15 +171,15 @@ export default function FillBlank() {
                             <div className="grid sm:grid-cols-3 gap-4">
                                 <div className="flex items-start gap-3">
                                     <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-amber-900/40"><BookOpen className="w-4 h-4 text-amber-600 dark:text-amber-400" /></div>
-                                    <div><p className="font-medium text-gray-900">Read</p><p className="text-sm text-gray-600 dark:text-gray-400">See a sentence from a real story</p></div>
+                                    <div><p className="font-medium text-gray-900 dark:text-gray-100">Read</p><p className="text-sm text-gray-600 dark:text-gray-400">See a sentence from a real story</p></div>
                                 </div>
                                 <div className="flex items-start gap-3">
                                     <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-orange-900/40"><Target className="w-4 h-4 text-orange-600 dark:text-orange-400" /></div>
-                                    <div><p className="font-medium text-gray-900">Choose</p><p className="text-sm text-gray-600 dark:text-gray-400">Pick the missing word from 4 options</p></div>
+                                    <div><p className="font-medium text-gray-900 dark:text-gray-100">Choose</p><p className="text-sm text-gray-600 dark:text-gray-400">Pick the missing word from 4 options</p></div>
                                 </div>
                                 <div className="flex items-start gap-3">
                                     <div className="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-success-900/40"><CheckCircle className="w-4 h-4 text-success-600 dark:text-success-400" /></div>
-                                    <div><p className="font-medium text-gray-900">Learn</p><p className="text-sm text-gray-600 dark:text-gray-400">Build reading comprehension skills</p></div>
+                                    <div><p className="font-medium text-gray-900 dark:text-gray-100">Learn</p><p className="text-sm text-gray-600 dark:text-gray-400">Build reading comprehension skills</p></div>
                                 </div>
                             </div>
                         </div>
@@ -207,7 +207,7 @@ export default function FillBlank() {
                         <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-3xl shadow-xl border border-amber-200 dark:border-amber-800 p-6 sm:p-8 text-center">
                             <Trophy className="w-12 h-12 text-amber-500 mx-auto mb-3" />
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Reading Complete!</h2>
-                            <p className="text-xl text-gray-700">{score}/{questions.length} correct ({pct}%)</p>
+                            <p className="text-xl text-gray-700 dark:text-gray-300">{score}/{questions.length} correct ({pct}%)</p>
                             <div className="flex justify-center gap-3 mt-6">
                                 <button onClick={() => { setQuestions([]); setStarted(false) }}
                                     className="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl px-5 py-3 font-semibold cursor-pointer transition-colors inline-flex items-center gap-2">
@@ -240,7 +240,7 @@ export default function FillBlank() {
                     </div>
                 </div>
 
-                <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-6">
                     <motion.div className="bg-gradient-to-r from-amber-500 to-orange-500 h-2 rounded-full"
                         animate={{ width: `${((currentQ + 1) / questions.length) * 100}%` }} transition={{ duration: 0.3 }} />
                 </div>
@@ -276,11 +276,11 @@ export default function FillBlank() {
 
                             <div className="grid grid-cols-2 gap-3">
                                 {q.options.map((opt, i) => {
-                                    let btnClass = 'bg-gray-50 dark:bg-gray-800 hover:bg-amber-50 dark:hover:bg-amber-950/30 border-2 border-gray-100 dark:border-gray-700 hover:border-amber-300 text-gray-800 dark:text-gray-200'
+                                    let btnClass = 'bg-gray-50 dark:bg-gray-800 hover:bg-amber-50 dark:hover:bg-amber-950/30 border-2 border-gray-100 dark:border-gray-700 hover:border-amber-300 dark:hover:border-amber-600 text-gray-800 dark:text-gray-200'
                                     if (selected !== null) {
-                                        if (i === q.correctIndex) btnClass = 'bg-success-50 border-2 border-green-400 text-success-800'
-                                        else if (i === selected) btnClass = 'bg-error-50 border-2 border-error-400 text-error-800'
-                                        else btnClass = 'bg-gray-50 border-2 border-gray-100 text-gray-400'
+                                        if (i === q.correctIndex) btnClass = 'bg-success-50 border-2 border-green-400 dark:bg-success-950/30 dark:border-green-800 text-success-800 dark:text-success-300'
+                                        else if (i === selected) btnClass = 'bg-error-50 border-2 border-error-400 dark:bg-error-950/30 dark:border-error-800 text-error-800 dark:text-error-300'
+                                        else btnClass = 'bg-gray-50 dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-gray-400 dark:text-gray-500'
                                     }
                                     return (
                                         <button key={i} onClick={() => handleAnswer(i)} disabled={selected !== null}

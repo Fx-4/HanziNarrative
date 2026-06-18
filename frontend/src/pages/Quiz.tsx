@@ -122,8 +122,9 @@ export default function Quiz() {
         setSelectedLeft(null)
         setSelectedRight(null)
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.detail || 'Failed to generate quiz')
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { detail?: string } } }
+      toast.error(axiosError.response?.data?.detail || 'Failed to generate quiz')
     } finally {
       setLoading(false)
     }

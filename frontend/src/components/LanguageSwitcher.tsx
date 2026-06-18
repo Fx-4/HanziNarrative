@@ -66,7 +66,7 @@ export default function LanguageSwitcher({ compact }: { compact?: boolean }) {
                   onClick={() => { setLocale(l.code); setOpen(false) }}
                   className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-colors text-left ${
                     locale === l.code
-                      ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600'
+                      ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600 dark:text-primary-400'
                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
                   }`}
                 >
