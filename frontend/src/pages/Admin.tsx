@@ -10,11 +10,12 @@ import {
   TrendingUp, FileText, Loader2, RefreshCw, AlertTriangle, Menu, X,
   RotateCcw, Clock, Inbox, Bug, Lightbulb, MessageSquare, CheckCircle2,
   Circle, Filter, ExternalLink, MousePointer2, Image as ImageIcon,
-  Copy, Check,
+  Copy, Check, Sun, Moon,
 } from 'lucide-react'
 import { adminApi } from '@/services/api'
 import type { FeedbackItem } from '@/services/api'
 import { useAuthStore } from '@/store/authStore'
+import { useThemeStore } from '@/store/themeStore'
 import toast from 'react-hot-toast'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -1401,6 +1402,14 @@ export default function Admin() {
             </div>
             <span>{user?.username}</span>
           </div>
+          <button
+            onClick={toggleDarkMode}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+            title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            <span className="hidden sm:inline">Theme</span>
+          </button>
           <button
             onClick={() => navigate('/')}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer transition-colors"
