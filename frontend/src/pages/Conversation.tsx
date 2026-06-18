@@ -290,7 +290,7 @@ export default function Conversation() {
                   className={`p-3 rounded-xl text-left transition-all cursor-pointer ${
                     selectedTopic === topic.id
                       ? 'bg-blue-50 border-2 border-blue-400 shadow-sm dark:bg-blue-950/30'
-                      : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
+                      : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100 dark:bg-surface-page dark:hover:bg-surface-elevated'
                   }`}
                 >
                   <span className="text-lg">{topic.emoji}</span>
