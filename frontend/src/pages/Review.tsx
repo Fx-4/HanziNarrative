@@ -55,7 +55,7 @@ function ReviewSkeleton() {
         </div>
       </div>
       {/* Card */}
-      <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+      <div className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
         <Sk className="h-1.5 rounded-none" />
         <div className="p-8 md:p-10">
           <div className="flex flex-col items-center gap-4 mb-8">

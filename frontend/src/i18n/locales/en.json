@@ -579,5 +579,46 @@
       "tier0Title":  "Keep Going!",
       "tier0Msg":    "Every mistake is a learning opportunity! You got this — practice makes perfect!"
     }
+  },
+
+  "writing": {
+    "title":         "Writing Practice",
+    "subtitle":      "Master Chinese characters through practice",
+    "selectLevel":   "Select HSK Level",
+    "progress":      "Your Progress (HSK {{level}})",
+    "mastered":      "Mastered",
+    "learning":      "Learning",
+    "new":           "New",
+    "totalPracticed":"Total Practiced",
+    "attempts":      "Attempts",
+    "accuracy":      "Accuracy",
+    "loginTitle":    "Login to Track Your Progress",
+    "loginDesc":     "You can practice writing without logging in, but your progress won't be saved. Login or register to track your learning journey, save your scores, and see detailed statistics!",
+    "login":         "Login",
+    "createAccount": "Create Account",
+    "modes": {
+      "practiceTitle": "Free Practice",
+      "practiceDesc":  "Practice writing characters at your own pace. Learn stroke order and improve muscle memory.",
+      "practiceTag":   "Recommended for beginners",
+      "timedTitle":    "Timed Challenge",
+      "timedDesc":     "Race against the clock! Complete as many characters as you can within the time limit.",
+      "timedTag":      "Build speed & confidence",
+      "masteryTitle":  "Mastery Mode",
+      "masteryDesc":   "Focus on characters you haven't mastered yet. Adaptive difficulty based on your performance.",
+      "masteryTag":    "Advanced practice"
+    },
+    "tipsTitle": "Writing Tips",
+    "tip1": "Follow the stroke order animation carefully",
+    "tip2": "Practice each character multiple times for better retention",
+    "tip3": "Focus on accuracy first, speed will come naturally",
+    "tip4": "Take breaks between practice sessions",
+    "toasts": {
+      "loginRequired":   "Please log in to practice writing",
+      "loadFailed":      "Failed to load characters",
+      "progressNotSaved":"Progress not saved — please log in to track your progress",
+      "saveFailed":      "Failed to save progress",
+      "sessionComplete": "Session complete! Average accuracy: {{pct}}%",
+      "timesUp":         "Time's up! You completed {{n}} characters!"
+    }
   }
 }

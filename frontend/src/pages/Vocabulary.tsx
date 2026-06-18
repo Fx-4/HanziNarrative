@@ -28,7 +28,7 @@ type ViewMode = 'grid' | 'list'
 
 function VocabGridSkeleton() {
   return (
-    <div className="rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
+    <div className="rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 bg-white dark:bg-surface-card">
       {/* Gradient header placeholder */}
       <div className="h-[100px] bg-gray-200 dark:bg-gray-700 animate-pulse" />
       {/* Pinyin + english lines */}

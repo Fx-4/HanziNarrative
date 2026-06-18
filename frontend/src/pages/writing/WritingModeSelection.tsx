@@ -41,7 +41,7 @@ export default function WritingModeSelection({
   const renderStatsCard = () => {
     if (statsLoading) {
       return (
-        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden p-4 sm:p-6">
+        <div className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden p-4 sm:p-6">
           <div className="flex items-center justify-center">
             <LoadingSpinner size="sm" />
           </div>
@@ -60,69 +60,69 @@ export default function WritingModeSelection({
       >
         {/* Accent bar */}
         <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600 rounded-t-3xl" />
-        <div className="bg-white dark:bg-gray-900 rounded-b-3xl shadow-xl border border-gray-100 dark:border-gray-800 border-t-0 overflow-hidden p-4 sm:p-6">
+        <div className="bg-white dark:bg-surface-card rounded-b-3xl shadow-xl border border-gray-100 dark:border-gray-800 border-t-0 overflow-hidden p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
             <BarChart3 className="w-5 h-5 text-primary-600 dark:text-primary-400" />
             <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">Your Progress (HSK {hskLevel})</h3>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-            <div className="bg-primary-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
+            <div className="bg-primary-600 dark:bg-primary-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-primary-300 shadow-lg border border-transparent dark:border-primary-800/50">
               <div className="flex items-center gap-2 mb-1">
-                <Award className="w-4 h-4 text-primary-200" />
-                <p className="text-xs text-primary-200 font-medium">Mastered</p>
+                <Award className="w-4 h-4 text-primary-200 dark:text-primary-400" />
+                <p className="text-xs text-primary-200 dark:text-primary-400/80 font-medium">Mastered</p>
               </div>
-              <p className="text-xl sm:text-2xl font-bold">
+              <p className="text-xl sm:text-2xl font-bold dark:text-primary-200">
                 <CountUp to={stats.mastered_characters} duration={1.2} />
               </p>
             </div>
 
-            <div className="bg-primary-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
+            <div className="bg-primary-600 dark:bg-primary-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-primary-300 shadow-lg border border-transparent dark:border-primary-800/50">
               <div className="flex items-center gap-2 mb-1">
-                <TrendingUp className="w-4 h-4 text-primary-200" />
-                <p className="text-xs text-primary-200 font-medium">Learning</p>
+                <TrendingUp className="w-4 h-4 text-primary-200 dark:text-primary-400" />
+                <p className="text-xs text-primary-200 dark:text-primary-400/80 font-medium">Learning</p>
               </div>
-              <p className="text-xl sm:text-2xl font-bold">
+              <p className="text-xl sm:text-2xl font-bold dark:text-primary-200">
                 <CountUp to={stats.characters_in_progress} duration={1.2} />
               </p>
             </div>
 
-            <div className="bg-violet-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
+            <div className="bg-violet-600 dark:bg-violet-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-violet-300 shadow-lg border border-transparent dark:border-violet-800/50">
               <div className="flex items-center gap-2 mb-1">
-                <BookOpen className="w-4 h-4 text-violet-200" />
-                <p className="text-xs text-violet-200 font-medium">New</p>
+                <BookOpen className="w-4 h-4 text-violet-200 dark:text-violet-400" />
+                <p className="text-xs text-violet-200 dark:text-violet-400/80 font-medium">New</p>
               </div>
-              <p className="text-xl sm:text-2xl font-bold">
+              <p className="text-xl sm:text-2xl font-bold dark:text-violet-200">
                 <CountUp to={stats.new_characters} duration={1.2} />
               </p>
             </div>
 
-            <div className="bg-orange-500 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
+            <div className="bg-orange-500 dark:bg-orange-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-orange-300 shadow-lg border border-transparent dark:border-orange-800/50">
               <div className="flex items-center gap-2 mb-1">
-                <Pencil className="w-4 h-4 text-orange-200" />
-                <p className="text-xs text-orange-200 font-medium">Total Practiced</p>
+                <Pencil className="w-4 h-4 text-orange-200 dark:text-orange-400" />
+                <p className="text-xs text-orange-200 dark:text-orange-400/80 font-medium">Total Practiced</p>
               </div>
-              <p className="text-xl sm:text-2xl font-bold">
+              <p className="text-xl sm:text-2xl font-bold dark:text-orange-200">
                 <CountUp to={stats.total_characters_practiced} duration={1.2} />
               </p>
             </div>
 
-            <div className="bg-pink-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
+            <div className="bg-pink-600 dark:bg-pink-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-pink-300 shadow-lg border border-transparent dark:border-pink-800/50">
               <div className="flex items-center gap-2 mb-1">
-                <Target className="w-4 h-4 text-pink-200" />
-                <p className="text-xs text-pink-200 font-medium">Attempts</p>
+                <Target className="w-4 h-4 text-pink-200 dark:text-pink-400" />
+                <p className="text-xs text-pink-200 dark:text-pink-400/80 font-medium">Attempts</p>
               </div>
-              <p className="text-xl sm:text-2xl font-bold">
+              <p className="text-xl sm:text-2xl font-bold dark:text-pink-200">
                 <CountUp to={stats.total_attempts} duration={1.2} />
               </p>
             </div>
 
-            <div className="bg-amber-500 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
+            <div className="bg-amber-500 dark:bg-amber-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-amber-300 shadow-lg border border-transparent dark:border-amber-800/50">
               <div className="flex items-center gap-2 mb-1">
-                <Zap className="w-4 h-4 text-amber-200" />
-                <p className="text-xs text-amber-200 font-medium">Accuracy</p>
+                <Zap className="w-4 h-4 text-amber-200 dark:text-amber-400" />
+                <p className="text-xs text-amber-200 dark:text-amber-400/80 font-medium">Accuracy</p>
               </div>
-              <p className="text-xl sm:text-2xl font-bold">
+              <p className="text-xl sm:text-2xl font-bold dark:text-amber-200">
                 <CountUp to={stats.average_accuracy} duration={1.2} decimals={0} suffix="%" />
               </p>
             </div>
@@ -331,7 +331,7 @@ export default function WritingModeSelection({
         transition={{ delay: 0.6 }}
         className="mt-6 sm:mt-8"
       >
-        <div className="bg-gradient-to-r from-primary-50 dark:from-primary-950/30 to-blue-50 dark:to-blue-950/30 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden p-4 sm:p-6">
+        <div className="bg-gradient-to-r from-primary-50 dark:from-primary-950/20 to-blue-50 dark:to-blue-950/20 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden p-4 sm:p-6">
           <div className="flex items-start gap-4">
             <div className="p-3 bg-white dark:bg-gray-800 rounded-xl flex-shrink-0 shadow-sm">
               <BookOpen className="w-6 h-6 text-primary-600 dark:text-primary-400" />

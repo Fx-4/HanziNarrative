@@ -1,0 +1,16 @@
+<!doctype html><html><head><meta charset="utf-8"/><style>
+  *{margin:0;box-sizing:border-box}
+  body{width:900px;height:1150px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#eef2ff,#faf5ff 52%,#f5f3ff);font-family:Inter,system-ui,sans-serif}
+  .phone{width:430px;height:900px;border-radius:56px;background:#0b1020;padding:14px;position:relative;
+    box-shadow:0 50px 110px rgba(79,70,229,.30),0 14px 40px rgba(0,0,0,.25)}
+  .screen{width:100%;height:100%;border-radius:44px;overflow:hidden;background:#fff;position:relative}
+  .notch{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:130px;height:26px;background:#0b1020;border-radius:0 0 16px 16px;z-index:2}
+  iframe{width:402px;height:872px;border:0;display:block}
+</style></head><body>
+  <div class="phone">
+    <div class="screen">
+      <iframe src="http://localhost:4399/" scrolling="no"></iframe>
+    </div>
+  </div>
+</body></html>

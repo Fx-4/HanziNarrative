@@ -63,7 +63,7 @@ export default function StrokeOrderLookup() {
       transition={{ delay: 0.55 }}
       className="mt-6 sm:mt-8"
     >
-      <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+      <div className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
         {/* Header */}
         <div className="h-1.5 bg-gradient-to-r from-teal-400 via-cyan-500 to-teal-500" />
         <div className="p-4 sm:p-6">

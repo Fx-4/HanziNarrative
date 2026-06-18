@@ -114,7 +114,7 @@ export default function DailyChallenge() {
             <Skeleton className="h-4 w-32 bg-gray-300 dark:bg-gray-600" />
           </div>
           {/* Content lines */}
-          <div className="px-6 py-5 space-y-3 bg-white dark:bg-gray-900">
+          <div className="px-6 py-5 space-y-3 bg-white dark:bg-surface-card">
             <Skeleton className="h-6 w-full" />
             <Skeleton className="h-6 w-5/6" />
             <Skeleton className="h-6 w-4/5" />
@@ -129,7 +129,7 @@ export default function DailyChallenge() {
         {/* Stat cards */}
         <div className="grid grid-cols-3 gap-3">
           {[0, 1, 2].map(i => (
-            <div key={i} className="rounded-2xl p-4 bg-gray-50 dark:bg-gray-800/50 space-y-2 animate-pulse">
+            <div key={i} className="rounded-2xl p-4 bg-gray-50 dark:bg-surface-card/50 space-y-2 animate-pulse">
               <Skeleton className="h-5 w-5 mx-auto rounded-full" />
               <Skeleton className="h-6 w-10 mx-auto" />
               <Skeleton className="h-3 w-14 mx-auto" />
@@ -220,7 +220,7 @@ export default function DailyChallenge() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden"
+        className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden"
       >
         {/* Gradient header */}
         <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 px-6 py-4">

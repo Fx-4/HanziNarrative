@@ -590,8 +590,8 @@ export default function MockTest() {
                     </motion.div>
 
                     {/* Additional info */}
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.16 }} className="mb-7">
-                        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 flex flex-wrap gap-6 justify-center text-center">
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16 }} className="mb-7">
+                        <div className="bg-white dark:bg-surface-card rounded-2xl border border-gray-100 dark:border-gray-800 p-4 flex flex-wrap gap-6 justify-center text-center">
                             {[
                                 { icon: BookOpen, label: '25 Questions', sub: 'Across 3 sections', color: 'text-primary-500' },
                                 { icon: Clock, label: '~20 Minutes', sub: 'Total exam time', color: 'text-amber-500' },
