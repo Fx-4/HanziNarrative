@@ -620,5 +620,27 @@
       "sessionComplete": "Sesi selesai! Rata-rata akurasi: {{pct}}%",
       "timesUp":         "Waktu habis! Kamu menyelesaikan {{n}} karakter!"
     }
+  },
+
+  "toneTrainer": {
+    "title":           "Pelatih Nada",
+    "subtitle":        "Identifikasi nada yang benar untuk tiap karakter",
+    "selectLevel":     "Pilih Level HSK",
+    "fourTones":       "Empat Nada",
+    "toneN":           "Nada {{n}}",
+    "tones":           { "1": "Pertama (datar)", "2": "Kedua (naik)", "3": "Ketiga (turun-naik)", "4": "Keempat (turun)", "5": "Netral" },
+    "start":           "Mulai Latihan",
+    "sessionComplete": "Sesi Selesai!",
+    "result":          "{{score}}/{{total}} benar ({{pct}}%)",
+    "newSession":      "Sesi Baru",
+    "continue":        "Lanjut",
+    "correctCount":    "{{score}} benar",
+    "listen":          "Dengar",
+    "whichTone":       "Apa nada suku kata pertama?",
+    "toasts": {
+      "notEnough":  "Kosakata tidak cukup untuk latihan nada.",
+      "noWords":    "Tidak ada kata yang cocok.",
+      "loadFailed": "Gagal memuat kosakata"
+    }
   }
 }

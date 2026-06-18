@@ -16,14 +16,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import BlurText from '@/components/animations/BlurText'
-
-const TONE_LABELS: Record<number, string> = {
-    1: 'First (flat)',
-    2: 'Second (rising)',
-    3: 'Third (dip)',
-    4: 'Fourth (falling)',
-    5: 'Neutral',
-}
+import { useTranslation } from 'react-i18next'
 
 const TONE_MARKS: Record<number, string> = {
     1: '\u0304', // macron
@@ -71,6 +64,7 @@ function generateToneQuestions(words: HanziWord[]): ToneQuestion[] {
 }
 
 export default function ToneTrainer() {
+    const { t } = useTranslation()
     const [hskLevel, setHskLevel] = useState(1)
     const [questions, setQuestions] = useState<ToneQuestion[]>([])
     const [currentQ, setCurrentQ] = useState(0)
@@ -85,12 +79,12 @@ export default function ToneTrainer() {
         try {
             const words = await vocabularyApi.getByHSKLevel(hskLevel)
             if (words.length < 8) {
-                toast.error('Not enough vocabulary for tone practice.')
+                toast.error(t('toneTrainer.toasts.notEnough'))
                 return
             }
             const qs = generateToneQuestions(words)
             if (qs.length === 0) {
-                toast.error('No suitable words found.')
+                toast.error(t('toneTrainer.toasts.noWords'))
                 return
             }
             setQuestions(qs)
@@ -99,7 +93,7 @@ export default function ToneTrainer() {
             setSelected(null)
             setSessionStarted(true)
         } catch {
-            toast.error('Failed to load vocabulary')
+            toast.error(t('toneTrainer.toasts.loadFailed'))
         } finally {
             setLoading(false)
         }
@@ -145,15 +139,15 @@ export default function ToneTrainer() {
                         <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                             <Music className="w-8 h-8 sm:w-10 sm:h-10 text-teal-600 dark:text-teal-400" />
                             <BlurText as="h1" className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100" wordDelay={0.08}>
-                                Tone Trainer
+                                {t('toneTrainer.title')}
                             </BlurText>
                         </div>
-                        <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">Identify the correct tone for each character</p>
+                        <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">{t('toneTrainer.subtitle')}</p>
                     </motion.div>
 
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="mb-6">
                         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Select HSK Level</h3>
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">{t('toneTrainer.selectLevel')}</h3>
                             <div className="flex flex-wrap gap-2">
                                 {[1, 2, 3, 4, 5, 6].map(level => (
                                     <button key={level} onClick={() => setHskLevel(level)}
@@ -167,13 +161,13 @@ export default function ToneTrainer() {
 
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="mb-6">
                         <div className="bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-950/30 dark:to-cyan-950/30 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
-                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">The Four Tones</h4>
+                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">{t('toneTrainer.fourTones')}</h4>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                {[1, 2, 3, 4].map(t => (
-                                    <div key={t} className="bg-white dark:bg-gray-800 rounded-xl p-3 text-center border border-gray-100 dark:border-gray-700 shadow-sm">
-                                        <p className="text-2xl font-bold text-teal-700 mb-1 dark:text-teal-300">Tone {t}</p>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">{TONE_LABELS[t]}</p>
-                                        <p className="text-lg text-gray-800 dark:text-gray-200 mt-1">ma{TONE_MARKS[t]}</p>
+                                {[1, 2, 3, 4].map(n => (
+                                    <div key={n} className="bg-white dark:bg-gray-800 rounded-xl p-3 text-center border border-gray-100 dark:border-gray-700 shadow-sm">
+                                        <p className="text-2xl font-bold text-teal-700 mb-1 dark:text-teal-300">{t('toneTrainer.toneN', { n })}</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">{t(`toneTrainer.tones.${n}`)}</p>
+                                        <p className="text-lg text-gray-800 dark:text-gray-200 mt-1">ma{TONE_MARKS[n]}</p>
                                     </div>
                                 ))}
                             </div>
@@ -184,7 +178,7 @@ export default function ToneTrainer() {
                         <button onClick={startSession} disabled={loading}
                             className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white rounded-2xl px-8 py-4 font-semibold text-lg cursor-pointer transition-all flex items-center gap-3 mx-auto disabled:opacity-50">
                             {loading ? <LoadingSpinner size="sm" /> : <Music className="w-6 h-6" />}
-                            Start Practice
+                            {t('toneTrainer.start')}
                         </button>
                     </motion.div>
                 </div>
@@ -201,16 +195,16 @@ export default function ToneTrainer() {
                     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
                         <div className="bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-950/30 dark:to-cyan-950/30 rounded-3xl shadow-xl border border-teal-200 dark:border-teal-800 p-6 sm:p-8 text-center">
                             <Trophy className="w-12 h-12 text-amber-500 mx-auto mb-3" />
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Session Complete!</h2>
-                            <p className="text-xl text-gray-700 dark:text-gray-300">{score}/{questions.length} correct ({pct}%)</p>
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('toneTrainer.sessionComplete')}</h2>
+                            <p className="text-xl text-gray-700 dark:text-gray-300">{t('toneTrainer.result', { score, total: questions.length, pct })}</p>
                             <div className="flex justify-center gap-3 mt-6">
                                 <button onClick={() => { setQuestions([]); setSessionStarted(false) }}
                                     className="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl px-5 py-3 font-semibold cursor-pointer transition-colors inline-flex items-center gap-2">
-                                    <RotateCcw className="w-5 h-5" /> New Session
+                                    <RotateCcw className="w-5 h-5" /> {t('toneTrainer.newSession')}
                                 </button>
                                 <button onClick={startSession}
                                     className="bg-teal-600 hover:bg-teal-700 text-white rounded-2xl px-5 py-3 font-semibold cursor-pointer transition-colors inline-flex items-center gap-2">
-                                    <ArrowRight className="w-5 h-5" /> Continue
+                                    <ArrowRight className="w-5 h-5" /> {t('toneTrainer.continue')}
                                 </button>
                             </div>
                         </div>
@@ -231,7 +225,7 @@ export default function ToneTrainer() {
                         <span className="font-bold text-gray-900 dark:text-gray-100">{currentQ + 1}/{questions.length}</span>
                     </div>
                     <div className="bg-teal-50 dark:bg-teal-950/30 rounded-xl border border-teal-200 dark:border-teal-800 px-3 py-1.5 text-sm font-bold text-teal-700 dark:text-teal-400">
-                        {score} correct
+                        {t('toneTrainer.correctCount', { score })}
                     </div>
                 </div>
 
@@ -247,11 +241,11 @@ export default function ToneTrainer() {
                             <p className="text-sm text-gray-500 dark:text-gray-400">{q.word.english}</p>
                             <button onClick={() => playWord(q.word.simplified)}
                                 className="mt-2 text-teal-600 hover:text-teal-700 cursor-pointer inline-flex items-center gap-1 text-sm dark:text-teal-400 dark:hover:text-teal-300">
-                                <Volume2 className="w-4 h-4" /> Listen
+                                <Volume2 className="w-4 h-4" /> {t('toneTrainer.listen')}
                             </button>
                         </div>
 
-                        <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-4">What tone is the first syllable?</p>
+                        <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-4">{t('toneTrainer.whichTone')}</p>
 
                         <div className="grid grid-cols-2 gap-3">
                             {q.options.map(tone => {
@@ -264,8 +258,8 @@ export default function ToneTrainer() {
                                 return (
                                     <button key={tone} onClick={() => handleAnswer(tone)} disabled={selected !== null}
                                         className={`rounded-2xl p-4 font-medium cursor-pointer transition-all text-center ${btnClass} disabled:cursor-default`}>
-                                        <p className="text-lg font-bold">Tone {tone}</p>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">{TONE_LABELS[tone]}</p>
+                                        <p className="text-lg font-bold">{t('toneTrainer.toneN', { n: tone })}</p>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">{t(`toneTrainer.tones.${tone}`)}</p>
                                         {selected !== null && tone === q.correctTone && <CheckCircle className="w-4 h-4 text-success-600 mx-auto mt-1 dark:text-success-400" />}
                                         {selected !== null && tone === selected && tone !== q.correctTone && <XCircle className="w-4 h-4 text-error-500 mx-auto mt-1" />}
                                     </button>

@@ -620,5 +620,27 @@
       "sessionComplete": "Session complete! Average accuracy: {{pct}}%",
       "timesUp":         "Time's up! You completed {{n}} characters!"
     }
+  },
+
+  "toneTrainer": {
+    "title":           "Tone Trainer",
+    "subtitle":        "Identify the correct tone for each character",
+    "selectLevel":     "Select HSK Level",
+    "fourTones":       "The Four Tones",
+    "toneN":           "Tone {{n}}",
+    "tones":           { "1": "First (flat)", "2": "Second (rising)", "3": "Third (dip)", "4": "Fourth (falling)", "5": "Neutral" },
+    "start":           "Start Practice",
+    "sessionComplete": "Session Complete!",
+    "result":          "{{score}}/{{total}} correct ({{pct}}%)",
+    "newSession":      "New Session",
+    "continue":        "Continue",
+    "correctCount":    "{{score}} correct",
+    "listen":          "Listen",
+    "whichTone":       "What tone is the first syllable?",
+    "toasts": {
+      "notEnough":  "Not enough vocabulary for tone practice.",
+      "noWords":    "No suitable words found.",
+      "loadFailed": "Failed to load vocabulary"
+    }
   }
 }
