@@ -429,5 +429,51 @@
       "fb1": "Hard, but you got it",
       "fb0": "Keep trying! Practice makes perfect"
     }
+  },
+
+  "flashcards": {
+    "title":          "Flashcard Study",
+    "subtitle":       "Master vocabulary with spaced repetition",
+    "studyMode":      "Study Mode",
+    "modeReview":     "Review",
+    "modeReviewDesc": "Due words",
+    "modeLearn":      "Learn New",
+    "modeLearnDesc":  "Fresh words",
+    "modeMixed":      "Mixed",
+    "modeMixedDesc":  "Review + New",
+    "hskLevel":       "HSK Level",
+    "howItWorks":     "How it works",
+    "how1":           "Click to flip and see the answer",
+    "how2":           "Swipe left (Again) or right (Easy)",
+    "how3":           "Rate difficulty to improve spaced repetition",
+    "how4":           "Track your progress in real-time",
+    "startSession":   "Start Study Session",
+    "noWordsTitle":   "No Words Available",
+    "noWordsDesc":    "Try selecting a different study mode or HSK level",
+    "backToSettings": "Back to Settings",
+    "sessionCompleteTitle": "Session Complete!",
+    "sessionCompleteDesc":  "Great work! Keep up the momentum",
+    "totalCards":     "Total Cards",
+    "correct":        "Correct",
+    "incorrect":      "Incorrect",
+    "accuracy":       "Accuracy",
+    "time":           "Time",
+    "avgTime":        "Avg Time",
+    "newSession":     "New Session",
+    "viewProgress":   "View Progress",
+    "counter":        "{{current}} of {{total}}",
+    "again":          "Again",
+    "easy":           "Easy",
+    "howWell":        "How well did you know this?",
+    "hard":           "Hard",
+    "good":           "Good",
+    "perfect":        "Perfect",
+    "instruction":    "Click card to flip • Swipe left (Again) or right (Easy)",
+    "toasts": {
+      "noWords":    "No words available. Try a different mode or HSK level.",
+      "loadFailed": "Failed to load words",
+      "flipFirst":  "Flip the card first to see the answer!",
+      "shuffled":   "Cards shuffled!"
+    }
   }
 }

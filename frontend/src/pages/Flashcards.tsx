@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { createLogger } from '@/utils/debugLogger'
+import { useTranslation } from 'react-i18next'
 
 const flashcardsLogger = createLogger('Flashcards')
 
@@ -31,6 +32,7 @@ interface SessionStats {
 
 export default function Flashcards() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const [words, setWords] = useState<HanziWord[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -82,7 +84,7 @@ export default function Flashcards() {
       }
 
       if (data.length === 0) {
-        toast.error('No words available. Try a different mode or HSK level.')
+        toast.error(t('flashcards.toasts.noWords'))
         setLoading(false)
         return
       }
@@ -93,7 +95,7 @@ export default function Flashcards() {
       setLoading(false)
     } catch (error) {
       flashcardsLogger.error('Failed to load words:', error)
-      toast.error('Failed to load words')
+      toast.error(t('flashcards.toasts.loadFailed'))
       setLoading(false)
     }
   }
@@ -138,7 +140,7 @@ export default function Flashcards() {
 
   const handleSwipe = (direction: 'left' | 'right') => {
     if (!isFlipped) {
-      toast('Flip the card first to see the answer!', { icon: '↻' })
+      toast(t('flashcards.toasts.flipFirst'), { icon: '↻' })
       return
     }
 
@@ -165,7 +167,7 @@ export default function Flashcards() {
     setWords(shuffled)
     setCurrentIndex(0)
     setIsFlipped(false)
-    toast.success('Cards shuffled!')
+    toast.success(t('flashcards.toasts.shuffled'))
   }
 
   const resetSession = () => {
@@ -202,10 +204,10 @@ export default function Flashcards() {
             </button>
             <div>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-50">
-                Flashcard Study
+                {t('flashcards.title')}
               </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Master vocabulary with spaced repetition
+                {t('flashcards.subtitle')}
               </p>
             </div>
           </div>
@@ -219,7 +221,7 @@ export default function Flashcards() {
               {/* Study Mode section */}
               <div className="mb-6">
                 <p className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3 dark:text-gray-400">
-                  Study Mode
+                  {t('flashcards.studyMode')}
                 </p>
                 <div className="grid grid-cols-3 gap-3">
                   {/* Review */}
@@ -241,9 +243,9 @@ export default function Flashcards() {
                         studyMode === 'review' ? 'text-primary-700' : 'text-gray-700'
                       }`}
                     >
-                      Review
+                      {t('flashcards.modeReview')}
                     </div>
-                    <div className="text-xs text-gray-500 mt-0.5 dark:text-gray-400">Due words</div>
+                    <div className="text-xs text-gray-500 mt-0.5 dark:text-gray-400">{t('flashcards.modeReviewDesc')}</div>
                   </button>
 
                   {/* Learn */}
@@ -265,9 +267,9 @@ export default function Flashcards() {
                         studyMode === 'learn' ? 'text-orange-600' : 'text-gray-700'
                       }`}
                     >
-                      Learn New
+                      {t('flashcards.modeLearn')}
                     </div>
-                    <div className="text-xs text-gray-500 mt-0.5 dark:text-gray-400">Fresh words</div>
+                    <div className="text-xs text-gray-500 mt-0.5 dark:text-gray-400">{t('flashcards.modeLearnDesc')}</div>
                   </button>
 
                   {/* Mixed */}
@@ -289,9 +291,9 @@ export default function Flashcards() {
                         studyMode === 'all' ? 'text-violet-700' : 'text-gray-700'
                       }`}
                     >
-                      Mixed
+                      {t('flashcards.modeMixed')}
                     </div>
-                    <div className="text-xs text-gray-500 mt-0.5 dark:text-gray-400">Review + New</div>
+                    <div className="text-xs text-gray-500 mt-0.5 dark:text-gray-400">{t('flashcards.modeMixedDesc')}</div>
                   </button>
                 </div>
               </div>
@@ -300,7 +302,7 @@ export default function Flashcards() {
               {studyMode !== 'review' && (
                 <div className="mb-6">
                   <p className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3 dark:text-gray-400">
-                    HSK Level
+                    {t('flashcards.hskLevel')}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {[1, 2, 3, 4, 5, 6].map(level => (
@@ -322,12 +324,12 @@ export default function Flashcards() {
 
               {/* Info box */}
               <div className="bg-primary-50 rounded-2xl p-4 border border-primary-100 mb-6">
-                <h3 className="text-sm font-bold text-primary-800 mb-2">How it works</h3>
-                <ul className="text-sm text-primary-700 space-y-1">
-                  <li>• Click to flip and see the answer</li>
-                  <li>• Swipe left (Again) or right (Easy)</li>
-                  <li>• Rate difficulty to improve spaced repetition</li>
-                  <li>• Track your progress in real-time</li>
+                <h3 className="text-sm font-bold text-primary-800 dark:text-primary-300 mb-2">{t('flashcards.howItWorks')}</h3>
+                <ul className="text-sm text-primary-700 dark:text-primary-300 space-y-1">
+                  <li>• {t('flashcards.how1')}</li>
+                  <li>• {t('flashcards.how2')}</li>
+                  <li>• {t('flashcards.how3')}</li>
+                  <li>• {t('flashcards.how4')}</li>
                 </ul>
               </div>
 
@@ -337,7 +339,7 @@ export default function Flashcards() {
                 className="w-full bg-primary-600 text-white rounded-2xl py-4 font-bold text-lg hover:bg-primary-700 transition-all flex items-center justify-center gap-2"
               >
                 <Brain className="w-5 h-5" />
-                Start Study Session
+                {t('flashcards.startSession')}
               </button>
             </div>
           </div>
@@ -379,15 +381,15 @@ export default function Flashcards() {
           <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
           <div className="p-8 text-center">
             <Brain className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-xl font-extrabold text-gray-900 mb-2 dark:text-gray-50">No Words Available</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mb-2 dark:text-gray-50">{t('flashcards.noWordsTitle')}</h2>
             <p className="text-gray-500 mb-6 text-sm sm:text-base dark:text-gray-400">
-              Try selecting a different study mode or HSK level
+              {t('flashcards.noWordsDesc')}
             </p>
             <button
               onClick={resetSession}
               className="bg-primary-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-primary-700 transition-all"
             >
-              Back to Settings
+              {t('flashcards.backToSettings')}
             </button>
           </div>
         </div>
@@ -419,31 +421,31 @@ export default function Flashcards() {
             <div className="p-8 sm:p-12 text-center">
               <Trophy className="w-16 h-16 sm:w-20 sm:h-20 text-yellow-500 mx-auto mb-4" />
               <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 dark:text-gray-50">
-                Session Complete!
+                {t('flashcards.sessionCompleteTitle')}
               </h2>
               <p className="text-gray-500 text-sm sm:text-base mb-8 dark:text-gray-400">
-                Great work! Keep up the momentum
+                {t('flashcards.sessionCompleteDesc')}
               </p>
 
               {/* Stat tiles */}
               <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-8 max-w-sm mx-auto">
                 <div className="bg-primary-600 rounded-2xl p-4 text-white text-center">
                   <div className="text-2xl sm:text-3xl font-bold">{sessionStats.total}</div>
-                  <div className="text-xs sm:text-sm opacity-90 mt-0.5">Total Cards</div>
+                  <div className="text-xs sm:text-sm opacity-90 mt-0.5">{t('flashcards.totalCards')}</div>
                 </div>
                 <div className="bg-success-500 rounded-2xl p-4 text-white text-center">
                   <div className="text-2xl sm:text-3xl font-bold">{sessionStats.correct}</div>
-                  <div className="text-xs sm:text-sm opacity-90 mt-0.5">Correct</div>
+                  <div className="text-xs sm:text-sm opacity-90 mt-0.5">{t('flashcards.correct')}</div>
                 </div>
                 <div className="bg-violet-600 rounded-2xl p-4 text-white text-center">
                   <div className="text-2xl sm:text-3xl font-bold">{accuracy}%</div>
-                  <div className="text-xs sm:text-sm opacity-90 mt-0.5">Accuracy</div>
+                  <div className="text-xs sm:text-sm opacity-90 mt-0.5">{t('flashcards.accuracy')}</div>
                 </div>
                 <div className="bg-orange-500 rounded-2xl p-4 text-white text-center">
                   <div className="text-2xl sm:text-3xl font-bold">
                     {Math.floor(sessionStats.timeElapsed / 60)}m
                   </div>
-                  <div className="text-xs sm:text-sm opacity-90 mt-0.5">Time</div>
+                  <div className="text-xs sm:text-sm opacity-90 mt-0.5">{t('flashcards.time')}</div>
                 </div>
               </div>
 
@@ -453,13 +455,13 @@ export default function Flashcards() {
                   onClick={resetSession}
                   className="w-full sm:w-auto flex-1 border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:border-primary-300 transition-all dark:border-gray-700 dark:text-gray-300"
                 >
-                  New Session
+                  {t('flashcards.newSession')}
                 </button>
                 <button
                   onClick={() => navigate('/dashboard')}
                   className="w-full sm:w-auto flex-1 bg-primary-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-primary-700 transition-all"
                 >
-                  View Progress
+                  {t('flashcards.viewProgress')}
                 </button>
               </div>
             </div>
@@ -486,10 +488,10 @@ export default function Flashcards() {
             </button>
             <div>
               <h1 className="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-gray-50">
-                Flashcard Study
+                {t('flashcards.title')}
               </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {currentIndex + 1} of {words.length}
+                {t('flashcards.counter', { current: currentIndex + 1, total: words.length })}
               </p>
             </div>
           </div>
@@ -521,7 +523,7 @@ export default function Flashcards() {
                 {sessionStats.correct}
               </span>
             </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">Correct</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">{t('flashcards.correct')}</div>
           </div>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center dark:bg-surface-card dark:border-gray-800">
             <div className="flex items-center justify-center gap-1 sm:gap-2 mb-1">
@@ -530,7 +532,7 @@ export default function Flashcards() {
                 {sessionStats.incorrect}
               </span>
             </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">Incorrect</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">{t('flashcards.incorrect')}</div>
           </div>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center dark:bg-surface-card dark:border-gray-800">
             <div className="flex items-center justify-center gap-1 sm:gap-2 mb-1">
@@ -539,7 +541,7 @@ export default function Flashcards() {
                 {sessionStats.averageTime}s
               </span>
             </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">Avg Time</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">{t('flashcards.avgTime')}</div>
           </div>
         </div>
       </div>
@@ -573,7 +575,7 @@ export default function Flashcards() {
                 className="border-2 border-error-200 text-gray-700 rounded-2xl px-6 sm:px-8 py-3 font-semibold hover:bg-error-50 transition-all flex items-center gap-2 dark:text-gray-300"
               >
                 <XCircle className="w-5 h-5 text-error-400" />
-                Again
+                {t('flashcards.again')}
               </button>
             </motion.div>
 
@@ -583,7 +585,7 @@ export default function Flashcards() {
                 className="bg-success-500 text-white rounded-2xl px-6 sm:px-8 py-3 font-semibold hover:bg-success-600 transition-all flex items-center gap-2"
               >
                 <CheckCircle className="w-5 h-5" />
-                Easy
+                {t('flashcards.easy')}
               </button>
             </motion.div>
           </div>
@@ -597,26 +599,26 @@ export default function Flashcards() {
             className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mt-4 dark:bg-surface-card dark:border-gray-800"
           >
             <h3 className="text-sm font-semibold text-gray-500 mb-3 text-center dark:text-gray-400">
-              How well did you know this?
+              {t('flashcards.howWell')}
             </h3>
             <div className="grid grid-cols-3 gap-2">
               <button
                 onClick={() => recordReview(1)}
-                className="rounded-xl py-3 text-sm font-semibold transition-all bg-error-50 text-error-600 hover:bg-error-100 border border-error-100"
+                className="rounded-xl py-3 text-sm font-semibold transition-all bg-error-50 dark:bg-error-950/40 text-error-600 dark:text-error-400 hover:bg-error-100 border border-error-100 dark:border-error-900/50"
               >
-                Hard
+                {t('flashcards.hard')}
               </button>
               <button
                 onClick={() => recordReview(3)}
-                className="rounded-xl py-3 text-sm font-semibold transition-all bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-100"
+                className="rounded-xl py-3 text-sm font-semibold transition-all bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-100 border border-amber-100 dark:border-amber-900/50"
               >
-                Good
+                {t('flashcards.good')}
               </button>
               <button
                 onClick={() => recordReview(5)}
                 className="rounded-xl py-3 text-sm font-semibold transition-all bg-primary-600 text-white hover:bg-primary-700"
               >
-                Perfect
+                {t('flashcards.perfect')}
               </button>
             </div>
           </motion.div>
@@ -625,7 +627,7 @@ export default function Flashcards() {
         {/* Instruction text – before flip */}
         {!isFlipped && (
           <p className="text-center text-sm text-gray-400 mt-6 dark:text-gray-500">
-            Click card to flip &bull; Swipe left (Again) or right (Easy)
+            {t('flashcards.instruction')}
           </p>
         )}
       </div>

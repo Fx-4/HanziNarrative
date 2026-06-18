@@ -429,5 +429,51 @@
       "fb1": "Sulit, tapi kamu berhasil",
       "fb0": "Terus coba! Latihan membuat sempurna"
     }
+  },
+
+  "flashcards": {
+    "title":          "Belajar Flashcard",
+    "subtitle":       "Kuasai kosakata dengan spaced repetition",
+    "studyMode":      "Mode Belajar",
+    "modeReview":     "Tinjau",
+    "modeReviewDesc": "Kata jatuh tempo",
+    "modeLearn":      "Belajar Baru",
+    "modeLearnDesc":  "Kata baru",
+    "modeMixed":      "Campur",
+    "modeMixedDesc":  "Tinjau + Baru",
+    "hskLevel":       "Level HSK",
+    "howItWorks":     "Cara kerjanya",
+    "how1":           "Klik untuk membalik dan lihat jawaban",
+    "how2":           "Geser kiri (Ulang) atau kanan (Mudah)",
+    "how3":           "Nilai kesulitan untuk meningkatkan spaced repetition",
+    "how4":           "Pantau progresmu secara real-time",
+    "startSession":   "Mulai Sesi Belajar",
+    "noWordsTitle":   "Tidak Ada Kata",
+    "noWordsDesc":    "Coba pilih mode belajar atau level HSK yang berbeda",
+    "backToSettings": "Kembali ke Pengaturan",
+    "sessionCompleteTitle": "Sesi Selesai!",
+    "sessionCompleteDesc":  "Kerja bagus! Pertahankan momentumnya",
+    "totalCards":     "Total Kartu",
+    "correct":        "Benar",
+    "incorrect":      "Salah",
+    "accuracy":       "Akurasi",
+    "time":           "Waktu",
+    "avgTime":        "Rata2 Waktu",
+    "newSession":     "Sesi Baru",
+    "viewProgress":   "Lihat Progress",
+    "counter":        "{{current}} dari {{total}}",
+    "again":          "Ulang",
+    "easy":           "Mudah",
+    "howWell":        "Seberapa baik kamu mengingatnya?",
+    "hard":           "Sulit",
+    "good":           "Baik",
+    "perfect":        "Sempurna",
+    "instruction":    "Klik kartu untuk membalik • Geser kiri (Ulang) atau kanan (Mudah)",
+    "toasts": {
+      "noWords":    "Tidak ada kata tersedia. Coba mode atau level HSK lain.",
+      "loadFailed": "Gagal memuat kata",
+      "flipFirst":  "Balik kartunya dulu untuk lihat jawaban!",
+      "shuffled":   "Kartu diacak!"
+    }
   }
 }
