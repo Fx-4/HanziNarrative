@@ -214,6 +214,9 @@ export default function FeedbackButton() {
   }
 
   const uploadToSupabase = async (file: File | string): Promise<string> => {
+    if (!supabase) {
+      throw new Error('Supabase storage is not configured')
+    }
     const fileExt = typeof file === 'string' ? 'png' : file.name.split('.').pop()
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${fileExt}`
     const filePath = `feedback/${fileName}`
