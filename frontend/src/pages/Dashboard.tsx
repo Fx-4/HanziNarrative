@@ -359,7 +359,7 @@ export default function Dashboard() {
                     labelLine={false}
                     minAngle={15}
                     stroke="none"
-                    label={({ name, value, percent }) => value > 0 && percent > 0.05 ? `${name}` : ''}
+                    label={({ name, value, percent }) => (value > 0 && percent !== undefined && percent > 0.05) ? `${name}` : ''}
                   >
                     {masteryDistribution.map((_entry, i) => (
                       <Cell key={`cell-${i}`} fill={CHART_COLORS[i % CHART_COLORS.length]} />
