@@ -1370,6 +1370,7 @@ export default function Admin() {
   const [refreshKey, setRefreshKey] = useState(0)
   const [unreadCount, setUnreadCount] = useState(0)
   const { user, logout } = useAuthStore()
+  const { isDarkMode, toggleDarkMode } = useThemeStore()
   const navigate = useNavigate()
 
   const handleLogout = () => {
