@@ -147,10 +147,10 @@ export default function WritingSession({
       {/* Character Grid — compact top panel on mobile/tablet, sidebar on desktop */}
       {mode === 'practice' && (
         <div className="mb-4 lg:hidden">
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200">
-              <h3 className="text-sm font-semibold text-gray-800">Select Character</h3>
-              <span className="text-xs text-gray-400">{currentCharacterIndex + 1}/{characters.length}</span>
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden dark:bg-surface-card dark:border-gray-700">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Select Character</h3>
+              <span className="text-xs text-gray-400 dark:text-gray-500">{currentCharacterIndex + 1}/{characters.length}</span>
             </div>
             <div className="p-2.5 max-h-60 overflow-y-auto">
               <CharacterGrid

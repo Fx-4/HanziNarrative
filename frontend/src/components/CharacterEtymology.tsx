@@ -139,10 +139,10 @@ export default function CharacterEtymology({ character, className = '', word, ev
 
   if (!etymology) {
     return (
-      <div className={`bg-gray-50 border border-gray-200 rounded-lg p-4 ${className}`}>
+      <div className={`bg-gray-50 border border-gray-200 rounded-lg p-4  dark:bg-gray-800/50 dark:border-gray-700${className}`}>
         <div className="flex items-center gap-2 mb-2">
-          <History className="w-4 h-4 text-gray-400" />
-          <p className="text-xs text-gray-600">No evolution history available for this character.</p>
+          <History className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+          <p className="text-xs text-gray-600 dark:text-gray-400">No evolution history available for this character.</p>
         </div>
       </div>
     )
@@ -187,7 +187,7 @@ export default function CharacterEtymology({ character, className = '', word, ev
           transition={{ duration: 0.3 }}
           className="text-center"
         >
-          <div className="bg-white rounded-lg p-6 mb-3 shadow-sm">
+          <div className="bg-white rounded-lg p-6 mb-3 shadow-sm dark:bg-surface-card">
             <motion.div
               className="text-6xl mb-2"
               initial={{ scale: 0.8 }}
@@ -200,7 +200,7 @@ export default function CharacterEtymology({ character, className = '', word, ev
               {stage.era}
               {stage.year && <span className="text-amber-500 ml-2">({stage.year})</span>}
             </div>
-            <div className="text-sm text-gray-700 italic">
+            <div className="text-sm text-gray-700 italic dark:text-gray-300">
               {stage.description}
             </div>
           </div>

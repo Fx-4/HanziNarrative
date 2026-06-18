@@ -102,8 +102,8 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
 
   if (!currentWord) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
-        <p className="text-gray-600">No words available for this HSK level.</p>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center dark:bg-surface-card dark:border-gray-800">
+        <p className="text-gray-600 dark:text-gray-400">No words available for this HSK level.</p>
         <button
           onClick={onBack}
           className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors mt-4"
@@ -126,18 +126,18 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 dark:bg-surface-card dark:border-gray-800">
         <div className="text-center mb-8">
-          <p className="text-sm text-gray-600 mb-4">Type the pinyin spelling for:</p>
+          <p className="text-sm text-gray-600 mb-4 dark:text-gray-400">Type the pinyin spelling for:</p>
           <motion.div
             key={currentWord.id}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="text-8xl font-chinese mb-4 text-gray-900"
+            className="text-8xl font-chinese mb-4 text-gray-900 dark:text-gray-50"
           >
             {currentWord.simplified}
           </motion.div>
-          <p className="text-xl text-gray-700">{currentWord.english}</p>
+          <p className="text-xl text-gray-700 dark:text-gray-300">{currentWord.english}</p>
         </div>
 
         {!showFeedback ? (
@@ -152,7 +152,7 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 placeholder="Type pinyin (e.g., ni hao)"
-                className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-primary-500 focus:outline-none transition-colors"
+                className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-primary-500 focus:outline-none transition-colors dark:border-gray-600 dark:bg-surface-card dark:text-gray-50"
                 disabled={showFeedback}
                 autoComplete="off"
               />
@@ -163,7 +163,7 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
             >
               Check Answer
             </button>
-            <p className="text-xs text-gray-600 mt-2 text-center">
+            <p className="text-xs text-gray-600 mt-2 text-center dark:text-gray-400">
               Press Enter to submit
             </p>
           </div>
@@ -218,7 +218,7 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
                 'Finish Session'
               )}
             </button>
-            <p className="text-xs text-gray-600 mt-2 text-center">
+            <p className="text-xs text-gray-600 mt-2 text-center dark:text-gray-400">
               Press Enter to continue
             </p>
           </motion.div>
@@ -229,13 +229,13 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium">Session Progress</span>
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-600 dark:text-gray-400">
             {sessionResults.length > 0
               ? `${Math.round((sessionResults.filter(r => r).length / sessionResults.length) * 100)}% accuracy`
               : 'No attempts yet'}
           </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
           <div
             className="bg-primary-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${((currentIndex + (showFeedback ? 1 : 0)) / words.length) * 100}%` }}

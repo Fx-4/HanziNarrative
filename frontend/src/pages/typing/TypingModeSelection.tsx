@@ -41,7 +41,7 @@ export default function TypingModeSelection({
 
     if (statsLoading) {
       return (
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6">
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6 dark:bg-surface-card dark:border-gray-800">
           <div className="flex items-center justify-center">
             <LoadingSpinner size="sm" />
           </div>
@@ -57,12 +57,12 @@ export default function TypingModeSelection({
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden dark:bg-surface-card dark:border-gray-800">
           <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
           <div className="p-4 sm:p-6">
             <div className="flex items-center gap-2 mb-4">
               <BarChart3 className="w-5 h-5 text-primary-600" />
-              <h3 className="text-lg font-semibold text-gray-800">Your Progress (HSK {hskLevel})</h3>
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Your Progress (HSK {hskLevel})</h3>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
@@ -123,13 +123,13 @@ export default function TypingModeSelection({
           <Keyboard className="w-8 h-8 sm:w-10 sm:h-10 text-primary-600" />
           <BlurText
             as="h1"
-            className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-50"
             wordDelay={0.08}
           >
             Typing Practice
           </BlurText>
         </div>
-        <p className="text-base sm:text-xl text-gray-600">
+        <p className="text-base sm:text-xl text-gray-600 dark:text-gray-400">
           Master Chinese typing with pinyin input
         </p>
       </motion.div>
@@ -146,10 +146,10 @@ export default function TypingModeSelection({
                 <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-base sm:text-lg font-semibold mb-2 text-gray-800">
+                <h3 className="text-base sm:text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">
                   Login to Track Your Progress
                 </h3>
-                <p className="text-sm sm:text-base text-gray-700 mb-4">
+                <p className="text-sm sm:text-base text-gray-700 mb-4 dark:text-gray-300">
                   Track your typing speed, accuracy, and progress!
                 </p>
                 <div className="flex flex-wrap gap-3">
@@ -178,8 +178,8 @@ export default function TypingModeSelection({
         animate={{ opacity: 1 }}
         className="mb-8"
       >
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6">
-          <h3 className="text-base sm:text-lg font-semibold mb-4 text-gray-800">Select HSK Level</h3>
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6 dark:bg-surface-card dark:border-gray-800">
+          <h3 className="text-base sm:text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Select HSK Level</h3>
           <div className="flex flex-wrap gap-2">
             {[1, 2, 3, 4, 5, 6].map((level) => (
               <button
@@ -210,16 +210,16 @@ export default function TypingModeSelection({
         >
           <TiltCard maxTilt={8} scale={1.03}>
             <SpotlightCard spotlightColor="rgba(59,130,246,0.15)">
-              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden h-full text-center group p-6 sm:p-8 hover:shadow-2xl transition-shadow">
+              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden h-full text-center group p-6 sm:p-8 hover:shadow-2xl transition-shadow dark:bg-surface-card dark:border-gray-800">
                 <div className="mb-5 sm:mb-6">
                   <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Keyboard className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                   </div>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold mb-3 text-gray-900">
+                <h3 className="text-xl sm:text-2xl font-bold mb-3 text-gray-900 dark:text-gray-50">
                   Pinyin Typing
                 </h3>
-                <p className="text-sm sm:text-base text-gray-600 mb-4">
+                <p className="text-sm sm:text-base text-gray-600 mb-4 dark:text-gray-400">
                   See Chinese character, type correct pinyin spelling. Perfect for learning romanization.
                 </p>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-700">
@@ -239,16 +239,16 @@ export default function TypingModeSelection({
         >
           <TiltCard maxTilt={8} scale={1.03}>
             <SpotlightCard spotlightColor="rgba(139,92,246,0.15)">
-              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden h-full text-center group p-6 sm:p-8 hover:shadow-2xl transition-shadow">
+              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden h-full text-center group p-6 sm:p-8 hover:shadow-2xl transition-shadow dark:bg-surface-card dark:border-gray-800">
                 <div className="mb-5 sm:mb-6">
                   <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Target className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                   </div>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold mb-3 text-gray-900">
+                <h3 className="text-xl sm:text-2xl font-bold mb-3 text-gray-900 dark:text-gray-50">
                   IME Practice
                 </h3>
-                <p className="text-sm sm:text-base text-gray-600 mb-4">
+                <p className="text-sm sm:text-base text-gray-600 mb-4 dark:text-gray-400">
                   Type pinyin and select correct character from candidates. Simulates real Chinese input.
                 </p>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-violet-100 text-violet-700">
@@ -268,16 +268,16 @@ export default function TypingModeSelection({
         >
           <TiltCard maxTilt={8} scale={1.03}>
             <SpotlightCard spotlightColor="rgba(245,158,11,0.15)">
-              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden h-full text-center group p-6 sm:p-8 hover:shadow-2xl transition-shadow">
+              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden h-full text-center group p-6 sm:p-8 hover:shadow-2xl transition-shadow dark:bg-surface-card dark:border-gray-800">
                 <div className="mb-5 sm:mb-6">
                   <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Zap className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                   </div>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold mb-3 text-gray-900">
+                <h3 className="text-xl sm:text-2xl font-bold mb-3 text-gray-900 dark:text-gray-50">
                   Speed Typing
                 </h3>
-                <p className="text-sm sm:text-base text-gray-600 mb-4">
+                <p className="text-sm sm:text-base text-gray-600 mb-4 dark:text-gray-400">
                   Test your typing speed! Type as fast as you can while maintaining accuracy.
                 </p>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-700">
@@ -297,12 +297,12 @@ export default function TypingModeSelection({
       >
         <div className="bg-gradient-to-r from-primary-50 to-blue-50 rounded-3xl shadow-xl border border-primary-100 overflow-hidden p-4 sm:p-6">
           <div className="flex items-start gap-3 sm:gap-4">
-            <div className="p-2 sm:p-3 bg-white rounded-lg shadow-sm shrink-0">
+            <div className="p-2 sm:p-3 bg-white rounded-lg shadow-sm shrink-0 dark:bg-surface-card">
               <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600" />
             </div>
             <div>
-              <h4 className="font-semibold mb-2 text-gray-800">Typing Tips</h4>
-              <ul className="text-xs sm:text-sm text-gray-700 space-y-1">
+              <h4 className="font-semibold mb-2 text-gray-800 dark:text-gray-200">Typing Tips</h4>
+              <ul className="text-xs sm:text-sm text-gray-700 space-y-1 dark:text-gray-300">
                 <li>- Pinyin Mode: Type plain pinyin (e.g., ni hao, zhong guo)</li>
                 <li>- IME Mode: Select characters from candidates like real Chinese typing</li>
                 <li>- Focus on accuracy first, speed will come naturally</li>

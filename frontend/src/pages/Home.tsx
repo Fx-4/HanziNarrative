@@ -103,7 +103,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-3xl sm:text-5xl font-extrabold text-gray-900 mb-4 leading-tight"
+          className="text-3xl sm:text-5xl font-extrabold text-gray-900 mb-4 leading-tight dark:text-gray-50"
         >
           Learn HSK Through
           <span className="block bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-violet-600">
@@ -115,7 +115,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="text-base sm:text-lg text-gray-500 mb-8 max-w-2xl mx-auto"
+          className="text-base sm:text-lg text-gray-500 mb-8 max-w-2xl mx-auto dark:text-gray-400"
         >
           Click any Chinese word to see its Pinyin, English meaning, and an illustrative image.
           Transform rote memorization into an intuitive, story-driven experience.
@@ -137,7 +137,7 @@ export default function Home() {
           {!isAuthenticated && (
             <Link
               to="/register"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50 text-gray-700 font-semibold rounded-xl transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50 text-gray-700 font-semibold rounded-xl transition-colors dark:border-gray-700 dark:text-gray-300"
             >
               Sign Up Free
               <ArrowRight className="w-4 h-4" />
@@ -178,13 +178,13 @@ export default function Home() {
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8"
+          className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 dark:bg-surface-card dark:border-gray-800"
         >
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 text-center mb-2 flex items-center justify-center gap-2">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 text-center mb-2 flex items-center justify-center gap-2 dark:text-gray-50">
             <Sparkles className="w-6 h-6 text-primary-500" />
             How It Works
           </h2>
-          <p className="text-center text-gray-400 text-sm mb-8">Three simple steps to Chinese fluency</p>
+          <p className="text-center text-gray-400 text-sm mb-8 dark:text-gray-500">Three simple steps to Chinese fluency</p>
 
           <div className="space-y-6">
             {STEPS.map(({ n, title, desc }, i) => (
@@ -200,8 +200,8 @@ export default function Home() {
                   {n}
                 </div>
                 <div className="pt-1">
-                  <h3 className="font-extrabold text-gray-900 text-base mb-0.5">{title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
+                  <h3 className="font-extrabold text-gray-900 text-base mb-0.5 dark:text-gray-50">{title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed dark:text-gray-400">{desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -217,11 +217,11 @@ export default function Home() {
           viewport={{ once: true }}
           className="text-center mb-6"
         >
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 flex items-center justify-center gap-2">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 flex items-center justify-center gap-2 dark:text-gray-50">
             <GraduationCap className="w-6 h-6 text-primary-500" />
             Learning Tools
           </h2>
-          <p className="text-sm text-gray-400">Everything you need to master Chinese</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">Everything you need to master Chinese</p>
         </motion.div>
 
         <div className="grid sm:grid-cols-3 gap-4">
@@ -237,13 +237,13 @@ export default function Home() {
               >
                 <Link
                   to={href}
-                  className={`flex flex-col h-full bg-white rounded-2xl border ${a.border} hover:shadow-lg transition-shadow p-5 group`}
+                  className={`flex flex-col h-full bg-white rounded-2xl border  dark:bg-surface-card${a.border} hover:shadow-lg transition-shadow p-5 group`}
                 >
                   <div className={`w-10 h-10 rounded-xl ${a.light} flex items-center justify-center mb-3`}>
                     <Icon className={`w-5 h-5 ${a.text}`} />
                   </div>
-                  <h3 className="font-extrabold text-gray-900 text-sm mb-1">{label}</h3>
-                  <p className="text-xs text-gray-500 leading-relaxed flex-1 mb-3">{desc}</p>
+                  <h3 className="font-extrabold text-gray-900 text-sm mb-1 dark:text-gray-50">{label}</h3>
+                  <p className="text-xs text-gray-500 leading-relaxed flex-1 mb-3 dark:text-gray-400">{desc}</p>
                   <span className={`text-xs font-semibold ${a.text} flex items-center gap-1 group-hover:gap-2 transition-all`}>
                     {cta} <ArrowRight className="w-3 h-3" />
                   </span>
@@ -267,7 +267,7 @@ export default function Home() {
           <p className="text-primary-100 text-sm mb-6">Create a free account and begin your Chinese journey today.</p>
           <Link
             to="/register"
-            className="inline-flex items-center gap-2 px-8 py-3 bg-white text-primary-700 font-bold rounded-xl hover:bg-primary-50 transition-colors shadow-lg"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-white text-primary-700 font-bold rounded-xl hover:bg-primary-50 transition-colors shadow-lg dark:bg-surface-card"
           >
             Get Started Free <ArrowRight className="w-4 h-4" />
           </Link>

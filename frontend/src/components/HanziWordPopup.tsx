@@ -152,13 +152,13 @@ export default function HanziWordPopup({
         exit={{ opacity: 0, scale: 0.88, y: 8 }}
         transition={{ type: 'spring', stiffness: 380, damping: 26 }}
       >
-        <div className="bg-white rounded-2xl shadow-[0_20px_60px_-10px_rgb(0_0_0/0.25)] border border-gray-200/80 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-[0_20px_60px_-10px_rgb(0_0_0/0.25)] border border-gray-200/80 overflow-hidden dark:bg-surface-card">
 
           {/* ── Row 1: Character + close ── */}
           <div className="flex items-start justify-between px-4 pt-4 pb-0">
             <div className="flex items-end gap-2.5">
               <motion.span
-                className="text-[52px] font-bold text-gray-900 leading-none"
+                className="text-[52px] font-bold text-gray-900 leading-none dark:text-gray-50"
                 style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
                 whileHover={{ scale: 1.08 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 15 }}
@@ -167,11 +167,11 @@ export default function HanziWordPopup({
               </motion.span>
               {word.traditional && word.traditional !== word.simplified && (
                 <div className="mb-0.5">
-                  <p className="text-[10px] text-gray-400 uppercase tracking-widest font-medium mb-0.5">
+                  <p className="text-[10px] text-gray-400 uppercase tracking-widest font-medium mb-0.5 dark:text-gray-500">
                     trad.
                   </p>
                   <span
-                    className="text-2xl text-gray-400 leading-none"
+                    className="text-2xl text-gray-400 leading-none dark:text-gray-500"
                     style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
                   >
                     {word.traditional}
@@ -181,7 +181,7 @@ export default function HanziWordPopup({
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 -mr-1 -mt-0.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+              className="p-1.5 -mr-1 -mt-0.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors dark:text-gray-500"
               aria-label="Close"
             >
               <X className="w-4 h-4" />
@@ -202,13 +202,13 @@ export default function HanziWordPopup({
                 tooltipText="Hear pronunciation"
               />
             </div>
-            <p className="text-sm text-gray-700 leading-snug">
+            <p className="text-sm text-gray-700 leading-snug dark:text-gray-300">
               {word.english}
             </p>
           </div>
 
           {/* ── Row 3: Visual image (Wikipedia / fallback) ── */}
-          <div className="mx-3 mb-3 h-36 rounded-xl overflow-hidden relative bg-gray-100">
+          <div className="mx-3 mb-3 h-36 rounded-xl overflow-hidden relative bg-gray-100 dark:bg-gray-800">
             {wikiLoading ? (
               /* Shimmer skeleton */
               <motion.div
@@ -216,7 +216,7 @@ export default function HanziWordPopup({
                 animate={{ backgroundPosition: ['0% 0%', '100% 0%', '0% 0%'] }}
                 transition={{ duration: 1.4, repeat: Infinity }}
               >
-                <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
+                <Loader2 className="w-5 h-5 text-gray-400 animate-spin dark:text-gray-500" />
               </motion.div>
             ) : imageUrl ? (
               <>
@@ -273,7 +273,7 @@ export default function HanziWordPopup({
             )}
             {/* Strokes */}
             {word.strokes && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
                 <Hash className="w-2.5 h-2.5" />
                 {word.strokes} strokes
               </span>

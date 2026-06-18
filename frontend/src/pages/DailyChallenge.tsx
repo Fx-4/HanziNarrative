@@ -144,7 +144,7 @@ export default function DailyChallenge() {
   if (error || !challenge) {
     return (
       <div className="max-w-xl mx-auto px-4 py-20 text-center space-y-4">
-        <p className="text-gray-500">Gagal memuat daily challenge.</p>
+        <p className="text-gray-500 dark:text-gray-400">Gagal memuat daily challenge.</p>
         <button
           onClick={load}
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-primary-600 border border-primary-200 rounded-xl hover:bg-primary-50 transition-colors"

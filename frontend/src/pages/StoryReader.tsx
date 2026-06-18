@@ -383,7 +383,7 @@ export default function StoryReader() {
               </div>
               <div className="space-y-3">
                 {paragraphs.map((para, idx) => (
-                  <p key={idx} className="text-gray-700 leading-relaxed">
+                  <p key={idx} className="text-gray-700 leading-relaxed dark:text-gray-300">
                     {para}
                   </p>
                 ))}
@@ -409,22 +409,22 @@ export default function StoryReader() {
             initial={{ opacity: 0, x: 300 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 300 }}
-            className="fixed right-0 top-0 h-full w-72 sm:w-80 bg-white shadow-2xl overflow-y-auto z-50 p-4 sm:p-6"
+            className="fixed right-0 top-0 h-full w-72 sm:w-80 bg-white shadow-2xl overflow-y-auto z-50 p-4 sm:p-6 dark:bg-surface-card"
           >
-            <div className="flex justify-between items-center mb-6 sticky top-0 bg-white pb-4 border-b">
+            <div className="flex justify-between items-center mb-6 sticky top-0 bg-white pb-4 border-b dark:bg-surface-card">
               <div className="flex items-center gap-2">
                 <BookMarked className="w-5 h-5 text-primary-600" />
                 <h3 className="text-lg font-bold">Vocabulary List</h3>
               </div>
               <button
                 onClick={() => setShowVocabulary(false)}
-                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl p-1.5 cursor-pointer transition-colors"
+                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl p-1.5 cursor-pointer transition-colors dark:text-gray-400"
               >
                 ✕
               </button>
             </div>
 
-            <div className="text-sm text-gray-600 mb-4">
+            <div className="text-sm text-gray-600 mb-4 dark:text-gray-400">
               {uniqueChars.length} unique characters in this story
             </div>
 
@@ -447,7 +447,7 @@ export default function StoryReader() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-baseline gap-3">
-                        <span className="text-4xl font-bold text-gray-900">
+                        <span className="text-4xl font-bold text-gray-900 dark:text-gray-50">
                           {char}
                         </span>
                         <span className="text-lg text-primary-600 font-semibold">
@@ -460,7 +460,7 @@ export default function StoryReader() {
                     </div>
 
                     {!isExpanded ? (
-                      <div className="text-xs text-gray-600 mt-2">
+                      <div className="text-xs text-gray-600 mt-2 dark:text-gray-400">
                         Click to see full definition
                       </div>
                     ) : (
@@ -471,16 +471,16 @@ export default function StoryReader() {
                       >
                         <div className="space-y-3">
                           <div>
-                            <p className="text-xs font-semibold text-gray-600 mb-1">Character:</p>
+                            <p className="text-xs font-semibold text-gray-600 mb-1 dark:text-gray-400">Character:</p>
                             <p className="text-2xl font-chinese font-bold">{char}</p>
                           </div>
                           <div>
-                            <p className="text-xs font-semibold text-gray-600 mb-1">Pinyin:</p>
+                            <p className="text-xs font-semibold text-gray-600 mb-1 dark:text-gray-400">Pinyin:</p>
                             <p className="text-base text-primary-700">{charPinyin}</p>
                           </div>
                           <div>
-                            <p className="text-xs font-semibold text-gray-600 mb-1">Meaning:</p>
-                            <p className="text-sm text-gray-700">
+                            <p className="text-xs font-semibold text-gray-600 mb-1 dark:text-gray-400">Meaning:</p>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">
                               {/* This would come from API in real app */}
                               Click on vocabulary page to see detailed meaning and usage examples.
                             </p>
@@ -492,7 +492,7 @@ export default function StoryReader() {
                                 navigate(`/vocabulary?search=${char}`)
                                 toast.success('Opening vocabulary page...')
                               }}
-                              className="w-full bg-gray-100 hover:bg-primary-50 text-gray-700 hover:text-primary-700 rounded-2xl px-4 py-2 font-semibold cursor-pointer transition-colors text-sm"
+                              className="w-full bg-gray-100 hover:bg-primary-50 text-gray-700 hover:text-primary-700 rounded-2xl px-4 py-2 font-semibold cursor-pointer transition-colors text-sm dark:bg-gray-800 dark:text-gray-300"
                             >
                               View in Vocabulary
                             </button>
@@ -529,8 +529,8 @@ export default function StoryReader() {
 
           <div className="space-y-6">
             {questions.map((question, qIdx) => (
-              <div key={qIdx} className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm">
-                <p className="font-semibold text-gray-900 mb-4">
+              <div key={qIdx} className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm dark:bg-surface-card">
+                <p className="font-semibold text-gray-900 mb-4 dark:text-gray-50">
                   {qIdx + 1}. {question.question}
                 </p>
 
@@ -617,7 +617,7 @@ export default function StoryReader() {
                   setQuizAnswers([])
                   setShowResults(false)
                 }}
-                className="bg-gray-100 hover:bg-primary-50 text-gray-700 hover:text-primary-700 rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors"
+                className="bg-gray-100 hover:bg-primary-50 text-gray-700 hover:text-primary-700 rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors dark:bg-gray-800 dark:text-gray-300"
               >
                 Retry Quiz
               </button>
@@ -658,7 +658,7 @@ export default function StoryReader() {
   if (!story) {
     return (
       <div className="text-center py-12 px-4">
-        <p className="text-gray-600 text-lg">Story not found</p>
+        <p className="text-gray-600 text-lg dark:text-gray-400">Story not found</p>
         <button
           onClick={() => navigate('/stories')}
           className="mt-4 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors"
@@ -681,7 +681,7 @@ export default function StoryReader() {
         <div className="flex items-center justify-between mb-4 gap-2">
           <button
             onClick={() => navigate('/stories')}
-            className="flex items-center gap-1.5 text-gray-600 hover:text-primary-600 font-medium px-3 py-2 rounded-2xl hover:bg-primary-50 cursor-pointer transition-colors text-sm sm:text-base"
+            className="flex items-center gap-1.5 text-gray-600 hover:text-primary-600 font-medium px-3 py-2 rounded-2xl hover:bg-primary-50 cursor-pointer transition-colors text-sm sm:text-base dark:text-gray-400"
           >
             <ArrowLeft className="w-4 h-4 shrink-0" />
             <span className="hidden sm:inline">Back to Stories</span>
@@ -700,11 +700,11 @@ export default function StoryReader() {
 
         {/* Title block */}
         <div className="mb-4">
-          <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2 leading-tight">
+          <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2 leading-tight dark:text-gray-50">
             {story.title}
           </h1>
           {story.title_english && (
-            <p className="text-base sm:text-xl text-gray-600 mb-3 italic">
+            <p className="text-base sm:text-xl text-gray-600 mb-3 italic dark:text-gray-400">
               {story.title_english}
             </p>
           )}
@@ -725,14 +725,14 @@ export default function StoryReader() {
         </div>
 
         {/* Interactive Controls */}
-        <div className="bg-gradient-to-r from-primary-50 to-purple-50 rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6">
+        <div className="bg-gradient-to-r from-primary-50 to-purple-50 rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6 dark:border-gray-800">
           <div className="flex flex-wrap gap-2 sm:gap-3">
             <button
               onClick={() => setShowPinyin(!showPinyin)}
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
                 showPinyin
                   ? 'bg-primary-600 hover:bg-primary-700 text-white'
-                  : 'bg-white hover:bg-primary-50 text-gray-700 hover:text-primary-700 border border-gray-200'
+                  : 'bg-white dark:bg-surface-card hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 border border-gray-200 dark:border-gray-700'
               }`}
             >
               <Type className="w-4 h-4 shrink-0" />
@@ -744,7 +744,7 @@ export default function StoryReader() {
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
                 showTranslation
                   ? 'bg-primary-600 hover:bg-primary-700 text-white'
-                  : 'bg-white hover:bg-primary-50 text-gray-700 hover:text-primary-700 border border-gray-200'
+                  : 'bg-white dark:bg-surface-card hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 border border-gray-200 dark:border-gray-700'
               }`}
             >
               {showTranslation
@@ -758,7 +758,7 @@ export default function StoryReader() {
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
                 isReading
                   ? 'bg-primary-600 hover:bg-primary-700 text-white'
-                  : 'bg-white hover:bg-primary-50 text-gray-700 hover:text-primary-700 border border-gray-200'
+                  : 'bg-white dark:bg-surface-card hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 border border-gray-200 dark:border-gray-700'
               }`}
             >
               {isReading
@@ -772,7 +772,7 @@ export default function StoryReader() {
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
                 showVocabulary
                   ? 'bg-primary-600 hover:bg-primary-700 text-white'
-                  : 'bg-white hover:bg-primary-50 text-gray-700 hover:text-primary-700 border border-gray-200'
+                  : 'bg-white dark:bg-surface-card hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 border border-gray-200 dark:border-gray-700'
               }`}
             >
               <BookMarked className="w-4 h-4 shrink-0" />
@@ -790,7 +790,7 @@ export default function StoryReader() {
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm disabled:opacity-60 disabled:cursor-not-allowed ${
                 showQuiz
                   ? 'bg-primary-600 hover:bg-primary-700 text-white'
-                  : 'bg-white hover:bg-primary-50 text-gray-700 hover:text-primary-700 border border-gray-200'
+                  : 'bg-white dark:bg-surface-card hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 border border-gray-200 dark:border-gray-700'
               }`}
             >
               <HelpCircle className="w-4 h-4 shrink-0" />
@@ -803,7 +803,7 @@ export default function StoryReader() {
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm disabled:opacity-60 disabled:cursor-not-allowed ${
                 isBookmarked
                   ? 'bg-rose-500 hover:bg-rose-600 text-white'
-                  : 'bg-white hover:bg-rose-50 text-gray-700 hover:text-rose-600 border border-gray-200'
+                  : 'bg-white dark:bg-surface-card hover:bg-rose-50 dark:hover:bg-rose-950/30 text-gray-700 dark:text-gray-300 hover:text-rose-600 border border-gray-200 dark:border-gray-700'
               }`}
             >
               <Heart className={`w-4 h-4 shrink-0 ${isBookmarked ? 'fill-current' : ''}`} />
@@ -819,11 +819,11 @@ export default function StoryReader() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-6">
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-6 dark:bg-surface-card dark:border-gray-800">
           {/* Accent bar */}
           <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
           <div className="p-4 sm:p-6 md:p-8">
-            <div className="flex items-center gap-2 text-gray-500 mb-6">
+            <div className="flex items-center gap-2 text-gray-500 mb-6 dark:text-gray-400">
               <BookOpen className="w-5 h-5 shrink-0" />
               <p className="text-sm">
                 Click any character for details &bull; Use controls above for interactive features

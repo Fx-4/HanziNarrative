@@ -59,7 +59,7 @@ export default function GamificationWidget() {
         <div className="bg-gradient-to-r from-primary-600 to-violet-600 text-white rounded-2xl p-3 sm:p-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center dark:bg-surface-card">
                 <Star className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-300" />
               </div>
               <div>
@@ -83,12 +83,12 @@ export default function GamificationWidget() {
               <span>Next level</span>
               <span>{stats.xp_to_next_level} XP needed</span>
             </div>
-            <div className="w-full bg-white bg-opacity-20 rounded-full h-2">
+            <div className="w-full bg-white bg-opacity-20 rounded-full h-2 dark:bg-surface-card">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${xpProgress}%` }}
                 transition={{ duration: 1, ease: "easeOut" }}
-                className="bg-white h-2 rounded-full"
+                className="bg-white h-2 rounded-full dark:bg-surface-card"
               />
             </div>
           </div>
@@ -97,20 +97,20 @@ export default function GamificationWidget() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-3 sm:mb-4 items-start">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center flex flex-col items-center justify-center aspect-square">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center flex flex-col items-center justify-center aspect-square dark:bg-surface-card dark:border-gray-800">
           <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500 mb-1 sm:mb-2 flex-shrink-0" />
           <div className="text-sm sm:text-xl font-bold">{stats.total_words_reviewed}</div>
-          <div className="text-[10px] sm:text-sm text-gray-500 leading-tight">Words</div>
+          <div className="text-[10px] sm:text-sm text-gray-500 leading-tight dark:text-gray-400">Words</div>
         </div>
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center flex flex-col items-center justify-center aspect-square">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center flex flex-col items-center justify-center aspect-square dark:bg-surface-card dark:border-gray-800">
           <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-primary-500 mb-1 sm:mb-2 flex-shrink-0" />
           <div className="text-sm sm:text-xl font-bold">{stats.accuracy_rate.toFixed(0)}%</div>
-          <div className="text-[10px] sm:text-sm text-gray-500 leading-tight">Accuracy</div>
+          <div className="text-[10px] sm:text-sm text-gray-500 leading-tight dark:text-gray-400">Accuracy</div>
         </div>
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center cursor-pointer hover:bg-gray-50 flex flex-col items-center justify-center aspect-square" onClick={() => setShowAchievements(!showAchievements)}>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center cursor-pointer hover:bg-gray-50 flex flex-col items-center justify-center aspect-square dark:bg-surface-card dark:border-gray-800" onClick={() => setShowAchievements(!showAchievements)}>
           <Award className="w-5 h-5 sm:w-6 sm:h-6 text-violet-500 mb-1 sm:mb-2 flex-shrink-0" />
           <div className="text-sm sm:text-xl font-bold">{stats.achievements.length}</div>
-          <div className="text-[10px] sm:text-sm text-gray-500 leading-tight">Badges</div>
+          <div className="text-[10px] sm:text-sm text-gray-500 leading-tight dark:text-gray-400">Badges</div>
         </div>
       </div>
 
@@ -128,7 +128,7 @@ export default function GamificationWidget() {
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
-              className="bg-white rounded-lg p-6 max-w-md w-full max-h-96 overflow-y-auto"
+              className="bg-white rounded-lg p-6 max-w-md w-full max-h-96 overflow-y-auto dark:bg-surface-card"
               onClick={(e) => e.stopPropagation()}
             >
               <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
@@ -136,7 +136,7 @@ export default function GamificationWidget() {
                 Your Achievements
               </h3>
               {stats.achievements.length === 0 ? (
-                <p className="text-gray-600">No achievements yet. Keep learning!</p>
+                <p className="text-gray-600 dark:text-gray-400">No achievements yet. Keep learning!</p>
               ) : (
                 <div className="space-y-3">
                   {stats.achievements.map((achievement) => (
@@ -147,7 +147,7 @@ export default function GamificationWidget() {
                         </div>
                         <div>
                           <div className="font-bold text-purple-900">{achievement.name}</div>
-                          <div className="text-sm text-gray-700">{achievement.description}</div>
+                          <div className="text-sm text-gray-700 dark:text-gray-300">{achievement.description}</div>
                         </div>
                       </div>
                     </div>

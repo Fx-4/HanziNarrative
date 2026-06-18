@@ -195,30 +195,30 @@ export default function Flashcards() {
           <div className="flex items-center gap-3 mb-6">
             <button
               onClick={() => navigate('/practice')}
-              className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-primary-300 transition-all"
+              className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-primary-300 transition-all dark:border-gray-700 dark:text-gray-300"
               aria-label="Go back"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-50">
                 Flashcard Study
               </h1>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Master vocabulary with spaced repetition
               </p>
             </div>
           </div>
 
           {/* Main card */}
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden dark:bg-surface-card dark:border-gray-800">
             {/* Accent bar */}
             <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
 
             <div className="p-6 sm:p-8">
               {/* Study Mode section */}
               <div className="mb-6">
-                <p className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">
+                <p className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3 dark:text-gray-400">
                   Study Mode
                 </p>
                 <div className="grid grid-cols-3 gap-3">
@@ -243,7 +243,7 @@ export default function Flashcards() {
                     >
                       Review
                     </div>
-                    <div className="text-xs text-gray-500 mt-0.5">Due words</div>
+                    <div className="text-xs text-gray-500 mt-0.5 dark:text-gray-400">Due words</div>
                   </button>
 
                   {/* Learn */}
@@ -267,7 +267,7 @@ export default function Flashcards() {
                     >
                       Learn New
                     </div>
-                    <div className="text-xs text-gray-500 mt-0.5">Fresh words</div>
+                    <div className="text-xs text-gray-500 mt-0.5 dark:text-gray-400">Fresh words</div>
                   </button>
 
                   {/* Mixed */}
@@ -291,7 +291,7 @@ export default function Flashcards() {
                     >
                       Mixed
                     </div>
-                    <div className="text-xs text-gray-500 mt-0.5">Review + New</div>
+                    <div className="text-xs text-gray-500 mt-0.5 dark:text-gray-400">Review + New</div>
                   </button>
                 </div>
               </div>
@@ -299,7 +299,7 @@ export default function Flashcards() {
               {/* HSK Level (only for non-review modes) */}
               {studyMode !== 'review' && (
                 <div className="mb-6">
-                  <p className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">
+                  <p className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3 dark:text-gray-400">
                     HSK Level
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -375,12 +375,12 @@ export default function Flashcards() {
   if (words.length === 0) {
     return (
       <div className="min-h-screen py-6 sm:py-10 px-4 sm:px-6 flex items-center justify-center">
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden max-w-md w-full">
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden max-w-md w-full dark:bg-surface-card dark:border-gray-800">
           <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
           <div className="p-8 text-center">
             <Brain className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-xl font-extrabold text-gray-900 mb-2">No Words Available</h2>
-            <p className="text-gray-500 mb-6 text-sm sm:text-base">
+            <h2 className="text-xl font-extrabold text-gray-900 mb-2 dark:text-gray-50">No Words Available</h2>
+            <p className="text-gray-500 mb-6 text-sm sm:text-base dark:text-gray-400">
               Try selecting a different study mode or HSK level
             </p>
             <button
@@ -412,16 +412,16 @@ export default function Flashcards() {
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-lg w-full mx-auto"
         >
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden dark:bg-surface-card dark:border-gray-800">
             {/* Accent bar */}
             <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
 
             <div className="p-8 sm:p-12 text-center">
               <Trophy className="w-16 h-16 sm:w-20 sm:h-20 text-yellow-500 mx-auto mb-4" />
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 dark:text-gray-50">
                 Session Complete!
               </h2>
-              <p className="text-gray-500 text-sm sm:text-base mb-8">
+              <p className="text-gray-500 text-sm sm:text-base mb-8 dark:text-gray-400">
                 Great work! Keep up the momentum
               </p>
 
@@ -451,7 +451,7 @@ export default function Flashcards() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={resetSession}
-                  className="w-full sm:w-auto flex-1 border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:border-primary-300 transition-all"
+                  className="w-full sm:w-auto flex-1 border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:border-primary-300 transition-all dark:border-gray-700 dark:text-gray-300"
                 >
                   New Session
                 </button>
@@ -479,23 +479,23 @@ export default function Flashcards() {
           <div className="flex items-center gap-3">
             <button
               onClick={resetSession}
-              className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-primary-300 transition-all"
+              className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-primary-300 transition-all dark:border-gray-700 dark:text-gray-300"
               aria-label="Back to settings"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <h1 className="text-xl sm:text-2xl font-extrabold text-gray-900">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-gray-50">
                 Flashcard Study
               </h1>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 {currentIndex + 1} of {words.length}
               </p>
             </div>
           </div>
           <button
             onClick={shuffleWords}
-            className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-primary-300 transition-all"
+            className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-primary-300 transition-all dark:border-gray-700 dark:text-gray-300"
             aria-label="Shuffle cards"
           >
             <Shuffle className="w-4 h-4" />
@@ -503,7 +503,7 @@ export default function Flashcards() {
         </div>
 
         {/* Progress bar */}
-        <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-4">
+        <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-4 dark:bg-gray-800">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
@@ -514,32 +514,32 @@ export default function Flashcards() {
 
         {/* 3 stat tiles */}
         <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center dark:bg-surface-card dark:border-gray-800">
             <div className="flex items-center justify-center gap-1 sm:gap-2 mb-1">
               <CheckCircle className="w-4 h-4 text-success-500" />
-              <span className="text-lg sm:text-xl font-bold text-gray-900">
+              <span className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-50">
                 {sessionStats.correct}
               </span>
             </div>
-            <div className="text-xs text-gray-500">Correct</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">Correct</div>
           </div>
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center dark:bg-surface-card dark:border-gray-800">
             <div className="flex items-center justify-center gap-1 sm:gap-2 mb-1">
               <XCircle className="w-4 h-4 text-error-400" />
-              <span className="text-lg sm:text-xl font-bold text-gray-900">
+              <span className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-50">
                 {sessionStats.incorrect}
               </span>
             </div>
-            <div className="text-xs text-gray-500">Incorrect</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">Incorrect</div>
           </div>
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 text-center dark:bg-surface-card dark:border-gray-800">
             <div className="flex items-center justify-center gap-1 sm:gap-2 mb-1">
               <Clock className="w-4 h-4 text-primary-400" />
-              <span className="text-lg sm:text-xl font-bold text-gray-900">
+              <span className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-50">
                 {sessionStats.averageTime}s
               </span>
             </div>
-            <div className="text-xs text-gray-500">Avg Time</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">Avg Time</div>
           </div>
         </div>
       </div>
@@ -570,7 +570,7 @@ export default function Flashcards() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <button
                 onClick={() => handleSwipe('left')}
-                className="border-2 border-error-200 text-gray-700 rounded-2xl px-6 sm:px-8 py-3 font-semibold hover:bg-error-50 transition-all flex items-center gap-2"
+                className="border-2 border-error-200 text-gray-700 rounded-2xl px-6 sm:px-8 py-3 font-semibold hover:bg-error-50 transition-all flex items-center gap-2 dark:text-gray-300"
               >
                 <XCircle className="w-5 h-5 text-error-400" />
                 Again
@@ -594,9 +594,9 @@ export default function Flashcards() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mt-4"
+            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mt-4 dark:bg-surface-card dark:border-gray-800"
           >
-            <h3 className="text-sm font-semibold text-gray-500 mb-3 text-center">
+            <h3 className="text-sm font-semibold text-gray-500 mb-3 text-center dark:text-gray-400">
               How well did you know this?
             </h3>
             <div className="grid grid-cols-3 gap-2">
@@ -624,7 +624,7 @@ export default function Flashcards() {
 
         {/* Instruction text – before flip */}
         {!isFlipped && (
-          <p className="text-center text-sm text-gray-400 mt-6">
+          <p className="text-center text-sm text-gray-400 mt-6 dark:text-gray-500">
             Click card to flip &bull; Swipe left (Again) or right (Easy)
           </p>
         )}

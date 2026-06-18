@@ -162,7 +162,7 @@ export default function StrokeOrderDisplay({
       {/* Canvas Container */}
       <div
         ref={containerRef}
-        className="border-2 border-gray-200 rounded-lg bg-white shadow-sm"
+        className="border-2 border-gray-200 rounded-lg bg-white shadow-sm dark:border-gray-700 dark:bg-surface-card"
         style={{ width: size, height: size }}
       />
 
@@ -185,7 +185,7 @@ export default function StrokeOrderDisplay({
           <button
             onClick={handleAnimate}
             disabled={isAnimating || isPracticeMode}
-            className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300"
           >
             <Play className="w-3.5 h-3.5" />
             Animate
@@ -194,7 +194,7 @@ export default function StrokeOrderDisplay({
           <button
             onClick={handlePracticeMode}
             disabled={isAnimating || isPracticeMode}
-            className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300"
           >
             <Pencil className="w-3.5 h-3.5" />
             Practice
@@ -203,7 +203,7 @@ export default function StrokeOrderDisplay({
           {isPracticeMode && (
             <button
               onClick={handleShowCharacter}
-              className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors"
+              className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors dark:bg-gray-800 dark:text-gray-300"
             >
               <Eye className="w-3.5 h-3.5" />
               Show
@@ -213,7 +213,7 @@ export default function StrokeOrderDisplay({
           <button
             onClick={handleReset}
             disabled={isAnimating}
-            className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Reset

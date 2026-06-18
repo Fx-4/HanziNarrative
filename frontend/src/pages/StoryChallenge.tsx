@@ -265,13 +265,13 @@ export default function StoryChallenge() {
                             <Lock className="w-8 h-8 sm:w-10 sm:h-10 text-amber-600" />
                             <BlurText
                                 as="h1"
-                                className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900"
+                                className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-50"
                                 wordDelay={0.08}
                             >
                                 Unlock the Story
                             </BlurText>
                         </div>
-                        <p className="text-base sm:text-lg text-gray-600">
+                        <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">
                             Write characters to reveal hidden words in stories
                         </p>
                     </motion.div>
@@ -283,8 +283,8 @@ export default function StoryChallenge() {
                         transition={{ delay: 0.1 }}
                         className="mb-6"
                     >
-                        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Select HSK Level</h3>
+                        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:bg-surface-card dark:border-gray-800">
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 dark:text-gray-50">Select HSK Level</h3>
                             <div className="flex flex-wrap gap-2">
                                 {[1, 2, 3, 4, 5, 6].map((level) => (
                                     <button
@@ -311,10 +311,10 @@ export default function StoryChallenge() {
                         {loading ? (
                             <div className="flex justify-center py-12"><LoadingSpinner size="lg" /></div>
                         ) : stories.length === 0 ? (
-                            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 text-center">
+                            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 text-center dark:bg-surface-card dark:border-gray-800">
                                 <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                                <p className="text-gray-600">No stories available for HSK {hskLevel}.</p>
-                                <p className="text-sm text-gray-400 mt-1">Generate some stories first!</p>
+                                <p className="text-gray-600 dark:text-gray-400">No stories available for HSK {hskLevel}.</p>
+                                <p className="text-sm text-gray-400 mt-1 dark:text-gray-500">Generate some stories first!</p>
                             </div>
                         ) : (
                             <div className="grid sm:grid-cols-2 gap-3">
@@ -327,20 +327,20 @@ export default function StoryChallenge() {
                                     >
                                         <button
                                             onClick={() => selectStory(story.id)}
-                                            className="w-full text-left bg-white rounded-2xl shadow-md border border-gray-100 p-4 hover:border-amber-300 hover:shadow-lg cursor-pointer transition-all group"
+                                            className="w-full text-left bg-white rounded-2xl shadow-md border border-gray-100 p-4 hover:border-amber-300 hover:shadow-lg cursor-pointer transition-all group dark:bg-surface-card dark:border-gray-800"
                                         >
                                             <div className="flex items-start gap-3">
                                                 <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-amber-200">
                                                     <BookOpen className="w-5 h-5 text-amber-600" />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <p className="font-chinese text-lg text-gray-900 truncate">{story.title}</p>
-                                                    <p className="text-sm text-gray-500 truncate">{story.title_pinyin}</p>
+                                                    <p className="font-chinese text-lg text-gray-900 truncate dark:text-gray-50">{story.title}</p>
+                                                    <p className="text-sm text-gray-500 truncate dark:text-gray-400">{story.title_pinyin}</p>
                                                     <div className="flex items-center gap-2 mt-1">
                                                         <span className="text-xs bg-amber-50 text-amber-700 rounded-full px-2 py-0.5">
                                                             HSK {story.difficulty_level}
                                                         </span>
-                                                        <span className="text-xs text-gray-400">
+                                                        <span className="text-xs text-gray-400 dark:text-gray-500">
                                                             {story.key_vocabulary?.length || 0} vocab
                                                         </span>
                                                     </div>
@@ -361,16 +361,16 @@ export default function StoryChallenge() {
                         transition={{ delay: 0.3 }}
                         className="mt-8"
                     >
-                        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
-                            <h4 className="font-semibold text-gray-900 mb-3">How it works</h4>
+                        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:border-gray-800">
+                            <h4 className="font-semibold text-gray-900 mb-3 dark:text-gray-50">How it works</h4>
                             <div className="grid sm:grid-cols-3 gap-4">
                                 <div className="flex items-start gap-3">
                                     <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
                                         <BookOpen className="w-4 h-4 text-amber-600" />
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-900">1. Read</p>
-                                        <p className="text-sm text-gray-600">Read the story with hidden vocabulary words</p>
+                                        <p className="font-medium text-gray-900 dark:text-gray-50">1. Read</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">Read the story with hidden vocabulary words</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
@@ -378,8 +378,8 @@ export default function StoryChallenge() {
                                         <PenTool className="w-4 h-4 text-yellow-600" />
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-900">2. Write</p>
-                                        <p className="text-sm text-gray-600">Draw each character to unlock the word</p>
+                                        <p className="font-medium text-gray-900 dark:text-gray-50">2. Write</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">Draw each character to unlock the word</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
@@ -387,8 +387,8 @@ export default function StoryChallenge() {
                                         <Unlock className="w-4 h-4 text-success-600" />
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-900">3. Unlock</p>
-                                        <p className="text-sm text-gray-600">Reveal the hidden words and complete the story</p>
+                                        <p className="font-medium text-gray-900 dark:text-gray-50">3. Unlock</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">Reveal the hidden words and complete the story</p>
                                     </div>
                                 </div>
                             </div>
@@ -407,7 +407,7 @@ export default function StoryChallenge() {
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
                     <button
                         onClick={() => setSelectedStory(null)}
-                        className="text-gray-600 hover:text-gray-900 font-medium cursor-pointer"
+                        className="text-gray-600 hover:text-gray-900 font-medium cursor-pointer dark:text-gray-400"
                     >
                         ← Back
                     </button>
@@ -415,7 +415,7 @@ export default function StoryChallenge() {
                         <button
                             onClick={playStory}
                             disabled={isPlaying}
-                            className="bg-white rounded-xl shadow-sm border px-3 py-1.5 text-sm font-medium cursor-pointer flex items-center gap-1 transition-colors hover:bg-gray-50 disabled:opacity-50"
+                            className="bg-white rounded-xl shadow-sm border px-3 py-1.5 text-sm font-medium cursor-pointer flex items-center gap-1 transition-colors hover:bg-gray-50 disabled:opacity-50 dark:bg-surface-card"
                         >
                             <Volume2 className="w-3.5 h-3.5" />
                             {isPlaying ? 'Playing...' : 'Listen'}
@@ -427,7 +427,7 @@ export default function StoryChallenge() {
                 </div>
 
                 {/* Progress */}
-                <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6 dark:bg-gray-700">
                     <motion.div
                         className="bg-gradient-to-r from-amber-500 to-yellow-500 h-2.5 rounded-full"
                         animate={{ width: `${hiddenWords.size > 0 ? (unlockedWords.size / hiddenWords.size) * 100 : 0}%` }}
@@ -441,7 +441,7 @@ export default function StoryChallenge() {
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-4"
                 >
-                    <h2 className="text-2xl font-chinese text-gray-900 mb-1">{selectedStory.title}</h2>
+                    <h2 className="text-2xl font-chinese text-gray-900 mb-1 dark:text-gray-50">{selectedStory.title}</h2>
                     <p className="text-sm text-amber-600">{selectedStory.title_pinyin}</p>
                 </motion.div>
 
@@ -452,15 +452,15 @@ export default function StoryChallenge() {
                     transition={{ delay: 0.1 }}
                     className="mb-6"
                 >
-                    <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-5 sm:p-8">
+                    <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-5 sm:p-8 dark:bg-surface-card dark:border-gray-800">
                         <div className="leading-[3rem] select-none">
                             {renderStoryWithBlanks()}
                         </div>
 
                         {/* Hint for hidden words */}
                         {!allUnlocked && (
-                            <div className="mt-6 pt-4 border-t border-gray-100">
-                                <p className="text-sm text-gray-500 mb-2 flex items-center gap-1">
+                            <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
+                                <p className="text-sm text-gray-500 mb-2 flex items-center gap-1 dark:text-gray-400">
                                     <Lock className="w-3.5 h-3.5" /> Click a blank to write and unlock:
                                 </p>
                                 <div className="flex flex-wrap gap-2">
@@ -505,13 +505,13 @@ export default function StoryChallenge() {
                         >
                             <div className="bg-gradient-to-r from-success-50 to-emerald-50 rounded-3xl shadow-xl border border-green-200 p-6 text-center">
                                 <Trophy className="w-12 h-12 text-amber-500 mx-auto mb-3" />
-                                <h3 className="text-xl font-bold text-gray-900 mb-2">Story Unlocked!</h3>
-                                <p className="text-gray-600 mb-1">You wrote all {hiddenWords.size} hidden words correctly!</p>
+                                <h3 className="text-xl font-bold text-gray-900 mb-2 dark:text-gray-50">Story Unlocked!</h3>
+                                <p className="text-gray-600 mb-1 dark:text-gray-400">You wrote all {hiddenWords.size} hidden words correctly!</p>
 
                                 {/* Translation reveal */}
-                                <div className="mt-4 bg-white rounded-2xl p-4 text-left">
-                                    <p className="text-sm text-gray-500 mb-1">English translation:</p>
-                                    <p className="text-gray-700 italic">{selectedStory.content_english}</p>
+                                <div className="mt-4 bg-white rounded-2xl p-4 text-left dark:bg-surface-card">
+                                    <p className="text-sm text-gray-500 mb-1 dark:text-gray-400">English translation:</p>
+                                    <p className="text-gray-700 italic dark:text-gray-300">{selectedStory.content_english}</p>
                                 </div>
 
                                 <button
@@ -540,17 +540,17 @@ export default function StoryChallenge() {
                             initial={{ scale: 0.9, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
                             exit={{ scale: 0.9, y: 20 }}
-                            className="bg-white rounded-3xl shadow-2xl p-5 sm:p-6 w-full max-w-sm"
+                            className="bg-white rounded-3xl shadow-2xl p-5 sm:p-6 w-full max-w-sm dark:bg-surface-card"
                             onClick={e => e.stopPropagation()}
                         >
                             <div className="flex items-center justify-between mb-4">
                                 <div>
-                                    <h3 className="font-semibold text-gray-900">
+                                    <h3 className="font-semibold text-gray-900 dark:text-gray-50">
                                         Write: <span className="text-amber-600">
                                             {writingWord} ({writingCharIndex + 1}/{writingWord.length})
                                         </span>
                                     </h3>
-                                    <p className="text-sm text-gray-500">
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">
                                         {selectedStory?.key_vocabulary?.find(v => v.simplified === writingWord)?.english || ''}
                                     </p>
                                 </div>
@@ -558,7 +558,7 @@ export default function StoryChallenge() {
                                     onClick={() => setWritingChar(null)}
                                     className="p-1 rounded-lg hover:bg-gray-100 cursor-pointer"
                                 >
-                                    <X className="w-5 h-5 text-gray-400" />
+                                    <X className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                                 </button>
                             </div>
 

@@ -328,7 +328,7 @@ export default function WritingCanvas({
           <div className="relative">
             <div
               ref={canvasRef}
-              className="border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-white shadow-inner"
+              className="border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-white shadow-inner dark:bg-surface-card"
               style={{ width: canvasSize, height: canvasSize }}
             />
             {loadError && (

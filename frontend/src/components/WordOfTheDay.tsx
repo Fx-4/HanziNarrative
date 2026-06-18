@@ -28,8 +28,8 @@ export default function WordOfTheDay() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 animate-pulse">
-        <div className="h-32 bg-gray-100 rounded-xl"></div>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 animate-pulse dark:bg-surface-card dark:border-gray-800">
+        <div className="h-32 bg-gray-100 rounded-xl dark:bg-gray-800"></div>
       </div>
     )
   }
@@ -49,11 +49,11 @@ export default function WordOfTheDay() {
         <div className="flex items-center justify-between mb-2 sm:mb-3">
           <div className="flex items-center gap-1.5 sm:gap-2">
             <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary-500" />
-            <h3 className="text-base sm:text-lg font-bold text-gray-900">
+            <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-50">
               每日一词
             </h3>
           </div>
-          <div className="flex items-center gap-1 text-[10px] sm:text-xs text-gray-500">
+          <div className="flex items-center gap-1 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
             <BookOpen className="w-3 h-3" />
             <span>HSK {word.hsk_level}</span>
           </div>
@@ -61,21 +61,21 @@ export default function WordOfTheDay() {
 
         {/* Word Display */}
         <div className="text-center py-2 sm:py-3">
-          <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-2"
+          <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-2 dark:text-gray-50"
             style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}>
             {word.simplified}
           </div>
           <div className="text-base sm:text-lg md:text-xl text-primary-600 mb-1 sm:mb-2 font-medium">
             {word.pinyin}
           </div>
-          <div className="text-sm sm:text-base md:text-lg text-gray-700">
+          <div className="text-sm sm:text-base md:text-lg text-gray-700 dark:text-gray-300">
             {word.english}
           </div>
 
           {/* Category Badge */}
           {word.category && (
             <div className="mt-2 sm:mt-3">
-              <span className="inline-block px-2 py-0.5 sm:px-3 sm:py-1 bg-white rounded-full text-[10px] sm:text-xs font-medium text-primary-700 border border-primary-200">
+              <span className="inline-block px-2 py-0.5 sm:px-3 sm:py-1 bg-white rounded-full text-[10px] sm:text-xs font-medium text-primary-700 border border-primary-200 dark:bg-surface-card">
                 {word.category}
               </span>
             </div>
@@ -94,7 +94,7 @@ export default function WordOfTheDay() {
         )}
 
         {/* Footer */}
-        <div className="mt-2 sm:mt-3 text-center text-[10px] sm:text-xs text-gray-500">
+        <div className="mt-2 sm:mt-3 text-center text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
           Word of the Day • {new Date(wordData.date).toLocaleDateString()}
         </div>
       </div>

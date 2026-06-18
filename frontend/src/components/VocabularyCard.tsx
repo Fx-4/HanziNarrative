@@ -47,7 +47,7 @@ export default function VocabularyCard({ word }: VocabularyCardProps) {
     <>
       <SpotlightCard spotlightColor="rgba(99,102,241,0.10)" className="h-full">
         <motion.div
-          className="h-full flex flex-col rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-shadow duration-300"
+          className="h-full flex flex-col rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-shadow duration-300 dark:bg-surface-card dark:border-gray-800"
           whileHover={{ y: -3 }}
           transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         >
@@ -89,7 +89,7 @@ export default function VocabularyCard({ word }: VocabularyCardProps) {
             </div>
 
             {/* English meaning */}
-            <p className="text-sm text-gray-700 leading-relaxed line-clamp-3 flex-1">
+            <p className="text-sm text-gray-700 leading-relaxed line-clamp-3 flex-1 dark:text-gray-300">
               {word.english}
             </p>
 
@@ -107,7 +107,7 @@ export default function VocabularyCard({ word }: VocabularyCardProps) {
                 </span>
               )}
               {word.strokes && (
-                <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
                   {word.strokes} strokes
                 </span>
               )}

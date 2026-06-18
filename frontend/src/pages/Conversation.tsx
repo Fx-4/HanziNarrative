@@ -242,8 +242,8 @@ export default function Conversation() {
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mx-auto mb-4 shadow-xl shadow-blue-500/25">
             <MessageCircle className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">AI Conversation Partner</h1>
-          <p className="text-gray-500 text-sm">Practice Chinese conversation with AI at your HSK level</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 dark:text-gray-50">AI Conversation Partner</h1>
+          <p className="text-gray-500 text-sm dark:text-gray-400">Practice Chinese conversation with AI at your HSK level</p>
         </motion.div>
 
         {/* HSK Level Selection */}
@@ -251,9 +251,9 @@ export default function Conversation() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl border border-gray-200 p-5 mb-4 shadow-sm"
+          className="bg-white rounded-2xl border border-gray-200 p-5 mb-4 shadow-sm dark:bg-surface-card dark:border-gray-700"
         >
-          <h2 className="font-bold text-gray-900 text-sm mb-3">Select Your Level</h2>
+          <h2 className="font-bold text-gray-900 text-sm mb-3 dark:text-gray-50">Select Your Level</h2>
           <div className="grid grid-cols-6 gap-2">
             {[1, 2, 3, 4, 5, 6].map(level => (
               <button
@@ -276,9 +276,9 @@ export default function Conversation() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-2xl border border-gray-200 p-5 mb-6 shadow-sm"
+          className="bg-white rounded-2xl border border-gray-200 p-5 mb-6 shadow-sm dark:bg-surface-card dark:border-gray-700"
         >
-          <h2 className="font-bold text-gray-900 text-sm mb-3">Choose a Topic</h2>
+          <h2 className="font-bold text-gray-900 text-sm mb-3 dark:text-gray-50">Choose a Topic</h2>
           {topicsLoading ? (
             <LoadingSpinner />
           ) : (
@@ -294,8 +294,8 @@ export default function Conversation() {
                   }`}
                 >
                   <span className="text-lg">{topic.emoji}</span>
-                  <p className="font-bold text-gray-900 text-xs mt-1">{topic.label}</p>
-                  <p className="text-[10px] text-gray-500">{topic.label_en}</p>
+                  <p className="font-bold text-gray-900 text-xs mt-1 dark:text-gray-50">{topic.label}</p>
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400">{topic.label_en}</p>
                 </button>
               ))}
             </div>
@@ -331,11 +331,11 @@ export default function Conversation() {
           onClick={resetConversation}
           className="p-2 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
+          <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
         </button>
         <div className="flex-1">
-          <h2 className="font-bold text-gray-900 text-sm">AI Chat — HSK {hskLevel}</h2>
-          <p className="text-xs text-gray-500">{messages.length} messages</p>
+          <h2 className="font-bold text-gray-900 text-sm dark:text-gray-50">AI Chat — HSK {hskLevel}</h2>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{messages.length} messages</p>
         </div>
         <div className="flex items-center gap-1">
           <button
@@ -358,7 +358,7 @@ export default function Conversation() {
           </button>
           <button
             onClick={resetConversation}
-            className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors cursor-pointer dark:bg-gray-800 dark:text-gray-400"
             title="New conversation"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -379,7 +379,7 @@ export default function Conversation() {
               <div className={`max-w-[85%] ${
                 msg.role === 'user'
                   ? 'bg-blue-600 text-white rounded-2xl rounded-br-md'
-                  : 'bg-white border border-gray-200 rounded-2xl rounded-bl-md shadow-sm'
+                  : 'bg-white dark:bg-surface-card border border-gray-200 dark:border-gray-700 rounded-2xl rounded-bl-md shadow-sm'
               } p-3.5`}>
                 {/* Main text — show typing dots only if streaming with no content yet */}
                 {msg.isStreaming && !msg.content ? (
@@ -399,7 +399,7 @@ export default function Conversation() {
 
                 {/* Pinyin — only shown once streaming is complete */}
                 {msg.role === 'assistant' && !msg.isStreaming && showPinyin && msg.pinyin && (
-                  <p className="text-xs text-gray-400 mt-1 italic">{msg.pinyin}</p>
+                  <p className="text-xs text-gray-400 mt-1 italic dark:text-gray-500">{msg.pinyin}</p>
                 )}
 
                 {/* English — only shown once streaming is complete */}
@@ -413,7 +413,7 @@ export default function Conversation() {
                     onClick={() => speakText(msg.content)}
                     className="mt-2 p-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
                   >
-                    <Volume2 className="w-3.5 h-3.5 text-gray-400" />
+                    <Volume2 className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
                   </button>
                 )}
 
@@ -424,12 +424,12 @@ export default function Conversation() {
                       <AlertCircle className="w-3 h-3" /> Corrections
                     </p>
                     {msg.corrections.map((c, ci) => (
-                      <div key={ci} className="text-xs text-gray-700 mb-1">
+                      <div key={ci} className="text-xs text-gray-700 mb-1 dark:text-gray-300">
                         <span className="line-through text-error-500">{c.original}</span>
                         {' → '}
                         <span className="text-success-600 font-semibold">{c.corrected}</span>
                         {c.explanation && (
-                          <p className="text-[10px] text-gray-500 mt-0.5">{c.explanation}</p>
+                          <p className="text-[10px] text-gray-500 mt-0.5 dark:text-gray-400">{c.explanation}</p>
                         )}
                       </div>
                     ))}
@@ -443,10 +443,10 @@ export default function Conversation() {
                       <BookOpen className="w-3 h-3" /> New Words
                     </p>
                     {msg.new_vocabulary.map((v, vi) => (
-                      <div key={vi} className="text-xs text-gray-700">
+                      <div key={vi} className="text-xs text-gray-700 dark:text-gray-300">
                         <span className="font-bold">{v.word}</span>
-                        <span className="text-gray-400 mx-1">{v.pinyin}</span>
-                        <span className="text-gray-500">{v.english}</span>
+                        <span className="text-gray-400 mx-1 dark:text-gray-500">{v.pinyin}</span>
+                        <span className="text-gray-500 dark:text-gray-400">{v.english}</span>
                       </div>
                     ))}
                   </div>
@@ -460,7 +460,7 @@ export default function Conversation() {
       </div>
 
       {/* Input Area */}
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-2 flex items-center gap-2">
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-2 flex items-center gap-2 dark:bg-surface-card dark:border-gray-700">
         <input
           id="chat-input"
           name="chat-input"

@@ -130,8 +130,8 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
 
   if (!currentWord) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
-        <p className="text-gray-600">No words available for this HSK level.</p>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center dark:bg-surface-card dark:border-gray-800">
+        <p className="text-gray-600 dark:text-gray-400">No words available for this HSK level.</p>
         <button
           onClick={onBack}
           className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors mt-4"
@@ -146,7 +146,7 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
     const stats = getSessionStats()!
     return (
       <div className="space-y-6">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 dark:bg-surface-card dark:border-gray-800">
           <div className="text-center">
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
@@ -155,7 +155,7 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
             >
               <Trophy className="w-20 h-20 mx-auto text-yellow-500 mb-4" />
               <h2 className="text-4xl font-bold mb-2">Session Complete!</h2>
-              <p className="text-gray-600">Great job on your typing practice!</p>
+              <p className="text-gray-600 dark:text-gray-400">Great job on your typing practice!</p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto mb-6">
@@ -206,13 +206,13 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
           <span className="text-lg font-semibold">Speed Typing</span>
         </div>
         <div className="flex gap-4">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-4 py-2">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-4 py-2 dark:bg-surface-card dark:border-gray-800">
             <div className="flex items-center gap-2">
               <Clock className="w-5 h-5 text-orange-600" />
               <span className="text-lg font-bold">{formatTime(timer)}</span>
             </div>
           </div>
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-4 py-2">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-4 py-2 dark:bg-surface-card dark:border-gray-800">
             <div className="flex items-center gap-2">
               <Zap className="w-5 h-5 text-yellow-600" />
               <span className="text-lg font-bold">{Math.round(currentWPM)} WPM</span>
@@ -221,17 +221,17 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 dark:bg-surface-card dark:border-gray-800">
         <div className="text-center mb-8">
           <motion.div
             key={currentWord.id}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
           >
-            <div className="text-7xl font-chinese mb-4 text-gray-900">
+            <div className="text-7xl font-chinese mb-4 text-gray-900 dark:text-gray-50">
               {currentWord.simplified}
             </div>
-            <p className="text-2xl text-gray-700">{currentWord.english}</p>
+            <p className="text-2xl text-gray-700 dark:text-gray-300">{currentWord.english}</p>
           </motion.div>
         </div>
 
@@ -244,10 +244,10 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
             value={inputValue}
             onChange={handleInputChange}
             placeholder="Type as fast as you can..."
-            className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-primary-500 focus:outline-none transition-colors"
+            className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-primary-500 focus:outline-none transition-colors dark:border-gray-600 dark:bg-surface-card dark:text-gray-50"
             autoComplete="off"
           />
-          <p className="text-sm text-gray-600 mt-2 text-center">
+          <p className="text-sm text-gray-600 mt-2 text-center dark:text-gray-400">
             Target: <span className="font-semibold text-primary-600">{currentWord.pinyin}</span>
           </p>
         </div>
@@ -263,13 +263,13 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium">Session Progress</span>
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-600 dark:text-gray-400">
             {sessionResults.length > 0
               ? `Avg: ${Math.round(sessionResults.reduce((acc, r) => acc + r.wpm, 0) / sessionResults.length)} WPM`
               : 'Start typing!'}
           </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
           <div
             className="bg-primary-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${((currentIndex + 1) / words.length) * 100}%` }}

@@ -140,8 +140,8 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
 
   if (!currentWord) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
-        <p className="text-gray-600">No words available for this HSK level.</p>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center dark:bg-surface-card dark:border-gray-800">
+        <p className="text-gray-600 dark:text-gray-400">No words available for this HSK level.</p>
         <button
           onClick={onBack}
           className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors mt-4"
@@ -164,9 +164,9 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 dark:bg-surface-card dark:border-gray-800">
         <div className="text-center mb-8">
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-sm text-gray-600 mb-4 dark:text-gray-400">
             Type pinyin and select the correct character:
           </p>
           <motion.div
@@ -175,8 +175,8 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
             animate={{ scale: 1, opacity: 1 }}
             className="mb-4"
           >
-            <p className="text-2xl text-gray-700 mb-2">{currentWord.english}</p>
-            <p className="text-lg text-gray-600">Pinyin: {currentWord.pinyin}</p>
+            <p className="text-2xl text-gray-700 mb-2 dark:text-gray-300">{currentWord.english}</p>
+            <p className="text-lg text-gray-600 dark:text-gray-400">Pinyin: {currentWord.pinyin}</p>
           </motion.div>
         </div>
 
@@ -189,7 +189,7 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
             value={inputValue}
             onChange={handleInputChange}
             placeholder="Type pinyin..."
-            className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-primary-500 focus:outline-none transition-colors"
+            className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-primary-500 focus:outline-none transition-colors dark:border-gray-600 dark:bg-surface-card dark:text-gray-50"
             disabled={showFeedback}
             autoComplete="off"
           />
@@ -209,7 +209,7 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: index * 0.05 }}
                     onClick={() => handleCandidateSelect(candidate)}
-                    className="text-4xl font-chinese h-20 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-all active:scale-95 cursor-pointer"
+                    className="text-4xl font-chinese h-20 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-all active:scale-95 cursor-pointer dark:bg-surface-card dark:border-gray-600"
                   >
                     {candidate}
                   </motion.button>
@@ -272,13 +272,13 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium">Session Progress</span>
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-600 dark:text-gray-400">
             {sessionResults.length > 0
               ? `${Math.round((sessionResults.filter(r => r).length / sessionResults.length) * 100)}% accuracy`
               : 'No attempts yet'}
           </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
           <div
             className="bg-primary-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${((currentIndex + (showFeedback ? 1 : 0)) / words.length) * 100}%` }}

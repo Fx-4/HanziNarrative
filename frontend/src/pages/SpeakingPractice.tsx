@@ -212,13 +212,13 @@ export default function SpeakingPractice() {
                             <Mic className="w-8 h-8 sm:w-10 sm:h-10 text-rose-600" />
                             <BlurText
                                 as="h1"
-                                className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900"
+                                className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-50"
                                 wordDelay={0.08}
                             >
                                 Speaking Practice
                             </BlurText>
                         </div>
-                        <p className="text-base sm:text-lg text-gray-600">
+                        <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">
                             Practice your Mandarin pronunciation with AI feedback
                         </p>
                     </motion.div>
@@ -230,8 +230,8 @@ export default function SpeakingPractice() {
                         transition={{ delay: 0.1 }}
                         className="mb-6"
                     >
-                        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Select HSK Level</h3>
+                        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:bg-surface-card dark:border-gray-800">
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 dark:text-gray-50">Select HSK Level</h3>
                             <div className="flex flex-wrap gap-2">
                                 {[1, 2, 3, 4, 5, 6].map((level) => (
                                     <button
@@ -256,7 +256,7 @@ export default function SpeakingPractice() {
                         transition={{ delay: 0.15 }}
                         className="mb-6"
                     >
-                        <div className="bg-white rounded-3xl shadow-xl border border-amber-100 overflow-hidden">
+                        <div className="bg-white rounded-3xl shadow-xl border border-amber-100 overflow-hidden dark:bg-surface-card">
                             <button
                                 onClick={() => setShowNeutralGuide(prev => !prev)}
                                 className="w-full flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-amber-50 transition-colors"
@@ -266,13 +266,13 @@ export default function SpeakingPractice() {
                                         <BookOpen className="w-5 h-5 text-amber-600" />
                                     </div>
                                     <div className="text-left">
-                                        <p className="font-semibold text-gray-900">轻声 (Neutral Tone) — When to use it</p>
-                                        <p className="text-sm text-gray-500">Learn about unstressed syllables in Mandarin</p>
+                                        <p className="font-semibold text-gray-900 dark:text-gray-50">轻声 (Neutral Tone) — When to use it</p>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">Learn about unstressed syllables in Mandarin</p>
                                     </div>
                                 </div>
                                 {showNeutralGuide
-                                    ? <ChevronUp className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                                    : <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                                    ? <ChevronUp className="w-5 h-5 text-gray-400 flex-shrink-0 dark:text-gray-500" />
+                                    : <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0 dark:text-gray-500" />
                                 }
                             </button>
 
@@ -286,36 +286,36 @@ export default function SpeakingPractice() {
                                         className="overflow-hidden"
                                     >
                                         <div className="px-4 sm:px-6 pb-6 space-y-5 border-t border-amber-100">
-                                            <p className="text-sm text-gray-600 mt-4">
+                                            <p className="text-sm text-gray-600 mt-4 dark:text-gray-400">
                                                 The <span className="font-semibold text-amber-700">neutral tone</span> (轻声 qīngshēng) is a short, unstressed syllable with no tone mark. It is marked below with a middle dot "·".
                                             </p>
 
                                             <div>
-                                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Common Particles</p>
+                                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 dark:text-gray-400">Common Particles</p>
                                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                                     {NEUTRAL_TONE_EXAMPLES.map(item => (
                                                         <div key={item.char} className="bg-amber-50 rounded-xl px-3 py-2">
                                                             <div className="flex items-center gap-2">
-                                                                <span className="text-2xl font-chinese text-gray-900">{item.char}</span>
+                                                                <span className="text-2xl font-chinese text-gray-900 dark:text-gray-50">{item.char}</span>
                                                                 <div>
                                                                     <p className="text-xs text-amber-700 font-medium">·{item.pinyin}</p>
-                                                                    <p className="text-xs text-gray-500">{item.meaning}</p>
+                                                                    <p className="text-xs text-gray-500 dark:text-gray-400">{item.meaning}</p>
                                                                 </div>
                                                             </div>
-                                                            <p className="text-xs text-gray-600 mt-1 font-chinese">{item.example}</p>
+                                                            <p className="text-xs text-gray-600 mt-1 font-chinese dark:text-gray-400">{item.example}</p>
                                                         </div>
                                                     ))}
                                                 </div>
                                             </div>
 
                                             <div>
-                                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Compound Words with Neutral Second Syllable</p>
+                                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 dark:text-gray-400">Compound Words with Neutral Second Syllable</p>
                                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                                     {NEUTRAL_TONE_COMPOUNDS.map(item => (
                                                         <div key={item.word} className="bg-orange-50 rounded-xl px-3 py-2">
-                                                            <p className="text-xl font-chinese text-gray-900">{item.word}</p>
+                                                            <p className="text-xl font-chinese text-gray-900 dark:text-gray-50">{item.word}</p>
                                                             <p className="text-xs text-orange-700 font-medium">{item.pinyin}</p>
-                                                            <p className="text-xs text-gray-500">{item.meaning}</p>
+                                                            <p className="text-xs text-gray-500 dark:text-gray-400">{item.meaning}</p>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -337,16 +337,16 @@ export default function SpeakingPractice() {
                             <div className="bg-gradient-to-r from-rose-50 to-pink-50 rounded-3xl shadow-xl border border-rose-200 p-4 sm:p-6">
                                 <div className="flex items-center gap-2 mb-3">
                                     <Award className="w-5 h-5 text-rose-600" />
-                                    <h3 className="font-semibold text-gray-900">Last Session Results</h3>
+                                    <h3 className="font-semibold text-gray-900 dark:text-gray-50">Last Session Results</h3>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4 text-center">
                                     <div>
                                         <p className="text-2xl font-bold text-rose-700">{score}/{totalAttempted}</p>
-                                        <p className="text-xs text-gray-600">Correct</p>
+                                        <p className="text-xs text-gray-600 dark:text-gray-400">Correct</p>
                                     </div>
                                     <div>
                                         <p className="text-2xl font-bold text-rose-700">{totalAttempted > 0 ? Math.round((score / totalAttempted) * 100) : 0}%</p>
-                                        <p className="text-xs text-gray-600">Accuracy</p>
+                                        <p className="text-xs text-gray-600 dark:text-gray-400">Accuracy</p>
                                     </div>
                                 </div>
                             </div>
@@ -377,16 +377,16 @@ export default function SpeakingPractice() {
                         transition={{ delay: 0.3 }}
                         className="mt-8"
                     >
-                        <div className="bg-gradient-to-r from-rose-50 to-orange-50 rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
-                            <h4 className="font-semibold text-gray-900 mb-3">How it works</h4>
+                        <div className="bg-gradient-to-r from-rose-50 to-orange-50 rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:border-gray-800">
+                            <h4 className="font-semibold text-gray-900 mb-3 dark:text-gray-50">How it works</h4>
                             <div className="grid sm:grid-cols-3 gap-4">
                                 <div className="flex items-start gap-3">
                                     <div className="w-8 h-8 bg-rose-100 rounded-full flex items-center justify-center flex-shrink-0">
                                         <Volume2 className="w-4 h-4 text-rose-600" />
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-900">1. Listen</p>
-                                        <p className="text-sm text-gray-600">Hear how the word is pronounced</p>
+                                        <p className="font-medium text-gray-900 dark:text-gray-50">1. Listen</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">Hear how the word is pronounced</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
@@ -394,8 +394,8 @@ export default function SpeakingPractice() {
                                         <Mic className="w-4 h-4 text-pink-600" />
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-900">2. Speak</p>
-                                        <p className="text-sm text-gray-600">Record yourself saying the word</p>
+                                        <p className="font-medium text-gray-900 dark:text-gray-50">2. Speak</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">Record yourself saying the word</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
@@ -403,8 +403,8 @@ export default function SpeakingPractice() {
                                         <CheckCircle className="w-4 h-4 text-success-600" />
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-900">3. Check</p>
-                                        <p className="text-sm text-gray-600">Get AI-powered pronunciation feedback</p>
+                                        <p className="font-medium text-gray-900 dark:text-gray-50">3. Check</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">Get AI-powered pronunciation feedback</p>
                                     </div>
                                 </div>
                             </div>
@@ -432,25 +432,25 @@ export default function SpeakingPractice() {
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                     <button
                         onClick={() => setSessionStarted(false)}
-                        className="text-gray-600 hover:text-gray-900 font-medium cursor-pointer"
+                        className="text-gray-600 hover:text-gray-900 font-medium cursor-pointer dark:text-gray-400"
                     >
                         ← Back
                     </button>
                     <div className="flex items-center gap-3">
-                        <div className="bg-white rounded-xl shadow-sm border px-3 py-1.5 flex items-center gap-1.5">
+                        <div className="bg-white rounded-xl shadow-sm border px-3 py-1.5 flex items-center gap-1.5 dark:bg-surface-card">
                             <Target className="w-4 h-4 text-rose-600" />
-                            <span className="font-bold text-gray-900">{currentIndex + 1}/{words.length}</span>
+                            <span className="font-bold text-gray-900 dark:text-gray-50">{currentIndex + 1}/{words.length}</span>
                         </div>
-                        <div className="bg-white rounded-xl shadow-sm border px-3 py-1.5 flex items-center gap-1.5">
+                        <div className="bg-white rounded-xl shadow-sm border px-3 py-1.5 flex items-center gap-1.5 dark:bg-surface-card">
                             <Zap className="w-4 h-4 text-amber-500" />
-                            <span className="font-bold text-gray-900">{score} pts</span>
+                            <span className="font-bold text-gray-900 dark:text-gray-50">{score} pts</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Mode Toggle */}
                 <div className="mb-4">
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-1.5 flex gap-1">
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-1.5 flex gap-1 dark:bg-surface-card dark:border-gray-800">
                         <button
                             onClick={() => { setPracticeMode('vocabulary'); setShowResult(false); setResult(null); setHintRevealed(false); setUsedHint(false) }}
                             className={`flex-1 flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold cursor-pointer transition-all ${isVocabMode
@@ -490,7 +490,7 @@ export default function SpeakingPractice() {
                 </div>
 
                 {/* Progress bar */}
-                <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6 dark:bg-gray-700">
                     <motion.div
                         className={`h-2.5 rounded-full ${isVocabMode
                             ? 'bg-gradient-to-r from-violet-500 to-purple-500'
@@ -508,7 +508,7 @@ export default function SpeakingPractice() {
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-6"
                 >
-                    <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-8 text-center">
+                    <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-8 text-center dark:bg-surface-card dark:border-gray-800">
 
                         {/* VOCABULARY CHALLENGE MODE */}
                         {isVocabMode ? (
@@ -516,8 +516,8 @@ export default function SpeakingPractice() {
                                 <p className="text-xs font-semibold text-violet-500 uppercase tracking-widest mb-3">What is this word in Chinese?</p>
 
                                 {/* English meaning — shown prominently */}
-                                <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">{currentWord.english}</p>
-                                <p className="text-sm text-gray-400 mb-5">Apa artinya dalam bahasa Mandarin?</p>
+                                <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 dark:text-gray-50">{currentWord.english}</p>
+                                <p className="text-sm text-gray-400 mb-5 dark:text-gray-500">Apa artinya dalam bahasa Mandarin?</p>
 
                                 {/* Hint reveal */}
                                 {!showResult && (
@@ -550,7 +550,7 @@ export default function SpeakingPractice() {
                                         className="mb-5"
                                     >
                                         <div className="bg-violet-50 border border-violet-200 rounded-2xl px-6 py-4 inline-block">
-                                            <p className="text-5xl sm:text-6xl font-chinese text-gray-900 mb-1">{currentWord.simplified}</p>
+                                            <p className="text-5xl sm:text-6xl font-chinese text-gray-900 mb-1 dark:text-gray-50">{currentWord.simplified}</p>
                                             <p className="text-xl text-violet-600">{currentWord.pinyin}</p>
                                         </div>
                                     </motion.div>
@@ -560,9 +560,9 @@ export default function SpeakingPractice() {
                             /* PRONUNCIATION CHECK MODE */
                             <div className="mb-5">
                                 <p className="text-xs font-semibold text-rose-500 uppercase tracking-widest mb-3">Pronounce this word</p>
-                                <p className="text-5xl sm:text-6xl font-chinese text-gray-900 mb-3">{currentWord.simplified}</p>
+                                <p className="text-5xl sm:text-6xl font-chinese text-gray-900 mb-3 dark:text-gray-50">{currentWord.simplified}</p>
                                 <p className="text-xl text-rose-600 mb-1">{currentWord.pinyin}</p>
-                                <p className="text-gray-500">{currentWord.english}</p>
+                                <p className="text-gray-500 dark:text-gray-400">{currentWord.english}</p>
                             </div>
                         )}
 
@@ -570,7 +570,7 @@ export default function SpeakingPractice() {
                         <button
                             onClick={playWord}
                             disabled={isPlaying}
-                            className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-5 py-2.5 font-medium cursor-pointer transition-colors flex items-center gap-2 mx-auto mb-6 disabled:opacity-50"
+                            className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-5 py-2.5 font-medium cursor-pointer transition-colors flex items-center gap-2 mx-auto mb-6 disabled:opacity-50 dark:bg-gray-800 dark:text-gray-300"
                         >
                             <Volume2 className="w-4 h-4" />
                             {isPlaying ? 'Playing...' : 'Listen'}
@@ -582,7 +582,7 @@ export default function SpeakingPractice() {
                                 {isProcessing ? (
                                     <div className="flex flex-col items-center gap-3 py-4">
                                         <LoadingSpinner size="lg" />
-                                        <p className="text-gray-600">
+                                        <p className="text-gray-600 dark:text-gray-400">
                                             {isVocabMode ? 'Checking vocabulary & tone...' : 'Analyzing your pronunciation...'}
                                         </p>
                                     </div>
@@ -603,7 +603,7 @@ export default function SpeakingPractice() {
                                                 <Mic className="w-10 h-10 text-white" />
                                             )}
                                         </button>
-                                        <p className="text-sm text-gray-500">
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">
                                             {isRecording ? 'Recording... Click to stop' : 'Click to start recording'}
                                         </p>
                                     </>
@@ -638,13 +638,13 @@ export default function SpeakingPractice() {
                                         <p className="text-center text-xs text-amber-600 mb-2">Hint was used — no points awarded for this attempt</p>
                                     )}
 
-                                    <p className="text-center font-medium text-gray-900 mb-1">{result?.feedback}</p>
+                                    <p className="text-center font-medium text-gray-900 mb-1 dark:text-gray-50">{result?.feedback}</p>
 
                                     {result?.transcript && (
                                         <div className="mt-3 text-center">
-                                            <p className="text-xs text-gray-500">What we heard:</p>
-                                            <p className="text-lg font-chinese text-gray-800">{result.transcript}</p>
-                                            <p className="text-xs text-gray-400 mt-1">Confidence: {result.confidence}%</p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">What we heard:</p>
+                                            <p className="text-lg font-chinese text-gray-800 dark:text-gray-200">{result.transcript}</p>
+                                            <p className="text-xs text-gray-400 mt-1 dark:text-gray-500">Confidence: {result.confidence}%</p>
                                         </div>
                                     )}
                                 </div>
@@ -652,7 +652,7 @@ export default function SpeakingPractice() {
                                 <div className="flex justify-center gap-3">
                                     <button
                                         onClick={handleRetry}
-                                        className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-5 py-2.5 font-medium cursor-pointer transition-colors flex items-center gap-2"
+                                        className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-5 py-2.5 font-medium cursor-pointer transition-colors flex items-center gap-2 dark:bg-gray-800 dark:text-gray-300"
                                     >
                                         <RotateCcw className="w-4 h-4" /> Try Again
                                     </button>
