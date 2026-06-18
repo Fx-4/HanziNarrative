@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+﻿import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CURRICULUM, UnitDef, SessionDef } from '@/data/curriculum'
@@ -54,11 +54,7 @@ export default function LearningPath() {
   const [error, setError] = useState(false)
   const [expandedUnit, setExpandedUnit] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadProgress()
-  }, [loadProgress])
-
-  const applyProgress = (completedIds: string[], statsData: ProgressCache['stats']) => {
+  const applyProgress = useCallback((completedIds: string[], statsData: ProgressCache['stats']) => {
     const set = new Set(completedIds)
     setCompleted(set)
     setStats(statsData)
@@ -73,7 +69,7 @@ export default function LearningPath() {
       }
     }
     if (!expanded) setExpandedUnit(CURRICULUM[1][0]?.id ?? null)
-  }
+  }, [])
 
   const loadProgress = useCallback(async () => {
     const now = Date.now()
@@ -106,7 +102,11 @@ export default function LearningPath() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [applyProgress])
+
+  useEffect(() => {
+    loadProgress()
+  }, [loadProgress])
 
   const units = CURRICULUM[activeLevel] ?? []
 
