@@ -193,23 +193,14 @@ export default function Flashcards() {
           animate={{ opacity: 1, y: 0 }}
           className="max-w-xl mx-auto"
         >
-          {/* Back + Title header */}
-          <div className="flex items-center gap-3 mb-6">
-            <button
-              onClick={() => navigate('/practice')}
-              className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-primary-300 transition-all dark:border-gray-700 dark:text-gray-300"
-              aria-label="Go back"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-50">
-                {t('flashcards.title')}
-              </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {t('flashcards.subtitle')}
-              </p>
-            </div>
+          {/* Title header */}
+          <div className="mb-6">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-50">
+              {t('flashcards.title')}
+            </h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {t('flashcards.subtitle')}
+            </p>
           </div>
 
           {/* Main card */}
