@@ -260,7 +260,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
           exit={{ opacity: 0, y: -12 }}
           className="w-full"
         >
-          <div className="mb-5 p-6 bg-gray-50 border border-gray-200 rounded-2xl text-center">
+          <div className="mb-5 p-6 bg-gray-50 dark:bg-surface-elevated border border-gray-200 dark:border-surface-border rounded-2xl text-center">
             <p className="text-4xl font-bold text-gray-900 font-chinese mb-2">
               {currentQuestion.chinese}
             </p>

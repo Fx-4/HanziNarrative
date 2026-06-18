@@ -40,7 +40,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="p-5 bg-white border border-gray-200 rounded-2xl shadow-sm"
+          className="p-5 bg-white dark:bg-surface-elevated border border-gray-200 dark:border-surface-border rounded-2xl shadow-sm"
         >
           <div className="flex items-center gap-2.5 mb-4">
             <div className="w-9 h-9 bg-sky-50 rounded-xl flex items-center justify-center">
@@ -65,7 +65,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="p-5 bg-white border border-gray-200 rounded-2xl shadow-sm"
+          className="p-5 bg-white dark:bg-surface-elevated border border-gray-200 dark:border-surface-border rounded-2xl shadow-sm"
         >
           <div className="flex items-center gap-2.5 mb-4">
             <div className="w-9 h-9 bg-violet-50 rounded-xl flex items-center justify-center">
@@ -90,7 +90,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="p-5 bg-white border border-gray-200 rounded-2xl shadow-sm"
+          className="p-5 bg-white dark:bg-surface-elevated border border-gray-200 dark:border-surface-border rounded-2xl shadow-sm"
         >
           <div className="flex items-center gap-2.5 mb-4">
             <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center">
@@ -123,7 +123,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="p-5 bg-white border border-gray-200 rounded-2xl shadow-sm"
+          className="p-5 bg-white dark:bg-surface-elevated border border-gray-200 dark:border-surface-border rounded-2xl shadow-sm"
         >
           <div className="flex items-center gap-2.5 mb-4">
             <div className="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center">

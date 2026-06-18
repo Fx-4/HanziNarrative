@@ -70,7 +70,7 @@ const LevelSelector = ({ onTakeAssessment, onSkipAssessment }: LevelSelectorProp
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
           onClick={onSkipAssessment}
-          className="group p-6 bg-gray-50 border-2 border-gray-200 rounded-2xl text-left hover:border-gray-400 hover:shadow-lg transition-all"
+          className="group p-6 bg-gray-50 dark:bg-surface-elevated border-2 border-gray-200 dark:border-surface-border rounded-2xl text-left hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-lg transition-all"
         >
           <div className="w-12 h-12 bg-gray-700 rounded-xl flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
             <PlayCircle className="w-6 h-6 text-white" />

@@ -57,7 +57,7 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
                 className={`p-4 rounded-xl border-2 transition-all text-center ${
                   prefs.learning_style === id
                     ? `${bg} ${border} shadow-sm`
-                    : 'bg-white border-gray-200 hover:border-gray-300'
+                    : 'bg-white dark:bg-surface-elevated border-gray-200 dark:border-surface-border hover:border-gray-300 dark:hover:border-gray-500'
                 }`}
               >
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2 ${prefs.learning_style === id ? bg : 'bg-gray-100'}`}>
@@ -81,7 +81,7 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
                 className={`p-4 rounded-xl border-2 transition-all text-center ${
                   prefs.difficulty_preference === id
                     ? 'bg-primary-50 border-primary-300 shadow-sm'
-                    : 'bg-white border-gray-200 hover:border-gray-300'
+                    : 'bg-white dark:bg-surface-elevated border-gray-200 dark:border-surface-border hover:border-gray-300 dark:hover:border-gray-500'
                 }`}
               >
                 <p className={`font-semibold text-sm ${prefs.difficulty_preference === id ? 'text-primary-700' : 'text-gray-900'}`}>{t(`onboarding.preferences.difficulties.${id}.label`)}</p>
@@ -99,7 +99,7 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
           className="space-y-3"
         >
           {/* Show pinyin */}
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-surface-elevated rounded-xl border border-gray-200 dark:border-surface-border">
             <div>
               <p className="font-semibold text-gray-900 text-sm">{t('onboarding.preferences.showPinyin')}</p>
               <p className="text-xs text-gray-500">{t('onboarding.preferences.showPinyinDesc')}</p>
@@ -113,7 +113,7 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
           </div>
 
           {/* Reminders */}
-          <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
+          <div className="p-4 bg-gray-50 dark:bg-surface-elevated rounded-xl border border-gray-200 dark:border-surface-border space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Bell className="w-4 h-4 text-gray-500" />
