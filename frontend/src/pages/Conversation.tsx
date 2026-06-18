@@ -289,7 +289,7 @@ export default function Conversation() {
                   onClick={() => setSelectedTopic(topic.id)}
                   className={`p-3 rounded-xl text-left transition-all cursor-pointer ${
                     selectedTopic === topic.id
-                      ? 'bg-blue-50 border-2 border-blue-400 shadow-sm'
+                      ? 'bg-blue-50 border-2 border-blue-400 shadow-sm dark:bg-blue-950/30'
                       : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
                   }`}
                 >
@@ -341,7 +341,7 @@ export default function Conversation() {
           <button
             onClick={() => setShowPinyin(!showPinyin)}
             className={`p-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-              showPinyin ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'
+              showPinyin ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' : 'bg-gray-100 text-gray-500'
             }`}
             title="Toggle pinyin"
           >
@@ -350,7 +350,7 @@ export default function Conversation() {
           <button
             onClick={() => setShowEnglish(!showEnglish)}
             className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-              showEnglish ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'
+              showEnglish ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' : 'bg-gray-100 text-gray-500'
             }`}
             title="Toggle English"
           >
@@ -389,7 +389,7 @@ export default function Conversation() {
                     <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                   </div>
                 ) : (
-                  <p className={`text-sm leading-relaxed ${msg.role === 'user' ? 'text-white' : 'text-gray-900'}`}>
+                  <p className={`text-sm leading-relaxed ${msg.role === 'user' ? 'text-white' : 'text-gray-900 dark:text-gray-100'}`}>
                     {msg.content}
                     {msg.isStreaming && (
                       <span className="inline-block w-[2px] h-[1em] bg-gray-500 ml-0.5 align-middle animate-pulse" />
@@ -411,7 +411,7 @@ export default function Conversation() {
                 {msg.role === 'assistant' && !msg.isStreaming && (
                   <button
                     onClick={() => speakText(msg.content)}
-                    className="mt-2 p-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                    className="mt-2 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
                   >
                     <Volume2 className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
                   </button>
@@ -469,7 +469,7 @@ export default function Conversation() {
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
           placeholder="用中文说点什么... (Type in Chinese)"
-          className="flex-1 px-3 py-2.5 text-sm outline-none bg-transparent"
+          className="flex-1 px-3 py-2.5 text-sm outline-none bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
           disabled={loading}
         />
         <button
