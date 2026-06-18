@@ -28,4 +28,5 @@ if (!supabaseClient) {
   console.warn('Supabase is not configured. Some features will be disabled, but the app should run.')
 }
 
-export const supabase = supabaseClient as SupabaseClient
+// May be null when env vars are missing — consumers MUST guard before use.
+export const supabase: SupabaseClient | null = supabaseClient

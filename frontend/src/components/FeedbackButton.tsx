@@ -255,15 +255,21 @@ export default function FeedbackButton() {
     setError(null)
     try {
       const finalAttachmentUrls: string[] = []
-      
+
       if (attachments.length > 0) {
-        try {
-          const uploadPromises = attachments.map(att => uploadToSupabase(att))
-          const urls = await Promise.all(uploadPromises)
-          finalAttachmentUrls.push(...urls)
-        } catch (uploadErr) {
-          console.warn('Failed to upload some images, submitting feedback without them:', uploadErr)
-          toast.error('Image upload failed. Submitting text only.')
+        // allSettled so a single failed upload doesn't discard the ones that succeeded.
+        const results = await Promise.allSettled(attachments.map(att => uploadToSupabase(att)))
+        for (const r of results) {
+          if (r.status === 'fulfilled') finalAttachmentUrls.push(r.value)
+        }
+        const failed = results.length - finalAttachmentUrls.length
+        if (failed > 0) {
+          console.warn(`${failed} image upload(s) failed; submitting feedback without them.`)
+          toast.error(
+            finalAttachmentUrls.length > 0
+              ? `${failed} image(s) failed to upload — sending the rest.`
+              : 'Image upload failed. Submitting text only.'
+          )
         }
       }
 
@@ -527,7 +533,6 @@ export default function FeedbackButton() {
                       ))}
                     </div>
                   )}
-
 
                   {error && (
                     <p className="text-xs text-error-600 dark:text-error-400">{error}</p>
