@@ -4,51 +4,22 @@ import { quizApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Brain, CheckCircle, XCircle, Trophy, RotateCcw, Flame, Star, Dumbbell, Target, Gem, Check, PenLine, RefreshCw } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 
 type QuizType = 'multiple_choice' | 'fill_blank' | 'character_match'
 
-// Motivational messages based on performance
+// Motivational message config based on performance (text resolved via i18n).
 const getMotivationalMessage = (percentage: number) => {
   if (percentage >= 90) {
-    return {
-      Icon: Flame,
-      iconClass: 'text-orange-500',
-      title: 'Absolutely Crushing It!',
-      message: 'Your Chinese skills are on fire! You\'re a HSK superstar!',
-      color: 'from-orange-400 to-error-500'
-    }
+    return { Icon: Flame, iconClass: 'text-orange-500', titleKey: 'tier90Title', msgKey: 'tier90Msg', color: 'from-orange-400 to-error-500' }
   } else if (percentage >= 80) {
-    return {
-      Icon: Star,
-      iconClass: 'text-yellow-500',
-      title: 'Excellent Work!',
-      message: 'You\'re mastering Chinese like a pro! Keep this momentum going!',
-      color: 'from-yellow-400 to-orange-500'
-    }
+    return { Icon: Star, iconClass: 'text-yellow-500', titleKey: 'tier80Title', msgKey: 'tier80Msg', color: 'from-yellow-400 to-orange-500' }
   } else if (percentage >= 70) {
-    return {
-      Icon: Dumbbell,
-      iconClass: 'text-purple-500',
-      title: 'Great Job!',
-      message: 'You\'re making solid progress! Your dedication is paying off!',
-      color: 'from-purple-400 to-pink-500'
-    }
+    return { Icon: Dumbbell, iconClass: 'text-purple-500', titleKey: 'tier70Title', msgKey: 'tier70Msg', color: 'from-purple-400 to-pink-500' }
   } else if (percentage >= 60) {
-    return {
-      Icon: Target,
-      iconClass: 'text-blue-500',
-      title: 'Good Effort!',
-      message: 'You\'re on the right track! A bit more practice and you\'ll nail it!',
-      color: 'from-blue-400 to-purple-500'
-    }
+    return { Icon: Target, iconClass: 'text-blue-500', titleKey: 'tier60Title', msgKey: 'tier60Msg', color: 'from-blue-400 to-purple-500' }
   } else {
-    return {
-      Icon: Gem,
-      iconClass: 'text-cyan-500',
-      title: 'Keep Going!',
-      message: 'Every mistake is a learning opportunity! You got this - practice makes perfect!',
-      color: 'from-cyan-400 to-blue-500'
-    }
+    return { Icon: Gem, iconClass: 'text-cyan-500', titleKey: 'tier0Title', msgKey: 'tier0Msg', color: 'from-cyan-400 to-blue-500' }
   }
 }
 
@@ -85,6 +56,7 @@ interface Quiz {
 }
 
 export default function Quiz() {
+  const { t } = useTranslation()
   const [hskLevel, setHskLevel] = useState(1)
   const [quizType, setQuizType] = useState<QuizType>('multiple_choice')
   const [numQuestions, setNumQuestions] = useState(10)
@@ -101,10 +73,10 @@ export default function Quiz() {
   const [matches, setMatches] = useState<Record<number, number>>({})
 
   const quizTypes = [
-    { value: 'multiple_choice', label: 'Multiple Choice', Icon: Check },
-    { value: 'fill_blank', label: 'Fill in Blank', Icon: PenLine },
-    { value: 'character_match', label: 'Character Match', Icon: RefreshCw }
-  ]
+    { value: 'multiple_choice', Icon: Check },
+    { value: 'fill_blank', Icon: PenLine },
+    { value: 'character_match', Icon: RefreshCw }
+  ] as const
 
   const startQuiz = async () => {
     setLoading(true)
@@ -124,7 +96,7 @@ export default function Quiz() {
       }
     } catch (error: unknown) {
       const axiosError = error as { response?: { data?: { detail?: string } } }
-      toast.error(axiosError.response?.data?.detail || 'Failed to generate quiz')
+      toast.error(axiosError.response?.data?.detail || t('quiz.toasts.generateFailed'))
     } finally {
       setLoading(false)
     }
@@ -158,11 +130,11 @@ export default function Quiz() {
 
     const percentage = Math.round((correctCount / totalQuestions) * 100)
     if (percentage >= 80) {
-      toast.success(`Excellent! ${percentage}% correct!`)
+      toast.success(t('quiz.toasts.excellent', { pct: percentage }))
     } else if (percentage >= 60) {
-      toast(`Good job! ${percentage}% correct`)
+      toast(t('quiz.toasts.goodJob', { pct: percentage }))
     } else {
-      toast(`Keep practicing! ${percentage}% correct`)
+      toast(t('quiz.toasts.keepPracticing', { pct: percentage }))
     }
   }
 
@@ -188,7 +160,7 @@ export default function Quiz() {
             }`}
           >
             <div className="flex justify-between items-start mb-4">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200">Question {idx + 1}</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200">{t('quiz.question', { n: idx + 1 })}</h3>
               {showResults && (
                 isCorrect
                   ? <CheckCircle className="w-5 h-5 text-success-500 dark:text-success-400 flex-shrink-0" />
@@ -227,7 +199,7 @@ export default function Quiz() {
             {showResults && (
               <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-xl">
                 <p className="text-sm text-gray-800 dark:text-gray-200">
-                  <strong>Answer:</strong> {question.chinese} ({question.pinyin}) - {question.english}
+                  <strong>{t('quiz.answer')}</strong> {question.chinese} ({question.pinyin}) - {question.english}
                 </p>
               </div>
             )}
@@ -261,7 +233,7 @@ export default function Quiz() {
             }`}
           >
             <div className="flex justify-between items-start mb-3">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200">Question {idx + 1}</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200">{t('quiz.question', { n: idx + 1 })}</h3>
               {showResults && (
                 isCorrect
                   ? <CheckCircle className="w-5 h-5 text-success-500 dark:text-success-400 flex-shrink-0" />
@@ -285,13 +257,13 @@ export default function Quiz() {
             {/* Hint */}
             {question.hint && (
               <p className="text-gray-500 dark:text-gray-400 mb-2 text-xs sm:text-sm">
-                <span className="font-semibold">Hint:</span> {question.hint}
+                <span className="font-semibold">{t('quiz.hint')}</span> {question.hint}
               </p>
             )}
 
             {/* English meaning */}
             <p className="text-gray-700 dark:text-gray-300 mb-3 text-sm sm:text-base">
-              <span className="font-semibold">Meaning:</span> {question.english}
+              <span className="font-semibold">{t('quiz.meaning')}</span> {question.english}
             </p>
 
             <div className="flex items-center gap-2 mb-2">
@@ -302,7 +274,7 @@ export default function Quiz() {
                 value={userAnswer || ''}
                 onChange={(e) => setAnswers({ ...answers, [idx]: e.target.value })}
                 disabled={showResults}
-                placeholder="Type the Chinese character(s)"
+                placeholder={t('quiz.fillPlaceholder')}
                 className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-700 rounded-xl text-xl sm:text-2xl font-chinese bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-primary-400 disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:text-gray-500 dark:disabled:text-gray-500"
               />
             </div>
@@ -310,13 +282,13 @@ export default function Quiz() {
             {showResults && (
               <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-xl space-y-1">
                 <p className="text-sm text-gray-800 dark:text-gray-200">
-                  <strong>Correct Answer:</strong>{' '}
+                  <strong>{t('quiz.correctAnswer')}</strong>{' '}
                   <span className="font-chinese text-lg">{question.blank_word}</span>{' '}
                   ({question.pinyin})
                 </p>
                 {sentenceParts && (
                   <p className="text-sm text-gray-600 dark:text-gray-400 font-chinese">
-                    Full: {question.sentence}
+                    {t('quiz.full')} {question.sentence}
                   </p>
                 )}
               </div>
@@ -379,7 +351,7 @@ export default function Quiz() {
         {/* Instruction */}
         {!showResults && (
           <div className="mb-3 text-center text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
-            Tap a character, then tap its matching meaning
+            {t('quiz.matchInstruction')}
           </div>
         )}
 
@@ -434,7 +406,7 @@ export default function Quiz() {
           {/* RIGHT: English Meanings */}
           <div>
             <h3 className="font-semibold mb-1.5 sm:mb-3 text-xs sm:text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-              Meaning
+              {t('quiz.meaningCol')}
             </h3>
             <div className="space-y-1.5 sm:space-y-2">
               {rightItems.map((q) => {
@@ -480,7 +452,7 @@ export default function Quiz() {
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 flex items-center gap-2 sm:gap-3 text-gray-900 dark:text-gray-100">
           <Brain className="w-7 h-7 sm:w-9 sm:h-9 text-primary-600 dark:text-primary-400 flex-shrink-0" />
-          HSK Quiz Practice
+          {t('quiz.title')}
         </h1>
       </motion.div>
 
@@ -488,11 +460,11 @@ export default function Quiz() {
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
           <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
           <div className="p-4 sm:p-6 md:p-8">
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900 dark:text-gray-100">Create Your Quiz</h2>
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900 dark:text-gray-100">{t('quiz.createTitle')}</h2>
 
             <div className="space-y-5 sm:space-y-6">
               <div>
-                <p className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">HSK Level</p>
+                <p className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">{t('quiz.hskLevel')}</p>
                 <div className="flex flex-wrap gap-2">
                   {[1, 2, 3, 4, 5, 6].map(level => (
                     <button
@@ -511,7 +483,7 @@ export default function Quiz() {
               </div>
 
               <div>
-                <p className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Quiz Type</p>
+                <p className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">{t('quiz.quizType')}</p>
                 <div className="flex flex-wrap gap-2">
                   {quizTypes.map(type => (
                     <button
@@ -524,14 +496,14 @@ export default function Quiz() {
                       }`}
                     >
                       <type.Icon className="w-4 h-4 flex-shrink-0" />
-                      {type.label}
+                      {t(`quiz.types.${type.value}`)}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label htmlFor="quiz-num-questions" className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Number of Questions</label>
+                <label htmlFor="quiz-num-questions" className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">{t('quiz.numQuestions')}</label>
                 <select
                   id="quiz-num-questions"
                   value={numQuestions}
@@ -539,7 +511,7 @@ export default function Quiz() {
                   className="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm sm:text-base focus:outline-none focus:border-primary-400"
                 >
                   {[5, 10, 15, 20].map(num => (
-                    <option key={num} value={num}>{num} questions</option>
+                    <option key={num} value={num}>{t('quiz.questionsOption', { n: num })}</option>
                   ))}
                 </select>
               </div>
@@ -550,7 +522,7 @@ export default function Quiz() {
                 className="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-2xl px-6 py-3 sm:py-4 font-semibold text-base sm:text-lg transition-all shadow-md"
               >
                 {loading ? <LoadingSpinner size="sm" /> : <Brain className="w-5 h-5" />}
-                Start Quiz
+                {t('quiz.start')}
               </button>
             </div>
           </div>
@@ -568,7 +540,7 @@ export default function Quiz() {
                   </span>
                   <span className="text-gray-500 dark:text-gray-400">•</span>
                   <span className="text-sm sm:text-base font-semibold text-gray-700 dark:text-gray-300">
-                    {quizTypes.find(t => t.value === quizType)?.label}
+                    {t(`quiz.types.${quizType}`)}
                   </span>
                 </div>
                 {showResults && (
@@ -600,23 +572,23 @@ export default function Quiz() {
                       <motivation.Icon className={`w-12 h-12 sm:w-16 sm:h-16 ${motivation.iconClass}`} />
                     </div>
                     <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                      {motivation.title}
+                      {t(`quiz.motivation.${motivation.titleKey}`)}
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm sm:text-base">
-                      {motivation.message}
+                      {t(`quiz.motivation.${motivation.msgKey}`)}
                     </p>
                     <div className="flex justify-center gap-4 sm:gap-8 items-center">
                       <div className="bg-primary-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg text-center min-w-[72px]">
                         <div className="text-2xl sm:text-3xl font-bold">{percentage}%</div>
-                        <div className="text-xs mt-0.5 opacity-80">Score</div>
+                        <div className="text-xs mt-0.5 opacity-80">{t('quiz.score')}</div>
                       </div>
                       <div className="bg-success-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg text-center min-w-[72px]">
                         <div className="text-2xl sm:text-3xl font-bold">{score}</div>
-                        <div className="text-xs mt-0.5 opacity-80">Correct</div>
+                        <div className="text-xs mt-0.5 opacity-80">{t('quiz.correct')}</div>
                       </div>
                       <div className="bg-error-500 rounded-2xl p-3 sm:p-4 text-white shadow-lg text-center min-w-[72px]">
                         <div className="text-2xl sm:text-3xl font-bold">{quiz.questions.length - score}</div>
-                        <div className="text-xs mt-0.5 opacity-80">Missed</div>
+                        <div className="text-xs mt-0.5 opacity-80">{t('quiz.missed')}</div>
                       </div>
                     </div>
                   </div>
@@ -635,7 +607,7 @@ export default function Quiz() {
                 onClick={submitQuiz}
                 className="flex-1 flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-6 py-3 sm:py-4 font-semibold text-base sm:text-lg transition-all shadow-md"
               >
-                Submit Quiz
+                {t('quiz.submit')}
               </button>
             ) : (
               <button
@@ -643,7 +615,7 @@ export default function Quiz() {
                 className="flex-1 flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-6 py-3 sm:py-4 font-semibold text-base sm:text-lg transition-all shadow-md"
               >
                 <RotateCcw className="w-5 h-5" />
-                New Quiz
+                {t('quiz.newQuiz')}
               </button>
             )}
           </div>

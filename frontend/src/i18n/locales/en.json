@@ -536,5 +536,48 @@
       "loginRequired": "Please log in to practice typing",
       "loadFailed":    "Failed to load words"
     }
+  },
+
+  "quiz": {
+    "title":           "HSK Quiz Practice",
+    "createTitle":     "Create Your Quiz",
+    "hskLevel":        "HSK Level",
+    "quizType":        "Quiz Type",
+    "numQuestions":    "Number of Questions",
+    "questionsOption": "{{n}} questions",
+    "start":           "Start Quiz",
+    "types":           { "multiple_choice": "Multiple Choice", "fill_blank": "Fill in Blank", "character_match": "Character Match" },
+    "question":        "Question {{n}}",
+    "answer":          "Answer:",
+    "hint":            "Hint:",
+    "meaning":         "Meaning:",
+    "fillPlaceholder": "Type the Chinese character(s)",
+    "correctAnswer":   "Correct Answer:",
+    "full":            "Full:",
+    "matchInstruction":"Tap a character, then tap its matching meaning",
+    "meaningCol":      "Meaning",
+    "score":           "Score",
+    "correct":         "Correct",
+    "missed":          "Missed",
+    "submit":          "Submit Quiz",
+    "newQuiz":         "New Quiz",
+    "toasts": {
+      "generateFailed": "Failed to generate quiz",
+      "excellent":      "Excellent! {{pct}}% correct!",
+      "goodJob":        "Good job! {{pct}}% correct",
+      "keepPracticing": "Keep practicing! {{pct}}% correct"
+    },
+    "motivation": {
+      "tier90Title": "Absolutely Crushing It!",
+      "tier90Msg":   "Your Chinese skills are on fire! You're a HSK superstar!",
+      "tier80Title": "Excellent Work!",
+      "tier80Msg":   "You're mastering Chinese like a pro! Keep this momentum going!",
+      "tier70Title": "Great Job!",
+      "tier70Msg":   "You're making solid progress! Your dedication is paying off!",
+      "tier60Title": "Good Effort!",
+      "tier60Msg":   "You're on the right track! A bit more practice and you'll nail it!",
+      "tier0Title":  "Keep Going!",
+      "tier0Msg":    "Every mistake is a learning opportunity! You got this — practice makes perfect!"
+    }
   }
 }

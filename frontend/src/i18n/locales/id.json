@@ -536,5 +536,48 @@
       "loginRequired": "Silakan masuk untuk berlatih mengetik",
       "loadFailed":    "Gagal memuat kata"
     }
+  },
+
+  "quiz": {
+    "title":           "Latihan Kuis HSK",
+    "createTitle":     "Buat Kuismu",
+    "hskLevel":        "Level HSK",
+    "quizType":        "Tipe Kuis",
+    "numQuestions":    "Jumlah Soal",
+    "questionsOption": "{{n}} soal",
+    "start":           "Mulai Kuis",
+    "types":           { "multiple_choice": "Pilihan Ganda", "fill_blank": "Isi Bagian Kosong", "character_match": "Cocokkan Karakter" },
+    "question":        "Soal {{n}}",
+    "answer":          "Jawaban:",
+    "hint":            "Petunjuk:",
+    "meaning":         "Arti:",
+    "fillPlaceholder": "Ketik karakter Mandarin",
+    "correctAnswer":   "Jawaban Benar:",
+    "full":            "Lengkap:",
+    "matchInstruction":"Ketuk karakter, lalu ketuk arti yang cocok",
+    "meaningCol":      "Arti",
+    "score":           "Skor",
+    "correct":         "Benar",
+    "missed":          "Terlewat",
+    "submit":          "Kirim Kuis",
+    "newQuiz":         "Kuis Baru",
+    "toasts": {
+      "generateFailed": "Gagal membuat kuis",
+      "excellent":      "Luar biasa! {{pct}}% benar!",
+      "goodJob":        "Kerja bagus! {{pct}}% benar",
+      "keepPracticing": "Terus berlatih! {{pct}}% benar"
+    },
+    "motivation": {
+      "tier90Title": "Benar-benar Hebat!",
+      "tier90Msg":   "Kemampuan Mandarinmu luar biasa! Kamu bintang HSK!",
+      "tier80Title": "Kerja Bagus!",
+      "tier80Msg":   "Kamu menguasai Mandarin seperti pro! Pertahankan momentumnya!",
+      "tier70Title": "Bagus Sekali!",
+      "tier70Msg":   "Kamu membuat progres solid! Dedikasimu membuahkan hasil!",
+      "tier60Title": "Usaha Bagus!",
+      "tier60Msg":   "Kamu di jalur yang benar! Sedikit latihan lagi dan kamu akan menguasainya!",
+      "tier0Title":  "Terus Maju!",
+      "tier0Msg":    "Setiap kesalahan adalah kesempatan belajar! Kamu pasti bisa — latihan membuat sempurna!"
+    }
   }
 }
