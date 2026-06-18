@@ -258,8 +258,8 @@ function HomeView({ onCreated, onJoined }: { onCreated: (c: string) => void; onJ
           {([{ value: 'battle_royale', label: 'Battle Royale', desc: 'Last one standing wins', icon: Swords, color: 'indigo' },
           { value: 'team_vs_team', label: 'Team vs Team', desc: 'Compete as a team', icon: Users, color: 'rose' }] as const
           ).map(({ value, label, desc, icon: Icon, color }) => (
-            <button key={value} onClick={() => setMode(value)} className={`p-3 sm:p-4 rounded-xl border-2 text-left transition-all ${mode === value ? color === 'indigo' ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30' : 'border-rose-500 bg-rose-50 dark:bg-rose-950/30' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}>
-              <Icon className={`w-4 h-4 sm:w-5 sm:h-5 mb-1.5 ${mode === value ? color === 'indigo' ? 'text-primary-600' : 'text-rose-500' : 'text-gray-400'}`} />
+            <button key={value} onClick={() => setMode(value)} className={`p-3 sm:p-4 rounded-xl border-2 text-left transition-all ${mode === value ? color === 'indigo' ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30' : 'border-rose-500 bg-rose-50 dark:bg-rose-950/30' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 dark:bg-surface-card bg-white'}`}>
+              <Icon className={`w-4 h-4 sm:w-5 sm:h-5 mb-1.5 ${mode === value ? color === 'indigo' ? 'text-primary-600 dark:text-primary-400' : 'text-rose-500' : 'text-gray-400 dark:text-gray-500'}`} />
               <p className="font-semibold text-xs sm:text-sm text-gray-900 dark:text-gray-100">{label}</p>
               <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">{desc}</p>
             </button>
@@ -275,7 +275,7 @@ function HomeView({ onCreated, onJoined }: { onCreated: (c: string) => void; onJ
         <div className="flex gap-2">
           <input value={joinCode} onChange={e => setJoinCode(e.target.value.toUpperCase())} maxLength={6} placeholder="ABC123"
             className="flex-1 px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl text-center text-xl font-mono font-bold tracking-widest bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-primary-400 uppercase" />
-          <button onClick={handleJoin} className="px-4 bg-gray-900 dark:bg-gray-100 hover:bg-gray-700 dark:hover:bg-gray-200 text-white dark:text-gray-900 font-semibold rounded-xl transition-all flex items-center gap-1.5 text-sm sm:text-base">
+          <button onClick={handleJoin} className="px-4 bg-gray-900 dark:bg-gray-100 hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-gray-900 font-semibold rounded-xl transition-all flex items-center gap-1.5 text-sm sm:text-base shadow-sm">
             Join <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -579,7 +579,7 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
       {/* Players mini-bar */}
       <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
         {gameState.players.map(p => (
-          <div key={p.user_id} className={`flex items-center gap-1 px-1.5 py-1 rounded-xl border ${p.eliminated ? 'border-error-200 bg-error-50 dark:bg-error-950/20 opacity-50' : p.user_id === currentUserId ? 'border-primary-300 bg-primary-50 dark:bg-primary-950/30' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'}`}>
+          <div key={p.user_id} className={`flex items-center gap-1 px-1.5 py-1 rounded-xl border ${p.eliminated ? 'border-error-200 bg-error-50 dark:bg-error-950/20 opacity-50 dark:border-error-800' : p.user_id === currentUserId ? 'border-primary-300 bg-primary-50 dark:bg-primary-950/30' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'}`}>
             <Avatar player={p} size="sm" />
             <div className="hidden sm:block ml-0.5">
               <p className="text-[10px] font-medium text-gray-700 dark:text-gray-300 leading-none">{p.username}</p>
@@ -624,7 +624,7 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
             <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || 'What is the meaning?'}</p>
             <div className="flex items-center justify-center gap-3">
               <motion.p initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-6xl sm:text-7xl font-bold font-chinese text-gray-900 dark:text-gray-100">{q.chinese}</motion.p>
-              <button onClick={() => speakChinese(q.chinese)} className="p-2 rounded-xl bg-primary-50 dark:bg-primary-950/30 text-primary-500 hover:bg-primary-100 transition-all" title="Hear pronunciation"><Volume2 className="w-5 h-5" /></button>
+              <button onClick={() => speakChinese(q.chinese)} className="p-2 rounded-xl bg-primary-50 dark:bg-primary-950/30 text-primary-500 hover:bg-primary-100 transition-all dark:hover:bg-primary-900/40" title="Hear pronunciation"><Volume2 className="w-5 h-5" /></button>
             </div>
             <p className="text-primary-500 text-lg mt-1.5">{q.pinyin}</p>
           </div>
@@ -640,7 +640,7 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
             <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || 'Which pronunciation is correct?'}</p>
             <div className="flex items-center justify-center gap-3">
               <motion.p initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-6xl sm:text-7xl font-bold font-chinese text-gray-900 dark:text-gray-100">{q.chinese}</motion.p>
-              <button onClick={() => speakChinese(q.chinese)} className="p-2 rounded-xl bg-primary-50 dark:bg-primary-950/30 text-primary-500 hover:bg-primary-100 transition-all" title="Hear pronunciation"><Volume2 className="w-5 h-5" /></button>
+              <button onClick={() => speakChinese(q.chinese)} className="p-2 rounded-xl bg-primary-50 dark:bg-primary-950/30 text-primary-500 hover:bg-primary-100 transition-all dark:hover:bg-primary-900/40" title="Hear pronunciation"><Volume2 className="w-5 h-5" /></button>
             </div>
             <p className="text-gray-400 text-sm mt-1.5 italic">{q.english}</p>
           </div>

@@ -249,7 +249,12 @@ export default function FeedbackButton() {
     try {
       let finalAttachmentUrl = undefined
       if (attachment) {
-        finalAttachmentUrl = await uploadToSupabase(attachment)
+        try {
+          finalAttachmentUrl = await uploadToSupabase(attachment)
+        } catch (uploadErr) {
+          console.warn('Failed to upload image, submitting feedback without it:', uploadErr)
+          toast.error('Image upload failed. Submitting text only.')
+        }
       }
 
       await feedbackApi.submit({
