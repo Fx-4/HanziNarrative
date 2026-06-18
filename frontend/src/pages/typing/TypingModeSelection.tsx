@@ -66,42 +66,42 @@ export default function TypingModeSelection({
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-              <div className="bg-success-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
+              <div className="bg-success-600 dark:bg-success-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-success-300 shadow-lg border border-transparent dark:border-success-800/50">
                 <div className="flex items-center gap-2 mb-1">
-                  <Award className="w-4 h-4 text-success-200" />
-                  <p className="text-xs text-success-100 font-medium">Mastered</p>
+                  <Award className="w-4 h-4 text-success-200 dark:text-success-400" />
+                  <p className="text-xs text-success-100 dark:text-success-400/80 font-medium">Mastered</p>
                 </div>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-2xl font-bold text-white dark:text-success-200">
                   <CountUp to={stats.mastered_words} duration={1.2} />
                 </p>
               </div>
 
-              <div className="bg-primary-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
+              <div className="bg-primary-600 dark:bg-primary-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-primary-300 shadow-lg border border-transparent dark:border-primary-800/50">
                 <div className="flex items-center gap-2 mb-1">
-                  <TrendingUp className="w-4 h-4 text-primary-200" />
-                  <p className="text-xs text-primary-100 font-medium">Accuracy</p>
+                  <TrendingUp className="w-4 h-4 text-primary-200 dark:text-primary-400" />
+                  <p className="text-xs text-primary-100 dark:text-primary-400/80 font-medium">Accuracy</p>
                 </div>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-2xl font-bold text-white dark:text-primary-200">
                   <CountUp to={stats.average_accuracy} duration={1.2} decimals={0} suffix="%" />
                 </p>
               </div>
 
-              <div className="bg-violet-600 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
+              <div className="bg-violet-600 dark:bg-violet-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-violet-300 shadow-lg border border-transparent dark:border-violet-800/50">
                 <div className="flex items-center gap-2 mb-1">
-                  <Zap className="w-4 h-4 text-violet-200" />
-                  <p className="text-xs text-violet-100 font-medium">Avg WPM</p>
+                  <Zap className="w-4 h-4 text-violet-200 dark:text-violet-400" />
+                  <p className="text-xs text-violet-100 dark:text-violet-400/80 font-medium">Avg WPM</p>
                 </div>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-2xl font-bold text-white dark:text-violet-200">
                   <CountUp to={stats.average_wpm} duration={1.2} decimals={0} />
                 </p>
               </div>
 
-              <div className="bg-orange-500 rounded-2xl p-3 sm:p-4 text-white shadow-lg">
+              <div className="bg-orange-500 dark:bg-orange-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-orange-300 shadow-lg border border-transparent dark:border-orange-800/50">
                 <div className="flex items-center gap-2 mb-1">
-                  <Target className="w-4 h-4 text-orange-200" />
-                  <p className="text-xs text-orange-100 font-medium">Best WPM</p>
+                  <Target className="w-4 h-4 text-orange-200 dark:text-orange-400" />
+                  <p className="text-xs text-orange-100 dark:text-orange-400/80 font-medium">Best WPM</p>
                 </div>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-2xl font-bold text-white dark:text-orange-200">
                   <CountUp to={stats.best_wpm} duration={1.2} decimals={0} />
                 </p>
               </div>
