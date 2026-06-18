@@ -455,19 +455,19 @@ export default function Review() {
                       animate={{ scale: 1, opacity: 1 }}
                       className={`text-center mb-6 p-4 rounded-2xl border-2 ${
                         isCorrectAnswer
-                          ? 'bg-success-50 border-success-200'
-                          : 'bg-error-50 border-error-200'
+                          ? 'bg-success-50 dark:bg-success-950/40 border-success-200 dark:border-success-800'
+                          : 'bg-error-50 dark:bg-error-950/40 border-error-200 dark:border-error-800'
                       }`}
                     >
                       {isCorrectAnswer ? (
-                        <div className="flex items-center justify-center gap-2 text-success-700">
+                        <div className="flex items-center justify-center gap-2 text-success-700 dark:text-success-300">
                           <CheckCircle className="w-5 h-5" />
-                          <span className="text-base font-semibold">Correct!</span>
+                          <span className="text-base font-semibold">{t('review.correct')}</span>
                         </div>
                       ) : (
-                        <div className="flex items-center justify-center gap-2 text-error-700">
+                        <div className="flex items-center justify-center gap-2 text-error-700 dark:text-error-300">
                           <XCircle className="w-5 h-5" />
-                          <span className="text-base font-semibold">Incorrect – See the answer below</span>
+                          <span className="text-base font-semibold">{t('review.incorrect')}</span>
                         </div>
                       )}
                     </motion.div>
@@ -489,16 +489,16 @@ export default function Review() {
                           let btnClass = 'w-full p-4 sm:p-5 text-left rounded-2xl border-2 transition-all cursor-pointer font-medium'
                           if (showResult) {
                             if (isCorrect) {
-                              btnClass += ' border-success-400 bg-success-50 text-success-900'
+                              btnClass += ' border-success-400 bg-success-50 dark:bg-success-950/40 text-success-900 dark:text-success-200'
                             } else if (isSelected && !isCorrect) {
-                              btnClass += ' border-error-400 bg-error-50 text-error-900'
+                              btnClass += ' border-error-400 bg-error-50 dark:bg-error-950/40 text-error-900 dark:text-error-200'
                             } else {
-                              btnClass += ' border-gray-200 bg-gray-50 text-gray-400'
+                              btnClass += ' border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-gray-400 dark:text-gray-500'
                             }
                           } else {
                             btnClass += isSelected
-                              ? ' border-primary-500 bg-primary-50 text-primary-900'
-                              : ' border-gray-200 hover:border-primary-300 hover:bg-primary-50 text-gray-800'
+                              ? ' border-primary-500 bg-primary-50 dark:bg-primary-950/50 text-primary-900 dark:text-primary-200'
+                              : ' border-gray-200 dark:border-gray-700 hover:border-primary-300 hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-800 dark:text-gray-200'
                           }
 
                           return (
@@ -531,10 +531,10 @@ export default function Review() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="text-center mb-6 sm:mb-8 p-5 sm:p-6 bg-gradient-to-br from-primary-50 to-violet-50 rounded-2xl border border-primary-100"
+                        className="text-center mb-6 sm:mb-8 p-5 sm:p-6 bg-gradient-to-br from-primary-50 to-violet-50 dark:from-primary-950/40 dark:to-violet-950/40 rounded-2xl border border-primary-100 dark:border-primary-900/40"
                       >
                         <div className="flex items-center justify-center gap-2 mb-2">
-                          <div className="text-2xl sm:text-3xl font-bold text-primary-600">
+                          <div className="text-2xl sm:text-3xl font-bold text-primary-600 dark:text-primary-400">
                             {currentItem.word.pinyin}
                           </div>
                           <AudioButton
@@ -542,14 +542,14 @@ export default function Review() {
                             language="zh-CN"
                             size="md"
                             variant="secondary"
-                            tooltipText="Hear the pronunciation"
+                            tooltipText={t('review.hearPronunciation')}
                           />
                         </div>
-                        <div className="text-lg sm:text-xl text-gray-800 mb-3">
+                        <div className="text-lg sm:text-xl text-gray-800 dark:text-gray-200 mb-3">
                           {currentItem.word.english}
                         </div>
                         {currentItem.word.category && (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-100 text-primary-700">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-100 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300">
                             {currentItem.word.category}
                           </span>
                         )}
@@ -562,46 +562,46 @@ export default function Review() {
                     <div className="flex justify-center">
                       <button
                         onClick={() => setShowAnswer(true)}
-                        className="border-2 border-gray-200 text-gray-700 rounded-2xl px-8 py-3.5 font-semibold hover:border-primary-300 hover:bg-primary-50 transition-all flex items-center gap-2 cursor-pointer"
+                        className="border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl px-8 py-3.5 font-semibold hover:border-primary-300 hover:bg-primary-50 dark:hover:bg-primary-950/30 transition-all flex items-center gap-2 cursor-pointer"
                       >
-                        Skip Quiz – Show Answer
+                        {t('review.skipQuiz')}
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      <p className="text-center text-sm text-gray-500 mb-3">How well did you know this?</p>
+                      <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-3">{t('review.howWell')}</p>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
                         <button
                           onClick={() => handleReview(0)}
-                          className="py-4 px-3 rounded-2xl border-2 border-error-200 hover:bg-error-50 transition-all text-left cursor-pointer"
+                          className="py-4 px-3 rounded-2xl border-2 border-error-200 dark:border-error-900/50 hover:bg-error-50 dark:hover:bg-error-950/40 transition-all text-left cursor-pointer"
                         >
                           <div className="flex items-center gap-1.5 mb-0.5">
                             <XCircle className="w-4 h-4 text-error-500" />
-                            <span className="font-bold text-gray-900 text-sm">Wrong</span>
+                            <span className="font-bold text-gray-900 dark:text-gray-100 text-sm">{t('review.labels.wrong')}</span>
                           </div>
-                          <div className="text-xs text-gray-500">Completely forgot</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">{t('review.ratingDesc.wrong')}</div>
                         </button>
                         <button
                           onClick={() => handleReview(2)}
-                          className="py-4 px-3 rounded-2xl border-2 border-orange-200 hover:bg-orange-50 transition-all text-left cursor-pointer"
+                          className="py-4 px-3 rounded-2xl border-2 border-orange-200 dark:border-orange-900/50 hover:bg-orange-50 dark:hover:bg-orange-950/40 transition-all text-left cursor-pointer"
                         >
-                          <div className="font-bold text-gray-900 text-sm mb-0.5">Hard</div>
-                          <div className="text-xs text-gray-500">Difficult to recall</div>
+                          <div className="font-bold text-gray-900 dark:text-gray-100 text-sm mb-0.5">{t('review.labels.hard')}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">{t('review.ratingDesc.hard')}</div>
                         </button>
                         <button
                           onClick={() => handleReview(3)}
-                          className="py-4 px-3 rounded-2xl border-2 border-blue-200 hover:bg-blue-50 transition-all text-left cursor-pointer"
+                          className="py-4 px-3 rounded-2xl border-2 border-blue-200 dark:border-blue-900/50 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-all text-left cursor-pointer"
                         >
-                          <div className="font-bold text-gray-900 text-sm mb-0.5">Good</div>
-                          <div className="text-xs text-gray-500">Remembered with effort</div>
+                          <div className="font-bold text-gray-900 dark:text-gray-100 text-sm mb-0.5">{t('review.labels.good')}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">{t('review.ratingDesc.good')}</div>
                         </button>
                         <button
                           onClick={() => handleReview(4)}
-                          className="py-4 px-3 rounded-2xl border-2 border-success-200 hover:bg-success-50 transition-all text-left cursor-pointer"
+                          className="py-4 px-3 rounded-2xl border-2 border-success-200 dark:border-success-900/50 hover:bg-success-50 dark:hover:bg-success-950/40 transition-all text-left cursor-pointer"
                         >
-                          <div className="font-bold text-gray-900 text-sm mb-0.5">Easy</div>
-                          <div className="text-xs text-gray-500">Quick recall</div>
+                          <div className="font-bold text-gray-900 dark:text-gray-100 text-sm mb-0.5">{t('review.labels.easy')}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">{t('review.ratingDesc.easy')}</div>
                         </button>
                         <button
                           onClick={() => handleReview(5)}
@@ -609,8 +609,8 @@ export default function Review() {
                         >
                           <CheckCircle className="w-4 h-4" />
                           <div className="text-left">
-                            <div className="font-bold text-sm">Perfect</div>
-                            <div className="text-xs opacity-80">Instant recall</div>
+                            <div className="font-bold text-sm">{t('review.labels.perfect')}</div>
+                            <div className="text-xs opacity-80">{t('review.ratingDesc.perfect')}</div>
                           </div>
                         </button>
                       </div>
