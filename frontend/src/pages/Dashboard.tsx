@@ -351,8 +351,8 @@ export default function Dashboard() {
                     data={masteryDistribution} 
                     cx="50%" 
                     cy="50%" 
-                    innerRadius={60} 
-                    outerRadius={85} 
+                    innerRadius={45} 
+                    outerRadius={65} 
                     paddingAngle={6} 
                     cornerRadius={6}
                     dataKey="value" 
@@ -367,7 +367,7 @@ export default function Dashboard() {
                   </Pie>
                   <Tooltip 
                     contentStyle={chartTheme.tooltip}
-                    itemStyle={{ fontSize: '12px', fontWeight: 600 }}
+                    itemStyle={{ fontSize: '12px', fontWeight: 600, color: chartTheme.tooltip.color }}
                     formatter={(value: number) => [value, t('dashboard.charts.words')]}
                   />
                   <Legend 
