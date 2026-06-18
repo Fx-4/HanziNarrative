@@ -12,11 +12,13 @@ import IMEPracticeMode from '@/components/typing/IMEPracticeMode'
 import SpeedTypingMode from '@/components/typing/SpeedTypingMode'
 import TypingModeSelection from './typing/TypingModeSelection'
 import { createLogger } from '@/utils/debugLogger'
+import { useTranslation } from 'react-i18next'
 
 const typingLogger = createLogger('Typing')
 
 export default function Typing() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { user } = useAuthStore()
   const [mode, setMode] = useState<TypingMode>(null)
   const [hskLevel, setHskLevel] = useState(1)
@@ -60,7 +62,7 @@ export default function Typing() {
 
   const handleModeSelect = async (selectedMode: TypingMode) => {
     if (!user) {
-      toast.error('Please log in to practice typing')
+      toast.error(t('typing.toasts.loginRequired'))
       return
     }
 
@@ -73,11 +75,11 @@ export default function Typing() {
     } catch (error) {
       const err = error as { response?: { status?: number } }
       if (err.response?.status === 401) {
-        toast.error('Please log in to practice typing')
+        toast.error(t('typing.toasts.loginRequired'))
         setMode(null)
       } else {
         typingLogger.error('Failed to load words:', error)
-        toast.error('Failed to load words')
+        toast.error(t('typing.toasts.loadFailed'))
       }
     } finally {
       setLoading(false)
@@ -108,7 +110,7 @@ export default function Typing() {
             className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 font-medium cursor-pointer rounded-2xl px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Modes
+            {t('typing.backToModes')}
           </button>
         </div>
 
@@ -138,7 +140,7 @@ export default function Typing() {
   }
 
   return (
-    <div className="min-h-screen py-6 sm:py-8 px-4 bg-gray-50 dark:bg-gray-950">
+    <div className="py-6 sm:py-8">
       <AnimatePresence mode="wait">
         {!mode && (
           <motion.div

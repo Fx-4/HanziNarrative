@@ -500,5 +500,41 @@
     "colCategory":       "Kategori",
     "colAction":         "Aksi",
     "details":           "Detail"
+  },
+
+  "typing": {
+    "title":         "Latihan Mengetik",
+    "subtitle":      "Kuasai mengetik Mandarin dengan input pinyin",
+    "backToModes":   "Kembali ke Mode",
+    "selectLevel":   "Pilih Level HSK",
+    "progress":      "Progresmu (HSK {{level}})",
+    "mastered":      "Dikuasai",
+    "accuracy":      "Akurasi",
+    "avgWpm":        "Rata2 WPM",
+    "bestWpm":       "WPM Terbaik",
+    "loginTitle":    "Masuk untuk Melacak Progresmu",
+    "loginDesc":     "Lacak kecepatan, akurasi, dan progres mengetikmu!",
+    "login":         "Masuk",
+    "createAccount": "Buat Akun",
+    "modes": {
+      "pinyinTitle": "Ketik Pinyin",
+      "pinyinDesc":  "Lihat karakter Mandarin, ketik ejaan pinyin yang benar. Cocok untuk belajar romanisasi.",
+      "pinyinTag":   "Belajar ejaan",
+      "imeTitle":    "Latihan IME",
+      "imeDesc":     "Ketik pinyin lalu pilih karakter yang benar dari kandidat. Simulasi input Mandarin asli.",
+      "imeTag":      "Latihan nyata",
+      "speedTitle":  "Ketik Cepat",
+      "speedDesc":   "Uji kecepatan mengetikmu! Ketik secepat mungkin sambil menjaga akurasi.",
+      "speedTag":    "Bangun kecepatan"
+    },
+    "tipsTitle": "Tips Mengetik",
+    "tip1": "Mode Pinyin: Ketik pinyin biasa (mis. ni hao, zhong guo)",
+    "tip2": "Mode IME: Pilih karakter dari kandidat seperti mengetik Mandarin asli",
+    "tip3": "Fokus akurasi dulu, kecepatan akan mengikuti",
+    "tip4": "Berlatih setiap hari untuk hasil terbaik",
+    "toasts": {
+      "loginRequired": "Silakan masuk untuk berlatih mengetik",
+      "loadFailed":    "Gagal memuat kata"
+    }
   }
 }

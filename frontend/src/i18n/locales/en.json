@@ -500,5 +500,41 @@
     "colCategory":       "Category",
     "colAction":         "Action",
     "details":           "Details"
+  },
+
+  "typing": {
+    "title":         "Typing Practice",
+    "subtitle":      "Master Chinese typing with pinyin input",
+    "backToModes":   "Back to Modes",
+    "selectLevel":   "Select HSK Level",
+    "progress":      "Your Progress (HSK {{level}})",
+    "mastered":      "Mastered",
+    "accuracy":      "Accuracy",
+    "avgWpm":        "Avg WPM",
+    "bestWpm":       "Best WPM",
+    "loginTitle":    "Login to Track Your Progress",
+    "loginDesc":     "Track your typing speed, accuracy, and progress!",
+    "login":         "Login",
+    "createAccount": "Create Account",
+    "modes": {
+      "pinyinTitle": "Pinyin Typing",
+      "pinyinDesc":  "See Chinese character, type correct pinyin spelling. Perfect for learning romanization.",
+      "pinyinTag":   "Learn spelling",
+      "imeTitle":    "IME Practice",
+      "imeDesc":     "Type pinyin and select correct character from candidates. Simulates real Chinese input.",
+      "imeTag":      "Real-world practice",
+      "speedTitle":  "Speed Typing",
+      "speedDesc":   "Test your typing speed! Type as fast as you can while maintaining accuracy.",
+      "speedTag":    "Build speed"
+    },
+    "tipsTitle": "Typing Tips",
+    "tip1": "Pinyin Mode: Type plain pinyin (e.g., ni hao, zhong guo)",
+    "tip2": "IME Mode: Select characters from candidates like real Chinese typing",
+    "tip3": "Focus on accuracy first, speed will come naturally",
+    "tip4": "Practice daily for best results",
+    "toasts": {
+      "loginRequired": "Please log in to practice typing",
+      "loadFailed":    "Failed to load words"
+    }
   }
 }

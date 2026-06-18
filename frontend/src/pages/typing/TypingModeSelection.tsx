@@ -16,6 +16,7 @@ import BlurText from '@/components/animations/BlurText'
 import TiltCard from '@/components/animations/TiltCard'
 import SpotlightCard from '@/components/animations/SpotlightCard'
 import CountUp from '@/components/animations/CountUp'
+import { useTranslation } from 'react-i18next'
 
 interface TypingModeSelectionProps {
   hskLevel: number
@@ -36,6 +37,7 @@ export default function TypingModeSelection({
   onModeSelect,
   onNavigate
 }: TypingModeSelectionProps) {
+  const { t } = useTranslation()
   const renderStatsCard = () => {
     if (!user) return null
 
@@ -62,14 +64,14 @@ export default function TypingModeSelection({
           <div className="p-4 sm:p-6">
             <div className="flex items-center gap-2 mb-4">
               <BarChart3 className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Your Progress (HSK {hskLevel})</h3>
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">{t('typing.progress', { level: hskLevel })}</h3>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
               <div className="bg-success-600 dark:bg-success-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-success-300 shadow-lg border border-transparent dark:border-success-800/50">
                 <div className="flex items-center gap-2 mb-1">
                   <Award className="w-4 h-4 text-success-200 dark:text-success-400" />
-                  <p className="text-xs text-success-100 dark:text-success-400/80 font-medium">Mastered</p>
+                  <p className="text-xs text-success-100 dark:text-success-400/80 font-medium">{t('typing.mastered')}</p>
                 </div>
                 <p className="text-2xl font-bold text-white dark:text-success-200">
                   <CountUp to={stats.mastered_words} duration={1.2} />
@@ -79,7 +81,7 @@ export default function TypingModeSelection({
               <div className="bg-primary-600 dark:bg-primary-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-primary-300 shadow-lg border border-transparent dark:border-primary-800/50">
                 <div className="flex items-center gap-2 mb-1">
                   <TrendingUp className="w-4 h-4 text-primary-200 dark:text-primary-400" />
-                  <p className="text-xs text-primary-100 dark:text-primary-400/80 font-medium">Accuracy</p>
+                  <p className="text-xs text-primary-100 dark:text-primary-400/80 font-medium">{t('typing.accuracy')}</p>
                 </div>
                 <p className="text-2xl font-bold text-white dark:text-primary-200">
                   <CountUp to={stats.average_accuracy} duration={1.2} decimals={0} suffix="%" />
@@ -89,7 +91,7 @@ export default function TypingModeSelection({
               <div className="bg-violet-600 dark:bg-violet-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-violet-300 shadow-lg border border-transparent dark:border-violet-800/50">
                 <div className="flex items-center gap-2 mb-1">
                   <Zap className="w-4 h-4 text-violet-200 dark:text-violet-400" />
-                  <p className="text-xs text-violet-100 dark:text-violet-400/80 font-medium">Avg WPM</p>
+                  <p className="text-xs text-violet-100 dark:text-violet-400/80 font-medium">{t('typing.avgWpm')}</p>
                 </div>
                 <p className="text-2xl font-bold text-white dark:text-violet-200">
                   <CountUp to={stats.average_wpm} duration={1.2} decimals={0} />
@@ -99,7 +101,7 @@ export default function TypingModeSelection({
               <div className="bg-orange-500 dark:bg-orange-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-orange-300 shadow-lg border border-transparent dark:border-orange-800/50">
                 <div className="flex items-center gap-2 mb-1">
                   <Target className="w-4 h-4 text-orange-200 dark:text-orange-400" />
-                  <p className="text-xs text-orange-100 dark:text-orange-400/80 font-medium">Best WPM</p>
+                  <p className="text-xs text-orange-100 dark:text-orange-400/80 font-medium">{t('typing.bestWpm')}</p>
                 </div>
                 <p className="text-2xl font-bold text-white dark:text-orange-200">
                   <CountUp to={stats.best_wpm} duration={1.2} decimals={0} />
@@ -126,11 +128,11 @@ export default function TypingModeSelection({
             className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-50"
             wordDelay={0.08}
           >
-            Typing Practice
+            {t('typing.title')}
           </BlurText>
         </div>
         <p className="text-base sm:text-xl text-gray-600 dark:text-gray-400">
-          Master Chinese typing with pinyin input
+          {t('typing.subtitle')}
         </p>
       </motion.div>
 
@@ -147,10 +149,10 @@ export default function TypingModeSelection({
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-base sm:text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">
-                  Login to Track Your Progress
+                  {t('typing.loginTitle')}
                 </h3>
                 <p className="text-sm sm:text-base text-gray-700 mb-4 dark:text-gray-300">
-                  Track your typing speed, accuracy, and progress!
+                  {t('typing.loginDesc')}
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <button
@@ -158,13 +160,13 @@ export default function TypingModeSelection({
                     className="inline-flex items-center bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-5 py-2.5 sm:px-6 sm:py-3 font-semibold cursor-pointer text-sm sm:text-base transition-colors"
                   >
                     <LogIn className="w-4 h-4 mr-2" />
-                    Login
+                    {t('typing.login')}
                   </button>
                   <button
                     onClick={() => onNavigate('/register')}
                     className="inline-flex items-center border border-primary-600 text-primary-600 hover:bg-primary-50 rounded-2xl px-5 py-2.5 sm:px-6 sm:py-3 font-semibold cursor-pointer text-sm sm:text-base transition-colors dark:text-primary-400 dark:hover:bg-primary-950/30"
                   >
-                    Create Account
+                    {t('typing.createAccount')}
                   </button>
                 </div>
               </div>
@@ -179,7 +181,7 @@ export default function TypingModeSelection({
         className="mb-8"
       >
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6 dark:bg-surface-card dark:border-gray-800">
-          <h3 className="text-base sm:text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Select HSK Level</h3>
+          <h3 className="text-base sm:text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">{t('typing.selectLevel')}</h3>
           <div className="flex flex-wrap gap-2">
             {[1, 2, 3, 4, 5, 6].map((level) => (
               <button
@@ -217,13 +219,13 @@ export default function TypingModeSelection({
                   </div>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold mb-3 text-gray-900 dark:text-gray-50">
-                  Pinyin Typing
+                  {t('typing.modes.pinyinTitle')}
                 </h3>
                 <p className="text-sm sm:text-base text-gray-600 mb-4 dark:text-gray-400">
-                  See Chinese character, type correct pinyin spelling. Perfect for learning romanization.
+                  {t('typing.modes.pinyinDesc')}
                 </p>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
-                  Learn spelling
+                  {t('typing.modes.pinyinTag')}
                 </span>
               </div>
             </SpotlightCard>
@@ -246,13 +248,13 @@ export default function TypingModeSelection({
                   </div>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold mb-3 text-gray-900 dark:text-gray-50">
-                  IME Practice
+                  {t('typing.modes.imeTitle')}
                 </h3>
                 <p className="text-sm sm:text-base text-gray-600 mb-4 dark:text-gray-400">
-                  Type pinyin and select correct character from candidates. Simulates real Chinese input.
+                  {t('typing.modes.imeDesc')}
                 </p>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300">
-                  Real-world practice
+                  {t('typing.modes.imeTag')}
                 </span>
               </div>
             </SpotlightCard>
@@ -275,13 +277,13 @@ export default function TypingModeSelection({
                   </div>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold mb-3 text-gray-900 dark:text-gray-50">
-                  Speed Typing
+                  {t('typing.modes.speedTitle')}
                 </h3>
                 <p className="text-sm sm:text-base text-gray-600 mb-4 dark:text-gray-400">
-                  Test your typing speed! Type as fast as you can while maintaining accuracy.
+                  {t('typing.modes.speedDesc')}
                 </p>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300">
-                  Build speed
+                  {t('typing.modes.speedTag')}
                 </span>
               </div>
             </SpotlightCard>
@@ -295,18 +297,18 @@ export default function TypingModeSelection({
         transition={{ delay: 0.5 }}
         className="mt-6 sm:mt-8"
       >
-        <div className="bg-gradient-to-r from-primary-50 to-blue-50 rounded-3xl shadow-xl border border-primary-100 overflow-hidden p-4 sm:p-6 dark:from-primary-950/30 dark:to-blue-950/30 dark:border-primary-900/40">
+        <div className="bg-gradient-to-r from-primary-50 to-blue-50 rounded-3xl shadow-xl border border-primary-100 overflow-hidden p-4 sm:p-6 dark:from-primary-950/20 dark:to-blue-950/20 dark:border-primary-900/30">
           <div className="flex items-start gap-3 sm:gap-4">
-            <div className="p-2 sm:p-3 bg-white rounded-lg shadow-sm shrink-0 dark:bg-surface-card">
+            <div className="p-2 sm:p-3 bg-white rounded-lg shadow-sm shrink-0 dark:bg-gray-800">
               <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600 dark:text-primary-400" />
             </div>
             <div>
-              <h4 className="font-semibold mb-2 text-gray-800 dark:text-gray-200">Typing Tips</h4>
+              <h4 className="font-semibold mb-2 text-gray-800 dark:text-gray-200">{t('typing.tipsTitle')}</h4>
               <ul className="text-xs sm:text-sm text-gray-700 space-y-1 dark:text-gray-300">
-                <li>- Pinyin Mode: Type plain pinyin (e.g., ni hao, zhong guo)</li>
-                <li>- IME Mode: Select characters from candidates like real Chinese typing</li>
-                <li>- Focus on accuracy first, speed will come naturally</li>
-                <li>- Practice daily for best results</li>
+                <li>- {t('typing.tip1')}</li>
+                <li>- {t('typing.tip2')}</li>
+                <li>- {t('typing.tip3')}</li>
+                <li>- {t('typing.tip4')}</li>
               </ul>
             </div>
           </div>
