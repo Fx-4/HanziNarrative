@@ -7,7 +7,6 @@ Create Date: 2026-06-18 14:57:52.756827
 """
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = '4f4e29a86896'
@@ -32,14 +31,6 @@ def downgrade() -> None:
     op.drop_column('feedback', 'element_selectors')
     op.drop_column('feedback', 'attachment_urls')
     # ### end Alembic commands ###
-    op.create_table('story_bookmarks',
-    sa.Column('id', sa.INTEGER(), autoincrement=True, nullable=False),
-    sa.Column('user_id', sa.INTEGER(), autoincrement=False, nullable=False),
-    sa.Column('story_id', sa.INTEGER(), autoincrement=False, nullable=False),
-    sa.Column('created_at', postgresql.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), autoincrement=False, nullable=True),
-    sa.ForeignKeyConstraint(['story_id'], ['stories.id'], name='story_bookmarks_story_id_fkey', ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='story_bookmarks_user_id_fkey', ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id', name='story_bookmarks_pkey'),
-    sa.UniqueConstraint('user_id', 'story_id', name='story_bookmarks_user_id_story_id_key')
-    )
-    # ### end Alembic commands ###
+    # NOTE: autogenerate also emitted a `create_table('story_bookmarks')` here because
+    # that table is managed via raw SQL (see routers/stories.py) and has no ORM model.
+    # It was removed — upgrade() never drops the table, so downgrade() must not recreate it.
