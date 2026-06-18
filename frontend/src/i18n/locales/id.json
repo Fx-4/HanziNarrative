@@ -579,5 +579,46 @@
       "tier0Title":  "Terus Maju!",
       "tier0Msg":    "Setiap kesalahan adalah kesempatan belajar! Kamu pasti bisa — latihan membuat sempurna!"
     }
+  },
+
+  "writing": {
+    "title":         "Latihan Menulis",
+    "subtitle":      "Kuasai karakter Mandarin lewat latihan",
+    "selectLevel":   "Pilih Level HSK",
+    "progress":      "Progresmu (HSK {{level}})",
+    "mastered":      "Dikuasai",
+    "learning":      "Dipelajari",
+    "new":           "Baru",
+    "totalPracticed":"Total Dilatih",
+    "attempts":      "Percobaan",
+    "accuracy":      "Akurasi",
+    "loginTitle":    "Masuk untuk Melacak Progresmu",
+    "loginDesc":     "Kamu bisa berlatih menulis tanpa masuk, tapi progresmu tidak akan tersimpan. Masuk atau daftar untuk melacak perjalanan belajarmu, menyimpan skor, dan melihat statistik lengkap!",
+    "login":         "Masuk",
+    "createAccount": "Buat Akun",
+    "modes": {
+      "practiceTitle": "Latihan Bebas",
+      "practiceDesc":  "Berlatih menulis karakter dengan kecepatanmu sendiri. Pelajari urutan goresan dan tingkatkan memori otot.",
+      "practiceTag":   "Disarankan untuk pemula",
+      "timedTitle":    "Tantangan Waktu",
+      "timedDesc":     "Adu cepat dengan waktu! Selesaikan karakter sebanyak mungkin dalam batas waktu.",
+      "timedTag":      "Bangun kecepatan & percaya diri",
+      "masteryTitle":  "Mode Penguasaan",
+      "masteryDesc":   "Fokus pada karakter yang belum kamu kuasai. Kesulitan adaptif berdasarkan performamu.",
+      "masteryTag":    "Latihan lanjutan"
+    },
+    "tipsTitle": "Tips Menulis",
+    "tip1": "Ikuti animasi urutan goresan dengan cermat",
+    "tip2": "Latih tiap karakter berulang kali untuk retensi lebih baik",
+    "tip3": "Fokus akurasi dulu, kecepatan akan mengikuti",
+    "tip4": "Istirahat di antara sesi latihan",
+    "toasts": {
+      "loginRequired":   "Silakan masuk untuk berlatih menulis",
+      "loadFailed":      "Gagal memuat karakter",
+      "progressNotSaved":"Progres tidak tersimpan — silakan masuk untuk melacak progresmu",
+      "saveFailed":      "Gagal menyimpan progres",
+      "sessionComplete": "Sesi selesai! Rata-rata akurasi: {{pct}}%",
+      "timesUp":         "Waktu habis! Kamu menyelesaikan {{n}} karakter!"
+    }
   }
 }

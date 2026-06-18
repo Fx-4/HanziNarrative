@@ -18,6 +18,7 @@ import TiltCard from '@/components/animations/TiltCard'
 import SpotlightCard from '@/components/animations/SpotlightCard'
 import CountUp from '@/components/animations/CountUp'
 import StrokeOrderLookup from './StrokeOrderLookup'
+import { useTranslation } from 'react-i18next'
 
 interface WritingModeSelectionProps {
   hskLevel: number
@@ -38,6 +39,7 @@ export default function WritingModeSelection({
   onModeSelect,
   onNavigate
 }: WritingModeSelectionProps) {
+  const { t } = useTranslation()
   const renderStatsCard = () => {
     if (statsLoading) {
       return (
@@ -63,14 +65,14 @@ export default function WritingModeSelection({
         <div className="bg-white dark:bg-surface-card rounded-b-3xl shadow-xl border border-gray-100 dark:border-gray-800 border-t-0 overflow-hidden p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
             <BarChart3 className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">Your Progress (HSK {hskLevel})</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">{t('writing.progress', { level: hskLevel })}</h3>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
             <div className="bg-primary-600 dark:bg-primary-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-primary-300 shadow-lg border border-transparent dark:border-primary-800/50">
               <div className="flex items-center gap-2 mb-1">
                 <Award className="w-4 h-4 text-primary-200 dark:text-primary-400" />
-                <p className="text-xs text-primary-200 dark:text-primary-400/80 font-medium">Mastered</p>
+                <p className="text-xs text-primary-200 dark:text-primary-400/80 font-medium">{t('writing.mastered')}</p>
               </div>
               <p className="text-xl sm:text-2xl font-bold dark:text-primary-200">
                 <CountUp to={stats.mastered_characters} duration={1.2} />
@@ -80,7 +82,7 @@ export default function WritingModeSelection({
             <div className="bg-primary-600 dark:bg-primary-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-primary-300 shadow-lg border border-transparent dark:border-primary-800/50">
               <div className="flex items-center gap-2 mb-1">
                 <TrendingUp className="w-4 h-4 text-primary-200 dark:text-primary-400" />
-                <p className="text-xs text-primary-200 dark:text-primary-400/80 font-medium">Learning</p>
+                <p className="text-xs text-primary-200 dark:text-primary-400/80 font-medium">{t('writing.learning')}</p>
               </div>
               <p className="text-xl sm:text-2xl font-bold dark:text-primary-200">
                 <CountUp to={stats.characters_in_progress} duration={1.2} />
@@ -90,7 +92,7 @@ export default function WritingModeSelection({
             <div className="bg-violet-600 dark:bg-violet-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-violet-300 shadow-lg border border-transparent dark:border-violet-800/50">
               <div className="flex items-center gap-2 mb-1">
                 <BookOpen className="w-4 h-4 text-violet-200 dark:text-violet-400" />
-                <p className="text-xs text-violet-200 dark:text-violet-400/80 font-medium">New</p>
+                <p className="text-xs text-violet-200 dark:text-violet-400/80 font-medium">{t('writing.new')}</p>
               </div>
               <p className="text-xl sm:text-2xl font-bold dark:text-violet-200">
                 <CountUp to={stats.new_characters} duration={1.2} />
@@ -100,7 +102,7 @@ export default function WritingModeSelection({
             <div className="bg-orange-500 dark:bg-orange-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-orange-300 shadow-lg border border-transparent dark:border-orange-800/50">
               <div className="flex items-center gap-2 mb-1">
                 <Pencil className="w-4 h-4 text-orange-200 dark:text-orange-400" />
-                <p className="text-xs text-orange-200 dark:text-orange-400/80 font-medium">Total Practiced</p>
+                <p className="text-xs text-orange-200 dark:text-orange-400/80 font-medium">{t('writing.totalPracticed')}</p>
               </div>
               <p className="text-xl sm:text-2xl font-bold dark:text-orange-200">
                 <CountUp to={stats.total_characters_practiced} duration={1.2} />
@@ -110,7 +112,7 @@ export default function WritingModeSelection({
             <div className="bg-pink-600 dark:bg-pink-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-pink-300 shadow-lg border border-transparent dark:border-pink-800/50">
               <div className="flex items-center gap-2 mb-1">
                 <Target className="w-4 h-4 text-pink-200 dark:text-pink-400" />
-                <p className="text-xs text-pink-200 dark:text-pink-400/80 font-medium">Attempts</p>
+                <p className="text-xs text-pink-200 dark:text-pink-400/80 font-medium">{t('writing.attempts')}</p>
               </div>
               <p className="text-xl sm:text-2xl font-bold dark:text-pink-200">
                 <CountUp to={stats.total_attempts} duration={1.2} />
@@ -120,7 +122,7 @@ export default function WritingModeSelection({
             <div className="bg-amber-500 dark:bg-amber-900/40 rounded-2xl p-3 sm:p-4 text-white dark:text-amber-300 shadow-lg border border-transparent dark:border-amber-800/50">
               <div className="flex items-center gap-2 mb-1">
                 <Zap className="w-4 h-4 text-amber-200 dark:text-amber-400" />
-                <p className="text-xs text-amber-200 dark:text-amber-400/80 font-medium">Accuracy</p>
+                <p className="text-xs text-amber-200 dark:text-amber-400/80 font-medium">{t('writing.accuracy')}</p>
               </div>
               <p className="text-xl sm:text-2xl font-bold dark:text-amber-200">
                 <CountUp to={stats.average_accuracy} duration={1.2} decimals={0} suffix="%" />
@@ -146,11 +148,11 @@ export default function WritingModeSelection({
             className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100"
             wordDelay={0.08}
           >
-            Writing Practice
+            {t('writing.title')}
           </BlurText>
         </div>
         <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400">
-          Master Chinese characters through practice
+          {t('writing.subtitle')}
         </p>
       </motion.div>
 
@@ -168,11 +170,10 @@ export default function WritingModeSelection({
               </div>
               <div className="flex-1">
                 <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                  Login to Track Your Progress
+                  {t('writing.loginTitle')}
                 </h3>
                 <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 mb-4">
-                  You can practice writing without logging in, but your progress won't be saved.
-                  Login or register to track your learning journey, save your scores, and see detailed statistics!
+                  {t('writing.loginDesc')}
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <button
@@ -180,13 +181,13 @@ export default function WritingModeSelection({
                     className="bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-5 py-2.5 font-semibold cursor-pointer flex items-center gap-2 text-sm sm:text-base transition-colors"
                   >
                     <LogIn className="w-4 h-4" />
-                    Login
+                    {t('writing.login')}
                   </button>
                   <button
                     onClick={() => onNavigate('/register')}
                     className="border border-primary-600 text-primary-600 hover:bg-primary-50 rounded-2xl px-5 py-2.5 font-semibold cursor-pointer text-sm sm:text-base transition-colors dark:text-primary-400 dark:hover:bg-primary-950/30"
                   >
-                    Create Account
+                    {t('writing.createAccount')}
                   </button>
                 </div>
               </div>
@@ -203,7 +204,7 @@ export default function WritingModeSelection({
         className="mb-6 sm:mb-8"
       >
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden p-4 sm:p-6">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4">Select HSK Level</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4">{t('writing.selectLevel')}</h3>
           <div className="flex flex-wrap gap-2">
             {[1, 2, 3, 4, 5, 6].map((level) => (
               <button
@@ -245,13 +246,13 @@ export default function WritingModeSelection({
                   </div>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-                  Free Practice
+                  {t('writing.modes.practiceTitle')}
                 </h3>
                 <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4">
-                  Practice writing characters at your own pace. Learn stroke order and improve muscle memory.
+                  {t('writing.modes.practiceDesc')}
                 </p>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-primary-100 dark:bg-primary-950/30 text-primary-700 dark:text-primary-400">
-                  Recommended for beginners
+                  {t('writing.modes.practiceTag')}
                 </span>
               </div>
             </SpotlightCard>
@@ -276,13 +277,13 @@ export default function WritingModeSelection({
                   </div>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-                  Timed Challenge
+                  {t('writing.modes.timedTitle')}
                 </h3>
                 <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4">
-                  Race against the clock! Complete as many characters as you can within the time limit.
+                  {t('writing.modes.timedDesc')}
                 </p>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-orange-100 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400">
-                  Build speed &amp; confidence
+                  {t('writing.modes.timedTag')}
                 </span>
               </div>
             </SpotlightCard>
@@ -307,13 +308,13 @@ export default function WritingModeSelection({
                   </div>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-                  Mastery Mode
+                  {t('writing.modes.masteryTitle')}
                 </h3>
                 <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4">
-                  Focus on characters you haven't mastered yet. Adaptive difficulty based on your performance.
+                  {t('writing.modes.masteryDesc')}
                 </p>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-violet-100 dark:bg-violet-950/30 text-violet-700 dark:text-violet-400">
-                  Advanced practice
+                  {t('writing.modes.masteryTag')}
                 </span>
               </div>
             </SpotlightCard>
@@ -337,12 +338,12 @@ export default function WritingModeSelection({
               <BookOpen className="w-6 h-6 text-primary-600 dark:text-primary-400" />
             </div>
             <div>
-              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Writing Tips</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">{t('writing.tipsTitle')}</h4>
               <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
-                <li>• Follow the stroke order animation carefully</li>
-                <li>• Practice each character multiple times for better retention</li>
-                <li>• Focus on accuracy first, speed will come naturally</li>
-                <li>• Take breaks between practice sessions</li>
+                <li>• {t('writing.tip1')}</li>
+                <li>• {t('writing.tip2')}</li>
+                <li>• {t('writing.tip3')}</li>
+                <li>• {t('writing.tip4')}</li>
               </ul>
             </div>
           </div>

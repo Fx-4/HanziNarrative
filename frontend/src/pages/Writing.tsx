@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/authStore'
 import WritingModeSelection from './writing/WritingModeSelection'
 import WritingSession from './writing/WritingSession'
 import { createLogger } from '@/utils/debugLogger'
+import { useTranslation } from 'react-i18next'
 
 const writingLogger = createLogger('Writing')
 
@@ -14,6 +15,7 @@ type WritingMode = 'practice' | 'timed' | 'mastery' | null
 
 export default function Writing() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { user } = useAuthStore()
   const [mode, setMode] = useState<WritingMode>(null)
   const [hskLevel, setHskLevel] = useState(1)
@@ -155,11 +157,11 @@ export default function Writing() {
     } catch (error) {
       const err = error as { response?: { status?: number } }
       if (err.response?.status === 401) {
-        toast.error('Please log in to practice writing')
+        toast.error(t('writing.toasts.loginRequired'))
         setMode(null)
       } else {
         writingLogger.error('Failed to load characters:', error)
-        toast.error('Failed to load characters')
+        toast.error(t('writing.toasts.loadFailed'))
       }
     } finally {
       setLoading(false)
@@ -206,7 +208,7 @@ export default function Writing() {
     } catch (error) {
       const err = error as { response?: { status?: number; data?: unknown } }
       if (err.response?.status === 401) {
-        toast('Progress not saved - please log in to track your progress', {
+        toast(t('writing.toasts.progressNotSaved'), {
           icon: '⚠️',
           duration: 3000
         })
@@ -218,7 +220,7 @@ export default function Writing() {
           accuracy: result.accuracy,
           timeTaken: result.timeTaken
         })
-        toast.error('Failed to save progress')
+        toast.error(t('writing.toasts.saveFailed'))
       }
     }
   }
@@ -292,7 +294,7 @@ export default function Writing() {
   const handleSessionComplete = () => {
     const avgAccuracy = sessionResults.reduce((acc, r) => acc + r.accuracy, 0) / sessionResults.length
 
-    toast.success(`Session complete! Average accuracy: ${Math.round(avgAccuracy)}%`)
+    toast.success(t('writing.toasts.sessionComplete', { pct: Math.round(avgAccuracy) }))
     setMode(null)
     setCurrentCharacter(null)
     setSessionResults([])
@@ -300,7 +302,7 @@ export default function Writing() {
   }
 
   const handleTimedModeComplete = () => {
-    toast.success(`Time's up! You completed ${sessionResults.length} characters!`)
+    toast.success(t('writing.toasts.timesUp', { n: sessionResults.length }))
     handleSessionComplete()
   }
 
