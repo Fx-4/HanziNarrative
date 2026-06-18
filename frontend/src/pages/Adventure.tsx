@@ -244,7 +244,7 @@ export default function Adventure() {
                                         onClick={() => setHskLevel(level)}
                                         className={`rounded-2xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${hskLevel === level
                                             ? 'bg-success-600 hover:bg-success-700 text-white'
-                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                                             }`}
                                     >
                                         HSK {level}
@@ -269,7 +269,7 @@ export default function Adventure() {
                                         key={t.value}
                                         onClick={() => setTopic(t.value)}
                                         className={`rounded-2xl px-3 py-3 text-sm font-medium cursor-pointer transition-all text-center ${topic === t.value
-                                            ? 'bg-success-100 border-2 border-success-500 text-success-800'
+                                            ? 'bg-success-100 border-2 border-success-500 text-success-800 dark:bg-success-900/40 dark:text-success-300'
                                             : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100 text-gray-700'
                                             }`}
                                     >
@@ -389,13 +389,13 @@ export default function Adventure() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx === storySteps.length - 1 ? 0.2 : 0 }}
                         >
-                            <div className={`bg-white rounded-2xl shadow-sm border p-4 sm:p-5  dark:bg-surface-card${idx === storySteps.length - 1 ? 'border-success-200 ring-1 ring-success-100' : 'border-gray-100'
+                            <div className={`bg-white rounded-2xl shadow-sm border p-4 sm:p-5  dark:bg-surface-card${idx === storySteps.length - 1 ? 'border-success-200 ring-1 ring-success-100 dark:border-success-800' : 'border-gray-100'
                                 }`}>
                                 {/* Audio button */}
                                 <div className="flex justify-end mb-2">
                                     <button
                                         onClick={() => playParagraph(step.paragraph)}
-                                        className="text-gray-400 hover:text-success-600 cursor-pointer transition-colors dark:text-gray-500"
+                                        className="text-gray-400 hover:text-success-600 cursor-pointer transition-colors dark:text-gray-500 dark:hover:text-success-400"
                                     >
                                         {isPlaying && idx === storySteps.length - 1 ? (
                                             <Pause className="w-4 h-4" />
@@ -506,7 +506,7 @@ export default function Adventure() {
                                         key={choice.id}
                                         onClick={() => handleChoice(choice)}
                                         disabled={loading}
-                                        className="w-full text-left bg-gray-50 hover:bg-success-50 border-2 border-gray-100 hover:border-success-300 rounded-2xl p-4 cursor-pointer transition-all disabled:opacity-50 group dark:bg-gray-800/50 dark:border-gray-800"
+                                        className="w-full text-left bg-gray-50 hover:bg-success-50 border-2 border-gray-100 hover:border-success-300 rounded-2xl p-4 cursor-pointer transition-all disabled:opacity-50 group dark:bg-gray-800/50 dark:border-gray-800 dark:hover:bg-success-950/30"
                                     >
                                         <div className="flex items-start gap-3">
                                             <span className="w-7 h-7 bg-success-100 text-success-700 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 group-hover:bg-success-200 dark:bg-success-900/40 dark:text-success-300">

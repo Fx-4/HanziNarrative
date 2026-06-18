@@ -197,8 +197,8 @@ export default function StoryChallenge() {
                             key={`word-${i}`}
                             onClick={() => !isUnlocked && openWritingChallenge(word)}
                             className={`inline-block mx-0.5 transition-all ${isUnlocked
-                                ? 'text-success-700 font-bold bg-success-50 px-1 rounded'
-                                : 'bg-amber-100 hover:bg-amber-200 text-amber-800 px-1 rounded cursor-pointer border-b-2 border-amber-300 border-dashed'
+                                ? 'text-success-700 font-bold bg-success-50 px-1 rounded dark:text-success-300 dark:bg-success-950/30'
+                                : 'bg-amber-100 hover:bg-amber-200 text-amber-800 px-1 rounded cursor-pointer border-b-2 border-amber-300 border-dashed dark:bg-amber-900/40 dark:text-amber-300'
                                 }`}
                             title={isUnlocked ? 'Unlocked!' : 'Click to write and unlock'}
                         >
@@ -291,8 +291,8 @@ export default function StoryChallenge() {
                                         key={level}
                                         onClick={() => setHskLevel(level)}
                                         className={`rounded-2xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${hskLevel === level
-                                            ? 'bg-amber-600 hover:bg-amber-700 text-white'
-                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                            ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-md shadow-amber-500/25'
+                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                                             }`}
                                     >
                                         HSK {level}
@@ -473,8 +473,8 @@ export default function StoryChallenge() {
                                                 onClick={() => !isUnlocked && openWritingChallenge(word)}
                                                 disabled={isUnlocked}
                                                 className={`rounded-xl px-3 py-1.5 text-sm font-medium cursor-pointer transition-all ${isUnlocked
-                                                    ? 'bg-success-50 text-success-700 border border-green-200'
-                                                    : 'bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200'
+                                                    ? 'bg-success-50 text-success-700 border border-green-200 dark:bg-success-950/30 dark:text-success-300 dark:border-green-800'
+                                                    : 'bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 dark:bg-amber-950/30 dark:hover:bg-amber-900/40 dark:text-amber-300 dark:border-amber-800'
                                                     }`}
                                             >
                                                 {isUnlocked ? (

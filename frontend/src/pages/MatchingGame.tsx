@@ -179,12 +179,12 @@ export default function MatchingGame() {
                             <Trophy className="w-12 h-12 text-amber-500 mx-auto mb-3" />
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">All Matched!</h2>
                             <div className="grid grid-cols-2 gap-4 mt-4 max-w-xs mx-auto">
-                                <div className="bg-white/80 rounded-xl p-3">
+                                <div className="bg-white/80 dark:bg-gray-800/80 rounded-xl p-3">
                                     <Clock className="w-5 h-5 text-rose-600 mx-auto mb-1 dark:text-rose-400" />
                                     <p className="text-lg font-bold text-rose-700 dark:text-rose-300">{formatTime(timer)}</p>
                                     <p className="text-xs text-gray-600">Time</p>
                                 </div>
-                                <div className="bg-white/80 rounded-xl p-3">
+                                <div className="bg-white/80 dark:bg-gray-800/80 rounded-xl p-3">
                                     <Zap className="w-5 h-5 text-amber-500 mx-auto mb-1" />
                                     <p className="text-lg font-bold text-amber-700 dark:text-amber-300">{moves}</p>
                                     <p className="text-xs text-gray-600">Moves</p>
@@ -231,8 +231,8 @@ export default function MatchingGame() {
                                     key={card.id}
                                     onClick={() => handleCardClick(card.id)}
                                     whileTap={{ scale: 0.95 }}
-                                    className={`aspect-square rounded-xl sm:rounded-2xl font-medium cursor-pointer transition-all text-center flex items-center justify-center p-2 ${card.matched ? 'bg-success-100 border-2 border-success-300 text-success-800'
-                                        : card.flipped ? 'bg-rose-100 border-2 border-rose-300 text-rose-800'
+                                    className={`aspect-square rounded-xl sm:rounded-2xl font-medium cursor-pointer transition-all text-center flex items-center justify-center p-2 ${card.matched ? 'bg-success-100 border-2 border-success-300 text-success-800 dark:bg-success-900/40 dark:text-success-300'
+                                        : card.flipped ? 'bg-rose-100 border-2 border-rose-300 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300'
                                             : 'bg-gray-100 dark:bg-gray-800 hover:bg-rose-50 dark:hover:bg-rose-950/30 border-2 border-gray-200 dark:border-gray-700 hover:border-rose-200 text-transparent'
                                         }`}>
                                     <span className={`${card.type === 'chinese' ? 'text-2xl sm:text-3xl font-chinese' : 'text-xs sm:text-sm'}`}>

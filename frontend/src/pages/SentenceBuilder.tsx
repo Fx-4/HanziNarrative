@@ -277,7 +277,7 @@ export default function SentenceBuilder() {
                   <span className="text-gray-600 dark:text-gray-400">Daily: </span>
                   <span className={`font-semibold ${
                     usageStats.sentence_validation.used_today >= usageStats.sentence_validation.limit_daily
-                      ? 'text-error-600' : 'text-primary-600'
+                      ? 'text-error-600 dark:text-error-400' : 'text-primary-600 dark:text-primary-400'
                   }`}>
                     {usageStats.sentence_validation.used_today}/{usageStats.sentence_validation.limit_daily}
                   </span>
@@ -286,7 +286,7 @@ export default function SentenceBuilder() {
                   <span className="text-gray-600 dark:text-gray-400">Hourly: </span>
                   <span className={`font-semibold ${
                     usageStats.sentence_validation.used_this_hour >= usageStats.sentence_validation.limit_hourly
-                      ? 'text-error-600' : 'text-primary-600'
+                      ? 'text-error-600 dark:text-error-400' : 'text-primary-600 dark:text-primary-400'
                   }`}>
                     {usageStats.sentence_validation.used_this_hour}/{usageStats.sentence_validation.limit_hourly}
                   </span>
@@ -342,7 +342,7 @@ export default function SentenceBuilder() {
                 onClick={clearSentence}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="text-sm text-error-600 hover:text-error-700 font-medium cursor-pointer dark:text-error-400"
+                className="text-sm text-error-600 hover:text-error-700 font-medium cursor-pointer dark:text-error-400 dark:hover:text-error-300"
               >
                 Clear
               </motion.button>
