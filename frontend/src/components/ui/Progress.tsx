@@ -80,7 +80,7 @@ export function CircularProgress({
           strokeWidth={strokeWidth}
           fill="none"
           strokeLinecap="round"
-          className="text-primary-600"
+          className="text-primary-600 dark:text-primary-400"
           initial={{ strokeDashoffset: circumference }}
           animate={{ strokeDashoffset: offset }}
           transition={{ duration: 1, ease: "easeInOut" }}

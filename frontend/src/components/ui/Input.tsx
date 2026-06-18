@@ -48,7 +48,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {inputElement}
         {error && (
           <motion.p
-            className="mt-1 text-sm text-error-600"
+            className="mt-1 text-sm text-error-600 dark:text-error-400"
             initial={animated ? { opacity: 0, y: -10 } : {}}
             animate={animated ? { opacity: 1, y: 0 } : {}}
           >

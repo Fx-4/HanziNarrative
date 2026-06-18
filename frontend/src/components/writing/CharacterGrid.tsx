@@ -135,7 +135,7 @@ export default function CharacterGrid({
                   </div>
 
                   {/* Pinyin */}
-                  <div className="text-[11px] text-primary-600 font-semibold leading-none mb-0.5">
+                  <div className="text-[11px] text-primary-600 font-semibold leading-none mb-0.5 dark:text-primary-400">
                     {character.pinyin}
                   </div>
 
@@ -166,7 +166,7 @@ export default function CharacterGrid({
                     </div>
                   ) : (
                     <div className="mt-1.5 pt-1.5 border-t border-gray-200 dark:border-gray-700">
-                      <span className="inline-flex px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-primary-100 text-primary-700">New</span>
+                      <span className="inline-flex px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">New</span>
                     </div>
                   )}
                 </div>
@@ -189,7 +189,7 @@ export default function CharacterGrid({
           </p>
           <button
             onClick={() => setFilter('all')}
-            className="mt-2 text-xs text-primary-600 hover:text-primary-700 font-medium"
+            className="mt-2 text-xs text-primary-600 hover:text-primary-700 font-medium dark:text-primary-400"
           >
             View all →
           </button>

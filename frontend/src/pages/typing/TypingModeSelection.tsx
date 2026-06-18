@@ -61,7 +61,7 @@ export default function TypingModeSelection({
           <div className="h-1.5 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-600" />
           <div className="p-4 sm:p-6">
             <div className="flex items-center gap-2 mb-4">
-              <BarChart3 className="w-5 h-5 text-primary-600" />
+              <BarChart3 className="w-5 h-5 text-primary-600 dark:text-primary-400" />
               <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Your Progress (HSK {hskLevel})</h3>
             </div>
 
@@ -120,7 +120,7 @@ export default function TypingModeSelection({
         className="text-center mb-10 sm:mb-12"
       >
         <div className="flex items-center justify-center gap-3 mb-4">
-          <Keyboard className="w-8 h-8 sm:w-10 sm:h-10 text-primary-600" />
+          <Keyboard className="w-8 h-8 sm:w-10 sm:h-10 text-primary-600 dark:text-primary-400" />
           <BlurText
             as="h1"
             className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-50"
@@ -140,10 +140,10 @@ export default function TypingModeSelection({
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <div className="bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200 rounded-3xl shadow-xl overflow-hidden p-4 sm:p-6">
+          <div className="bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200 rounded-3xl shadow-xl overflow-hidden p-4 sm:p-6 dark:from-orange-950/30 dark:to-yellow-950/30 dark:border-orange-800">
             <div className="flex items-start gap-3 sm:gap-4">
-              <div className="p-2 sm:p-3 bg-orange-100 rounded-full shrink-0">
-                <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
+              <div className="p-2 sm:p-3 bg-orange-100 rounded-full shrink-0 dark:bg-orange-900/40">
+                <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600 dark:text-orange-400" />
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-base sm:text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">
@@ -162,7 +162,7 @@ export default function TypingModeSelection({
                   </button>
                   <button
                     onClick={() => onNavigate('/register')}
-                    className="inline-flex items-center border border-primary-600 text-primary-600 hover:bg-primary-50 rounded-2xl px-5 py-2.5 sm:px-6 sm:py-3 font-semibold cursor-pointer text-sm sm:text-base transition-colors"
+                    className="inline-flex items-center border border-primary-600 text-primary-600 hover:bg-primary-50 rounded-2xl px-5 py-2.5 sm:px-6 sm:py-3 font-semibold cursor-pointer text-sm sm:text-base transition-colors dark:text-primary-400"
                   >
                     Create Account
                   </button>
@@ -222,7 +222,7 @@ export default function TypingModeSelection({
                 <p className="text-sm sm:text-base text-gray-600 mb-4 dark:text-gray-400">
                   See Chinese character, type correct pinyin spelling. Perfect for learning romanization.
                 </p>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-700">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
                   Learn spelling
                 </span>
               </div>
@@ -251,7 +251,7 @@ export default function TypingModeSelection({
                 <p className="text-sm sm:text-base text-gray-600 mb-4 dark:text-gray-400">
                   Type pinyin and select correct character from candidates. Simulates real Chinese input.
                 </p>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-violet-100 text-violet-700">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300">
                   Real-world practice
                 </span>
               </div>
@@ -280,7 +280,7 @@ export default function TypingModeSelection({
                 <p className="text-sm sm:text-base text-gray-600 mb-4 dark:text-gray-400">
                   Test your typing speed! Type as fast as you can while maintaining accuracy.
                 </p>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-700">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300">
                   Build speed
                 </span>
               </div>
@@ -295,10 +295,10 @@ export default function TypingModeSelection({
         transition={{ delay: 0.5 }}
         className="mt-6 sm:mt-8"
       >
-        <div className="bg-gradient-to-r from-primary-50 to-blue-50 rounded-3xl shadow-xl border border-primary-100 overflow-hidden p-4 sm:p-6">
+        <div className="bg-gradient-to-r from-primary-50 to-blue-50 rounded-3xl shadow-xl border border-primary-100 overflow-hidden p-4 sm:p-6 dark:from-primary-950/30 dark:to-blue-950/30 dark:border-primary-900/40">
           <div className="flex items-start gap-3 sm:gap-4">
             <div className="p-2 sm:p-3 bg-white rounded-lg shadow-sm shrink-0 dark:bg-surface-card">
-              <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600" />
+              <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600 dark:text-primary-400" />
             </div>
             <div>
               <h4 className="font-semibold mb-2 text-gray-800 dark:text-gray-200">Typing Tips</h4>

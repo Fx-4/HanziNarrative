@@ -191,7 +191,7 @@ export default function HanziWordPopup({
           {/* ── Row 2: Pinyin + audio + English ── */}
           <div className="px-4 pt-2 pb-3">
             <div className="flex items-center gap-1.5 mb-1">
-              <span className="text-lg font-semibold text-primary-600 tracking-wide">
+              <span className="text-lg font-semibold text-primary-600 tracking-wide dark:text-primary-400">
                 {word.pinyin}
               </span>
               <AudioButton
@@ -240,7 +240,7 @@ export default function HanziWordPopup({
               </>
             ) : (
               /* No image: big character on gradient bg */
-              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100/50">
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100/50 dark:from-primary-950/30">
                 <span
                   className="text-[80px] font-bold text-primary-200 select-none leading-none"
                   style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
@@ -254,7 +254,7 @@ export default function HanziWordPopup({
           {/* ── Row 4: Meta pills ── */}
           <div className="px-4 pb-3 flex flex-wrap gap-1.5">
             {/* HSK level */}
-            <span className="inline-flex items-center text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary-100 text-primary-700">
+            <span className="inline-flex items-center text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
               HSK {word.hsk_level}
             </span>
             {/* Category */}
@@ -266,7 +266,7 @@ export default function HanziWordPopup({
             )}
             {/* Radical */}
             {word.radical && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-300">
                 <Brush className="w-2.5 h-2.5" />
                 {word.radical}
               </span>

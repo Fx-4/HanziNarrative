@@ -124,8 +124,8 @@ export default function WritingFeedback({
               animate={{ scale: 1, rotate: 0 }}
               transition={{ delay: 0.5, type: 'spring', stiffness: 150 }}
             >
-              <div className="p-2 bg-yellow-100 rounded-full">
-                <Award className="w-6 h-6 text-yellow-600" />
+              <div className="p-2 bg-yellow-100 rounded-full dark:bg-yellow-900/40">
+                <Award className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
               </div>
             </motion.div>
           )}
@@ -186,7 +186,7 @@ export default function WritingFeedback({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7 }}
-            className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200"
+            className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200 dark:bg-yellow-950/30 dark:border-yellow-800"
           >
             <p className="text-sm font-semibold text-yellow-900">
               New Personal Record! Keep up the great work!

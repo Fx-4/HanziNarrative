@@ -143,7 +143,7 @@ export default function ToneTrainer() {
                 <div className="max-w-4xl mx-auto">
                     <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8 sm:mb-12">
                         <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                            <Music className="w-8 h-8 sm:w-10 sm:h-10 text-teal-600" />
+                            <Music className="w-8 h-8 sm:w-10 sm:h-10 text-teal-600 dark:text-teal-400" />
                             <BlurText as="h1" className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100" wordDelay={0.08}>
                                 Tone Trainer
                             </BlurText>
@@ -171,7 +171,7 @@ export default function ToneTrainer() {
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 {[1, 2, 3, 4].map(t => (
                                     <div key={t} className="bg-white dark:bg-gray-800 rounded-xl p-3 text-center border border-gray-100 dark:border-gray-700">
-                                        <p className="text-2xl font-bold text-teal-700 mb-1">Tone {t}</p>
+                                        <p className="text-2xl font-bold text-teal-700 mb-1 dark:text-teal-300">Tone {t}</p>
                                         <p className="text-sm text-gray-600 dark:text-gray-400">{TONE_LABELS[t]}</p>
                                         <p className="text-lg text-gray-800 mt-1">ma{TONE_MARKS[t]}</p>
                                     </div>
@@ -227,7 +227,7 @@ export default function ToneTrainer() {
             <div className="max-w-3xl mx-auto">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                        <Target className="w-5 h-5 text-teal-600" />
+                        <Target className="w-5 h-5 text-teal-600 dark:text-teal-400" />
                         <span className="font-bold text-gray-900 dark:text-gray-100">{currentQ + 1}/{questions.length}</span>
                     </div>
                     <div className="bg-teal-50 dark:bg-teal-950/30 rounded-xl border border-teal-200 dark:border-teal-800 px-3 py-1.5 text-sm font-bold text-teal-700 dark:text-teal-400">
@@ -246,7 +246,7 @@ export default function ToneTrainer() {
                             <p className="text-6xl font-chinese text-gray-900 dark:text-gray-100 mb-2">{q.word.simplified}</p>
                             <p className="text-sm text-gray-500">{q.word.english}</p>
                             <button onClick={() => playWord(q.word.simplified)}
-                                className="mt-2 text-teal-600 hover:text-teal-700 cursor-pointer inline-flex items-center gap-1 text-sm">
+                                className="mt-2 text-teal-600 hover:text-teal-700 cursor-pointer inline-flex items-center gap-1 text-sm dark:text-teal-400">
                                 <Volume2 className="w-4 h-4" /> Listen
                             </button>
                         </div>
@@ -266,7 +266,7 @@ export default function ToneTrainer() {
                                         className={`rounded-2xl p-4 font-medium cursor-pointer transition-all text-center ${btnClass} disabled:cursor-default`}>
                                         <p className="text-lg font-bold">Tone {tone}</p>
                                         <p className="text-sm text-gray-500">{TONE_LABELS[tone]}</p>
-                                        {selected !== null && tone === q.correctTone && <CheckCircle className="w-4 h-4 text-success-600 mx-auto mt-1" />}
+                                        {selected !== null && tone === q.correctTone && <CheckCircle className="w-4 h-4 text-success-600 mx-auto mt-1 dark:text-success-400" />}
                                         {selected !== null && tone === selected && tone !== q.correctTone && <XCircle className="w-4 h-4 text-error-500 mx-auto mt-1" />}
                                     </button>
                                 )
@@ -275,7 +275,7 @@ export default function ToneTrainer() {
 
                         {selected !== null && (
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 text-center">
-                                <p className="text-lg text-teal-700 font-medium">{q.word.pinyin}</p>
+                                <p className="text-lg text-teal-700 font-medium dark:text-teal-300">{q.word.pinyin}</p>
                             </motion.div>
                         )}
                     </div>

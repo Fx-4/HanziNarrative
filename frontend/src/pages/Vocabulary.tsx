@@ -320,7 +320,7 @@ export default function Vocabulary() {
             </span>
             <button
               onClick={clearFilters}
-              className="flex items-center gap-1 text-primary-600 hover:underline cursor-pointer text-xs"
+              className="flex items-center gap-1 text-primary-600 hover:underline cursor-pointer text-xs dark:text-primary-400"
             >
               <X className="w-3 h-3" />
               Clear
@@ -457,7 +457,7 @@ export default function Vocabulary() {
 
                 {/* Pinyin + audio */}
                 <div className="col-span-3 sm:col-span-2 flex items-center gap-1">
-                  <span className="text-sm font-medium text-primary-600 truncate">
+                  <span className="text-sm font-medium text-primary-600 truncate dark:text-primary-400">
                     {word.pinyin}
                   </span>
                   <span className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
@@ -491,7 +491,7 @@ export default function Vocabulary() {
                     onClick={() => setListDetail(word)}
                     className="opacity-0 group-hover:opacity-100 transition-opacity text-xs px-3 py-1.5 rounded-lg
                       bg-primary-50 text-primary-700
-                      hover:bg-primary-100 font-medium cursor-pointer"
+                      hover:bg-primary-100 font-medium cursor-pointer dark:bg-primary-950/30 dark:text-primary-300"
                   >
                     Details
                   </button>

@@ -118,7 +118,7 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-blue-600" />
+          <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           <span className="text-lg font-semibold">Pinyin Typing</span>
         </div>
         <div className="text-lg font-semibold">
@@ -181,12 +181,12 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
               <div className="flex items-center justify-center gap-3 mb-4">
                 {isCorrect ? (
                   <>
-                    <CheckCircle className="w-8 h-8 text-success-600" />
+                    <CheckCircle className="w-8 h-8 text-success-600 dark:text-success-400" />
                     <span className="text-2xl font-semibold text-success-900">Correct!</span>
                   </>
                 ) : (
                   <>
-                    <XCircle className="w-8 h-8 text-error-600" />
+                    <XCircle className="w-8 h-8 text-error-600 dark:text-error-400" />
                     <span className="text-2xl font-semibold text-error-900">Incorrect</span>
                   </>
                 )}
@@ -201,7 +201,7 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
                 {!isCorrect && (
                   <p className="text-lg">
                     <span className="font-semibold">Correct pinyin:</span>{' '}
-                    <span className="text-success-700">{currentWord.pinyin}</span>
+                    <span className="text-success-700 dark:text-success-300">{currentWord.pinyin}</span>
                   </p>
                 )}
               </div>

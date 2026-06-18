@@ -613,7 +613,7 @@ function StoriesTab() {
                         onClick={() => handleTogglePublish(story)}
                         disabled={actionId === story.id}
                         title={story.is_published ? 'Unpublish' : 'Publish'}
-                        className="p-1.5 rounded-lg hover:bg-success-50 dark:hover:bg-success-900/30 text-success-600 cursor-pointer transition-colors disabled:opacity-50"
+                        className="p-1.5 rounded-lg hover:bg-success-50 dark:hover:bg-success-900/30 text-success-600 cursor-pointer transition-colors disabled:opacity-50 dark:text-success-400"
                       >
                         {actionId === story.id
                           ? <Loader2 className="w-4 h-4 animate-spin" />
@@ -936,7 +936,7 @@ function TrashTab({ currentUserId }: { currentUserId: number }) {
                             onClick={() => handleRestoreUser(user)}
                             disabled={actionId === user.id}
                             title="Restore"
-                            className="p-1.5 rounded-lg hover:bg-success-50 dark:hover:bg-success-900/30 text-success-600 cursor-pointer transition-colors disabled:opacity-50"
+                            className="p-1.5 rounded-lg hover:bg-success-50 dark:hover:bg-success-900/30 text-success-600 cursor-pointer transition-colors disabled:opacity-50 dark:text-success-400"
                           >
                             {actionId === user.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
                           </button>
@@ -1015,7 +1015,7 @@ function TrashTab({ currentUserId }: { currentUserId: number }) {
                             onClick={() => handleRestoreStory(story)}
                             disabled={actionId === story.id}
                             title="Restore"
-                            className="p-1.5 rounded-lg hover:bg-success-50 dark:hover:bg-success-900/30 text-success-600 cursor-pointer transition-colors disabled:opacity-50"
+                            className="p-1.5 rounded-lg hover:bg-success-50 dark:hover:bg-success-900/30 text-success-600 cursor-pointer transition-colors disabled:opacity-50 dark:text-success-400"
                           >
                             {actionId === story.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
                           </button>

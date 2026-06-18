@@ -70,7 +70,7 @@ export default function DailyGoalsTracker() {
       >
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-primary-500 p-3 sm:p-4 dark:bg-surface-card dark:border-gray-800">
           <div className="flex items-center gap-2 mb-3">
-            <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
+            <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 dark:text-primary-400" />
             <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-50">
               Daily Goals
             </h3>
@@ -109,7 +109,7 @@ export default function DailyGoalsTracker() {
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-primary-500 p-3 sm:p-4 dark:bg-surface-card dark:border-gray-800">
         {/* Header */}
         <div className="flex items-center gap-2 mb-3">
-          <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
+          <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 dark:text-primary-400" />
           <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-50">
             Daily Goals
           </h3>
@@ -128,7 +128,7 @@ export default function DailyGoalsTracker() {
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs sm:text-sm font-bold text-primary-600">
+                  <span className="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
                     {Math.min(progress.wordsReviewed, goals.daily_words)}/{goals.daily_words}
                   </span>
                   {isGoalMet(progress.wordsReviewed, goals.daily_words) && (
@@ -162,7 +162,7 @@ export default function DailyGoalsTracker() {
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs sm:text-sm font-bold text-primary-600">
+                  <span className="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
                     {Math.min(progress.timeStudied, goals.daily_time_minutes)}/{goals.daily_time_minutes} min
                   </span>
                   {isGoalMet(progress.timeStudied, goals.daily_time_minutes) && (
@@ -195,7 +195,7 @@ export default function DailyGoalsTracker() {
                     Target Level
                   </span>
                 </div>
-                <span className="text-sm font-bold text-primary-600">
+                <span className="text-sm font-bold text-primary-600 dark:text-primary-400">
                   HSK {goals.target_hsk_level}
                 </span>
               </div>

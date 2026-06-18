@@ -29,9 +29,9 @@ export default function ValidationResult({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {isCorrect ? (
-            <CheckCircle className="w-8 h-8 text-success-600" />
+            <CheckCircle className="w-8 h-8 text-success-600 dark:text-success-400" />
           ) : (
-            <XCircle className="w-8 h-8 text-yellow-600" />
+            <XCircle className="w-8 h-8 text-yellow-600 dark:text-yellow-400" />
           )}
           <div>
             <h3 className={`text-xl font-bold ${isCorrect ? 'text-success-700' : 'text-yellow-700'}`}>
@@ -57,7 +57,7 @@ export default function ValidationResult({
       {/* AI Feedback */}
       <div className="bg-white/70 rounded-xl p-4 border border-gray-200">
         <div className="flex items-start gap-2">
-          <Sparkles className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
+          <Sparkles className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0 dark:text-purple-400" />
           <div>
             <h4 className="font-semibold text-gray-800 mb-1">AI Feedback</h4>
             <p className="text-gray-700 text-sm leading-relaxed">{feedback}</p>
@@ -67,15 +67,15 @@ export default function ValidationResult({
 
       {/* Corrections */}
       {corrections.length > 0 && (
-        <div className="bg-white/70 rounded-xl p-4 border border-yellow-200">
+        <div className="bg-white/70 rounded-xl p-4 border border-yellow-200 dark:border-yellow-800">
           <div className="flex items-start gap-2">
-            <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+            <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0 dark:text-yellow-400" />
             <div className="flex-1">
               <h4 className="font-semibold text-gray-800 mb-2">Corrections / 更正</h4>
               <ul className="space-y-1">
                 {corrections.map((correction, index) => (
                   <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
-                    <span className="text-yellow-600 font-bold">•</span>
+                    <span className="text-yellow-600 font-bold dark:text-yellow-400">•</span>
                     <span>{correction}</span>
                   </li>
                 ))}
@@ -87,15 +87,15 @@ export default function ValidationResult({
 
       {/* Grammar Issues */}
       {grammarIssues.length > 0 && (
-        <div className="bg-white/70 rounded-xl p-4 border border-error-200">
+        <div className="bg-white/70 rounded-xl p-4 border border-error-200 dark:border-error-800">
           <div className="flex items-start gap-2">
-            <AlertCircle className="w-5 h-5 text-error-600 mt-0.5 flex-shrink-0" />
+            <AlertCircle className="w-5 h-5 text-error-600 mt-0.5 flex-shrink-0 dark:text-error-400" />
             <div className="flex-1">
               <h4 className="font-semibold text-gray-800 mb-2">Grammar Issues / 语法问题</h4>
               <ul className="space-y-1">
                 {grammarIssues.map((issue, index) => (
                   <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
-                    <span className="text-error-600 font-bold">•</span>
+                    <span className="text-error-600 font-bold dark:text-error-400">•</span>
                     <span>{issue}</span>
                   </li>
                 ))}
@@ -107,15 +107,15 @@ export default function ValidationResult({
 
       {/* Suggestions */}
       {suggestions.length > 0 && (
-        <div className="bg-white/70 rounded-xl p-4 border border-blue-200">
+        <div className="bg-white/70 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
           <div className="flex items-start gap-2">
-            <Lightbulb className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+            <Lightbulb className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0 dark:text-blue-400" />
             <div className="flex-1">
               <h4 className="font-semibold text-gray-800 mb-2">Suggestions / 建议</h4>
               <ul className="space-y-1">
                 {suggestions.map((suggestion, index) => (
                   <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
-                    <span className="text-blue-600 font-bold">•</span>
+                    <span className="text-blue-600 font-bold dark:text-blue-400">•</span>
                     <span>{suggestion}</span>
                   </li>
                 ))}

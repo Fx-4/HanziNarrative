@@ -311,7 +311,7 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
 
                   {/* ── Wikipedia link always visible when no image ── */}
                   {!imageUrl && wiki?.pageUrl && (
-                    <div className="mx-5 mt-4 p-3 rounded-xl bg-blue-50 border border-blue-100 flex items-start gap-3">
+                    <div className="mx-5 mt-4 p-3 rounded-xl bg-blue-50 border border-blue-100 flex items-start gap-3 dark:bg-blue-950/30 dark:border-blue-900/40">
                       <Globe className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <div className="flex-1 min-w-0">
                         {wiki?.extract && (
@@ -323,7 +323,7 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
                           href={wiki.pageUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:underline"
+                          className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:underline dark:text-blue-400"
                           onClick={e => e.stopPropagation()}
                         >
                           Read on Wikipedia
@@ -344,13 +344,13 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
                     {/* Radical */}
                     {word.radical && (
-                      <div className="p-3 rounded-xl bg-amber-50 border border-amber-100">
-                        <p className="text-[10px] text-amber-600 font-semibold uppercase tracking-widest mb-1 flex items-center gap-1">
+                      <div className="p-3 rounded-xl bg-amber-50 border border-amber-100 dark:bg-amber-950/30 dark:border-amber-900/40">
+                        <p className="text-[10px] text-amber-600 font-semibold uppercase tracking-widest mb-1 flex items-center gap-1 dark:text-amber-400">
                           <Brush className="w-2.5 h-2.5" />
                           Radical
                         </p>
                         <p
-                          className="text-2xl font-bold text-amber-800 leading-none"
+                          className="text-2xl font-bold text-amber-800 leading-none dark:text-amber-300"
                           style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
                         >
                           {word.radical}
@@ -386,12 +386,12 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
 
                     {/* Traditional form */}
                     {word.traditional && word.traditional !== word.simplified && (
-                      <div className="p-3 rounded-xl bg-primary-50 border border-primary-100">
-                        <p className="text-[10px] text-primary-600 font-semibold uppercase tracking-widest mb-1">
+                      <div className="p-3 rounded-xl bg-primary-50 border border-primary-100 dark:bg-primary-950/30 dark:border-primary-900/40">
+                        <p className="text-[10px] text-primary-600 font-semibold uppercase tracking-widest mb-1 dark:text-primary-400">
                           Traditional
                         </p>
                         <p
-                          className="text-2xl font-bold text-primary-800 leading-none"
+                          className="text-2xl font-bold text-primary-800 leading-none dark:text-primary-300"
                           style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
                         >
                           {word.traditional}
@@ -417,7 +417,7 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
                         <ScrollText className="w-3.5 h-3.5" />
                         Character Evolution
                       </h3>
-                      <div className="p-4 rounded-xl bg-amber-50 border border-amber-100">
+                      <div className="p-4 rounded-xl bg-amber-50 border border-amber-100 dark:bg-amber-950/30 dark:border-amber-900/40">
                         <p className="text-sm text-gray-700 leading-relaxed dark:text-gray-300">
                           {word.evolution_history}
                         </p>

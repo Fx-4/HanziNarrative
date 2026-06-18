@@ -125,7 +125,7 @@ export default function MatchingGame() {
                 <div className="max-w-4xl mx-auto">
                     <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8 sm:mb-12">
                         <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                            <Grid3X3 className="w-8 h-8 sm:w-10 sm:h-10 text-rose-600" />
+                            <Grid3X3 className="w-8 h-8 sm:w-10 sm:h-10 text-rose-600 dark:text-rose-400" />
                             <BlurText as="h1" className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100" wordDelay={0.08}>
                                 Matching Game
                             </BlurText>
@@ -151,7 +151,7 @@ export default function MatchingGame() {
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
                             <div className="bg-rose-50 dark:bg-rose-950/30 rounded-xl border border-rose-200 dark:border-rose-800 p-4 text-center">
                                 <Star className="w-5 h-5 text-rose-500 mx-auto mb-1" />
-                                <p className="text-sm text-gray-700">Best time: <span className="font-bold text-rose-700">{formatTime(bestTime)}</span></p>
+                                <p className="text-sm text-gray-700">Best time: <span className="font-bold text-rose-700 dark:text-rose-300">{formatTime(bestTime)}</span></p>
                             </div>
                         </motion.div>
                     )}
@@ -180,13 +180,13 @@ export default function MatchingGame() {
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">All Matched!</h2>
                             <div className="grid grid-cols-2 gap-4 mt-4 max-w-xs mx-auto">
                                 <div className="bg-white/80 rounded-xl p-3">
-                                    <Clock className="w-5 h-5 text-rose-600 mx-auto mb-1" />
-                                    <p className="text-lg font-bold text-rose-700">{formatTime(timer)}</p>
+                                    <Clock className="w-5 h-5 text-rose-600 mx-auto mb-1 dark:text-rose-400" />
+                                    <p className="text-lg font-bold text-rose-700 dark:text-rose-300">{formatTime(timer)}</p>
                                     <p className="text-xs text-gray-600">Time</p>
                                 </div>
                                 <div className="bg-white/80 rounded-xl p-3">
                                     <Zap className="w-5 h-5 text-amber-500 mx-auto mb-1" />
-                                    <p className="text-lg font-bold text-amber-700">{moves}</p>
+                                    <p className="text-lg font-bold text-amber-700 dark:text-amber-300">{moves}</p>
                                     <p className="text-xs text-gray-600">Moves</p>
                                 </div>
                             </div>

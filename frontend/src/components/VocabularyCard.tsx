@@ -101,7 +101,7 @@ export default function VocabularyCard({ word }: VocabularyCardProps) {
                 </span>
               )}
               {word.radical && (
-                <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 flex items-center gap-1">
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 flex items-center gap-1 dark:bg-amber-950/30 dark:text-amber-300">
                   <Brush className="w-2.5 h-2.5" />
                   {word.radical}
                 </span>

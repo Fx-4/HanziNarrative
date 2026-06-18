@@ -314,7 +314,7 @@ export default function Flashcards() {
               )}
 
               {/* Info box */}
-              <div className="bg-primary-50 rounded-2xl p-4 border border-primary-100 mb-6">
+              <div className="bg-primary-50 rounded-2xl p-4 border border-primary-100 mb-6 dark:bg-primary-950/30 dark:border-primary-900/40">
                 <h3 className="text-sm font-bold text-primary-800 dark:text-primary-300 mb-2">{t('flashcards.howItWorks')}</h3>
                 <ul className="text-sm text-primary-700 dark:text-primary-300 space-y-1">
                   <li>• {t('flashcards.how1')}</li>
@@ -563,7 +563,7 @@ export default function Flashcards() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <button
                 onClick={() => handleSwipe('left')}
-                className="border-2 border-error-200 text-gray-700 rounded-2xl px-6 sm:px-8 py-3 font-semibold hover:bg-error-50 transition-all flex items-center gap-2 dark:text-gray-300"
+                className="border-2 border-error-200 text-gray-700 rounded-2xl px-6 sm:px-8 py-3 font-semibold hover:bg-error-50 transition-all flex items-center gap-2 dark:text-gray-300 dark:border-error-800"
               >
                 <XCircle className="w-5 h-5 text-error-400" />
                 {t('flashcards.again')}

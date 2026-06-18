@@ -132,7 +132,7 @@ export default function GamificationWidget() {
               onClick={(e) => e.stopPropagation()}
             >
               <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                <Award className="w-6 h-6 text-purple-600" />
+                <Award className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                 Your Achievements
               </h3>
               {stats.achievements.length === 0 ? (
@@ -140,7 +140,7 @@ export default function GamificationWidget() {
               ) : (
                 <div className="space-y-3">
                   {stats.achievements.map((achievement) => (
-                    <div key={achievement.id} className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-3 border-2 border-purple-200">
+                    <div key={achievement.id} className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-3 border-2 border-purple-200 dark:from-purple-950/30 dark:to-blue-950/30 dark:border-purple-800">
                       <div className="flex items-start gap-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
                           <Trophy className="w-5 h-5 text-white" />

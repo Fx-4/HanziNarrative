@@ -528,7 +528,7 @@ export default function MockTest() {
                 <div className="max-w-4xl mx-auto">
                     <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8 sm:mb-10">
                         <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3">
-                            <Target className="w-9 h-9 sm:w-11 sm:h-11 text-primary-600" />
+                            <Target className="w-9 h-9 sm:w-11 sm:h-11 text-primary-600 dark:text-primary-400" />
                             <BlurText as="h1" className="text-3xl sm:text-5xl font-bold text-gray-900 dark:text-gray-100" wordDelay={0.08}>
                                 HSK Mock Test
                             </BlurText>
@@ -703,8 +703,8 @@ export default function MockTest() {
                         className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-800 p-8 sm:p-10 text-center">
                         <div className={`w-16 h-16 ${passed ? 'bg-success-100 dark:bg-success-900/30' : 'bg-amber-100 dark:bg-amber-900/30'} rounded-full flex items-center justify-center mx-auto mb-4`}>
                             {passed
-                                ? <CheckCircle className="w-9 h-9 text-success-600" />
-                                : <XCircle className="w-9 h-9 text-amber-600" />}
+                                ? <CheckCircle className="w-9 h-9 text-success-600 dark:text-success-400" />
+                                : <XCircle className="w-9 h-9 text-amber-600 dark:text-amber-400" />}
                         </div>
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
                             {meta.labelEn} Complete!
@@ -829,14 +829,14 @@ export default function MockTest() {
                                             <div key={i} className="bg-error-50 dark:bg-error-950/20 rounded-xl p-3 border border-error-100 dark:border-error-900">
                                                 <div className="flex items-center gap-2 mb-1">
                                                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${m.badge}`}>{m.labelEn}</span>
-                                                    {allAns[i] === -1 && <span className="text-xs text-amber-600 font-semibold">Timed out</span>}
+                                                    {allAns[i] === -1 && <span className="text-xs text-amber-600 font-semibold dark:text-amber-400">Timed out</span>}
                                                 </div>
                                                 <p className="font-chinese text-lg text-gray-900 dark:text-gray-100">
                                                     {q.word.simplified}
                                                     <span className="text-sm text-gray-500 ml-2">({q.word.pinyin})</span>
                                                 </p>
                                                 <p className="text-sm text-gray-600 dark:text-gray-400">{q.word.english}</p>
-                                                <p className="text-xs text-success-600 mt-1">
+                                                <p className="text-xs text-success-600 mt-1 dark:text-success-400">
                                                     Correct answer: <strong>{q.options[q.correctIndex]}</strong>
                                                 </p>
                                                 {allAns[i] !== null && allAns[i] !== -1 && allAns[i] !== q.correctIndex && (
@@ -1044,7 +1044,7 @@ export default function MockTest() {
                                             <span className={`flex-1 text-center ${optionsAreChinese ? 'font-chinese text-xl' : optionsAreEnglish ? 'text-sm' : optionsArePinyin ? 'text-base font-medium' : 'text-base'}`}>
                                                 {opt}
                                             </span>
-                                            {isAnswered && i === q.correctIndex && <CheckCircle className="w-4 h-4 text-success-600 flex-shrink-0" />}
+                                            {isAnswered && i === q.correctIndex && <CheckCircle className="w-4 h-4 text-success-600 flex-shrink-0 dark:text-success-400" />}
                                             {isAnswered && i === selectedAnswer && i !== q.correctIndex && <XCircle className="w-4 h-4 text-error-500 flex-shrink-0" />}
                                         </button>
                                     )

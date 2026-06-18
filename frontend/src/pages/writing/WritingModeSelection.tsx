@@ -184,7 +184,7 @@ export default function WritingModeSelection({
                   </button>
                   <button
                     onClick={() => onNavigate('/register')}
-                    className="border border-primary-600 text-primary-600 hover:bg-primary-50 rounded-2xl px-5 py-2.5 font-semibold cursor-pointer text-sm sm:text-base transition-colors"
+                    className="border border-primary-600 text-primary-600 hover:bg-primary-50 rounded-2xl px-5 py-2.5 font-semibold cursor-pointer text-sm sm:text-base transition-colors dark:text-primary-400"
                   >
                     Create Account
                   </button>

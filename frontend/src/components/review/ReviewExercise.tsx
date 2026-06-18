@@ -112,7 +112,7 @@ export default function ReviewExercise({ item, allItems, onRate }: Props) {
         {/* Overdue badge */}
         {item.days_overdue > 0 && (
           <div className="mb-4">
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300">
               <Clock className="w-3.5 h-3.5" />
               {item.days_overdue} hari terlambat
             </span>
@@ -171,8 +171,8 @@ export default function ReviewExercise({ item, allItems, onRate }: Props) {
                     <span className={mode === 'char_recall' ? 'font-chinese text-3xl' : 'text-sm sm:text-base'}>
                       {opt}
                     </span>
-                    {answered && isCorr && <CheckCircle className="w-5 h-5 text-success-600 shrink-0" />}
-                    {answered && isSel && !isCorr && <XCircle className="w-5 h-5 text-error-600 shrink-0" />}
+                    {answered && isCorr && <CheckCircle className="w-5 h-5 text-success-600 shrink-0 dark:text-success-400" />}
+                    {answered && isSel && !isCorr && <XCircle className="w-5 h-5 text-error-600 shrink-0 dark:text-error-400" />}
                   </div>
                 </button>
               )

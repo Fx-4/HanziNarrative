@@ -419,15 +419,15 @@ export default function Conversation() {
 
                 {/* Corrections — only when done streaming */}
                 {!msg.isStreaming && msg.corrections && msg.corrections.length > 0 && (
-                  <div className="mt-2 p-2 bg-amber-50 rounded-xl border border-amber-200">
-                    <p className="text-[10px] font-bold text-amber-700 mb-1 flex items-center gap-1">
+                  <div className="mt-2 p-2 bg-amber-50 rounded-xl border border-amber-200 dark:bg-amber-950/30 dark:border-amber-800">
+                    <p className="text-[10px] font-bold text-amber-700 mb-1 flex items-center gap-1 dark:text-amber-300">
                       <AlertCircle className="w-3 h-3" /> Corrections
                     </p>
                     {msg.corrections.map((c, ci) => (
                       <div key={ci} className="text-xs text-gray-700 mb-1 dark:text-gray-300">
                         <span className="line-through text-error-500">{c.original}</span>
                         {' → '}
-                        <span className="text-success-600 font-semibold">{c.corrected}</span>
+                        <span className="text-success-600 font-semibold dark:text-success-400">{c.corrected}</span>
                         {c.explanation && (
                           <p className="text-[10px] text-gray-500 mt-0.5 dark:text-gray-400">{c.explanation}</p>
                         )}
@@ -438,8 +438,8 @@ export default function Conversation() {
 
                 {/* New Vocabulary — only when done streaming */}
                 {!msg.isStreaming && msg.new_vocabulary && msg.new_vocabulary.length > 0 && (
-                  <div className="mt-2 p-2 bg-blue-50 rounded-xl border border-blue-200">
-                    <p className="text-[10px] font-bold text-blue-700 mb-1 flex items-center gap-1">
+                  <div className="mt-2 p-2 bg-blue-50 rounded-xl border border-blue-200 dark:bg-blue-950/30 dark:border-blue-800">
+                    <p className="text-[10px] font-bold text-blue-700 mb-1 flex items-center gap-1 dark:text-blue-300">
                       <BookOpen className="w-3 h-3" /> New Words
                     </p>
                     {msg.new_vocabulary.map((v, vi) => (

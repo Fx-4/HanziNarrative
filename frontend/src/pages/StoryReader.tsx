@@ -374,9 +374,9 @@ export default function StoryReader() {
             exit={{ opacity: 0, height: 0 }}
             className="mt-8"
           >
-            <div className="bg-blue-50 border border-blue-200 rounded-3xl shadow-xl overflow-hidden p-4 sm:p-6">
+            <div className="bg-blue-50 border border-blue-200 rounded-3xl shadow-xl overflow-hidden p-4 sm:p-6 dark:bg-blue-950/30 dark:border-blue-800">
               <div className="flex items-center gap-2 mb-4">
-                <Languages className="w-5 h-5 text-blue-600 shrink-0" />
+                <Languages className="w-5 h-5 text-blue-600 shrink-0 dark:text-blue-400" />
                 <h3 className="text-lg font-semibold text-blue-900">
                   English Translation
                 </h3>
@@ -413,7 +413,7 @@ export default function StoryReader() {
           >
             <div className="flex justify-between items-center mb-6 sticky top-0 bg-white pb-4 border-b dark:bg-surface-card">
               <div className="flex items-center gap-2">
-                <BookMarked className="w-5 h-5 text-primary-600" />
+                <BookMarked className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                 <h3 className="text-lg font-bold">Vocabulary List</h3>
               </div>
               <button
@@ -450,11 +450,11 @@ export default function StoryReader() {
                         <span className="text-4xl font-bold text-gray-900 dark:text-gray-50">
                           {char}
                         </span>
-                        <span className="text-lg text-primary-600 font-semibold">
+                        <span className="text-lg text-primary-600 font-semibold dark:text-primary-400">
                           {charPinyin}
                         </span>
                       </div>
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-primary-100 text-primary-700">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
                         #{idx + 1}
                       </span>
                     </div>
@@ -476,7 +476,7 @@ export default function StoryReader() {
                           </div>
                           <div>
                             <p className="text-xs font-semibold text-gray-600 mb-1 dark:text-gray-400">Pinyin:</p>
-                            <p className="text-base text-primary-700">{charPinyin}</p>
+                            <p className="text-base text-primary-700 dark:text-primary-300">{charPinyin}</p>
                           </div>
                           <div>
                             <p className="text-xs font-semibold text-gray-600 mb-1 dark:text-gray-400">Meaning:</p>
@@ -519,9 +519,9 @@ export default function StoryReader() {
         animate={{ opacity: 1, y: 0 }}
         className="mt-8"
       >
-        <div className="bg-purple-50 border border-purple-200 rounded-3xl shadow-xl overflow-hidden p-4 sm:p-6">
+        <div className="bg-purple-50 border border-purple-200 rounded-3xl shadow-xl overflow-hidden p-4 sm:p-6 dark:bg-purple-950/30 dark:border-purple-800">
           <div className="flex items-center gap-2 mb-6">
-            <HelpCircle className="w-6 h-6 text-purple-600 shrink-0" />
+            <HelpCircle className="w-6 h-6 text-purple-600 shrink-0 dark:text-purple-400" />
             <h3 className="text-xl font-bold text-purple-900">
               Comprehension Quiz
             </h3>
@@ -582,15 +582,15 @@ export default function StoryReader() {
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    className="mt-4 p-3 bg-blue-50 rounded-xl"
+                    className="mt-4 p-3 bg-blue-50 rounded-xl dark:bg-blue-950/30"
                   >
                     <div className="flex items-start gap-2">
-                      <Lightbulb className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
+                      <Lightbulb className="w-5 h-5 text-blue-600 mt-0.5 shrink-0 dark:text-blue-400" />
                       <div>
                         <p className="font-semibold text-blue-900 mb-1">
                           Explanation:
                         </p>
-                        <p className="text-blue-800 text-sm">
+                        <p className="text-blue-800 text-sm dark:text-blue-300">
                           {question.explanation}
                         </p>
                       </div>
@@ -690,7 +690,7 @@ export default function StoryReader() {
 
           <button
             onClick={handleDeleteStory}
-            className="flex items-center gap-1.5 text-error-600 hover:text-error-700 hover:bg-error-50 font-medium px-3 py-2 rounded-2xl cursor-pointer transition-colors text-sm sm:text-base"
+            className="flex items-center gap-1.5 text-error-600 hover:text-error-700 hover:bg-error-50 font-medium px-3 py-2 rounded-2xl cursor-pointer transition-colors text-sm sm:text-base dark:text-error-400"
           >
             <Trash2 className="w-4 h-4 shrink-0" />
             <span className="hidden sm:inline">Delete Story</span>
@@ -709,15 +709,15 @@ export default function StoryReader() {
             </p>
           )}
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-primary-100 text-primary-700">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
               HSK {story.hsk_level}
             </span>
             {(story.category ?? 'curated') === 'ai_generated' ? (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-700">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
                 ✨ AI Generated
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700 dark:bg-success-900/40 dark:text-success-300">
                 📚 Curated
               </span>
             )}
@@ -725,7 +725,7 @@ export default function StoryReader() {
         </div>
 
         {/* Interactive Controls */}
-        <div className="bg-gradient-to-r from-primary-50 to-purple-50 rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6 dark:border-gray-800">
+        <div className="bg-gradient-to-r from-primary-50 to-purple-50 rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6 dark:border-gray-800 dark:from-primary-950/30 dark:to-purple-950/30">
           <div className="flex flex-wrap gap-2 sm:gap-3">
             <button
               onClick={() => setShowPinyin(!showPinyin)}

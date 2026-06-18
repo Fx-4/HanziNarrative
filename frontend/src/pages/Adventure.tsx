@@ -214,7 +214,7 @@ export default function Adventure() {
                         className="text-center mb-8 sm:mb-12"
                     >
                         <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                            <Map className="w-8 h-8 sm:w-10 sm:h-10 text-success-600" />
+                            <Map className="w-8 h-8 sm:w-10 sm:h-10 text-success-600 dark:text-success-400" />
                             <BlurText
                                 as="h1"
                                 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-50"
@@ -289,21 +289,21 @@ export default function Adventure() {
                             transition={{ delay: 0.2 }}
                             className="mb-6"
                         >
-                            <div className="bg-gradient-to-r from-success-50 to-success-50 rounded-3xl shadow border border-success-200 p-4 sm:p-5">
+                            <div className="bg-gradient-to-r from-success-50 to-success-50 rounded-3xl shadow border border-success-200 p-4 sm:p-5 dark:from-success-950/30 dark:to-success-950/30 dark:border-success-800">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <AlertCircle className="w-4 h-4 text-success-600" />
-                                    <h4 className="text-sm font-semibold text-success-800">Today's Quota</h4>
+                                    <AlertCircle className="w-4 h-4 text-success-600 dark:text-success-400" />
+                                    <h4 className="text-sm font-semibold text-success-800 dark:text-success-300">Today's Quota</h4>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3">
                                     <div>
-                                        <p className="text-xs text-success-700">Adventures remaining</p>
-                                        <p className="text-lg font-bold text-success-800">
+                                        <p className="text-xs text-success-700 dark:text-success-300">Adventures remaining</p>
+                                        <p className="text-lg font-bold text-success-800 dark:text-success-300">
                                             {startQuota ? `${startQuota.remaining_daily}/${startQuota.limit_daily}` : '—'}
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-success-700">Choices remaining</p>
-                                        <p className="text-lg font-bold text-success-800">
+                                        <p className="text-xs text-success-700 dark:text-success-300">Choices remaining</p>
+                                        <p className="text-lg font-bold text-success-800 dark:text-success-300">
                                             {continueQuota ? `${continueQuota.remaining_daily}/${continueQuota.limit_daily}` : '—'}
                                         </p>
                                     </div>
@@ -363,7 +363,7 @@ export default function Adventure() {
                             {showTranslation ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                             EN
                         </button>
-                        <div className="bg-success-50 rounded-xl border border-success-200 px-3 py-1.5 text-sm font-bold text-success-700">
+                        <div className="bg-success-50 rounded-xl border border-success-200 px-3 py-1.5 text-sm font-bold text-success-700 dark:bg-success-950/30 dark:border-success-800 dark:text-success-300">
                             Step {stepNumber}/5
                         </div>
                     </div>
@@ -416,7 +416,7 @@ export default function Adventure() {
                                         initial={{ opacity: 0, height: 0 }}
                                         animate={{ opacity: 1, height: 'auto' }}
                                         exit={{ opacity: 0, height: 0 }}
-                                        className="text-success-600 text-sm mb-1"
+                                        className="text-success-600 text-sm mb-1 dark:text-success-400"
                                     >
                                         {step.paragraph_pinyin}
                                     </motion.p>
@@ -449,7 +449,7 @@ export default function Adventure() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                     >
-                        <div className="bg-white rounded-2xl shadow-sm border border-success-200 ring-1 ring-success-100 p-4 sm:p-5 mb-4 dark:bg-surface-card">
+                        <div className="bg-white rounded-2xl shadow-sm border border-success-200 ring-1 ring-success-100 p-4 sm:p-5 mb-4 dark:bg-surface-card dark:border-success-800">
                             <p className="text-xl sm:text-2xl font-chinese leading-relaxed text-gray-900 dark:text-gray-50">
                                 {streamingText}
                                 <span className="inline-block w-0.5 h-6 bg-success-500 ml-0.5 animate-pulse align-middle">▊</span>
@@ -473,7 +473,7 @@ export default function Adventure() {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                     >
-                        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-3xl shadow-xl border border-amber-200 p-6 text-center">
+                        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-3xl shadow-xl border border-amber-200 p-6 text-center dark:from-amber-950/30 dark:to-yellow-950/30 dark:border-amber-800">
                             <Trophy className="w-12 h-12 text-amber-500 mx-auto mb-3" />
                             <h3 className="text-xl font-bold text-gray-900 mb-2 dark:text-gray-50">Adventure Complete!</h3>
                             {currentStep.moral && (
@@ -497,7 +497,7 @@ export default function Adventure() {
                     >
                         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:bg-surface-card dark:border-gray-800">
                             <div className="flex items-center gap-2 mb-4">
-                                <Sparkles className="w-5 h-5 text-success-600" />
+                                <Sparkles className="w-5 h-5 text-success-600 dark:text-success-400" />
                                 <h3 className="font-semibold text-gray-900 dark:text-gray-50">What do you do?</h3>
                             </div>
                             <div className="space-y-3">
@@ -509,13 +509,13 @@ export default function Adventure() {
                                         className="w-full text-left bg-gray-50 hover:bg-success-50 border-2 border-gray-100 hover:border-success-300 rounded-2xl p-4 cursor-pointer transition-all disabled:opacity-50 group dark:bg-gray-800/50 dark:border-gray-800"
                                     >
                                         <div className="flex items-start gap-3">
-                                            <span className="w-7 h-7 bg-success-100 text-success-700 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 group-hover:bg-success-200">
+                                            <span className="w-7 h-7 bg-success-100 text-success-700 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 group-hover:bg-success-200 dark:bg-success-900/40 dark:text-success-300">
                                                 {choice.id}
                                             </span>
                                             <div className="flex-1">
                                                 <p className="text-lg font-chinese text-gray-900 dark:text-gray-50">{choice.text}</p>
                                                 {showPinyin && choice.text_pinyin && (
-                                                    <p className="text-sm text-success-600 mt-0.5">{choice.text_pinyin}</p>
+                                                    <p className="text-sm text-success-600 mt-0.5 dark:text-success-400">{choice.text_pinyin}</p>
                                                 )}
                                                 <p className="text-sm text-gray-500 mt-0.5 dark:text-gray-400">{choice.text_english}</p>
                                             </div>

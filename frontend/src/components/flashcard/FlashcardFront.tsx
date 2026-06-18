@@ -34,7 +34,7 @@ export default function FlashcardFront({ word }: FlashcardFrontProps) {
         {/* Traditional (if different) */}
         {word.traditional !== word.simplified && (
           <p
-            className="text-base sm:text-lg font-semibold text-violet-600"
+            className="text-base sm:text-lg font-semibold text-violet-600 dark:text-violet-400"
             style={{ fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif' }}
           >
             {word.traditional}
@@ -47,7 +47,7 @@ export default function FlashcardFront({ word }: FlashcardFrontProps) {
           animate={{ y: [0, -4, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <div className="w-6 h-6 rounded-full bg-primary-100 border border-primary-200 flex items-center justify-center">
+          <div className="w-6 h-6 rounded-full bg-primary-100 border border-primary-200 flex items-center justify-center dark:bg-primary-900/40 dark:border-primary-800">
             <svg className="w-3 h-3 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />

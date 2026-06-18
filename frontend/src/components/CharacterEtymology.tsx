@@ -120,7 +120,7 @@ export default function CharacterEtymology({ character, className = '', word, ev
   // If we have evolution history from API, display it as text
   if (apiEvolutionHistory) {
     return (
-      <div className={`bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-lg p-4 ${className}`}>
+      <div className={`bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-lg p-4  dark:from-amber-950/30 dark:to-orange-950/30 dark:border-amber-800${className}`}>
         <div className="flex items-center gap-2 mb-3">
           <div className="w-6 h-6 bg-amber-600 rounded-full flex items-center justify-center">
             <BookOpen className="w-4 h-4 text-white" />
@@ -151,7 +151,7 @@ export default function CharacterEtymology({ character, className = '', word, ev
   const stage = etymology[currentStage]
 
   return (
-    <div className={`bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-lg p-4 ${className}`}>
+    <div className={`bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-lg p-4  dark:from-amber-950/30 dark:to-orange-950/30 dark:border-amber-800${className}`}>
       <div className="flex items-center gap-2 mb-4">
         <div className="w-6 h-6 bg-amber-600 rounded-full flex items-center justify-center">
           <History className="w-4 h-4 text-white" />
@@ -196,7 +196,7 @@ export default function CharacterEtymology({ character, className = '', word, ev
             >
               {stage.character}
             </motion.div>
-            <div className="text-xs text-amber-600 font-semibold mb-1">
+            <div className="text-xs text-amber-600 font-semibold mb-1 dark:text-amber-400">
               {stage.era}
               {stage.year && <span className="text-amber-500 ml-2">({stage.year})</span>}
             </div>
@@ -210,7 +210,7 @@ export default function CharacterEtymology({ character, className = '', word, ev
             <button
               onClick={() => setCurrentStage(Math.max(0, currentStage - 1))}
               disabled={currentStage === 0}
-              className="px-4 py-2 bg-amber-100 hover:bg-amber-200 disabled:bg-gray-100 disabled:text-gray-400 rounded-lg text-sm font-medium transition-colors flex items-center gap-1"
+              className="px-4 py-2 bg-amber-100 hover:bg-amber-200 disabled:bg-gray-100 disabled:text-gray-400 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 dark:bg-amber-900/40"
             >
               <ChevronRight className="w-4 h-4 rotate-180" />
               Previous
@@ -228,7 +228,7 @@ export default function CharacterEtymology({ character, className = '', word, ev
       </AnimatePresence>
 
       {/* Progress Indicator */}
-      <div className="text-center mt-3 text-xs text-amber-700">
+      <div className="text-center mt-3 text-xs text-amber-700 dark:text-amber-300">
         Stage {currentStage + 1} of {etymology.length}
       </div>
     </div>

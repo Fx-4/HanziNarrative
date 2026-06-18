@@ -168,13 +168,13 @@ export default function StrokeOrderDisplay({
 
       {/* Status Message */}
       {quizComplete && (
-        <div className="text-sm font-medium text-success-600 animate-fade-in">
+        <div className="text-sm font-medium text-success-600 animate-fade-in dark:text-success-400">
           ✓ Perfect! You wrote it correctly!
         </div>
       )}
 
       {isPracticeMode && !quizComplete && (
-        <div className="text-sm font-medium text-blue-600 animate-pulse">
+        <div className="text-sm font-medium text-blue-600 animate-pulse dark:text-blue-400">
           ✍️ Draw the character stroke by stroke...
         </div>
       )}

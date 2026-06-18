@@ -511,10 +511,10 @@ export default function Review() {
                               <div className="flex items-center justify-between">
                                 <span className="text-base sm:text-lg">{option}</span>
                                 {showResult && isCorrect && (
-                                  <CheckCircle className="w-5 h-5 text-success-600 shrink-0" />
+                                  <CheckCircle className="w-5 h-5 text-success-600 shrink-0 dark:text-success-400" />
                                 )}
                                 {showResult && isSelected && !isCorrect && (
-                                  <XCircle className="w-5 h-5 text-error-600 shrink-0" />
+                                  <XCircle className="w-5 h-5 text-error-600 shrink-0 dark:text-error-400" />
                                 )}
                               </div>
                             </button>

@@ -267,7 +267,7 @@ export default function Home() {
           <p className="text-primary-100 text-sm mb-6">Create a free account and begin your Chinese journey today.</p>
           <Link
             to="/register"
-            className="inline-flex items-center gap-2 px-8 py-3 bg-white text-primary-700 font-bold rounded-xl hover:bg-primary-50 transition-colors shadow-lg dark:bg-surface-card"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-white text-primary-700 font-bold rounded-xl hover:bg-primary-50 transition-colors shadow-lg dark:bg-surface-card dark:text-primary-300"
           >
             Get Started Free <ArrowRight className="w-4 h-4" />
           </Link>

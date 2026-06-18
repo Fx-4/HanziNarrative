@@ -163,7 +163,7 @@ export default function Dictation() {
                         className="text-center mb-8 sm:mb-12"
                     >
                         <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                            <Headphones className="w-8 h-8 sm:w-10 sm:h-10 text-cyan-600" />
+                            <Headphones className="w-8 h-8 sm:w-10 sm:h-10 text-cyan-600 dark:text-cyan-400" />
                             <BlurText
                                 as="h1"
                                 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-50"
@@ -210,22 +210,22 @@ export default function Dictation() {
                             animate={{ opacity: 1, y: 0 }}
                             className="mb-6"
                         >
-                            <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-3xl shadow-xl border border-cyan-200 p-4 sm:p-6">
+                            <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-3xl shadow-xl border border-cyan-200 p-4 sm:p-6 dark:from-cyan-950/30 dark:to-blue-950/30 dark:border-cyan-800">
                                 <div className="flex items-center gap-2 mb-3">
-                                    <Target className="w-5 h-5 text-cyan-600" />
+                                    <Target className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
                                     <h3 className="font-semibold text-gray-900 dark:text-gray-50">Last Session Results</h3>
                                 </div>
                                 <div className="grid grid-cols-3 gap-4 text-center">
                                     <div>
-                                        <p className="text-2xl font-bold text-cyan-700">{score}/{totalAttempted}</p>
+                                        <p className="text-2xl font-bold text-cyan-700 dark:text-cyan-300">{score}/{totalAttempted}</p>
                                         <p className="text-xs text-gray-600 dark:text-gray-400">Correct</p>
                                     </div>
                                     <div>
-                                        <p className="text-2xl font-bold text-cyan-700">{totalAttempted > 0 ? Math.round((score / totalAttempted) * 100) : 0}%</p>
+                                        <p className="text-2xl font-bold text-cyan-700 dark:text-cyan-300">{totalAttempted > 0 ? Math.round((score / totalAttempted) * 100) : 0}%</p>
                                         <p className="text-xs text-gray-600 dark:text-gray-400">Accuracy</p>
                                     </div>
                                     <div>
-                                        <p className="text-2xl font-bold text-cyan-700">{streak}</p>
+                                        <p className="text-2xl font-bold text-cyan-700 dark:text-cyan-300">{streak}</p>
                                         <p className="text-xs text-gray-600 dark:text-gray-400">Best Streak</p>
                                     </div>
                                 </div>
@@ -257,12 +257,12 @@ export default function Dictation() {
                         transition={{ delay: 0.3 }}
                         className="mt-8"
                     >
-                        <div className="bg-gradient-to-r from-cyan-50 to-primary-50 rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:border-gray-800">
+                        <div className="bg-gradient-to-r from-cyan-50 to-primary-50 rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:border-gray-800 dark:from-cyan-950/30 dark:to-primary-950/30">
                             <h4 className="font-semibold text-gray-900 mb-3 dark:text-gray-50">How it works</h4>
                             <div className="grid sm:grid-cols-3 gap-4">
                                 <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 bg-cyan-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <Volume2 className="w-4 h-4 text-cyan-600" />
+                                    <div className="w-8 h-8 bg-cyan-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-cyan-900/40">
+                                        <Volume2 className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
                                     </div>
                                     <div>
                                         <p className="font-medium text-gray-900 dark:text-gray-50">1. Listen</p>
@@ -270,8 +270,8 @@ export default function Dictation() {
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <Send className="w-4 h-4 text-blue-600" />
+                                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-blue-900/40">
+                                        <Send className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                                     </div>
                                     <div>
                                         <p className="font-medium text-gray-900 dark:text-gray-50">2. Type</p>
@@ -279,8 +279,8 @@ export default function Dictation() {
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <CheckCircle className="w-4 h-4 text-success-600" />
+                                    <div className="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-success-900/40">
+                                        <CheckCircle className="w-4 h-4 text-success-600 dark:text-success-400" />
                                     </div>
                                     <div>
                                         <p className="font-medium text-gray-900 dark:text-gray-50">3. Check</p>
@@ -308,7 +308,7 @@ export default function Dictation() {
             <div className="min-h-screen py-8 px-4">
                 <div className="max-w-2xl mx-auto text-center">
                     <p className="text-gray-600 dark:text-gray-400">No sentences available</p>
-                    <button onClick={() => setSessionStarted(false)} className="mt-4 text-cyan-600 hover:underline cursor-pointer">
+                    <button onClick={() => setSessionStarted(false)} className="mt-4 text-cyan-600 hover:underline cursor-pointer dark:text-cyan-400">
                         Go back
                     </button>
                 </div>
@@ -331,7 +331,7 @@ export default function Dictation() {
                     </button>
                     <div className="flex items-center gap-3">
                         <div className="bg-white rounded-xl shadow-sm border px-3 py-1.5 flex items-center gap-1.5 dark:bg-surface-card">
-                            <Target className="w-4 h-4 text-cyan-600" />
+                            <Target className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
                             <span className="font-bold text-gray-900 dark:text-gray-50">{currentIndex + 1}/{sentences.length}</span>
                         </div>
                         <div className="bg-white rounded-xl shadow-sm border px-3 py-1.5 flex items-center gap-1.5 dark:bg-surface-card">
@@ -339,8 +339,8 @@ export default function Dictation() {
                             <span className="font-bold text-gray-900 dark:text-gray-50">{score} pts</span>
                         </div>
                         {streak >= 2 && (
-                            <div className="bg-orange-50 rounded-xl border border-orange-200 px-3 py-1.5">
-                                <span className="text-sm font-bold text-orange-600 flex items-center gap-1"><Zap className="w-3.5 h-3.5" /> {streak} streak</span>
+                            <div className="bg-orange-50 rounded-xl border border-orange-200 px-3 py-1.5 dark:bg-orange-950/30 dark:border-orange-800">
+                                <span className="text-sm font-bold text-orange-600 flex items-center gap-1 dark:text-orange-400"><Zap className="w-3.5 h-3.5" /> {streak} streak</span>
                             </div>
                         )}
                     </div>
@@ -389,7 +389,7 @@ export default function Dictation() {
                         <div className="text-center mb-4">
                             <button
                                 onClick={() => setShowHint(!showHint)}
-                                className="text-sm text-cyan-600 hover:text-cyan-700 font-medium cursor-pointer flex items-center gap-1 mx-auto"
+                                className="text-sm text-cyan-600 hover:text-cyan-700 font-medium cursor-pointer flex items-center gap-1 mx-auto dark:text-cyan-400"
                             >
                                 <Eye className="w-3.5 h-3.5" />
                                 {showHint ? 'Hide hint' : 'Show English hint'}
@@ -467,7 +467,7 @@ export default function Dictation() {
                                     <p className="text-sm text-gray-500 mb-2 dark:text-gray-400">Correct answer:</p>
                                     <p className="text-2xl font-chinese text-center text-gray-900 mb-2 dark:text-gray-50">{currentSentence.text}</p>
                                     {currentSentence.pinyin && (
-                                        <p className="text-center text-cyan-600">{currentSentence.pinyin}</p>
+                                        <p className="text-center text-cyan-600 dark:text-cyan-400">{currentSentence.pinyin}</p>
                                     )}
                                     {currentSentence.english_hint && (
                                         <p className="text-center text-gray-500 text-sm mt-1 dark:text-gray-400">{currentSentence.english_hint}</p>

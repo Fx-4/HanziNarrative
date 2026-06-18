@@ -143,7 +143,7 @@ export default function FillBlank() {
                 <div className="max-w-4xl mx-auto">
                     <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8 sm:mb-12">
                         <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                            <Lightbulb className="w-8 h-8 sm:w-10 sm:h-10 text-amber-600" />
+                            <Lightbulb className="w-8 h-8 sm:w-10 sm:h-10 text-amber-600 dark:text-amber-400" />
                             <BlurText as="h1" className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100" wordDelay={0.08}>
                                 Fill in the Blank
                             </BlurText>
@@ -170,15 +170,15 @@ export default function FillBlank() {
                             <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">How It Works</h4>
                             <div className="grid sm:grid-cols-3 gap-4">
                                 <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0"><BookOpen className="w-4 h-4 text-amber-600" /></div>
+                                    <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-amber-900/40"><BookOpen className="w-4 h-4 text-amber-600 dark:text-amber-400" /></div>
                                     <div><p className="font-medium text-gray-900">Read</p><p className="text-sm text-gray-600 dark:text-gray-400">See a sentence from a real story</p></div>
                                 </div>
                                 <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0"><Target className="w-4 h-4 text-orange-600" /></div>
+                                    <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-orange-900/40"><Target className="w-4 h-4 text-orange-600 dark:text-orange-400" /></div>
                                     <div><p className="font-medium text-gray-900">Choose</p><p className="text-sm text-gray-600 dark:text-gray-400">Pick the missing word from 4 options</p></div>
                                 </div>
                                 <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center flex-shrink-0"><CheckCircle className="w-4 h-4 text-success-600" /></div>
+                                    <div className="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-success-900/40"><CheckCircle className="w-4 h-4 text-success-600 dark:text-success-400" /></div>
                                     <div><p className="font-medium text-gray-900">Learn</p><p className="text-sm text-gray-600 dark:text-gray-400">Build reading comprehension skills</p></div>
                                 </div>
                             </div>
@@ -232,7 +232,7 @@ export default function FillBlank() {
             <div className="max-w-3xl mx-auto">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                        <Target className="w-5 h-5 text-amber-600" />
+                        <Target className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                         <span className="font-bold text-gray-900 dark:text-gray-100">{currentQ + 1}/{questions.length}</span>
                     </div>
                     <div className="bg-amber-50 dark:bg-amber-950/30 rounded-xl border border-amber-200 dark:border-amber-800 px-3 py-1.5 text-sm font-bold text-amber-700 dark:text-amber-400">
@@ -263,7 +263,7 @@ export default function FillBlank() {
                                                     : 'border-amber-300'
                                                     } text-center`}>
                                                     {selected !== null ? (
-                                                        <span className="text-success-700 font-bold">{q.blankWord}</span>
+                                                        <span className="text-success-700 font-bold dark:text-success-300">{q.blankWord}</span>
                                                     ) : (
                                                         <span className="text-amber-400 text-lg">?</span>
                                                     )}
@@ -286,7 +286,7 @@ export default function FillBlank() {
                                         <button key={i} onClick={() => handleAnswer(i)} disabled={selected !== null}
                                             className={`rounded-2xl p-4 font-medium cursor-pointer transition-all text-center ${btnClass} disabled:cursor-default`}>
                                             <span className="text-2xl font-chinese">{opt}</span>
-                                            {selected !== null && i === q.correctIndex && <CheckCircle className="w-4 h-4 text-success-600 mx-auto mt-1" />}
+                                            {selected !== null && i === q.correctIndex && <CheckCircle className="w-4 h-4 text-success-600 mx-auto mt-1 dark:text-success-400" />}
                                             {selected !== null && i === selected && i !== q.correctIndex && <XCircle className="w-4 h-4 text-error-500 mx-auto mt-1" />}
                                         </button>
                                     )

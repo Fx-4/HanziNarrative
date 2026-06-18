@@ -147,7 +147,7 @@ export default function DailyChallenge() {
         <p className="text-gray-500 dark:text-gray-400">Gagal memuat daily challenge.</p>
         <button
           onClick={load}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-primary-600 border border-primary-200 rounded-xl hover:bg-primary-50 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-primary-600 border border-primary-200 rounded-xl hover:bg-primary-50 transition-colors dark:text-primary-400 dark:border-primary-800"
         >
           <RefreshCw className="w-4 h-4" /> Coba lagi
         </button>
@@ -172,7 +172,7 @@ export default function DailyChallenge() {
           <div>
             <div className="flex items-center gap-1.5 mb-1">
               <Calendar className="w-4 h-4 text-amber-500" />
-              <span className="text-xs font-bold text-amber-600 uppercase tracking-widest">Daily Challenge</span>
+              <span className="text-xs font-bold text-amber-600 uppercase tracking-widest dark:text-amber-400">Daily Challenge</span>
             </div>
             <h1 className="text-2xl font-extrabold text-gray-900 dark:text-gray-50">{dateLabel}</h1>
           </div>

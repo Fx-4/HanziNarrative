@@ -452,7 +452,7 @@ export default function Navbar() {
                     )}
                     <button
                       onClick={() => { handleLogout(); setMobileMenuOpen(false) }}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-error-600 hover:bg-error-50 dark:hover:bg-error-950/30 transition-colors"
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-error-600 hover:bg-error-50 dark:hover:bg-error-950/30 transition-colors dark:text-error-400"
                     >
                       <LogOut className="w-4 h-4" />
                       <span className="text-sm font-medium">{t('nav.user.logout')}</span>
@@ -765,7 +765,7 @@ const UserMenu = forwardRef<HTMLDivElement, {
               <div className="border-t border-gray-100 dark:border-gray-800 my-1" />
               <button
                 onClick={onLogout}
-                className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-error-50 dark:hover:bg-error-950/30 transition-colors text-error-600"
+                className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-error-50 dark:hover:bg-error-950/30 transition-colors text-error-600 dark:text-error-400"
               >
                 <LogOut className="w-4 h-4" />
                 <span className="text-sm">{t('nav.user.logout')}</span>

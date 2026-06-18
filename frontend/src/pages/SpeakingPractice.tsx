@@ -209,7 +209,7 @@ export default function SpeakingPractice() {
                         className="text-center mb-8 sm:mb-12"
                     >
                         <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                            <Mic className="w-8 h-8 sm:w-10 sm:h-10 text-rose-600" />
+                            <Mic className="w-8 h-8 sm:w-10 sm:h-10 text-rose-600 dark:text-rose-400" />
                             <BlurText
                                 as="h1"
                                 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-50"
@@ -256,14 +256,14 @@ export default function SpeakingPractice() {
                         transition={{ delay: 0.15 }}
                         className="mb-6"
                     >
-                        <div className="bg-white rounded-3xl shadow-xl border border-amber-100 overflow-hidden dark:bg-surface-card">
+                        <div className="bg-white rounded-3xl shadow-xl border border-amber-100 overflow-hidden dark:bg-surface-card dark:border-amber-900/40">
                             <button
                                 onClick={() => setShowNeutralGuide(prev => !prev)}
                                 className="w-full flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-amber-50 transition-colors"
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <BookOpen className="w-5 h-5 text-amber-600" />
+                                    <div className="w-9 h-9 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-amber-900/40">
+                                        <BookOpen className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                                     </div>
                                     <div className="text-left">
                                         <p className="font-semibold text-gray-900 dark:text-gray-50">轻声 (Neutral Tone) — When to use it</p>
@@ -285,20 +285,20 @@ export default function SpeakingPractice() {
                                         transition={{ duration: 0.25 }}
                                         className="overflow-hidden"
                                     >
-                                        <div className="px-4 sm:px-6 pb-6 space-y-5 border-t border-amber-100">
+                                        <div className="px-4 sm:px-6 pb-6 space-y-5 border-t border-amber-100 dark:border-amber-900/40">
                                             <p className="text-sm text-gray-600 mt-4 dark:text-gray-400">
-                                                The <span className="font-semibold text-amber-700">neutral tone</span> (轻声 qīngshēng) is a short, unstressed syllable with no tone mark. It is marked below with a middle dot "·".
+                                                The <span className="font-semibold text-amber-700 dark:text-amber-300">neutral tone</span> (轻声 qīngshēng) is a short, unstressed syllable with no tone mark. It is marked below with a middle dot "·".
                                             </p>
 
                                             <div>
                                                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 dark:text-gray-400">Common Particles</p>
                                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                                     {NEUTRAL_TONE_EXAMPLES.map(item => (
-                                                        <div key={item.char} className="bg-amber-50 rounded-xl px-3 py-2">
+                                                        <div key={item.char} className="bg-amber-50 rounded-xl px-3 py-2 dark:bg-amber-950/30">
                                                             <div className="flex items-center gap-2">
                                                                 <span className="text-2xl font-chinese text-gray-900 dark:text-gray-50">{item.char}</span>
                                                                 <div>
-                                                                    <p className="text-xs text-amber-700 font-medium">·{item.pinyin}</p>
+                                                                    <p className="text-xs text-amber-700 font-medium dark:text-amber-300">·{item.pinyin}</p>
                                                                     <p className="text-xs text-gray-500 dark:text-gray-400">{item.meaning}</p>
                                                                 </div>
                                                             </div>
@@ -312,9 +312,9 @@ export default function SpeakingPractice() {
                                                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 dark:text-gray-400">Compound Words with Neutral Second Syllable</p>
                                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                                     {NEUTRAL_TONE_COMPOUNDS.map(item => (
-                                                        <div key={item.word} className="bg-orange-50 rounded-xl px-3 py-2">
+                                                        <div key={item.word} className="bg-orange-50 rounded-xl px-3 py-2 dark:bg-orange-950/30">
                                                             <p className="text-xl font-chinese text-gray-900 dark:text-gray-50">{item.word}</p>
-                                                            <p className="text-xs text-orange-700 font-medium">{item.pinyin}</p>
+                                                            <p className="text-xs text-orange-700 font-medium dark:text-orange-300">{item.pinyin}</p>
                                                             <p className="text-xs text-gray-500 dark:text-gray-400">{item.meaning}</p>
                                                         </div>
                                                     ))}
@@ -334,18 +334,18 @@ export default function SpeakingPractice() {
                             animate={{ opacity: 1, y: 0 }}
                             className="mb-6"
                         >
-                            <div className="bg-gradient-to-r from-rose-50 to-pink-50 rounded-3xl shadow-xl border border-rose-200 p-4 sm:p-6">
+                            <div className="bg-gradient-to-r from-rose-50 to-pink-50 rounded-3xl shadow-xl border border-rose-200 p-4 sm:p-6 dark:from-rose-950/30 dark:to-pink-950/30 dark:border-rose-800">
                                 <div className="flex items-center gap-2 mb-3">
-                                    <Award className="w-5 h-5 text-rose-600" />
+                                    <Award className="w-5 h-5 text-rose-600 dark:text-rose-400" />
                                     <h3 className="font-semibold text-gray-900 dark:text-gray-50">Last Session Results</h3>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4 text-center">
                                     <div>
-                                        <p className="text-2xl font-bold text-rose-700">{score}/{totalAttempted}</p>
+                                        <p className="text-2xl font-bold text-rose-700 dark:text-rose-300">{score}/{totalAttempted}</p>
                                         <p className="text-xs text-gray-600 dark:text-gray-400">Correct</p>
                                     </div>
                                     <div>
-                                        <p className="text-2xl font-bold text-rose-700">{totalAttempted > 0 ? Math.round((score / totalAttempted) * 100) : 0}%</p>
+                                        <p className="text-2xl font-bold text-rose-700 dark:text-rose-300">{totalAttempted > 0 ? Math.round((score / totalAttempted) * 100) : 0}%</p>
                                         <p className="text-xs text-gray-600 dark:text-gray-400">Accuracy</p>
                                     </div>
                                 </div>
@@ -377,12 +377,12 @@ export default function SpeakingPractice() {
                         transition={{ delay: 0.3 }}
                         className="mt-8"
                     >
-                        <div className="bg-gradient-to-r from-rose-50 to-orange-50 rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:border-gray-800">
+                        <div className="bg-gradient-to-r from-rose-50 to-orange-50 rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:border-gray-800 dark:from-rose-950/30 dark:to-orange-950/30">
                             <h4 className="font-semibold text-gray-900 mb-3 dark:text-gray-50">How it works</h4>
                             <div className="grid sm:grid-cols-3 gap-4">
                                 <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 bg-rose-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <Volume2 className="w-4 h-4 text-rose-600" />
+                                    <div className="w-8 h-8 bg-rose-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-rose-900/40">
+                                        <Volume2 className="w-4 h-4 text-rose-600 dark:text-rose-400" />
                                     </div>
                                     <div>
                                         <p className="font-medium text-gray-900 dark:text-gray-50">1. Listen</p>
@@ -390,8 +390,8 @@ export default function SpeakingPractice() {
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <Mic className="w-4 h-4 text-pink-600" />
+                                    <div className="w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-pink-900/40">
+                                        <Mic className="w-4 h-4 text-pink-600 dark:text-pink-400" />
                                     </div>
                                     <div>
                                         <p className="font-medium text-gray-900 dark:text-gray-50">2. Speak</p>
@@ -399,8 +399,8 @@ export default function SpeakingPractice() {
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <CheckCircle className="w-4 h-4 text-success-600" />
+                                    <div className="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-success-900/40">
+                                        <CheckCircle className="w-4 h-4 text-success-600 dark:text-success-400" />
                                     </div>
                                     <div>
                                         <p className="font-medium text-gray-900 dark:text-gray-50">3. Check</p>
@@ -438,7 +438,7 @@ export default function SpeakingPractice() {
                     </button>
                     <div className="flex items-center gap-3">
                         <div className="bg-white rounded-xl shadow-sm border px-3 py-1.5 flex items-center gap-1.5 dark:bg-surface-card">
-                            <Target className="w-4 h-4 text-rose-600" />
+                            <Target className="w-4 h-4 text-rose-600 dark:text-rose-400" />
                             <span className="font-bold text-gray-900 dark:text-gray-50">{currentIndex + 1}/{words.length}</span>
                         </div>
                         <div className="bg-white rounded-xl shadow-sm border px-3 py-1.5 flex items-center gap-1.5 dark:bg-surface-card">
@@ -477,12 +477,12 @@ export default function SpeakingPractice() {
                 {/* Mode badge */}
                 <div className="mb-4 flex items-center gap-2">
                     {isVocabMode ? (
-                        <span className="inline-flex items-center gap-1.5 bg-violet-100 text-violet-700 text-xs font-semibold px-3 py-1 rounded-full">
+                        <span className="inline-flex items-center gap-1.5 bg-violet-100 text-violet-700 text-xs font-semibold px-3 py-1 rounded-full dark:bg-violet-900/40 dark:text-violet-300">
                             <Brain className="w-3.5 h-3.5" />
                             Vocabulary Challenge — recall the Chinese word from its meaning
                         </span>
                     ) : (
-                        <span className="inline-flex items-center gap-1.5 bg-rose-100 text-rose-700 text-xs font-semibold px-3 py-1 rounded-full">
+                        <span className="inline-flex items-center gap-1.5 bg-rose-100 text-rose-700 text-xs font-semibold px-3 py-1 rounded-full dark:bg-rose-900/40 dark:text-rose-300">
                             <Volume2 className="w-3.5 h-3.5" />
                             Pronunciation Check — read and pronounce correctly
                         </span>
@@ -523,16 +523,16 @@ export default function SpeakingPractice() {
                                 {!showResult && (
                                     <div className="mb-5">
                                         {hintRevealed ? (
-                                            <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-2">
+                                            <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-2 dark:bg-amber-950/30 dark:border-amber-800">
                                                 <Eye className="w-4 h-4 text-amber-500" />
-                                                <span className="text-amber-700 font-medium text-sm">Hint: </span>
-                                                <span className="text-lg text-rose-600 font-medium">{currentWord.pinyin}</span>
+                                                <span className="text-amber-700 font-medium text-sm dark:text-amber-300">Hint: </span>
+                                                <span className="text-lg text-rose-600 font-medium dark:text-rose-400">{currentWord.pinyin}</span>
                                                 <span className="text-xs text-amber-500">(no points for this attempt)</span>
                                             </div>
                                         ) : (
                                             <button
                                                 onClick={handleRevealHint}
-                                                className="inline-flex items-center gap-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 rounded-2xl px-4 py-2 text-sm font-medium cursor-pointer transition-colors"
+                                                className="inline-flex items-center gap-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 rounded-2xl px-4 py-2 text-sm font-medium cursor-pointer transition-colors dark:bg-amber-950/30 dark:border-amber-800 dark:text-amber-300"
                                             >
                                                 <Lightbulb className="w-4 h-4" />
                                                 Reveal pinyin hint
@@ -549,9 +549,9 @@ export default function SpeakingPractice() {
                                         animate={{ opacity: 1, scale: 1 }}
                                         className="mb-5"
                                     >
-                                        <div className="bg-violet-50 border border-violet-200 rounded-2xl px-6 py-4 inline-block">
+                                        <div className="bg-violet-50 border border-violet-200 rounded-2xl px-6 py-4 inline-block dark:bg-violet-950/30 dark:border-violet-800">
                                             <p className="text-5xl sm:text-6xl font-chinese text-gray-900 mb-1 dark:text-gray-50">{currentWord.simplified}</p>
-                                            <p className="text-xl text-violet-600">{currentWord.pinyin}</p>
+                                            <p className="text-xl text-violet-600 dark:text-violet-400">{currentWord.pinyin}</p>
                                         </div>
                                     </motion.div>
                                 )}
@@ -561,7 +561,7 @@ export default function SpeakingPractice() {
                             <div className="mb-5">
                                 <p className="text-xs font-semibold text-rose-500 uppercase tracking-widest mb-3">Pronounce this word</p>
                                 <p className="text-5xl sm:text-6xl font-chinese text-gray-900 mb-3 dark:text-gray-50">{currentWord.simplified}</p>
-                                <p className="text-xl text-rose-600 mb-1">{currentWord.pinyin}</p>
+                                <p className="text-xl text-rose-600 mb-1 dark:text-rose-400">{currentWord.pinyin}</p>
                                 <p className="text-gray-500 dark:text-gray-400">{currentWord.english}</p>
                             </div>
                         )}
@@ -635,7 +635,7 @@ export default function SpeakingPractice() {
                                     )}
 
                                     {usedHint && (
-                                        <p className="text-center text-xs text-amber-600 mb-2">Hint was used — no points awarded for this attempt</p>
+                                        <p className="text-center text-xs text-amber-600 mb-2 dark:text-amber-400">Hint was used — no points awarded for this attempt</p>
                                     )}
 
                                     <p className="text-center font-medium text-gray-900 mb-1 dark:text-gray-50">{result?.feedback}</p>

@@ -50,7 +50,7 @@ export default function DailyChallengeCard() {
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-5 shadow-sm"
+      className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-5 shadow-sm dark:from-amber-950/30 dark:to-orange-950/30 dark:border-amber-800"
     >
       {/* Header */}
       <div className="flex items-center gap-2 mb-3">
@@ -69,8 +69,8 @@ export default function DailyChallengeCard() {
       {/* Story Info */}
       <div className="bg-white/70 rounded-xl p-3 mb-3">
         <div className="flex items-center gap-2 mb-1">
-          <BookOpen className="w-3.5 h-3.5 text-accent-600" />
-          <span className="text-xs font-semibold text-accent-700">HSK {challenge.story.hsk_level}</span>
+          <BookOpen className="w-3.5 h-3.5 text-accent-600 dark:text-accent-400" />
+          <span className="text-xs font-semibold text-accent-700 dark:text-accent-300">HSK {challenge.story.hsk_level}</span>
         </div>
         <p className="font-bold text-gray-900 text-sm">{challenge.story.title}</p>
         <p className="text-xs text-gray-500">{challenge.story.title_english}</p>

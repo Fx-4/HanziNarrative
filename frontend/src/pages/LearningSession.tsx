@@ -178,7 +178,7 @@ function GrammarCard({ step, onNext }: { step: StepGrammar; onNext: () => void }
   return (
     <motion.div key={gp.pattern} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
       <div className="text-center">
-        <span className="text-xs font-bold text-violet-600 uppercase tracking-widest">Grammar</span>
+        <span className="text-xs font-bold text-violet-600 uppercase tracking-widest dark:text-violet-400">Grammar</span>
         <p className="text-lg font-extrabold text-gray-900 dark:text-gray-50 mt-1">{gp.pattern}</p>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">{gp.explanation}</p>
       </div>

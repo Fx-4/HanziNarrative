@@ -583,7 +583,7 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
             <Avatar player={p} size="sm" />
             <div className="hidden sm:block ml-0.5">
               <p className="text-[10px] font-medium text-gray-700 dark:text-gray-300 leading-none">{p.username}</p>
-              {gameState.mode === 'battle_royale' ? <Hearts lives={p.lives} max={maxLives} /> : <p className="text-[10px] text-primary-600 font-bold">{p.score}p</p>}
+              {gameState.mode === 'battle_royale' ? <Hearts lives={p.lives} max={maxLives} /> : <p className="text-[10px] text-primary-600 font-bold dark:text-primary-400">{p.score}p</p>}
               <EffectBadges effects={p.active_effects ?? {}} />
             </div>
             {gameState.answeredUserIds.includes(p.user_id) && !p.eliminated && <Check className="w-3 h-3 text-success-500 ml-1" />}
@@ -651,7 +651,7 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
             <div className="inline-flex items-center gap-3 bg-amber-50 dark:bg-amber-950/30 border-2 border-amber-300 dark:border-amber-700 rounded-2xl px-5 py-3">
               <span className="text-2xl">🎵</span>
               <motion.p initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-3xl sm:text-4xl font-bold text-amber-700 dark:text-amber-400 tracking-wider">{q.bare_syllable || q.pinyin}</motion.p>
-              <button onClick={() => speakChinese(q.chinese)} className="p-1.5 rounded-xl bg-amber-100 dark:bg-amber-900/50 text-amber-700 hover:bg-amber-200 transition-all" title="Hear word"><Volume2 className="w-4 h-4" /></button>
+              <button onClick={() => speakChinese(q.chinese)} className="p-1.5 rounded-xl bg-amber-100 dark:bg-amber-900/50 text-amber-700 hover:bg-amber-200 transition-all dark:text-amber-300" title="Hear word"><Volume2 className="w-4 h-4" /></button>
             </div>
             <p className="text-gray-400 text-xs mt-2 italic">{q.english} · {q.chinese}</p>
           </div>

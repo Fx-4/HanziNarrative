@@ -342,7 +342,7 @@ export default function SentenceBuilder() {
                 onClick={clearSentence}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="text-sm text-error-600 hover:text-error-700 font-medium cursor-pointer"
+                className="text-sm text-error-600 hover:text-error-700 font-medium cursor-pointer dark:text-error-400"
               >
                 Clear
               </motion.button>

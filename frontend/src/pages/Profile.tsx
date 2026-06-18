@@ -341,7 +341,7 @@ export default function Profile() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center py-12 gap-4 bg-white rounded-3xl border border-error-100 shadow-sm dark:bg-surface-card"
+          className="flex flex-col items-center py-12 gap-4 bg-white rounded-3xl border border-error-100 shadow-sm dark:bg-surface-card dark:border-error-900/40"
         >
           <div className="w-12 h-12 rounded-2xl bg-error-50 flex items-center justify-center dark:bg-error-900/30">
             <TrendingUp className="w-6 h-6 text-error-400" />

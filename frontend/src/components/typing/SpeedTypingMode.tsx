@@ -159,25 +159,25 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto mb-6">
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6">
-                <Zap className="w-8 h-8 mx-auto mb-2 text-purple-600" />
-                <p className="text-sm text-purple-700 font-medium mb-1">Average WPM</p>
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6 dark:from-purple-950/30">
+                <Zap className="w-8 h-8 mx-auto mb-2 text-purple-600 dark:text-purple-400" />
+                <p className="text-sm text-purple-700 font-medium mb-1 dark:text-purple-300">Average WPM</p>
                 <p className="text-3xl font-bold text-purple-900">
                   {Math.round(stats.avgWpm)}
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-6">
-                <Trophy className="w-8 h-8 mx-auto mb-2 text-orange-600" />
-                <p className="text-sm text-orange-700 font-medium mb-1">Best WPM</p>
+              <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-6 dark:from-orange-950/30">
+                <Trophy className="w-8 h-8 mx-auto mb-2 text-orange-600 dark:text-orange-400" />
+                <p className="text-sm text-orange-700 font-medium mb-1 dark:text-orange-300">Best WPM</p>
                 <p className="text-3xl font-bold text-orange-900">
                   {Math.round(stats.bestWpm)}
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-success-50 to-success-100 rounded-lg p-6">
-                <TrendingUp className="w-8 h-8 mx-auto mb-2 text-success-600" />
-                <p className="text-sm text-success-700 font-medium mb-1">Accuracy</p>
+              <div className="bg-gradient-to-br from-success-50 to-success-100 rounded-lg p-6 dark:from-success-950/30">
+                <TrendingUp className="w-8 h-8 mx-auto mb-2 text-success-600 dark:text-success-400" />
+                <p className="text-sm text-success-700 font-medium mb-1 dark:text-success-300">Accuracy</p>
                 <p className="text-3xl font-bold text-success-900">
                   {Math.round(stats.accuracy)}%
                 </p>
@@ -202,19 +202,19 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Zap className="w-5 h-5 text-orange-600" />
+          <Zap className="w-5 h-5 text-orange-600 dark:text-orange-400" />
           <span className="text-lg font-semibold">Speed Typing</span>
         </div>
         <div className="flex gap-4">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-4 py-2 dark:bg-surface-card dark:border-gray-800">
             <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-orange-600" />
+              <Clock className="w-5 h-5 text-orange-600 dark:text-orange-400" />
               <span className="text-lg font-bold">{formatTime(timer)}</span>
             </div>
           </div>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-4 py-2 dark:bg-surface-card dark:border-gray-800">
             <div className="flex items-center gap-2">
-              <Zap className="w-5 h-5 text-yellow-600" />
+              <Zap className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
               <span className="text-lg font-bold">{Math.round(currentWPM)} WPM</span>
             </div>
           </div>
@@ -248,7 +248,7 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
             autoComplete="off"
           />
           <p className="text-sm text-gray-600 mt-2 text-center dark:text-gray-400">
-            Target: <span className="font-semibold text-primary-600">{currentWord.pinyin}</span>
+            Target: <span className="font-semibold text-primary-600 dark:text-primary-400">{currentWord.pinyin}</span>
           </p>
         </div>
 

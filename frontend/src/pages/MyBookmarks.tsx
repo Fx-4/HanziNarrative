@@ -144,7 +144,7 @@ export default function MyBookmarks() {
                     <h3 className="text-xl font-bold text-gray-900 flex-1 mr-2 dark:text-gray-50">
                       {story.title}
                     </h3>
-                    <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-100 text-primary-700 flex-shrink-0">
+                    <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-100 text-primary-700 flex-shrink-0 dark:bg-primary-900/40 dark:text-primary-300">
                       HSK {story.hsk_level}
                     </span>
                   </div>
