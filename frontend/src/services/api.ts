@@ -1035,6 +1035,8 @@ export const feedbackApi = {
     subject: string
     message: string
     page_url?: string
+    attachment_url?: string
+    element_selector?: string
   }) => {
     const response = await api.post('/feedback/', data)
     return response.data as FeedbackItem

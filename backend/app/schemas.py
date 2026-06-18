@@ -324,6 +324,8 @@ class FeedbackCreate(BaseModel):
     subject: str
     message: str
     page_url: Optional[str] = None
+    attachment_url: Optional[str] = None
+    element_selector: Optional[str] = None
 
     @field_validator('subject')
     @classmethod
@@ -354,6 +356,8 @@ class FeedbackOut(BaseModel):
     subject: str
     message: str
     page_url: Optional[str] = None
+    attachment_url: Optional[str] = None
+    element_selector: Optional[str] = None
     is_read: bool
     is_resolved: bool
     created_at: datetime

@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageSquarePlus, X, Bug, Lightbulb, MessageSquare, AlertTriangle, Loader2, CheckCircle, Sparkles, RefreshCw } from 'lucide-react'
+import { MessageSquarePlus, X, Bug, Lightbulb, MessageSquare, AlertTriangle, Loader2, CheckCircle, Sparkles, RefreshCw, Image as ImageIcon, MousePointer2, Trash2 } from 'lucide-react'
 import { feedbackApi } from '@/services/api'
 import { useLocation } from 'react-router-dom'
+import toast from 'react-hot-toast'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -22,6 +23,33 @@ const TEMPLATES: Record<FeedbackType, string> = {
   error: 'Error encountered:\n\n\nWhen it happens:\n\n\nBrowser / Device:\n',
 }
 
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+function getElementSelector(el: HTMLElement): string {
+  if (el.id) return `#${el.id}`
+  if (el === document.body) return 'body'
+  
+  let path = el.tagName.toLowerCase()
+  if (el.classList.length > 0) {
+    // Only use standard classes, skip Tailwind dynamic ones with colons
+    const classes = Array.from(el.classList)
+      .filter(c => !c.includes(':') && !c.includes('[') && !c.includes('/'))
+      .slice(0, 3) // limit to first 3 classes for brevity
+    if (classes.length > 0) path += '.' + classes.join('.')
+  }
+  
+  const parent = el.parentElement
+  if (parent) {
+    const siblings = Array.from(parent.children).filter(s => s.tagName === el.tagName)
+    if (siblings.length > 1) {
+      const index = siblings.indexOf(el) + 1
+      path += `:nth-of-type(${index})`
+    }
+    return `${getElementSelector(parent)} > ${path}`
+  }
+  return path
+}
+
 // ── Main component ─────────────────────────────────────────────────────────────
 
 export default function FeedbackButton() {
@@ -29,11 +57,15 @@ export default function FeedbackButton() {
   const [type, setType] = useState<FeedbackType>('general')
   const [subject, setSubject] = useState('')
   const [messages, setMessages] = useState<Record<FeedbackType, string>>({ ...TEMPLATES })
+  const [attachment, setAttachment] = useState<string | null>(null)
+  const [selector, setSelector] = useState<string | null>(null)
+  const [isSelecting, setIsSelecting] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [improving, setImproving] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const location = useLocation()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const currentMessage = messages[type]
 
@@ -41,11 +73,15 @@ export default function FeedbackButton() {
     setType('general')
     setSubject('')
     setMessages({ ...TEMPLATES })
+    setAttachment(null)
+    setSelector(null)
     setError(null)
     setSubmitted(false)
+    setIsSelecting(false)
   }
 
   const handleClose = () => {
+    if (isSelecting) return // Prevent closing while selecting
     setOpen(false)
     setTimeout(reset, 300)
   }
@@ -60,6 +96,99 @@ export default function FeedbackButton() {
       [type]: TEMPLATES[type]
     }))
   }
+
+  // ── Image Handling ───────────────────────────────────────────────────────────
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Image must be smaller than 2MB')
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setAttachment(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const items = e.clipboardData?.items
+    if (!items) return
+
+    for (const item of Array.from(items)) {
+      if (item.type.indexOf('image') !== -1) {
+        const file = item.getAsFile()
+        if (!file) continue
+        
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          setAttachment(reader.result as string)
+        }
+        reader.readAsDataURL(file)
+        toast.success('Screenshot pasted!')
+      }
+    }
+  }
+
+  // ── Element Selection ────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    if (!isSelecting) return
+
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (target.id === 'feedback-modal-root' || target.closest('#feedback-modal-root')) return
+      target.style.outline = '2px solid #6366f1'
+      target.style.outlineOffset = '2px'
+    }
+
+    const handleMouseOut = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      target.style.outline = ''
+      target.style.outlineOffset = ''
+    }
+
+    const handleClick = (e: MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      
+      const target = e.target as HTMLElement
+      if (target.id === 'feedback-modal-root' || target.closest('#feedback-modal-root')) return
+
+      const sel = getElementSelector(target)
+      setSelector(sel)
+      setIsSelecting(false)
+      setOpen(true)
+      
+      // Cleanup outline
+      target.style.outline = ''
+      target.style.outlineOffset = ''
+      
+      toast.success('Element selected!')
+    }
+
+    document.addEventListener('mouseover', handleMouseOver)
+    document.addEventListener('mouseout', handleMouseOut)
+    document.addEventListener('click', handleClick, true)
+
+    return () => {
+      document.removeEventListener('mouseover', handleMouseOver)
+      document.removeEventListener('mouseout', handleMouseOut)
+      document.removeEventListener('click', handleClick, true)
+    }
+  }, [isSelecting])
+
+  const startSelection = () => {
+    setOpen(false)
+    setIsSelecting(true)
+    toast('Click on an element to highlight it', { icon: '🎯' })
+  }
+
+  // ── Actions ──────────────────────────────────────────────────────────────────
 
   const handleImprove = async () => {
     if (!currentMessage.trim() || improving) return
@@ -90,6 +219,8 @@ export default function FeedbackButton() {
         subject: subject.trim(),
         message: currentMessage.trim(),
         page_url: location.pathname,
+        attachment_url: attachment || undefined,
+        element_selector: selector || undefined,
       })
       setSubmitted(true)
       setTimeout(handleClose, 2000)
@@ -126,11 +257,13 @@ export default function FeedbackButton() {
             />
 
             <motion.div
+              id="feedback-modal-root"
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="fixed bottom-[88px] right-6 z-50 w-[360px] max-w-[calc(100vw-3rem)] bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-2xl overflow-hidden"
+              className="fixed bottom-[88px] right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-2xl overflow-hidden"
+              onPaste={handlePaste}
             >
               {/* Header */}
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800">
@@ -160,7 +293,7 @@ export default function FeedbackButton() {
                   <p className="text-sm text-gray-500 dark:text-gray-400 text-center">We'll review it shortly.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="p-5 space-y-4">
+                <form onSubmit={handleSubmit} className="p-5 space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar">
                   {/* Type selector */}
                   <div>
                     <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
@@ -249,6 +382,79 @@ export default function FeedbackButton() {
                     </div>
                   </div>
 
+                  {/* Additional Context (Visuals) */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {/* Element Selector */}
+                    <button
+                      type="button"
+                      onClick={startSelection}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${
+                        selector 
+                          ? 'border-indigo-200 bg-indigo-50 text-indigo-700 dark:border-indigo-900/40 dark:bg-indigo-900/20 dark:text-indigo-400'
+                          : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400'
+                      }`}
+                    >
+                      <MousePointer2 className="w-3.5 h-3.5" />
+                      {selector ? 'Element Linked' : 'Select Element'}
+                      {selector && (
+                        <X 
+                          className="w-3 h-3 ml-auto hover:text-error-500" 
+                          onClick={(e) => { e.stopPropagation(); setSelector(null); }}
+                        />
+                      )}
+                    </button>
+
+                    {/* Image Attachment */}
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${
+                        attachment 
+                          ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-400'
+                          : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400'
+                      }`}
+                    >
+                      <ImageIcon className="w-3.5 h-3.5" />
+                      {attachment ? 'Image Attached' : 'Attach Image'}
+                      {attachment && (
+                        <X 
+                          className="w-3 h-3 ml-auto hover:text-error-500" 
+                          onClick={(e) => { e.stopPropagation(); setAttachment(null); }}
+                        />
+                      )}
+                    </button>
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      className="hidden" 
+                      accept="image/*" 
+                      onChange={handleImageUpload} 
+                    />
+                  </div>
+
+                  {/* Preview of attachment if any */}
+                  {attachment && (
+                    <div className="relative group rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                      <img src={attachment} alt="Attachment preview" className="w-full h-32 object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setAttachment(null)}
+                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Show selector breadcrumb if any */}
+                  {selector && (
+                    <div className="px-2 py-1.5 rounded-lg bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-900/30">
+                      <p className="text-[10px] font-mono text-indigo-600 dark:text-indigo-400 truncate">
+                        {selector}
+                      </p>
+                    </div>
+                  )}
+
                   {error && (
                     <p className="text-xs text-error-600 dark:text-error-400">{error}</p>
                   )}
@@ -264,6 +470,10 @@ export default function FeedbackButton() {
                       'Send Feedback'
                     )}
                   </button>
+                  
+                  <p className="text-[10px] text-gray-400 text-center italic">
+                    Tip: You can also paste screenshots (Ctrl+V)
+                  </p>
                 </form>
               )}
             </motion.div>
