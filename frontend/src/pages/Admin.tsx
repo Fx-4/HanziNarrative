@@ -10,10 +10,12 @@ import {
   TrendingUp, FileText, Loader2, RefreshCw, AlertTriangle, Menu, X,
   RotateCcw, Clock, Inbox, Bug, Lightbulb, MessageSquare, CheckCircle2,
   Circle, Filter, ExternalLink, MousePointer2, Image as ImageIcon,
+  Copy, Check,
 } from 'lucide-react'
 import { adminApi } from '@/services/api'
 import type { FeedbackItem } from '@/services/api'
 import { useAuthStore } from '@/store/authStore'
+import toast from 'react-hot-toast'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -1076,6 +1078,7 @@ function InboxTab({ onUnreadChange }: { onUnreadChange: (n: number) => void }) {
   const [loading, setLoading] = useState(true)
   const [actionId, setActionId] = useState<number | null>(null)
   const [expanded, setExpanded] = useState<number | null>(null)
+  const [copiedId, setCopiedId] = useState<string | null>(null)
   const unreadRef = useRef(0)
 
   const PAGE_SIZE = 20
@@ -1132,6 +1135,13 @@ function InboxTab({ onUnreadChange }: { onUnreadChange: (n: number) => void }) {
     } finally {
       setActionId(null)
     }
+  }
+
+  const handleCopy = (text: string, id: string) => {
+    navigator.clipboard.writeText(text)
+    setCopiedId(id)
+    toast.success('Copied to clipboard!')
+    setTimeout(() => setCopiedId(null), 2000)
   }
 
   return (
@@ -1242,9 +1252,18 @@ function InboxTab({ onUnreadChange }: { onUnreadChange: (n: number) => void }) {
                     className="overflow-hidden"
                   >
                     <div className="px-4 pb-4 ml-5">
-                      <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed bg-gray-50 dark:bg-gray-800 rounded-xl p-3 mb-3">
-                        {item.message}
-                      </p>
+                      <div className="relative group">
+                        <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed bg-gray-50 dark:bg-gray-800 rounded-xl p-3 mb-3 pr-10">
+                          {item.message}
+                        </p>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleCopy(item.message, `msg-${item.id}`) }}
+                          className="absolute top-2 right-2 p-1.5 rounded-lg bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-400 hover:text-primary-500 opacity-0 group-hover:opacity-100 transition-all shadow-sm"
+                          title="Copy message"
+                        >
+                          {copiedId === `msg-${item.id}` ? <Check className="w-3.5 h-3.5 text-success-500" /> : <Copy className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
 
                       <div className="flex flex-wrap items-center gap-4 mb-3">
                         {item.page_url && (
@@ -1254,9 +1273,12 @@ function InboxTab({ onUnreadChange }: { onUnreadChange: (n: number) => void }) {
                           </div>
                         )}
                         {item.element_selector && (
-                          <div className="text-xs text-indigo-500 flex items-center gap-1">
+                          <div className="text-xs text-indigo-500 flex items-center gap-1 group/sel cursor-pointer" onClick={() => handleCopy(item.element_selector!, `sel-${item.id}`)}>
                             <MousePointer2 className="w-3 h-3" />
-                            Element: <span className="font-mono bg-indigo-50 dark:bg-indigo-900/20 px-1 rounded">{item.element_selector}</span>
+                            Element: <span className="font-mono bg-indigo-50 dark:bg-indigo-900/20 px-1 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors flex items-center gap-1">
+                              {item.element_selector}
+                              {copiedId === `sel-${item.id}` ? <Check className="w-2.5 h-2.5 text-success-500" /> : <Copy className="w-2.5 h-2.5 opacity-0 group-hover/sel:opacity-100" />}
+                            </span>
                           </div>
                         )}
                       </div>

@@ -75,9 +75,9 @@ const TOOLS = [
 ]
 
 const accentMap: Record<string, { bg: string; text: string; border: string; light: string }> = {
-  indigo: { bg: 'bg-primary-600', text: 'text-primary-600', border: 'border-primary-200', light: 'bg-primary-50' },
-  violet: { bg: 'bg-violet-600', text: 'text-violet-600', border: 'border-violet-200', light: 'bg-violet-50' },
-  emerald: { bg: 'bg-success-600', text: 'text-success-600', border: 'border-success-200', light: 'bg-success-50' },
+  indigo: { bg: 'bg-primary-600', text: 'text-primary-600 dark:text-primary-400', border: 'border-primary-200 dark:border-primary-800', light: 'bg-primary-50 dark:bg-primary-950/30' },
+  violet: { bg: 'bg-violet-600', text: 'text-violet-600 dark:text-violet-400', border: 'border-violet-200 dark:border-violet-800', light: 'bg-violet-50 dark:bg-violet-950/30' },
+  emerald: { bg: 'bg-success-600', text: 'text-success-600 dark:text-success-400', border: 'border-success-200 dark:border-success-800', light: 'bg-success-50 dark:bg-success-950/30' },
 }
 
 export default function Home() {
@@ -137,7 +137,7 @@ export default function Home() {
           {!isAuthenticated && (
             <Link
               to="/register"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50 text-gray-700 font-semibold rounded-xl transition-colors dark:border-gray-700 dark:text-gray-300"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50 text-gray-700 font-semibold rounded-xl transition-colors dark:border-gray-700 dark:text-gray-300 dark:hover:bg-primary-950/30"
             >
               Sign Up Free
               <ArrowRight className="w-4 h-4" />
@@ -237,7 +237,7 @@ export default function Home() {
               >
                 <Link
                   to={href}
-                  className={`flex flex-col h-full bg-white rounded-2xl border  dark:bg-surface-card${a.border} hover:shadow-lg transition-shadow p-5 group`}
+                  className={`flex flex-col h-full bg-white rounded-2xl border dark:bg-surface-card ${a.border} hover:shadow-lg transition-shadow p-5 group`}
                 >
                   <div className={`w-10 h-10 rounded-xl ${a.light} flex items-center justify-center mb-3`}>
                     <Icon className={`w-5 h-5 ${a.text}`} />
@@ -267,7 +267,7 @@ export default function Home() {
           <p className="text-primary-100 text-sm mb-6">Create a free account and begin your Chinese journey today.</p>
           <Link
             to="/register"
-            className="inline-flex items-center gap-2 px-8 py-3 bg-white text-primary-700 font-bold rounded-xl hover:bg-primary-50 transition-colors shadow-lg dark:bg-surface-card dark:text-primary-300"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-white text-primary-700 font-bold rounded-xl hover:bg-primary-50 transition-colors shadow-lg dark:bg-surface-card dark:text-primary-300 dark:hover:bg-primary-950/30"
           >
             Get Started Free <ArrowRight className="w-4 h-4" />
           </Link>

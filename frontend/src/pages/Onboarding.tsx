@@ -166,7 +166,7 @@ const Onboarding = () => {
   const showBackButton = currentStep > 1 && currentStep !== 4 && currentStep !== 6
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-violet-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-violet-50 dark:from-surface-page dark:via-surface-page dark:to-surface-page py-8">
       <div className="container mx-auto px-4 max-w-4xl">
 
         {/* Logo + Brand */}
@@ -175,7 +175,7 @@ const Onboarding = () => {
             <div className="w-7 h-7 rounded-lg bg-primary-600 flex items-center justify-center">
               <span className="text-white text-sm font-bold font-chinese">汉</span>
             </div>
-            <span className="text-sm font-bold text-gray-500 tracking-tight">HanziNarrative</span>
+            <span className="text-sm font-bold text-gray-500 dark:text-gray-400 tracking-tight">HanziNarrative</span>
           </div>
         )}
 
@@ -198,7 +198,7 @@ const Onboarding = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -16 }}
             transition={{ duration: 0.25 }}
-            className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 md:p-10"
+            className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-8 md:p-10"
           >
             {currentStep === 1 && <WelcomeScreen onNext={handleWelcomeNext} />}
 
