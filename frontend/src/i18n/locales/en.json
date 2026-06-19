@@ -642,5 +642,25 @@
       "noWords":    "No suitable words found.",
       "loadFailed": "Failed to load vocabulary"
     }
+  },
+
+  "matchingGame": {
+    "title":       "Matching Game",
+    "subtitle":    "Match Chinese characters with their English meanings",
+    "selectLevel": "Select HSK Level",
+    "bestTime":    "Best time:",
+    "start":       "Start Game",
+    "allMatched":  "All Matched!",
+    "time":        "Time",
+    "moves":       "Moves",
+    "playAgain":   "Play Again",
+    "back":        "← Back",
+    "movesCount":  "{{n}} moves",
+    "pairsFound":  "{{found}}/6 pairs found",
+    "toasts": {
+      "needWords":  "Need at least 6 words for the matching game.",
+      "loadFailed": "Failed to load vocabulary",
+      "allMatched": "All pairs matched!"
+    }
   }
 }

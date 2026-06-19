@@ -642,5 +642,25 @@
       "noWords":    "Tidak ada kata yang cocok.",
       "loadFailed": "Gagal memuat kosakata"
     }
+  },
+
+  "matchingGame": {
+    "title":       "Permainan Cocokkan",
+    "subtitle":    "Cocokkan karakter Mandarin dengan arti Inggrisnya",
+    "selectLevel": "Pilih Level HSK",
+    "bestTime":    "Waktu terbaik:",
+    "start":       "Mulai Permainan",
+    "allMatched":  "Semua Cocok!",
+    "time":        "Waktu",
+    "moves":       "Langkah",
+    "playAgain":   "Main Lagi",
+    "back":        "← Kembali",
+    "movesCount":  "{{n}} langkah",
+    "pairsFound":  "{{found}}/6 pasangan ditemukan",
+    "toasts": {
+      "needWords":  "Butuh minimal 6 kata untuk permainan cocokkan.",
+      "loadFailed": "Gagal memuat kosakata",
+      "allMatched": "Semua pasangan cocok!"
+    }
   }
 }

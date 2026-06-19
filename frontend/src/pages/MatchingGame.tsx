@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import BlurText from '@/components/animations/BlurText'
+import { useTranslation } from 'react-i18next'
 
 interface Card {
     id: number
@@ -34,6 +35,7 @@ function createCards(words: HanziWord[]): Card[] {
 }
 
 export default function MatchingGame() {
+    const { t } = useTranslation()
     const [hskLevel, setHskLevel] = useState(1)
     const [cards, setCards] = useState<Card[]>([])
     const [flippedIds, setFlippedIds] = useState<number[]>([])
@@ -56,7 +58,7 @@ export default function MatchingGame() {
         try {
             const words = await vocabularyApi.getByHSKLevel(hskLevel)
             if (words.length < 6) {
-                toast.error('Need at least 6 words for the matching game.')
+                toast.error(t('matchingGame.toasts.needWords'))
                 return
             }
             const newCards = createCards(words)
@@ -70,7 +72,7 @@ export default function MatchingGame() {
             lockRef.current = false
             timerRef.current = setInterval(() => setTimer(prev => prev + 1), 1000)
         } catch {
-            toast.error('Failed to load vocabulary')
+            toast.error(t('matchingGame.toasts.loadFailed'))
         } finally {
             setLoading(false)
         }
@@ -103,7 +105,7 @@ export default function MatchingGame() {
                         if (timerRef.current) clearInterval(timerRef.current)
                         setGameFinished(true)
                         setGameStarted(false)
-                        toast.success('All pairs matched!')
+                        toast.success(t('matchingGame.toasts.allMatched'))
                     }
                 }, 500)
             } else {
@@ -127,15 +129,15 @@ export default function MatchingGame() {
                         <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                             <Grid3X3 className="w-8 h-8 sm:w-10 sm:h-10 text-rose-600 dark:text-rose-400" />
                             <BlurText as="h1" className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100" wordDelay={0.08}>
-                                Matching Game
+                                {t('matchingGame.title')}
                             </BlurText>
                         </div>
-                        <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">Match Chinese characters with their English meanings</p>
+                        <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">{t('matchingGame.subtitle')}</p>
                     </motion.div>
 
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="mb-6">
                         <div className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-surface-border p-4 sm:p-6">
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Select HSK Level</h3>
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">{t('matchingGame.selectLevel')}</h3>
                             <div className="flex flex-wrap gap-2">
                                 {[1, 2, 3, 4, 5, 6].map(level => (
                                     <button key={level} onClick={() => setHskLevel(level)}
@@ -151,7 +153,7 @@ export default function MatchingGame() {
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
                             <div className="bg-rose-50 dark:bg-rose-950/30 rounded-xl border border-rose-200 dark:border-rose-800 p-4 text-center">
                                 <Star className="w-5 h-5 text-rose-500 mx-auto mb-1" />
-                                <p className="text-sm text-gray-700">Best time: <span className="font-bold text-rose-700 dark:text-rose-300">{formatTime(bestTime)}</span></p>
+                                <p className="text-sm text-gray-700 dark:text-gray-300">{t('matchingGame.bestTime')} <span className="font-bold text-rose-700 dark:text-rose-300">{formatTime(bestTime)}</span></p>
                             </div>
                         </motion.div>
                     )}
@@ -160,7 +162,7 @@ export default function MatchingGame() {
                         <button onClick={startGame} disabled={loading}
                             className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white rounded-2xl px-8 py-4 font-semibold text-lg cursor-pointer transition-all flex items-center gap-3 mx-auto disabled:opacity-50">
                             {loading ? <LoadingSpinner size="sm" /> : <Grid3X3 className="w-6 h-6" />}
-                            Start Game
+                            {t('matchingGame.start')}
                         </button>
                     </motion.div>
                 </div>
@@ -177,22 +179,22 @@ export default function MatchingGame() {
                     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
                         <div className="bg-gradient-to-r from-rose-50 to-pink-50 dark:from-rose-950/30 dark:to-pink-950/30 rounded-3xl shadow-xl border border-rose-200 dark:border-rose-800 p-6 sm:p-8 text-center">
                             <Trophy className="w-12 h-12 text-amber-500 mx-auto mb-3" />
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">All Matched!</h2>
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('matchingGame.allMatched')}</h2>
                             <div className="grid grid-cols-2 gap-4 mt-4 max-w-xs mx-auto">
                                 <div className="bg-white/80 dark:bg-surface-card/80 rounded-xl p-3">
                                     <Clock className="w-5 h-5 text-rose-600 mx-auto mb-1 dark:text-rose-400" />
                                     <p className="text-lg font-bold text-rose-700 dark:text-rose-300">{formatTime(timer)}</p>
-                                    <p className="text-xs text-gray-600">Time</p>
+                                    <p className="text-xs text-gray-600 dark:text-gray-400">{t('matchingGame.time')}</p>
                                 </div>
                                 <div className="bg-white/80 dark:bg-surface-card/80 rounded-xl p-3">
                                     <Zap className="w-5 h-5 text-amber-500 mx-auto mb-1" />
                                     <p className="text-lg font-bold text-amber-700 dark:text-amber-300">{moves}</p>
-                                    <p className="text-xs text-gray-600">Moves</p>
+                                    <p className="text-xs text-gray-600 dark:text-gray-400">{t('matchingGame.moves')}</p>
                                 </div>
                             </div>
                             <button onClick={startGame}
                                 className="mt-6 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors inline-flex items-center gap-2">
-                                <RotateCcw className="w-5 h-5" /> Play Again
+                                <RotateCcw className="w-5 h-5" /> {t('matchingGame.playAgain')}
                             </button>
                         </div>
                     </motion.div>
@@ -208,12 +210,12 @@ export default function MatchingGame() {
                 <div className="flex items-center justify-between mb-4">
                     <button onClick={() => { if (timerRef.current) clearInterval(timerRef.current); setGameStarted(false); setGameFinished(false) }}
                         className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 font-medium cursor-pointer">
-                        ← Back
+                        {t('matchingGame.back')}
                     </button>
                     <div className="flex items-center gap-3">
                         <div className="bg-white dark:bg-surface-card rounded-xl shadow-sm border dark:border-surface-border px-3 py-1.5 flex items-center gap-1.5">
                             <Zap className="w-4 h-4 text-amber-500" />
-                            <span className="font-bold text-gray-900 dark:text-gray-100">{moves} moves</span>
+                            <span className="font-bold text-gray-900 dark:text-gray-100">{t('matchingGame.movesCount', { n: moves })}</span>
                         </div>
                         <div className="bg-white dark:bg-surface-card rounded-xl shadow-sm border dark:border-surface-border px-3 py-1.5 flex items-center gap-1.5 font-mono">
                             <Clock className="w-4 h-4 text-rose-500" />
@@ -223,7 +225,7 @@ export default function MatchingGame() {
                 </div>
 
                 <div className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-surface-border p-4 sm:p-6">
-                    <p className="text-center text-sm text-gray-500 mb-4">{matchedPairs}/6 pairs found</p>
+                    <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-4">{t('matchingGame.pairsFound', { found: matchedPairs })}</p>
                     <div className="grid grid-cols-3 gap-2 sm:gap-3">
                         <AnimatePresence>
                             {cards.map(card => (
