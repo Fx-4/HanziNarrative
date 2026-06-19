@@ -662,5 +662,52 @@
       "loadFailed": "Failed to load vocabulary",
       "allMatched": "All pairs matched!"
     }
+  },
+
+  "dictation": {
+    "title":         "Dictation",
+    "subtitle":      "Listen to sentences, then type what you hear",
+    "selectLevel":   "Select HSK Level",
+    "lastSession":   "Last Session Results",
+    "correct":       "Correct",
+    "accuracy":      "Accuracy",
+    "bestStreak":    "Best Streak",
+    "start":         "Start Dictation Session",
+    "howItWorks":    "How it works",
+    "step1":         "1. Listen",
+    "step1Desc":     "Play the audio of a real sentence from stories",
+    "step2":         "2. Type",
+    "step2Desc":     "Write the Chinese characters you heard",
+    "step3":         "3. Check",
+    "step3Desc":     "See character-by-character feedback",
+    "noSentences":   "No sentences available",
+    "goBack":        "Go back",
+    "back":          "← Back",
+    "pts":           "{{n}} pts",
+    "streak":        "{{n}} streak",
+    "from":          "From: {{title}}",
+    "playing":       "Playing...",
+    "clickToPlay":   "Click to play the sentence",
+    "hideHint":      "Hide hint",
+    "showHint":      "Show English hint",
+    "noTranslation": "No translation available",
+    "placeholder":   "Type the Chinese characters you heard...",
+    "replay":        "Replay",
+    "check":         "Check",
+    "yourAnswer":    "Your answer:",
+    "correctTitle":  "Correct!",
+    "expected":      "Expected: {{char}}",
+    "correctAnswer": "Correct answer:",
+    "listenAgain":   "Listen again",
+    "next":          "Next",
+    "finish":        "Finish",
+    "toasts": {
+      "noStories":       "No stories available for HSK {{level}}. Generate some stories first!",
+      "loadFailed":      "Failed to load sentences",
+      "perfect":         "Perfect! 完美！",
+      "great":           "Great! {{pct}}% accurate!",
+      "keepPracticing":  "{{pct}}% — keep practicing!",
+      "sessionComplete": "Session complete! Score: {{score}}/{{total}}"
+    }
   }
 }

@@ -18,6 +18,7 @@ import {
 import { toast } from 'react-hot-toast'
 import BlurText from '@/components/animations/BlurText'
 import { fetchTTSAudio } from '@/utils/ttsHelper'
+import { useTranslation } from 'react-i18next'
 
 interface DictationSentence {
     text: string
@@ -28,6 +29,7 @@ interface DictationSentence {
 }
 
 export default function Dictation() {
+    const { t } = useTranslation()
     const [hskLevel, setHskLevel] = useState(1)
     const [sentences, setSentences] = useState<DictationSentence[]>([])
     const [currentIndex, setCurrentIndex] = useState(0)
@@ -61,9 +63,9 @@ export default function Dictation() {
         } catch (error: unknown) {
             const axiosError = error as { response?: { status: number } }
             if (axiosError.response?.status === 404) {
-                toast.error(`No stories available for HSK ${hskLevel}. Generate some stories first!`)
+                toast.error(t('dictation.toasts.noStories', { level: hskLevel }))
             } else {
-                toast.error('Failed to load sentences')
+                toast.error(t('dictation.toasts.loadFailed'))
             }
         } finally {
             setLoading(false)
@@ -125,11 +127,11 @@ export default function Dictation() {
         if (accuracy >= 80) {
             setScore(prev => prev + 1)
             setStreak(prev => prev + 1)
-            if (accuracy === 100) toast.success('Perfect! 完美！')
-            else toast.success(`Great! ${accuracy}% accurate!`)
+            if (accuracy === 100) toast.success(t('dictation.toasts.perfect'))
+            else toast.success(t('dictation.toasts.great', { pct: accuracy }))
         } else {
             setStreak(0)
-            toast(`${accuracy}% — keep practicing!`, { icon: '✎' })
+            toast(t('dictation.toasts.keepPracticing', { pct: accuracy }), { icon: '✎' })
         }
     }
 
@@ -141,7 +143,7 @@ export default function Dictation() {
             setShowHint(false)
             setTimeout(() => inputRef.current?.focus(), 100)
         } else {
-            toast.success(`Session complete! Score: ${score}/${totalAttempted}`)
+            toast.success(t('dictation.toasts.sessionComplete', { score, total: totalAttempted }))
             setSessionStarted(false)
         }
     }
@@ -170,11 +172,11 @@ export default function Dictation() {
                                 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-50"
                                 wordDelay={0.08}
                             >
-                                Dictation 听写
+                                {`${t('dictation.title')} 听写`}
                             </BlurText>
                         </div>
                         <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">
-                            Listen to sentences, then type what you hear
+                            {t('dictation.subtitle')}
                         </p>
                     </motion.div>
 
@@ -186,7 +188,7 @@ export default function Dictation() {
                         className="mb-6"
                     >
                         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:bg-surface-card dark:border-gray-800">
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 dark:text-gray-50">Select HSK Level</h3>
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 dark:text-gray-50">{t('dictation.selectLevel')}</h3>
                             <div className="flex flex-wrap gap-2">
                                 {[1, 2, 3, 4, 5, 6].map((level) => (
                                     <button
@@ -214,20 +216,20 @@ export default function Dictation() {
                             <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-3xl shadow-xl border border-cyan-200 p-4 sm:p-6 dark:from-cyan-950/30 dark:to-blue-950/30 dark:border-cyan-800">
                                 <div className="flex items-center gap-2 mb-3">
                                     <Target className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
-                                    <h3 className="font-semibold text-gray-900 dark:text-gray-50">Last Session Results</h3>
+                                    <h3 className="font-semibold text-gray-900 dark:text-gray-50">{t('dictation.lastSession')}</h3>
                                 </div>
                                 <div className="grid grid-cols-3 gap-4 text-center">
                                     <div>
                                         <p className="text-2xl font-bold text-cyan-700 dark:text-cyan-300">{score}/{totalAttempted}</p>
-                                        <p className="text-xs text-gray-600 dark:text-gray-400">Correct</p>
+                                        <p className="text-xs text-gray-600 dark:text-gray-400">{t('dictation.correct')}</p>
                                     </div>
                                     <div>
                                         <p className="text-2xl font-bold text-cyan-700 dark:text-cyan-300">{totalAttempted > 0 ? Math.round((score / totalAttempted) * 100) : 0}%</p>
-                                        <p className="text-xs text-gray-600 dark:text-gray-400">Accuracy</p>
+                                        <p className="text-xs text-gray-600 dark:text-gray-400">{t('dictation.accuracy')}</p>
                                     </div>
                                     <div>
                                         <p className="text-2xl font-bold text-cyan-700 dark:text-cyan-300">{streak}</p>
-                                        <p className="text-xs text-gray-600 dark:text-gray-400">Best Streak</p>
+                                        <p className="text-xs text-gray-600 dark:text-gray-400">{t('dictation.bestStreak')}</p>
                                     </div>
                                 </div>
                             </div>
@@ -247,7 +249,7 @@ export default function Dictation() {
                             className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white rounded-2xl px-8 py-4 font-semibold text-lg cursor-pointer transition-all flex items-center gap-3 mx-auto disabled:opacity-50"
                         >
                             {loading ? <LoadingSpinner size="sm" /> : <Headphones className="w-6 h-6" />}
-                            Start Dictation Session
+                            {t('dictation.start')}
                         </button>
                     </motion.div>
 
@@ -259,15 +261,15 @@ export default function Dictation() {
                         className="mt-8"
                     >
                         <div className="bg-gradient-to-r from-cyan-50 to-primary-50 rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:border-gray-800 dark:from-cyan-950/30 dark:to-primary-950/30">
-                            <h4 className="font-semibold text-gray-900 mb-3 dark:text-gray-50">How it works</h4>
+                            <h4 className="font-semibold text-gray-900 mb-3 dark:text-gray-50">{t('dictation.howItWorks')}</h4>
                             <div className="grid sm:grid-cols-3 gap-4">
                                 <div className="flex items-start gap-3">
                                     <div className="w-8 h-8 bg-cyan-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-cyan-900/40">
                                         <Volume2 className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-900 dark:text-gray-50">1. Listen</p>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">Play the audio of a real sentence from stories</p>
+                                        <p className="font-medium text-gray-900 dark:text-gray-50">{t('dictation.step1')}</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">{t('dictation.step1Desc')}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
@@ -275,8 +277,8 @@ export default function Dictation() {
                                         <Send className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-900 dark:text-gray-50">2. Type</p>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">Write the Chinese characters you heard</p>
+                                        <p className="font-medium text-gray-900 dark:text-gray-50">{t('dictation.step2')}</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">{t('dictation.step2Desc')}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
@@ -284,8 +286,8 @@ export default function Dictation() {
                                         <CheckCircle className="w-4 h-4 text-success-600 dark:text-success-400" />
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-900 dark:text-gray-50">3. Check</p>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">See character-by-character feedback</p>
+                                        <p className="font-medium text-gray-900 dark:text-gray-50">{t('dictation.step3')}</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">{t('dictation.step3Desc')}</p>
                                     </div>
                                 </div>
                             </div>
@@ -308,9 +310,9 @@ export default function Dictation() {
         return (
             <div className="min-h-screen py-8 px-4">
                 <div className="max-w-2xl mx-auto text-center">
-                    <p className="text-gray-600 dark:text-gray-400">No sentences available</p>
+                    <p className="text-gray-600 dark:text-gray-400">{t('dictation.noSentences')}</p>
                     <button onClick={() => setSessionStarted(false)} className="mt-4 text-cyan-600 hover:underline cursor-pointer dark:text-cyan-400">
-                        Go back
+                        {t('dictation.goBack')}
                     </button>
                 </div>
             </div>
@@ -326,9 +328,9 @@ export default function Dictation() {
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
                     <button
                         onClick={() => setSessionStarted(false)}
-                        className="text-gray-600 hover:text-gray-900 font-medium cursor-pointer dark:text-gray-400"
+                        className="text-gray-600 hover:text-gray-900 font-medium cursor-pointer dark:text-gray-400 dark:hover:text-gray-100"
                     >
-                        ← Back
+                        {t('dictation.back')}
                     </button>
                     <div className="flex items-center gap-3">
                         <div className="bg-white rounded-xl shadow-sm border px-3 py-1.5 flex items-center gap-1.5 dark:bg-surface-card">
@@ -337,11 +339,11 @@ export default function Dictation() {
                         </div>
                         <div className="bg-white rounded-xl shadow-sm border px-3 py-1.5 flex items-center gap-1.5 dark:bg-surface-card">
                             <Zap className="w-4 h-4 text-amber-500" />
-                            <span className="font-bold text-gray-900 dark:text-gray-50">{score} pts</span>
+                            <span className="font-bold text-gray-900 dark:text-gray-50">{t('dictation.pts', { n: score })}</span>
                         </div>
                         {streak >= 2 && (
                             <div className="bg-orange-50 rounded-xl border border-orange-200 px-3 py-1.5 dark:bg-orange-950/30 dark:border-orange-800">
-                                <span className="text-sm font-bold text-orange-600 flex items-center gap-1 dark:text-orange-400"><Zap className="w-3.5 h-3.5" /> {streak} streak</span>
+                                <span className="text-sm font-bold text-orange-600 flex items-center gap-1 dark:text-orange-400"><Zap className="w-3.5 h-3.5" /> {t('dictation.streak', { n: streak })}</span>
                             </div>
                         )}
                     </div>
@@ -365,7 +367,7 @@ export default function Dictation() {
                 >
                     <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-8 dark:bg-surface-card dark:border-gray-800">
                         <div className="text-center mb-6">
-                            <p className="text-sm text-gray-500 mb-2 dark:text-gray-400">From: {currentSentence.story_title}</p>
+                            <p className="text-sm text-gray-500 mb-2 dark:text-gray-400">{t('dictation.from', { title: currentSentence.story_title })}</p>
                             <div className="flex justify-center gap-3">
                                 <button
                                     onClick={isPlaying ? stopAudio : playAudio}
@@ -382,7 +384,7 @@ export default function Dictation() {
                                 </button>
                             </div>
                             <p className="text-sm text-gray-500 mt-3 dark:text-gray-400">
-                                {isPlaying ? 'Playing...' : 'Click to play the sentence'}
+                                {isPlaying ? t('dictation.playing') : t('dictation.clickToPlay')}
                             </p>
                         </div>
 
@@ -393,7 +395,7 @@ export default function Dictation() {
                                 className="text-sm text-cyan-600 hover:text-cyan-700 font-medium cursor-pointer flex items-center gap-1 mx-auto dark:text-cyan-400 dark:hover:text-cyan-300"
                             >
                                 <Eye className="w-3.5 h-3.5" />
-                                {showHint ? 'Hide hint' : 'Show English hint'}
+                                {showHint ? t('dictation.hideHint') : t('dictation.showHint')}
                             </button>
                             <AnimatePresence>
                                 {showHint && (
@@ -403,7 +405,7 @@ export default function Dictation() {
                                         exit={{ opacity: 0, height: 0 }}
                                         className="text-gray-600 italic mt-2 dark:text-gray-400"
                                     >
-                                        {currentSentence.english_hint || 'No translation available'}
+                                        {currentSentence.english_hint || t('dictation.noTranslation')}
                                     </motion.p>
                                 )}
                             </AnimatePresence>
@@ -420,7 +422,7 @@ export default function Dictation() {
                                     value={userInput}
                                     onChange={(e) => setUserInput(e.target.value)}
                                     onKeyDown={handleKeyDown}
-                                    placeholder="Type the Chinese characters you heard..."
+                                    placeholder={t('dictation.placeholder')}
                                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl text-lg font-chinese text-center focus:border-cyan-500 focus:outline-none transition-colors dark:border-gray-700"
                                     autoFocus
                                     lang="zh-CN"
@@ -432,7 +434,7 @@ export default function Dictation() {
                                         className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-4 py-2.5 font-medium cursor-pointer transition-colors flex items-center gap-2 disabled:opacity-50 dark:bg-gray-800 dark:text-gray-300"
                                     >
                                         <RotateCcw className="w-4 h-4" />
-                                        Replay
+                                        {t('dictation.replay')}
                                     </button>
                                     <button
                                         onClick={handleSubmit}
@@ -440,7 +442,7 @@ export default function Dictation() {
                                         className="bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl px-6 py-2.5 font-semibold cursor-pointer transition-colors flex items-center gap-2 disabled:opacity-50"
                                     >
                                         <Send className="w-4 h-4" />
-                                        Check
+                                        {t('dictation.check')}
                                     </button>
                                 </div>
                             </div>
@@ -449,7 +451,7 @@ export default function Dictation() {
                             <div className="space-y-4">
                                 {/* Character-by-character diff */}
                                 <div className="bg-gray-50 rounded-2xl p-4 dark:bg-gray-800/50">
-                                    <p className="text-sm text-gray-500 mb-2 dark:text-gray-400">Your answer:</p>
+                                    <p className="text-sm text-gray-500 mb-2 dark:text-gray-400">{t('dictation.yourAnswer')}</p>
                                     <div className="flex flex-wrap justify-center gap-1 mb-4">
                                         {comparison.map((item, i) => (
                                             <span
@@ -458,14 +460,14 @@ export default function Dictation() {
                                                     ? 'text-success-700 bg-success-100 dark:text-success-300 dark:bg-success-900/40'
                                                     : 'text-error-700 bg-error-100 dark:text-error-300 dark:bg-error-900/40'
                                                     }`}
-                                                title={item.correct ? 'Correct!' : `Expected: ${item.expected}`}
+                                                title={item.correct ? t('dictation.correctTitle') : t('dictation.expected', { char: item.expected })}
                                             >
                                                 {item.char}
                                             </span>
                                         ))}
                                     </div>
 
-                                    <p className="text-sm text-gray-500 mb-2 dark:text-gray-400">Correct answer:</p>
+                                    <p className="text-sm text-gray-500 mb-2 dark:text-gray-400">{t('dictation.correctAnswer')}</p>
                                     <p className="text-2xl font-chinese text-center text-gray-900 mb-2 dark:text-gray-50">{currentSentence.text}</p>
                                     {currentSentence.pinyin && (
                                         <p className="text-center text-cyan-600 dark:text-cyan-400">{currentSentence.pinyin}</p>
@@ -482,16 +484,16 @@ export default function Dictation() {
                                         className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl px-4 py-2.5 font-medium cursor-pointer transition-colors flex items-center gap-2 disabled:opacity-50 dark:bg-gray-800 dark:text-gray-300"
                                     >
                                         <Volume2 className="w-4 h-4" />
-                                        Listen again
+                                        {t('dictation.listenAgain')}
                                     </button>
                                     <button
                                         onClick={handleNext}
                                         className="bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl px-6 py-2.5 font-semibold cursor-pointer transition-colors flex items-center gap-2"
                                     >
                                         {currentIndex < sentences.length - 1 ? (
-                                            <>Next <ArrowRight className="w-4 h-4" /></>
+                                            <>{t('dictation.next')} <ArrowRight className="w-4 h-4" /></>
                                         ) : (
-                                            <>Finish <CheckCircle className="w-4 h-4" /></>
+                                            <>{t('dictation.finish')} <CheckCircle className="w-4 h-4" /></>
                                         )}
                                     </button>
                                 </div>

@@ -662,5 +662,52 @@
       "loadFailed": "Gagal memuat kosakata",
       "allMatched": "Semua pasangan cocok!"
     }
+  },
+
+  "dictation": {
+    "title":         "Dikte",
+    "subtitle":      "Dengarkan kalimat, lalu ketik yang kamu dengar",
+    "selectLevel":   "Pilih Level HSK",
+    "lastSession":   "Hasil Sesi Terakhir",
+    "correct":       "Benar",
+    "accuracy":      "Akurasi",
+    "bestStreak":    "Streak Terbaik",
+    "start":         "Mulai Sesi Dikte",
+    "howItWorks":    "Cara kerjanya",
+    "step1":         "1. Dengar",
+    "step1Desc":     "Putar audio kalimat nyata dari cerita",
+    "step2":         "2. Ketik",
+    "step2Desc":     "Tulis karakter Mandarin yang kamu dengar",
+    "step3":         "3. Periksa",
+    "step3Desc":     "Lihat umpan balik per karakter",
+    "noSentences":   "Tidak ada kalimat",
+    "goBack":        "Kembali",
+    "back":          "← Kembali",
+    "pts":           "{{n}} poin",
+    "streak":        "{{n}} streak",
+    "from":          "Dari: {{title}}",
+    "playing":       "Memutar...",
+    "clickToPlay":   "Klik untuk memutar kalimat",
+    "hideHint":      "Sembunyikan petunjuk",
+    "showHint":      "Tampilkan petunjuk Inggris",
+    "noTranslation": "Terjemahan tidak tersedia",
+    "placeholder":   "Ketik karakter Mandarin yang kamu dengar...",
+    "replay":        "Putar Ulang",
+    "check":         "Periksa",
+    "yourAnswer":    "Jawabanmu:",
+    "correctTitle":  "Benar!",
+    "expected":      "Seharusnya: {{char}}",
+    "correctAnswer": "Jawaban benar:",
+    "listenAgain":   "Dengar lagi",
+    "next":          "Lanjut",
+    "finish":        "Selesai",
+    "toasts": {
+      "noStories":       "Tidak ada cerita untuk HSK {{level}}. Buat cerita dulu!",
+      "loadFailed":      "Gagal memuat kalimat",
+      "perfect":         "Sempurna! 完美！",
+      "great":           "Bagus! {{pct}}% akurat!",
+      "keepPracticing":  "{{pct}}% — terus berlatih!",
+      "sessionComplete": "Sesi selesai! Skor: {{score}}/{{total}}"
+    }
   }
 }
