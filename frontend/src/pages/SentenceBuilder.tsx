@@ -15,6 +15,7 @@ import { FadeInOnMount } from '@/components/animations/FadeIn';
 import { StaggerOnMount } from '@/components/animations/StaggerContainer';
 import StaggerItem from '@/components/animations/StaggerItem';
 import { createLogger } from '@/utils/debugLogger'
+import { useTranslation } from 'react-i18next'
 
 const sentenceBuilderLogger = createLogger('SentenceBuilder')
 
@@ -45,6 +46,7 @@ interface UsageStats {
 }
 
 export default function SentenceBuilder() {
+  const { t } = useTranslation();
   const { token } = useAuthStore();
   const [selectedWords, setSelectedWords] = useState<HanziWord[]>([]);
   const [sentence, setSentence] = useState<HanziWord[]>([]);
@@ -147,12 +149,12 @@ export default function SentenceBuilder() {
 
   const validateSentence = async () => {
     if (sentence.length === 0) {
-      toast.error('Please build a sentence first');
+      toast.error(t('sentenceBuilder.toasts.buildFirst'));
       return;
     }
 
     if (!token) {
-      toast.error('Please login first to use sentence validation');
+      toast.error(t('sentenceBuilder.toasts.loginFirst'));
       return;
     }
 
@@ -179,19 +181,19 @@ export default function SentenceBuilder() {
       loadUsageStats();
 
       if (response.data.is_correct) {
-        toast.success(`Great job! Score: ${response.data.score}/100`);
+        toast.success(t('sentenceBuilder.toasts.greatJob', { score: response.data.score }));
       } else {
-        toast.error(`Score: ${response.data.score}/100 - Check feedback below`);
+        toast.error(t('sentenceBuilder.toasts.checkFeedback', { score: response.data.score }));
       }
     } catch (error) {
       const err = error as { response?: { status?: number; data?: { detail?: string } }; message?: string }
       sentenceBuilderLogger.error('Validation failed:', error);
       if (err.response?.status === 401 || err.response?.status === 403) {
-        toast.error('Authentication error. Please login again.');
+        toast.error(t('sentenceBuilder.toasts.authError'));
       } else if (err.response?.status === 429) {
-        toast.error('Rate limit exceeded. Please wait a moment and try again.');
+        toast.error(t('sentenceBuilder.toasts.rateLimit'));
       } else {
-        toast.error(`Failed to validate sentence: ${err.response?.data?.detail || err.message}`);
+        toast.error(t('sentenceBuilder.toasts.validateFailed', { detail: err.response?.data?.detail || err.message }));
       }
     } finally {
       setIsValidating(false);
@@ -208,9 +210,9 @@ export default function SentenceBuilder() {
   const showNextHint = () => {
     if (hintLevel < 3) {
       setHintLevel(hintLevel + 1);
-      toast.success(`Hint ${hintLevel + 1} revealed!`);
+      toast.success(t('sentenceBuilder.toasts.hintRevealed', { n: hintLevel + 1 }));
     } else {
-      toast('No more hints available!', { icon: '💡' });
+      toast(t('sentenceBuilder.toasts.noMoreHints'), { icon: '💡' });
     }
   };
 
@@ -220,26 +222,26 @@ export default function SentenceBuilder() {
     if (hintLevel >= 1) {
       hints.push({
         level: 1,
-        title: '📝 Grammar Pattern',
+        title: t('sentenceBuilder.hints.grammarTitle'),
         content: hskLevel <= 2
-          ? 'Basic pattern: Subject + Verb / Subject + Verb + Object'
-          : 'Try: Subject + Time/Location + Verb + Object / Modifier + Noun'
+          ? t('sentenceBuilder.hints.grammarBasic')
+          : t('sentenceBuilder.hints.grammarAdvanced')
       });
     }
 
     if (hintLevel >= 2) {
       hints.push({
         level: 2,
-        title: '🔢 Word Count',
-        content: `A good sentence uses 3-5 words. Try combining ${selectedWords.length} available words.`
+        title: t('sentenceBuilder.hints.wordCountTitle'),
+        content: t('sentenceBuilder.hints.wordCountContent', { words: selectedWords.length })
       });
     }
 
     if (hintLevel >= 3 && targetSentence) {
       hints.push({
         level: 3,
-        title: '✨ Example',
-        content: `Example sentence: ${targetSentence} (${selectedWords.slice(0, 3).map(w => w.pinyin).join(' ')})`
+        title: t('sentenceBuilder.hints.exampleTitle'),
+        content: t('sentenceBuilder.hints.exampleContent', { sentence: targetSentence, pinyin: selectedWords.slice(0, 3).map(w => w.pinyin).join(' ') })
       });
     }
 
@@ -258,10 +260,10 @@ export default function SentenceBuilder() {
             className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 dark:text-gray-200 mb-2 justify-center"
             wordDelay={0.07}
           >
-            Sentence Builder 造句练习
+            {`${t('sentenceBuilder.title')} 造句练习`}
           </BlurText>
           <p className="text-sm sm:text-base lg:text-lg text-gray-600 dark:text-gray-300 mb-4">
-            Drag words to build Chinese sentences and get AI-powered feedback
+            {t('sentenceBuilder.subtitle')}
           </p>
 
           {/* AI Usage Stats */}
@@ -271,10 +273,10 @@ export default function SentenceBuilder() {
               animate={{ opacity: 1, scale: 1 }}
               className="inline-block bg-white dark:bg-surface-card rounded-xl shadow-md p-4 mt-4 border border-gray-100 dark:border-surface-border"
             >
-              <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">AI Validation Limits:</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t('sentenceBuilder.aiLimits')}</div>
               <div className="flex gap-6 text-sm">
                 <div>
-                  <span className="text-gray-600 dark:text-gray-400">Daily: </span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('sentenceBuilder.daily')} </span>
                   <span className={`font-semibold ${
                     usageStats.sentence_validation.used_today >= usageStats.sentence_validation.limit_daily
                       ? 'text-error-600 dark:text-error-400' : 'text-primary-600 dark:text-primary-400'
@@ -283,7 +285,7 @@ export default function SentenceBuilder() {
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-600 dark:text-gray-400">Hourly: </span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('sentenceBuilder.hourly')} </span>
                   <span className={`font-semibold ${
                     usageStats.sentence_validation.used_this_hour >= usageStats.sentence_validation.limit_hourly
                       ? 'text-error-600 dark:text-error-400' : 'text-primary-600 dark:text-primary-400'
@@ -304,7 +306,7 @@ export default function SentenceBuilder() {
           className="bg-white dark:bg-surface-card rounded-xl shadow-md p-3 sm:p-4 mb-4 sm:mb-6 border border-gray-100 dark:border-surface-border"
         >
           <p className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            HSK Level:
+            {t('sentenceBuilder.hskLevel')}
           </p>
           <StaggerOnMount className="flex flex-wrap gap-2" staggerDelay={0.05} delay={0.35}>
             {[1, 2, 3, 4, 5, 6].map(level => (
@@ -336,7 +338,7 @@ export default function SentenceBuilder() {
           >
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                Your Sentence: {sentence.map(w => w.simplified).join('')}
+                {t('sentenceBuilder.yourSentence')} {sentence.map(w => w.simplified).join('')}
               </h2>
               <motion.button
                 onClick={clearSentence}
@@ -344,7 +346,7 @@ export default function SentenceBuilder() {
                 whileTap={{ scale: 0.95 }}
                 className="text-sm text-error-600 hover:text-error-700 font-medium cursor-pointer dark:text-error-400 dark:hover:text-error-300"
               >
-                Clear
+                {t('sentenceBuilder.clear')}
               </motion.button>
             </div>
 
@@ -373,9 +375,9 @@ export default function SentenceBuilder() {
                       transition={{ repeat: Infinity, duration: 0.8, ease: 'linear' }}
                       className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
                     />
-                    Validating...
+                    {t('sentenceBuilder.validating')}
                   </span>
-                ) : 'Validate Sentence'}
+                ) : t('sentenceBuilder.validate')}
               </motion.button>
               <motion.button
                 onClick={showNextHint}
@@ -383,7 +385,7 @@ export default function SentenceBuilder() {
                 whileTap={{ scale: 0.98 }}
                 className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-purple-600 transition-all shadow-md shadow-blue-300/30 cursor-pointer"
               >
-                Hint ({hintLevel}/3)
+                {t('sentenceBuilder.hint', { n: hintLevel })}
               </motion.button>
               <motion.button
                 onClick={generateNewExercise}
@@ -391,7 +393,7 @@ export default function SentenceBuilder() {
                 whileTap={{ scale: 0.98 }}
                 className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors cursor-pointer"
               >
-                New Words
+                {t('sentenceBuilder.newWords')}
               </motion.button>
             </div>
 
@@ -451,7 +453,7 @@ export default function SentenceBuilder() {
             className="bg-white dark:bg-surface-card rounded-xl shadow-lg p-6 border border-gray-100 dark:border-surface-border"
           >
             <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
-              Word Bank 词库
+              {`${t('sentenceBuilder.wordBank')} 词库`}
             </h2>
             <SortableContext items={selectedWords.map(w => w.id.toString())}>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
@@ -487,12 +489,12 @@ export default function SentenceBuilder() {
           transition={{ delay: 0.7 }}
           className="mt-6 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4"
         >
-          <h3 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">Tips:</h3>
+          <h3 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">{t('sentenceBuilder.tipsTitle')}</h3>
           <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-            <li>• Drag words from the word bank to build your sentence</li>
-            <li>• You can reorder words in your sentence by dragging them</li>
-            <li>• Click the X to remove a word from your sentence</li>
-            <li>• AI will check grammar, naturalness, and provide feedback</li>
+            <li>• {t('sentenceBuilder.tip1')}</li>
+            <li>• {t('sentenceBuilder.tip2')}</li>
+            <li>• {t('sentenceBuilder.tip3')}</li>
+            <li>• {t('sentenceBuilder.tip4')}</li>
           </ul>
         </motion.div>
       </div>

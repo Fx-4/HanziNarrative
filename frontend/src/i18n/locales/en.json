@@ -709,5 +709,46 @@
       "keepPracticing":  "{{pct}}% — keep practicing!",
       "sessionComplete": "Session complete! Score: {{score}}/{{total}}"
     }
+  },
+
+  "sentenceBuilder": {
+    "title":        "Sentence Builder",
+    "subtitle":     "Drag words to build Chinese sentences and get AI-powered feedback",
+    "aiLimits":     "AI Validation Limits:",
+    "daily":        "Daily:",
+    "hourly":       "Hourly:",
+    "hskLevel":     "HSK Level:",
+    "yourSentence": "Your Sentence:",
+    "clear":        "Clear",
+    "validating":   "Validating...",
+    "validate":     "Validate Sentence",
+    "hint":         "Hint ({{n}}/3)",
+    "newWords":     "New Words",
+    "wordBank":     "Word Bank",
+    "tipsTitle":    "Tips:",
+    "tip1":         "Drag words from the word bank to build your sentence",
+    "tip2":         "You can reorder words in your sentence by dragging them",
+    "tip3":         "Click the X to remove a word from your sentence",
+    "tip4":         "AI will check grammar, naturalness, and provide feedback",
+    "hints": {
+      "grammarTitle":     "📝 Grammar Pattern",
+      "grammarBasic":     "Basic pattern: Subject + Verb / Subject + Verb + Object",
+      "grammarAdvanced":  "Try: Subject + Time/Location + Verb + Object / Modifier + Noun",
+      "wordCountTitle":   "🔢 Word Count",
+      "wordCountContent": "A good sentence uses 3-5 words. Try combining {{words}} available words.",
+      "exampleTitle":     "✨ Example",
+      "exampleContent":   "Example sentence: {{sentence}} ({{pinyin}})"
+    },
+    "toasts": {
+      "buildFirst":     "Please build a sentence first",
+      "loginFirst":     "Please login first to use sentence validation",
+      "greatJob":       "Great job! Score: {{score}}/100",
+      "checkFeedback":  "Score: {{score}}/100 — Check feedback below",
+      "authError":      "Authentication error. Please login again.",
+      "rateLimit":      "Rate limit exceeded. Please wait a moment and try again.",
+      "validateFailed": "Failed to validate sentence: {{detail}}",
+      "hintRevealed":   "Hint {{n}} revealed!",
+      "noMoreHints":    "No more hints available!"
+    }
   }
 }

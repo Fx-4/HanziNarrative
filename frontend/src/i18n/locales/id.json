@@ -709,5 +709,46 @@
       "keepPracticing":  "{{pct}}% — terus berlatih!",
       "sessionComplete": "Sesi selesai! Skor: {{score}}/{{total}}"
     }
+  },
+
+  "sentenceBuilder": {
+    "title":        "Penyusun Kalimat",
+    "subtitle":     "Seret kata untuk menyusun kalimat Mandarin dan dapatkan umpan balik AI",
+    "aiLimits":     "Batas Validasi AI:",
+    "daily":        "Harian:",
+    "hourly":       "Per jam:",
+    "hskLevel":     "Level HSK:",
+    "yourSentence": "Kalimatmu:",
+    "clear":        "Hapus",
+    "validating":   "Memvalidasi...",
+    "validate":     "Validasi Kalimat",
+    "hint":         "Petunjuk ({{n}}/3)",
+    "newWords":     "Kata Baru",
+    "wordBank":     "Bank Kata",
+    "tipsTitle":    "Tips:",
+    "tip1":         "Seret kata dari bank kata untuk menyusun kalimatmu",
+    "tip2":         "Kamu bisa mengurutkan ulang kata dengan menyeretnya",
+    "tip3":         "Klik X untuk menghapus kata dari kalimatmu",
+    "tip4":         "AI akan memeriksa tata bahasa, kewajaran, dan memberi umpan balik",
+    "hints": {
+      "grammarTitle":     "📝 Pola Tata Bahasa",
+      "grammarBasic":     "Pola dasar: Subjek + Kata Kerja / Subjek + Kata Kerja + Objek",
+      "grammarAdvanced":  "Coba: Subjek + Waktu/Tempat + Kata Kerja + Objek / Pemodifikasi + Kata Benda",
+      "wordCountTitle":   "🔢 Jumlah Kata",
+      "wordCountContent": "Kalimat yang baik memakai 3-5 kata. Coba gabungkan {{words}} kata tersedia.",
+      "exampleTitle":     "✨ Contoh",
+      "exampleContent":   "Contoh kalimat: {{sentence}} ({{pinyin}})"
+    },
+    "toasts": {
+      "buildFirst":     "Susun kalimat dulu",
+      "loginFirst":     "Masuk dulu untuk memakai validasi kalimat",
+      "greatJob":       "Kerja bagus! Skor: {{score}}/100",
+      "checkFeedback":  "Skor: {{score}}/100 — Cek umpan balik di bawah",
+      "authError":      "Error autentikasi. Silakan masuk lagi.",
+      "rateLimit":      "Batas tercapai. Tunggu sebentar dan coba lagi.",
+      "validateFailed": "Gagal memvalidasi kalimat: {{detail}}",
+      "hintRevealed":   "Petunjuk {{n}} terbuka!",
+      "noMoreHints":    "Tidak ada petunjuk lagi!"
+    }
   }
 }
