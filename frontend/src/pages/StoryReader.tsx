@@ -378,7 +378,7 @@ export default function StoryReader() {
             <div className="bg-blue-50 border border-blue-200 rounded-3xl shadow-xl overflow-hidden p-4 sm:p-6 dark:bg-blue-950/30 dark:border-blue-800">
               <div className="flex items-center gap-2 mb-4">
                 <Languages className="w-5 h-5 text-blue-600 shrink-0 dark:text-blue-400" />
-                <h3 className="text-lg font-semibold text-blue-900">
+                <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-200">
                   English Translation
                 </h3>
               </div>

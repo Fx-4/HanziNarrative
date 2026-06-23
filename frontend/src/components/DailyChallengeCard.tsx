@@ -58,7 +58,7 @@ export default function DailyChallengeCard() {
           <Calendar className="w-4 h-4 text-white" />
         </div>
         <div>
-          <h3 className="font-bold text-gray-900 text-sm">Daily Challenge</h3>
+          <h3 className="font-bold text-gray-900 dark:text-gray-50 text-sm">Daily Challenge</h3>
           <p className="text-xs text-gray-500">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
         </div>
         {challenge.completed && (

@@ -25,29 +25,50 @@
     @apply font-sans bg-gray-50 dark:bg-surface-page text-gray-900 dark:text-gray-100 transition-colors duration-200 leading-relaxed;
   }
 
-  /* ── Heading scale (matches tailwind.config.js fontSize tokens) ── */
+  /* ── Heading scale (matches tailwind.config.js fontSize tokens) ──
+     Default heading colors use bare-element specificity (0,0,1) in BOTH themes.
+     The dark defaults below are wrapped in :where() so they stay at (0,0,1) too —
+     this keeps light/dark symmetric, so any explicit text-* utility a component
+     puts on a heading wins in dark mode just like it does in light mode.
+     (Previously `dark:` here compiled to h1:is(.dark *) at (0,1,1), which beat
+     plain color utilities and forced every colored heading to gray in dark mode.) */
   h1 {
-    @apply text-h1 font-bold tracking-tighter text-gray-900 dark:text-gray-50 leading-heading;
+    @apply text-h1 font-bold tracking-tighter text-gray-900 leading-heading;
   }
 
   h2 {
-    @apply text-h2 font-bold tracking-tighter text-gray-900 dark:text-gray-50 leading-heading;
+    @apply text-h2 font-bold tracking-tighter text-gray-900 leading-heading;
   }
 
   h3 {
-    @apply text-h3 font-semibold tracking-tight text-gray-800 dark:text-gray-100 leading-snug;
+    @apply text-h3 font-semibold tracking-tight text-gray-800 leading-snug;
   }
 
   h4 {
-    @apply text-h4 font-semibold tracking-tight text-gray-800 dark:text-gray-100 leading-snug;
+    @apply text-h4 font-semibold tracking-tight text-gray-800 leading-snug;
   }
 
   h5 {
-    @apply text-body-lg font-semibold text-gray-700 dark:text-gray-200;
+    @apply text-body-lg font-semibold text-gray-700;
   }
 
   h6 {
-    @apply text-body font-semibold text-gray-700 dark:text-gray-200;
+    @apply text-body font-semibold text-gray-700;
+  }
+
+  :where(html.dark) h1,
+  :where(html.dark) h2 {
+    @apply text-gray-50;
+  }
+
+  :where(html.dark) h3,
+  :where(html.dark) h4 {
+    @apply text-gray-100;
+  }
+
+  :where(html.dark) h5,
+  :where(html.dark) h6 {
+    @apply text-gray-200;
   }
 
   p {

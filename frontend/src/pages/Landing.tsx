@@ -315,7 +315,7 @@ export default function Landing() {
               <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               {t('landing.why.badge')}
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 mb-3 sm:mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-gray-50 mb-3 sm:mb-4">
               {t('landing.why.title')}
             </h2>
             <p className="text-gray-500 text-base sm:text-lg max-w-xl mx-auto">
@@ -338,7 +338,7 @@ export default function Landing() {
                   <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${p.bg} flex items-center justify-center mx-auto mb-4 sm:mb-5`}>
                     <Icon className={`w-6 h-6 sm:w-7 sm:h-7 ${p.color}`} />
                   </div>
-                  <h3 className="font-bold text-gray-900 text-base sm:text-lg mb-2">
+                  <h3 className="font-bold text-gray-900 dark:text-gray-50 text-base sm:text-lg mb-2">
                     {t(`landing.why.pillars.${p.key}.title`)}
                   </h3>
                   <p className="text-sm sm:text-base text-gray-500 leading-relaxed">
@@ -391,7 +391,7 @@ export default function Landing() {
       <section id="features" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 mb-3 sm:mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-gray-50 mb-3 sm:mb-4">
               {t('landing.features.title')}
             </h2>
             <p className="text-gray-500 text-base sm:text-lg max-w-xl mx-auto">
@@ -436,7 +436,7 @@ export default function Landing() {
       <section id="pricing" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 mb-3 sm:mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-gray-50 mb-3 sm:mb-4">
               {t('landing.pricing.title')}
             </h2>
             <p className="text-gray-500 text-base sm:text-lg">

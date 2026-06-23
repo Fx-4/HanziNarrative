@@ -19,7 +19,7 @@ const LevelSelector = ({ onTakeAssessment, onSkipAssessment }: LevelSelectorProp
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-8"
       >
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-50 mb-2">
           {t('onboarding.level.title')}
         </h2>
         <p className="text-gray-500 text-sm">
@@ -76,7 +76,7 @@ const LevelSelector = ({ onTakeAssessment, onSkipAssessment }: LevelSelectorProp
             <PlayCircle className="w-6 h-6 text-white" />
           </div>
 
-          <h3 className="text-lg font-bold text-gray-900 mb-1">{t('onboarding.level.scratchTitle')}</h3>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-gray-50 mb-1">{t('onboarding.level.scratchTitle')}</h3>
           <p className="text-sm text-gray-500 mb-4">{t('onboarding.level.scratchMeta')}</p>
 
           <ul className="space-y-1.5 text-sm text-gray-700">

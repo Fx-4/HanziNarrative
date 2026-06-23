@@ -26,7 +26,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-8"
       >
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-50 mb-2">
           {t('onboarding.goals.title')}
         </h2>
         <p className="text-gray-500 text-sm">{t('onboarding.goals.subtitle')}</p>

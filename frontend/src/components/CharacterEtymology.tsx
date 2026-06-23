@@ -125,9 +125,9 @@ export default function CharacterEtymology({ character, className = '', word, ev
           <div className="w-6 h-6 bg-amber-600 rounded-full flex items-center justify-center">
             <BookOpen className="w-4 h-4 text-white" />
           </div>
-          <h3 className="text-sm font-bold text-amber-900">Character Evolution</h3>
+          <h3 className="text-sm font-bold text-amber-900 dark:text-amber-200">Character Evolution</h3>
         </div>
-        <div className="text-xs leading-relaxed text-amber-900">
+        <div className="text-xs leading-relaxed text-amber-900 dark:text-amber-200">
           {apiEvolutionHistory}
         </div>
       </div>
