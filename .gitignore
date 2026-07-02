@@ -98,3 +98,6 @@ fix-dark-contrast.ps1
 
 # Promo video render tooling (headless Edge + ffmpeg scratch)
 .render-tmp/
+
+# graphify knowledge-graph output (generated)
+graphify-out/
