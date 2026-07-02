@@ -926,6 +926,30 @@ export const learningPathApi = {
   },
 }
 
+// ── Ladder Race API ──────────────────────────────────────────────────────────
+
+export const ladderApi = {
+  createRoom: async (boardSize: 50 | 100): Promise<{
+    room_code: string
+    board_size: number
+    host_id: number
+  }> => {
+    const res = await api.post('/ladder/rooms', { board_size: boardSize })
+    return res.data
+  },
+
+  getRoom: async (roomCode: string): Promise<{
+    room_code: string
+    board_size: number
+    host_id: number
+    state: string
+    player_count: number
+  }> => {
+    const res = await api.get(`/ladder/rooms/${roomCode}`)
+    return res.data
+  },
+}
+
 export const adminApi = {
   getStats: async (): Promise<AdminSystemStatsResponse> => {
     const response = await api.get('/admin/stats')
