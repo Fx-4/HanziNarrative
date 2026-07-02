@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
-from .routers import auth, stories, vocabulary, progress, vocabulary_sets, exercises, learning, writing, quiz, gamification, onboarding, typing, tts, dictation, adventure, stt, scramble, daily_challenge, conversation, admin, battle, mock_test, learning_path, feedback
+from .routers import auth, stories, vocabulary, progress, vocabulary_sets, exercises, learning, writing, quiz, gamification, onboarding, typing, tts, dictation, adventure, stt, scramble, daily_challenge, conversation, admin, battle, mock_test, learning_path, feedback, ladder
 from .database import engine, Base
 from .config import settings
 
@@ -140,6 +140,7 @@ app.include_router(battle.router)
 app.include_router(mock_test.router)
 app.include_router(learning_path.router)
 app.include_router(feedback.router)
+app.include_router(ladder.router)
 
 # Serve pre-generated TTS audio files directly (bypasses Python for cached audio)
 _tts_cache_dir = os.path.join(os.path.dirname(__file__), "..", "tts_cache")
