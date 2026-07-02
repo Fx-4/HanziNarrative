@@ -910,6 +910,7 @@ export const learningPathApi = {
     unit_id: string
     hsk_level: number
     score: number
+    base_xp?: number
   }): Promise<{ is_new: boolean; xp_earned: number; score: number }> => {
     const res = await api.post('/learning-path/complete', body)
     return res.data

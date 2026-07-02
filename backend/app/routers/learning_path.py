@@ -27,6 +27,7 @@ class CompleteSessionRequest(BaseModel):
     unit_id: str      # e.g. "h1-u1"
     hsk_level: int
     score: int        # 0–100
+    base_xp: int | None = None  # session XP from curriculum.ts (20–35); clamped server-side
 
 
 # ── Endpoints ────────────────────────────────────────────────────────────────
@@ -71,9 +72,12 @@ def complete_session(
     """
     score = max(0, min(100, body.score))
 
-    # Calculate XP
+    # Calculate XP — base comes from the curriculum session definition so the
+    # award matches what the UI shows (20/25/30/35 per type); clamp so a
+    # tampered client can't inflate it beyond curriculum range
+    base = max(15, min(40, body.base_xp)) if body.base_xp is not None else BASE_XP
     bonus = PERFECT_BONUS if score >= 90 else (GOOD_BONUS if score >= 70 else 0)
-    xp = BASE_XP + bonus
+    xp = base + bonus
 
     existing = (
         db.query(UserLessonProgress)

@@ -37,7 +37,13 @@ type SessionSave = { steps: Step[]; currentIdx: number; correct: number; wrong: 
 // ── Exercise generation ────────────────────────────────────────────────────────
 
 function shuffle<T>(arr: T[]): T[] {
-  return [...arr].sort(() => Math.random() - 0.5)
+  // Fisher–Yates — uniform, unlike sort(() => Math.random() - 0.5)
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
 }
 
 function mcqFromWord(word: Word, pool: Word[], askMeaning = true): StepMCQ {
@@ -64,8 +70,9 @@ function generateSteps(
     for (let i = 0; i < words.length; i += batchSize) {
       const batch = words.slice(i, i + batchSize)
       batch.forEach(w => steps.push({ kind: 'intro', word: w }))
-      // Test first 2 in batch
-      batch.slice(0, 2).forEach((w, idx) =>
+      // Test EVERY word in the batch (shuffled so MCQ order ≠ intro order),
+      // alternating zh→en and en→zh direction
+      shuffle(batch).forEach((w, idx) =>
         steps.push(mcqFromWord(w, words, idx % 2 === 0))
       )
     }
@@ -244,24 +251,33 @@ function MCQCard({ step, onCorrect, onWrong }: { step: StepMCQ; onCorrect: () =>
   )
 }
 
-function MatchCard({ step, onNext }: { step: StepMatch; onNext: () => void }) {
+function MatchCard({ step, onNext, onHit, onMiss }: {
+  step: StepMatch
+  onNext: () => void
+  onHit: () => void
+  onMiss: () => void
+}) {
   const [leftSel, setLeftSel] = useState<string | null>(null)
   const [matched, setMatched] = useState<Set<string>>(new Set())
   const [flash, setFlash] = useState<string | null>(null)
+  // Shuffle ONCE on mount — computing in render body reshuffled the column on
+  // every state change, making buttons jump around after each tap
+  const [rightItems] = useState(() => shuffle(step.pairs.map(p => p.en)))
 
   const leftItems = step.pairs.map(p => p.zh)
-  const rightItems = shuffle(step.pairs.map(p => p.en))
 
   const pickRight = (en: string) => {
     if (!leftSel) return
     const correctPair = step.pairs.find(p => p.zh === leftSel)
     if (correctPair?.en === en) {
+      onHit()
       const next = new Set(matched)
       next.add(leftSel); next.add(en)
       setMatched(next)
       setLeftSel(null)
       if (next.size >= step.pairs.length * 2) setTimeout(onNext, 600)
     } else {
+      onMiss()
       setFlash(leftSel)
       setTimeout(() => { setFlash(null); setLeftSel(null) }, 600)
     }
@@ -373,6 +389,7 @@ export default function LearningSession() {
   const [xpEarned, setXpEarned] = useState(0)
   const [isNew, setIsNew] = useState(false)
   const [stepKey, setStepKey] = useState(0)
+  const [noContent, setNoContent] = useState(false)
   // Next-session navigation state
   const [nextSessionId, setNextSessionId] = useState<string | null>(null)
   const [isLastInUnit, setIsLastInUnit] = useState(false)
@@ -410,6 +427,9 @@ export default function LearningSession() {
     const practicePool = getUnitWords(unit.id)
     const generated = generateSteps(session.type, session.words, session.grammarPoints, practicePool)
     setSteps(generated)
+    // Stub/empty sessions (e.g. HSK 5–6 via direct URL) generate zero steps —
+    // without this flag the skeleton below would spin forever
+    setNoContent(generated.length === 0)
 
     // Pre-warm TTS for all intro words in this session (fire-and-forget)
     const introWords = generated
@@ -454,6 +474,11 @@ export default function LearningSession() {
     setWrong(w => w + 1)
     goNext()
   }, [goNext])
+
+  // Non-advancing counters — used by MatchCard so every pair counts toward
+  // the score without ending the step
+  const addCorrect = useCallback(() => setCorrect(c => c + 1), [])
+  const addWrong = useCallback(() => setWrong(w => w + 1), [])
 
   // Session complete
   useEffect(() => {
@@ -508,6 +533,7 @@ export default function LearningSession() {
         unit_id: unit.id,
         hsk_level: unit.hsk_level,
         score,
+        base_xp: session.xp, // curriculum XP (20–35) — backend clamps; keeps UI honest
       }
       let res = null
       let lastErr: unknown
@@ -532,6 +558,21 @@ export default function LearningSession() {
     } finally {
       setSaving(false)
     }
+  }
+
+  if (noContent) {
+    return (
+      <div className="max-w-md mx-auto px-4 pb-16 pt-16 text-center space-y-4">
+        <p className="text-4xl">🔒</p>
+        <p className="text-gray-700 dark:text-gray-300 font-semibold">Konten sesi ini belum tersedia.</p>
+        <button
+          onClick={() => navigate('/path')}
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" /> Kembali ke Kursus
+        </button>
+      </div>
+    )
   }
 
   if (!sessionId || steps.length === 0) {
@@ -733,7 +774,7 @@ export default function LearningSession() {
           {step?.kind === 'intro'   && <IntroCard   step={step} onNext={goNext} />}
           {step?.kind === 'grammar' && <GrammarCard step={step} onNext={goNext} />}
           {step?.kind === 'mcq'     && <MCQCard     step={step} onCorrect={onCorrect} onWrong={onWrong} />}
-          {step?.kind === 'match'   && <MatchCard   step={step} onNext={goNext} />}
+          {step?.kind === 'match'   && <MatchCard   step={step} onNext={goNext} onHit={addCorrect} onMiss={addWrong} />}
           {step?.kind === 'fill'    && <FillCard    step={step} onCorrect={onCorrect} onWrong={onWrong} />}
         </div>
       </AnimatePresence>
