@@ -10,7 +10,7 @@ import {
   BarChart3, Type, ChevronDown, Menu, X, Moon, Sun,
   Layers, Keyboard, Trophy, ChevronRight, Headphones, Map, Mic, Lock,
   Target, Grid3X3, Music, Heart, MessageCircle, Shield, Swords, Zap,
-  Calendar, HelpCircle, Route,
+  Calendar, HelpCircle, Route, Dice5,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useState, useEffect, useRef } from 'react'
@@ -89,6 +89,7 @@ const dropdownMenus: DropdownMenu[] = [
     cols: 1,
     items: [
       { to: '/battle',           key: 'battle',          icon: Swords },
+      { to: '/ladder',           key: 'ladderRace',      icon: Dice5 },
       { to: '/adventure',        key: 'adventure',       icon: Map },
       { to: '/conversation',     key: 'aiChat',          icon: MessageCircle },
       { to: '/matching',         key: 'matchGame',       icon: Grid3X3 },
