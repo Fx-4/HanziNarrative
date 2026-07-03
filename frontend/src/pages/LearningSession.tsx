@@ -66,6 +66,21 @@ function listenFromWord(word: Word, pool: Word[]): StepListen {
   return { kind: 'listen', zh: word.zh, py: word.py, en: word.en, options: opts, correct: opts.indexOf(word.zh) }
 }
 
+/**
+ * Retry copy with RESHUFFLED options — without this the learner can pass the
+ * retry by remembering the position of the answer instead of the answer itself.
+ */
+function reshuffledRetry(step: StepMCQ | StepFill | StepListen): Step {
+  if (step.kind === 'fill') {
+    const correctText = step.fb.options[step.fb.correct]
+    const options = shuffle(step.fb.options)
+    return { ...step, retry: true, fb: { ...step.fb, options, correct: options.indexOf(correctText) } }
+  }
+  const correctText = step.options[step.correct]
+  const options = shuffle(step.options)
+  return { ...step, retry: true, options, correct: options.indexOf(correctText) }
+}
+
 function generateSteps(
   type: string,
   words?: Word[],
@@ -659,7 +674,7 @@ export default function LearningSession() {
       trackWord(zh, ok)
     }
     if (!ok && gradable) {
-      setSteps(prev => [...prev, { ...step, retry: true }])
+      setSteps(prev => [...prev, reshuffledRetry(step)])
     }
     goNext()
   }, [goNext, trackWord])
