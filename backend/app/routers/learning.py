@@ -168,6 +168,16 @@ def record_course_results(
     return {"updated": updated, "total": len(request.results)}
 
 
+# Only categories where a stock photo genuinely depicts the word. Abstract
+# words (greetings, particles, pronouns, verbs, grammar…) get mismatched
+# photos from the keyword-based Pexels fetch — worse than no image at all.
+VISUAL_CATEGORIES = {
+    "noun", "food", "transport", "place", "nature", "body", "clothing",
+    "home", "object", "weather", "school", "education", "media",
+    "people", "person",
+}
+
+
 @router.post("/word-images")
 def get_word_images(
     request: WordImagesRequest,
@@ -178,7 +188,11 @@ def get_word_images(
     chars = request.chars[:50]
     rows = (
         db.query(HanziWord.simplified, HanziWord.image_url)
-        .filter(HanziWord.simplified.in_(chars), HanziWord.image_url.isnot(None))
+        .filter(
+            HanziWord.simplified.in_(chars),
+            HanziWord.image_url.isnot(None),
+            HanziWord.category.in_(VISUAL_CATEGORIES),
+        )
         .all()
     )
     return {"images": {simplified: url for simplified, url in rows if url}}
