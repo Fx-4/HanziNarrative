@@ -490,6 +490,18 @@ export const learningApi = {
     const response = await api.post('/learning/seed', { simplified_chars: simplifiedChars })
     return response.data
   },
+
+  // Feed per-word correct/wrong results from a course session into SRS (SM-2)
+  recordCourseResults: async (results: { zh: string; correct: boolean }[]) => {
+    const response = await api.post('/learning/course-results', { results })
+    return response.data
+  },
+
+  // Image URLs for simplified characters (course intro cards)
+  getWordImages: async (chars: string[]): Promise<{ images: Record<string, string> }> => {
+    const response = await api.post('/learning/word-images', { chars })
+    return response.data
+  },
 }
 
 // Quiz API

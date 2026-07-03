@@ -17,6 +17,8 @@ import {
 import { Skeleton } from '@/components/ui/Skeleton'
 import toast from 'react-hot-toast'
 import { createLogger } from '@/utils/debugLogger'
+import TonedPinyin from '@/components/TonedPinyin'
+import { playFeedback } from '@/utils/feedbackSfx'
 
 const learningSessionLogger = createLogger('LearningSession')
 
@@ -24,10 +26,11 @@ const learningSessionLogger = createLogger('LearningSession')
 
 type StepIntro = { kind: 'intro'; word: Word }
 type StepGrammar = { kind: 'grammar'; point: GrammarPoint }
-type StepMCQ = { kind: 'mcq'; question: string; promptZh?: string; options: string[]; correct: number }
+type StepMCQ = { kind: 'mcq'; question: string; promptZh?: string; options: string[]; correct: number; wordZh?: string; retry?: boolean }
 type StepMatch = { kind: 'match'; pairs: { zh: string; en: string }[] }
-type StepFill = { kind: 'fill'; fb: FillBlank }
-type Step = StepIntro | StepGrammar | StepMCQ | StepMatch | StepFill
+type StepFill = { kind: 'fill'; fb: FillBlank; retry?: boolean }
+type StepListen = { kind: 'listen'; zh: string; py: string; en: string; options: string[]; correct: number; retry?: boolean }
+type Step = StepIntro | StepGrammar | StepMCQ | StepMatch | StepFill | StepListen
 
 // ── Session save / resume ─────────────────────────────────────────────────────
 const SESSION_SAVE_TTL = 2 * 60 * 60 * 1000 // 2 hours
@@ -50,11 +53,17 @@ function mcqFromWord(word: Word, pool: Word[], askMeaning = true): StepMCQ {
   const distractors = shuffle(pool.filter(w => w.zh !== word.zh)).slice(0, 3)
   if (askMeaning) {
     const opts = shuffle([word.en, ...distractors.map(d => d.en)])
-    return { kind: 'mcq', question: `What does "${word.zh}" mean?`, promptZh: word.zh, options: opts, correct: opts.indexOf(word.en) }
+    return { kind: 'mcq', question: `What does "${word.zh}" mean?`, promptZh: word.zh, options: opts, correct: opts.indexOf(word.en), wordZh: word.zh }
   } else {
     const opts = shuffle([word.zh, ...distractors.map(d => d.zh)])
-    return { kind: 'mcq', question: `Which character means "${word.en}"?`, options: opts, correct: opts.indexOf(word.zh) }
+    return { kind: 'mcq', question: `Which character means "${word.en}"?`, options: opts, correct: opts.indexOf(word.zh), wordZh: word.zh }
   }
+}
+
+function listenFromWord(word: Word, pool: Word[]): StepListen {
+  const distractors = shuffle(pool.filter(w => w.zh !== word.zh)).slice(0, 3)
+  const opts = shuffle([word.zh, ...distractors.map(d => d.zh)])
+  return { kind: 'listen', zh: word.zh, py: word.py, en: word.en, options: opts, correct: opts.indexOf(word.zh) }
 }
 
 function generateSteps(
@@ -62,20 +71,32 @@ function generateSteps(
   words?: Word[],
   grammarPoints?: GrammarPoint[],
   practicePool?: Word[],
+  reviewPool?: Word[],
 ): Step[] {
   const steps: Step[] = []
 
   if (type === 'vocab' && words && words.length > 0) {
     const batchSize = 4
-    for (let i = 0; i < words.length; i += batchSize) {
-      const batch = words.slice(i, i + batchSize)
-      batch.forEach(w => steps.push({ kind: 'intro', word: w }))
-      // Test EVERY word in the batch (shuffled so MCQ order ≠ intro order),
-      // alternating zh→en and en→zh direction
+    const batches: Word[][] = []
+    for (let i = 0; i < words.length; i += batchSize) batches.push(words.slice(i, i + batchSize))
+
+    // Every word gets an MCQ (shuffled, alternating direction) + one listening
+    // question per batch (hear TTS → pick the character)
+    const pushTests = (batch: Word[]) => {
       shuffle(batch).forEach((w, idx) =>
         steps.push(mcqFromWord(w, words, idx % 2 === 0))
       )
+      steps.push(listenFromWord(batch[Math.floor(Math.random() * batch.length)], words))
     }
+
+    batches.forEach((batch, bi) => {
+      batch.forEach(w => steps.push({ kind: 'intro', word: w }))
+      // Delayed retrieval: quiz the PREVIOUS batch after the new intros, so
+      // answers come from memory instead of the card the user just saw
+      if (bi > 0) pushTests(batches[bi - 1])
+    })
+    pushTests(batches[batches.length - 1])
+
     // Final match (up to 5 pairs)
     const matchWords = shuffle(words).slice(0, Math.min(5, words.length))
     steps.push({ kind: 'match', pairs: matchWords.map(w => ({ zh: w.zh, en: w.en })) })
@@ -89,10 +110,23 @@ function generateSteps(
   }
 
   if (type === 'practice' && practicePool && practicePool.length > 0) {
+    const graded: Step[] = []
     const pool = shuffle(practicePool)
-    pool.slice(0, Math.min(8, pool.length)).forEach((w, idx) =>
-      steps.push(mcqFromWord(w, practicePool, idx % 2 === 0))
+    pool.slice(0, Math.min(6, pool.length)).forEach((w, idx) =>
+      graded.push(mcqFromWord(w, practicePool, idx % 2 === 0))
     )
+    // Listening — 2 slots
+    shuffle(practicePool).slice(0, Math.min(2, practicePool.length)).forEach(w =>
+      graded.push(listenFromWord(w, practicePool))
+    )
+    // Cumulative review: 2 questions from the previous units fight the
+    // forgetting curve (interleaving across the whole level, not just this unit)
+    if (reviewPool && reviewPool.length >= 4) {
+      shuffle(reviewPool).slice(0, 2).forEach((w, idx) =>
+        graded.push(mcqFromWord(w, reviewPool, idx % 2 === 0))
+      )
+    }
+    steps.push(...shuffle(graded))
     const matchWords = shuffle(practicePool).slice(0, Math.min(5, practicePool.length))
     steps.push({ kind: 'match', pairs: matchWords.map(w => ({ zh: w.zh, en: w.en })) })
   }
@@ -102,7 +136,7 @@ function generateSteps(
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function IntroCard({ step, onNext }: { step: StepIntro; onNext: () => void }) {
+function IntroCard({ step, onNext, imageUrl }: { step: StepIntro; onNext: () => void; imageUrl?: string }) {
   const [playing, setPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const fetchPromiseRef = useRef<Promise<HTMLAudioElement> | null>(null)
@@ -161,9 +195,19 @@ function IntroCard({ step, onNext }: { step: StepIntro; onNext: () => void }) {
         {playing ? <Loader2 className="w-5 h-5 text-primary-500 animate-spin" /> : <Volume2 className="w-5 h-5 text-primary-500" />}
       </button>
 
+      {imageUrl && (
+        <img
+          src={imageUrl}
+          alt={step.word.en}
+          loading="lazy"
+          onError={e => { e.currentTarget.style.display = 'none' }}
+          className="w-44 h-28 object-cover rounded-2xl shadow-sm"
+        />
+      )}
+
       <div>
         <p className="font-chinese text-7xl font-bold text-gray-900 dark:text-gray-50">{step.word.zh}</p>
-        <p className="text-primary-500 text-lg mt-2">{step.word.py}</p>
+        <p className="text-lg mt-2"><TonedPinyin py={step.word.py} /></p>
         <p className="text-gray-600 dark:text-gray-300 text-xl font-semibold mt-1">{step.word.en}</p>
         {step.word.note && (
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 max-w-xs mx-auto italic">{step.word.note}</p>
@@ -254,8 +298,8 @@ function MCQCard({ step, onCorrect, onWrong }: { step: StepMCQ; onCorrect: () =>
 function MatchCard({ step, onNext, onHit, onMiss }: {
   step: StepMatch
   onNext: () => void
-  onHit: () => void
-  onMiss: () => void
+  onHit: (zh: string) => void
+  onMiss: (zh: string) => void
 }) {
   const [leftSel, setLeftSel] = useState<string | null>(null)
   const [matched, setMatched] = useState<Set<string>>(new Set())
@@ -270,14 +314,14 @@ function MatchCard({ step, onNext, onHit, onMiss }: {
     if (!leftSel) return
     const correctPair = step.pairs.find(p => p.zh === leftSel)
     if (correctPair?.en === en) {
-      onHit()
+      onHit(leftSel)
       const next = new Set(matched)
       next.add(leftSel); next.add(en)
       setMatched(next)
       setLeftSel(null)
       if (next.size >= step.pairs.length * 2) setTimeout(onNext, 600)
     } else {
-      onMiss()
+      onMiss(leftSel)
       setFlash(leftSel)
       setTimeout(() => { setFlash(null); setLeftSel(null) }, 600)
     }
@@ -375,6 +419,98 @@ function FillCard({ step, onCorrect, onWrong }: { step: StepFill; onCorrect: () 
   )
 }
 
+function ListenCard({ step, onCorrect, onWrong }: { step: StepListen; onCorrect: () => void; onWrong: () => void }) {
+  const [selected, setSelected] = useState<number | null>(null)
+  const [playing, setPlaying] = useState(false)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const fetchPromiseRef = useRef<Promise<HTMLAudioElement> | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    const promise = fetchTTSAudio({ text: step.zh })
+    fetchPromiseRef.current = promise
+    promise.then(audio => {
+      if (cancelled) return
+      audioRef.current = audio
+      audio.play().catch(() => { /* autoplay blocked — user taps the button */ })
+    }).catch(err => {
+      if (!cancelled) learningSessionLogger.error('[TTS] listen prefetch failed:', err)
+    })
+    return () => {
+      cancelled = true
+      audioRef.current?.pause()
+      audioRef.current = null
+      fetchPromiseRef.current = null
+    }
+  }, [step.zh])
+
+  const play = async () => {
+    if (playing) return
+    setPlaying(true)
+    try {
+      let audio = audioRef.current
+      if (!audio && fetchPromiseRef.current) {
+        audio = await fetchPromiseRef.current
+        audioRef.current = audio
+      }
+      if (audio) {
+        audio.currentTime = 0
+        await audio.play()
+      }
+    } catch {
+      toast.error('Gagal memutar audio', { duration: 2000 })
+    }
+    setPlaying(false)
+  }
+
+  const pick = (i: number) => {
+    if (selected !== null) return
+    setSelected(i)
+    // Longer reveal than MCQ — learner needs a beat to connect sound ↔ character
+    if (i === step.correct) setTimeout(onCorrect, 1200)
+    else setTimeout(onWrong, 1200)
+  }
+
+  return (
+    <motion.div key={step.zh} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
+      <div className="text-center space-y-3">
+        <span className="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-widest">Listening</span>
+        <button onClick={play} disabled={playing}
+          className="w-20 h-20 mx-auto rounded-3xl bg-sky-50 dark:bg-sky-950/40 flex items-center justify-center hover:bg-sky-100 dark:hover:bg-sky-900/40 transition-colors disabled:opacity-60"
+        >
+          {playing
+            ? <Loader2 className="w-7 h-7 text-sky-500 animate-spin" />
+            : <Volume2 className="w-7 h-7 text-sky-500" />}
+        </button>
+        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Which character did you hear?</p>
+        {selected !== null && (
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            <TonedPinyin py={step.py} className="font-mono" /> · {step.en}
+          </p>
+        )}
+      </div>
+
+      <div className="grid grid-cols-2 gap-2.5">
+        {step.options.map((opt, i) => {
+          const isSel = selected === i
+          const isCorr = i === step.correct
+          let cls = 'border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-surface-card text-gray-800 dark:text-gray-100'
+          if (isSel && isCorr) cls = 'border-success-500 bg-success-50 dark:bg-success-950/40 text-success-700 dark:text-success-300'
+          else if (isSel && !isCorr) cls = 'border-error-400 bg-error-50 dark:bg-error-950/40 text-error-700 dark:text-error-300'
+          else if (selected !== null && isCorr) cls = 'border-success-500 bg-success-50 dark:bg-success-950/40 text-success-700 dark:text-success-300'
+          return (
+            <button key={i} onClick={() => pick(i)}
+              className={`py-4 rounded-xl font-chinese text-2xl font-bold transition-all ${cls}`}
+            >
+              {opt}
+            </button>
+          )
+        })}
+      </div>
+    </motion.div>
+  )
+}
+
 // ── Main Session Player ───────────────────────────────────────────────────────
 
 export default function LearningSession() {
@@ -390,6 +526,10 @@ export default function LearningSession() {
   const [isNew, setIsNew] = useState(false)
   const [stepKey, setStepKey] = useState(0)
   const [noContent, setNoContent] = useState(false)
+  const [combo, setCombo] = useState(0)
+  const [wordImages, setWordImages] = useState<Record<string, string>>({})
+  // Per-word answer tally for this session — fed into SRS on completion
+  const resultsRef = useRef<Record<string, { correct: number; wrong: number }>>({})
   // Next-session navigation state
   const [nextSessionId, setNextSessionId] = useState<string | null>(null)
   const [isLastInUnit, setIsLastInUnit] = useState(false)
@@ -400,6 +540,18 @@ export default function LearningSession() {
     const found = getSession(sessionId)
     if (!found) return
     const { session, unit } = found
+
+    // Fetch vocab images for intro cards (backend Pexels/Pixabay cache)
+    const fetchImages = (stepsList: Step[]) => {
+      const introZh = stepsList
+        .filter((s): s is StepIntro => s.kind === 'intro')
+        .map(s => s.word.zh)
+      if (introZh.length > 0) {
+        learningApi.getWordImages(introZh)
+          .then(r => setWordImages(r.images))
+          .catch(() => { /* images are progressive enhancement */ })
+      }
+    }
 
     // ── Resume saved mid-session progress ──────────────────────────────────
     try {
@@ -414,6 +566,7 @@ export default function LearningSession() {
           setCorrect(save.correct ?? 0)
           setWrong(save.wrong ?? 0)
           setStepKey(save.currentIdx)
+          fetchImages(save.steps)
           toast('▶ Melanjutkan sesi yang belum selesai', { duration: 2500 })
           return
         }
@@ -425,16 +578,27 @@ export default function LearningSession() {
 
     // ── Fresh start ─────────────────────────────────────────────────────────
     const practicePool = getUnitWords(unit.id)
-    const generated = generateSteps(session.type, session.words, session.grammarPoints, practicePool)
+    // Cumulative review pool: words from up to 2 previous units of this level
+    const levelUnits = ALL_UNITS.filter(u => u.hsk_level === unit.hsk_level && !u.locked)
+    const unitIdx = levelUnits.findIndex(u => u.id === unit.id)
+    const reviewPool = unitIdx > 0
+      ? levelUnits
+          .slice(Math.max(0, unitIdx - 2), unitIdx)
+          .flatMap(u => u.sessions.flatMap(s => s.words ?? []))
+      : []
+    const generated = generateSteps(session.type, session.words, session.grammarPoints, practicePool, reviewPool)
     setSteps(generated)
+    resultsRef.current = {}
+    setCombo(0)
+    fetchImages(generated)
     // Stub/empty sessions (e.g. HSK 5–6 via direct URL) generate zero steps —
     // without this flag the skeleton below would spin forever
     setNoContent(generated.length === 0)
 
-    // Pre-warm TTS for all intro words in this session (fire-and-forget)
-    const introWords = generated
-      .filter((s): s is StepIntro => s.kind === 'intro')
-      .map(s => s.word.zh)
+    // Pre-warm TTS for all intro + listening words in this session (fire-and-forget)
+    const introWords = [...new Set(generated.flatMap(s =>
+      s.kind === 'intro' ? [s.word.zh] : s.kind === 'listen' ? [s.zh] : []
+    ))]
     if (introWords.length > 0) {
       const token = localStorage.getItem('access_token')
       if (token) {
@@ -465,20 +629,55 @@ export default function LearningSession() {
     setStepKey(k => k + 1)
   }, [])
 
-  const onCorrect = useCallback(() => {
+  const trackWord = useCallback((zh: string | undefined, ok: boolean) => {
+    if (!zh) return
+    const r = resultsRef.current[zh] ?? (resultsRef.current[zh] = { correct: 0, wrong: 0 })
+    if (ok) r.correct++
+    else r.wrong++
+  }, [])
+
+  /**
+   * Graded-step answer handler.
+   * - First attempt counts toward score/combo and the per-word SRS tally.
+   * - A wrong answer re-queues a copy of the step (flagged retry) at the end
+   *   of the session — the word must eventually be answered correctly.
+   * - Retry attempts never touch the score.
+   */
+  const handleAnswer = useCallback((step: Step, ok: boolean) => {
+    playFeedback(ok)
+    const gradable = step.kind === 'mcq' || step.kind === 'fill' || step.kind === 'listen'
+    const isRetry = gradable && step.retry === true
+    if (!isRetry) {
+      if (ok) {
+        setCorrect(c => c + 1)
+        setCombo(c => c + 1)
+      } else {
+        setWrong(w => w + 1)
+        setCombo(0)
+      }
+      const zh = step.kind === 'mcq' ? step.wordZh : step.kind === 'listen' ? step.zh : undefined
+      trackWord(zh, ok)
+    }
+    if (!ok && gradable) {
+      setSteps(prev => [...prev, { ...step, retry: true }])
+    }
+    goNext()
+  }, [goNext, trackWord])
+
+  // Match pairs count toward score/combo without ending the step
+  const onMatchHit = useCallback((zh: string) => {
+    playFeedback(true)
     setCorrect(c => c + 1)
-    goNext()
-  }, [goNext])
+    setCombo(c => c + 1)
+    trackWord(zh, true)
+  }, [trackWord])
 
-  const onWrong = useCallback(() => {
+  const onMatchMiss = useCallback((zh: string) => {
+    playFeedback(false)
     setWrong(w => w + 1)
-    goNext()
-  }, [goNext])
-
-  // Non-advancing counters — used by MatchCard so every pair counts toward
-  // the score without ending the step
-  const addCorrect = useCallback(() => setCorrect(c => c + 1), [])
-  const addWrong = useCallback(() => setWrong(w => w + 1), [])
+    setCombo(0)
+    trackWord(zh, false)
+  }, [trackWord])
 
   // Session complete
   useEffect(() => {
@@ -502,6 +701,15 @@ export default function LearningSession() {
     // XP banner will pop in once the backend responds.
     setDone(true)
     sessionStorage.setItem('lp-cache-invalid', '1')
+
+    // Feed per-word results into SRS (fire-and-forget): a word answered
+    // wrong at least once this session schedules an earlier review (SM-2 q=2)
+    const resultEntries = Object.entries(resultsRef.current)
+    if (resultEntries.length > 0) {
+      learningApi.recordCourseResults(
+        resultEntries.map(([zh, r]) => ({ zh, correct: r.wrong === 0 }))
+      ).catch(() => { /* non-critical */ })
+    }
 
     // Compute next-session navigation synchronously (no API needed)
     const currentSessionIdx = unit.sessions.findIndex(s => s.id === session.id)
@@ -728,6 +936,10 @@ export default function LearningSession() {
             <button
               onClick={() => {
                 if (sessionId) sessionStorage.removeItem(getSaveKey(sessionId))
+                // Drop retry copies appended during the previous run
+                setSteps(prev => prev.filter(s => !('retry' in s && s.retry)))
+                resultsRef.current = {}
+                setCombo(0)
                 setCurrentIdx(0); setCorrect(0); setWrong(0); setDone(false); setStepKey(k => k + 1)
               }}
               className="w-full py-2.5 text-gray-500 dark:text-gray-400 font-medium rounded-xl hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm"
@@ -759,6 +971,21 @@ export default function LearningSession() {
             transition={{ duration: 0.3 }}
           />
         </div>
+        {/* Combo meter — momentum feedback for consecutive correct answers */}
+        <AnimatePresence>
+          {combo >= 2 && (
+            <motion.span
+              key={combo}
+              initial={{ scale: 0.4, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.4, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+              className="text-xs font-extrabold text-amber-500 whitespace-nowrap"
+            >
+              🔥{combo}
+            </motion.span>
+          )}
+        </AnimatePresence>
         <span className="text-xs text-gray-500 dark:text-gray-400 font-medium w-10 text-right">
           {currentIdx}/{steps.length}
         </span>
@@ -771,11 +998,12 @@ export default function LearningSession() {
       {/* Exercise */}
       <AnimatePresence mode="wait">
         <div key={stepKey}>
-          {step?.kind === 'intro'   && <IntroCard   step={step} onNext={goNext} />}
+          {step?.kind === 'intro'   && <IntroCard   step={step} onNext={goNext} imageUrl={wordImages[step.word.zh]} />}
           {step?.kind === 'grammar' && <GrammarCard step={step} onNext={goNext} />}
-          {step?.kind === 'mcq'     && <MCQCard     step={step} onCorrect={onCorrect} onWrong={onWrong} />}
-          {step?.kind === 'match'   && <MatchCard   step={step} onNext={goNext} onHit={addCorrect} onMiss={addWrong} />}
-          {step?.kind === 'fill'    && <FillCard    step={step} onCorrect={onCorrect} onWrong={onWrong} />}
+          {step?.kind === 'mcq'     && <MCQCard     step={step} onCorrect={() => handleAnswer(step, true)} onWrong={() => handleAnswer(step, false)} />}
+          {step?.kind === 'listen'  && <ListenCard  step={step} onCorrect={() => handleAnswer(step, true)} onWrong={() => handleAnswer(step, false)} />}
+          {step?.kind === 'match'   && <MatchCard   step={step} onNext={goNext} onHit={onMatchHit} onMiss={onMatchMiss} />}
+          {step?.kind === 'fill'    && <FillCard    step={step} onCorrect={() => handleAnswer(step, true)} onWrong={() => handleAnswer(step, false)} />}
         </div>
       </AnimatePresence>
     </div>

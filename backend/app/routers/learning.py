@@ -7,7 +7,7 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.auth import get_current_user
-from app.models import User
+from app.models import User, HanziWord
 from app.services.learning_service import LearningService
 from app.services.gamification_service import record_word_review
 from app import schemas
@@ -29,6 +29,19 @@ class ReviewResponse(BaseModel):
     mastery_level: int
     next_review_days: int
     message: str
+
+
+class CourseResultItem(BaseModel):
+    zh: str
+    correct: bool
+
+
+class CourseResultsRequest(BaseModel):
+    results: List[CourseResultItem]
+
+
+class WordImagesRequest(BaseModel):
+    chars: List[str]
 
 
 @router.get("/words/new")
@@ -126,6 +139,49 @@ def seed_words_from_session(
         simplified_chars=request.simplified_chars,
     )
     return {"seeded": seeded, "total": len(request.simplified_chars)}
+
+
+@router.post("/course-results")
+def record_course_results(
+    request: CourseResultsRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Feed per-word results from a completed course session into the SRS.
+    Each answer becomes an SM-2 review: correct → quality 4, wrong → quality 2,
+    so hard words resurface sooner in Review instead of starting from zero.
+    No gamification here — session XP is already awarded by /learning-path/complete.
+    """
+    updated = 0
+    for item in request.results[:100]:  # sane cap per session
+        word = db.query(HanziWord).filter(HanziWord.simplified == item.zh).first()
+        if not word:
+            continue
+        LearningService.record_review(
+            db=db,
+            user=current_user,
+            word_id=word.id,
+            quality=4 if item.correct else 2,
+        )
+        updated += 1
+    return {"updated": updated, "total": len(request.results)}
+
+
+@router.post("/word-images")
+def get_word_images(
+    request: WordImagesRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Return image URLs for the given simplified characters (course intro cards)."""
+    chars = request.chars[:50]
+    rows = (
+        db.query(HanziWord.simplified, HanziWord.image_url)
+        .filter(HanziWord.simplified.in_(chars), HanziWord.image_url.isnot(None))
+        .all()
+    )
+    return {"images": {simplified: url for simplified, url in rows if url}}
 
 
 @router.post("/review", response_model=ReviewResponse)
