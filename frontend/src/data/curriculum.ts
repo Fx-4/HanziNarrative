@@ -54,6 +54,7 @@ export interface UnitDef {
   subtitle: string
   emoji: string
   color: string        // tailwind gradient classes
+  culturalNote?: string // shown in the unit header when expanded
   sessions: SessionDef[]
   locked?: boolean     // future placeholder
 }

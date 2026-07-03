@@ -267,6 +267,22 @@ export default function LearningPath() {
                       transition={{ duration: 0.25, ease: 'easeInOut' }}
                       style={{ overflow: 'hidden' }}
                     >
+                      {/* Cultural tip — context that makes the unit memorable */}
+                      {unit.culturalNote && (
+                        <div className="border-t border-gray-100 dark:border-gray-800 px-4 py-3">
+                          <div className="flex gap-2.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/40 rounded-xl p-3">
+                            <span className="text-base leading-none">💡</span>
+                            <div className="min-w-0">
+                              <p className="text-[10px] font-bold uppercase tracking-wide text-amber-700 dark:text-amber-400">
+                                {t('learningPath.culturalTip')}
+                              </p>
+                              <p className="text-xs text-amber-800 dark:text-amber-300/90 leading-relaxed mt-0.5">
+                                {unit.culturalNote}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       <div className="border-t border-gray-100 dark:border-gray-800 divide-y divide-gray-50 dark:divide-gray-800/50">
                         {unit.sessions.map((session, sIdx) => {
                           const status = sessionStatus(session.id, sIdx, unit.sessions, completed)

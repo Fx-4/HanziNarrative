@@ -386,6 +386,7 @@
     "totalXp":      "Total XP",
     "activeLevel":  "Active Level",
     "sessionType":  { "vocab": "Vocabulary", "grammar": "Grammar", "practice": "Practice" },
+    "culturalTip":  "Cultural tip",
     "loadError":    "Failed to load progress.",
     "retry":        "Try again",
     "start":        "Start",

@@ -386,6 +386,7 @@
     "totalXp":      "Total XP",
     "activeLevel":  "Level Aktif",
     "sessionType":  { "vocab": "Kosakata", "grammar": "Tata Bahasa", "practice": "Latihan" },
+    "culturalTip":  "Tips budaya",
     "loadError":    "Gagal memuat progress.",
     "retry":        "Coba lagi",
     "start":        "Mulai",

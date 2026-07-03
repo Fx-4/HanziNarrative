@@ -10,6 +10,7 @@ export const HSK1: UnitDef[] = [
     id: 'h1-u1', hsk_level: 1,
     title: 'Unit 1', subtitle: '问候 · Greetings',
     emoji: '👋', color: 'from-indigo-500 to-violet-500',
+    culturalNote: '你好 is textbook-polite — close friends greet with "吃了吗?" (Have you eaten?) or just a name. Use 您 (nín) for teachers, elders, and customers.',
     sessions: [
       {
         id: 'h1-u1-s1', type: 'vocab', xp: 20,
@@ -96,6 +97,7 @@ export const HSK1: UnitDef[] = [
     id: 'h1-u2', hsk_level: 1,
     title: 'Unit 2', subtitle: '人称与家庭 · People',
     emoji: '👨‍👩‍👧', color: 'from-pink-500 to-rose-500',
+    culturalNote: 'Chinese family words encode age order: 哥哥 (older brother) vs 弟弟 (younger brother). Seniority shapes how you address everyone — even strangers can be 阿姨 (auntie).',
     sessions: [
       {
         id: 'h1-u2-s1', type: 'vocab', xp: 20,
@@ -164,6 +166,7 @@ export const HSK1: UnitDef[] = [
     id: 'h1-u3', hsk_level: 1,
     title: 'Unit 3', subtitle: '数字与时间 · Numbers & Time',
     emoji: '🔢', color: 'from-amber-500 to-orange-500',
+    culturalNote: '8 (八 bā) is lucky — it sounds like 发 fā "get rich". 4 (四 sì) sounds like 死 sǐ "death", so many buildings skip the 4th floor entirely.',
     sessions: [
       {
         id: 'h1-u3-s1', type: 'vocab', xp: 20,
@@ -250,6 +253,7 @@ export const HSK1: UnitDef[] = [
     id: 'h1-u4', hsk_level: 1,
     title: 'Unit 4', subtitle: '地点与交通 · Places & Transport',
     emoji: '📍', color: 'from-emerald-500 to-teal-500',
+    culturalNote: 'Chinese addresses run big → small: country, city, district, street, number. The same logic shapes dates (year-month-day) and names (family name first).',
     sessions: [
       {
         id: 'h1-u4-s1', type: 'vocab', xp: 20,
@@ -318,6 +322,7 @@ export const HSK1: UnitDef[] = [
     id: 'h1-u5', hsk_level: 1,
     title: 'Unit 5', subtitle: '饮食 · Food & Drink',
     emoji: '🍜', color: 'from-red-500 to-orange-400',
+    culturalNote: 'Meals are shared — dishes sit in the middle of the table for everyone. "你吃了吗?" (Have you eaten?) is a warm greeting, not literally an invitation to dinner.',
     sessions: [
       {
         id: 'h1-u5-s1', type: 'vocab', xp: 20,
@@ -374,6 +379,7 @@ export const HSK1: UnitDef[] = [
     id: 'h1-u6', hsk_level: 1,
     title: 'Unit 6', subtitle: '常用动词 · Core Verbs',
     emoji: '⚡', color: 'from-purple-500 to-indigo-500',
+    culturalNote: 'Chinese verbs never conjugate — 去 is go/goes/went/going. Time is carried by context and particles: 不 negates habits and the future, 没 negates the past.',
     sessions: [
       {
         id: 'h1-u6-s1', type: 'vocab', xp: 20,
@@ -440,6 +446,7 @@ export const HSK1: UnitDef[] = [
     id: 'h1-u7', hsk_level: 1,
     title: 'Unit 7', subtitle: '语言与描述 · Language & Description',
     emoji: '💬', color: 'from-blue-500 to-cyan-500',
+    culturalNote: 'Mandarin is 普通话 "common speech" — one of many Chinese languages. Speakers of Cantonese or Shanghainese may not understand each other, yet all share one writing system.',
     sessions: [
       {
         id: 'h1-u7-s1', type: 'vocab', xp: 20,
@@ -560,6 +567,7 @@ export const HSK1: UnitDef[] = [
     id: 'h1-u8', hsk_level: 1,
     title: 'Unit 8', subtitle: '物品与房间 · Objects & Room',
     emoji: '🏠', color: 'from-teal-500 to-emerald-500',
+    culturalNote: 'Measure words are mandatory: 一本书 "one [volume] book", never 一书. There are hundreds, but 个 (gè) is the universal fallback when you are unsure.',
     sessions: [
       {
         id: 'h1-u8-s1', type: 'vocab', xp: 20,
@@ -644,6 +652,7 @@ export const HSK1: UnitDef[] = [
     id: 'h1-u9', hsk_level: 1,
     title: 'Unit 9', subtitle: '天气与时段 · Weather & Time of Day',
     emoji: '⛅', color: 'from-sky-500 to-blue-400',
+    culturalNote: 'Weather is the classic small-talk opener in China too — and everyday speech loves the dramatic 太…了 pattern: 太热了! "SO hot!", 太好了! "Awesome!".',
     sessions: [
       {
         id: 'h1-u9-s1', type: 'vocab', xp: 20,
@@ -726,6 +735,7 @@ export const HSK1: UnitDef[] = [
     id: 'h1-u10', hsk_level: 1,
     title: 'Unit 10', subtitle: '爱好与生活 · Hobbies & Life',
     emoji: '🎉', color: 'from-rose-500 to-pink-500',
+    culturalNote: '会 means a LEARNED skill (我会游泳 — I can swim, I learned it) while 能 is circumstance (我能来 — I can come, nothing stops me). English "can" hides this difference.',
     sessions: [
       {
         id: 'h1-u10-s1', type: 'vocab', xp: 20,
