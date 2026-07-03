@@ -12,7 +12,7 @@ import { pinyin as toPinyin } from 'pinyin-pro'
 const PARTICLE_PINYIN: Record<string, string> = { '了': 'le' }
 import {
   Volume2, ChevronRight, CheckCircle, X, Star, Zap,
-  ArrowLeft, Loader2, Trophy,
+  ArrowLeft, Loader2, Trophy, RefreshCw,
 } from 'lucide-react'
 import { Skeleton } from '@/components/ui/Skeleton'
 import toast from 'react-hot-toast'
@@ -156,10 +156,12 @@ function IntroCard({ step, onNext, imageUrl }: { step: StepIntro; onNext: () => 
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const fetchPromiseRef = useRef<Promise<HTMLAudioElement> | null>(null)
 
-  // Pre-fetch audio as soon as card mounts, auto-play if browser allows
+  // Pre-fetch audio as soon as card mounts, auto-play if browser allows.
+  // Browser-voice fallback disabled: intro audio teaches pronunciation, so
+  // only the real (Edge) voice is acceptable.
   useEffect(() => {
     let cancelled = false
-    const promise = fetchTTSAudio({ text: step.word.zh })
+    const promise = fetchTTSAudio({ text: step.word.zh, allowBrowserFallback: false, retries: 1 })
     fetchPromiseRef.current = promise
 
     promise.then(audio => {
@@ -437,43 +439,59 @@ function FillCard({ step, onCorrect, onWrong }: { step: StepFill; onCorrect: () 
 function ListenCard({ step, onCorrect, onWrong }: { step: StepListen; onCorrect: () => void; onWrong: () => void }) {
   const [selected, setSelected] = useState<number | null>(null)
   const [playing, setPlaying] = useState(false)
+  // loading = fetching from backend · ready = audio in hand · error = tap to retry
+  const [audioState, setAudioState] = useState<'loading' | 'ready' | 'error'>('loading')
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const fetchPromiseRef = useRef<Promise<HTMLAudioElement> | null>(null)
+  const cancelledRef = useRef(false)
 
-  useEffect(() => {
-    let cancelled = false
-    const promise = fetchTTSAudio({ text: step.zh })
+  // Listening MUST use the real (Edge) voice — a robotic browser voice would
+  // teach the wrong pronunciation, so browser fallback is disabled here.
+  const startFetch = useCallback((autoplay: boolean) => {
+    setAudioState('loading')
+    const promise = fetchTTSAudio({ text: step.zh, allowBrowserFallback: false, retries: 2 })
     fetchPromiseRef.current = promise
     promise.then(audio => {
-      if (cancelled) return
+      if (cancelledRef.current) return
       audioRef.current = audio
-      audio.play().catch(() => { /* autoplay blocked — user taps the button */ })
+      setAudioState('ready')
+      if (autoplay) audio.play().catch(() => { /* autoplay blocked — user taps */ })
     }).catch(err => {
-      if (!cancelled) learningSessionLogger.error('[TTS] listen prefetch failed:', err)
+      if (cancelledRef.current) return
+      fetchPromiseRef.current = null
+      setAudioState('error')
+      learningSessionLogger.error('[TTS] listen fetch failed:', err)
     })
+    return promise
+  }, [step.zh])
+
+  useEffect(() => {
+    cancelledRef.current = false
+    audioRef.current = null
+    startFetch(true)
     return () => {
-      cancelled = true
+      cancelledRef.current = true
       audioRef.current?.pause()
       audioRef.current = null
       fetchPromiseRef.current = null
     }
-  }, [step.zh])
+  }, [startFetch])
 
   const play = async () => {
     if (playing) return
     setPlaying(true)
     try {
       let audio = audioRef.current
-      if (!audio && fetchPromiseRef.current) {
-        audio = await fetchPromiseRef.current
+      if (!audio) {
+        // No audio yet — await the in-flight fetch, or start a new one (retry after error)
+        const promise = fetchPromiseRef.current ?? startFetch(false)
+        audio = await promise
         audioRef.current = audio
       }
-      if (audio) {
-        audio.currentTime = 0
-        await audio.play()
-      }
+      audio.currentTime = 0
+      await audio.play()
     } catch {
-      toast.error('Gagal memutar audio', { duration: 2000 })
+      toast.error('Audio belum siap — coba lagi sebentar', { duration: 2500 })
     }
     setPlaying(false)
   }
@@ -493,11 +511,19 @@ function ListenCard({ step, onCorrect, onWrong }: { step: StepListen; onCorrect:
         <button onClick={play} disabled={playing}
           className="w-20 h-20 mx-auto rounded-3xl bg-sky-50 dark:bg-sky-950/40 flex items-center justify-center hover:bg-sky-100 dark:hover:bg-sky-900/40 transition-colors disabled:opacity-60"
         >
-          {playing
+          {playing || audioState === 'loading'
             ? <Loader2 className="w-7 h-7 text-sky-500 animate-spin" />
-            : <Volume2 className="w-7 h-7 text-sky-500" />}
+            : audioState === 'error'
+              ? <RefreshCw className="w-7 h-7 text-sky-500" />
+              : <Volume2 className="w-7 h-7 text-sky-500" />}
         </button>
-        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Which character did you hear?</p>
+        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          {audioState === 'loading'
+            ? 'Menyiapkan audio…'
+            : audioState === 'error'
+              ? 'Audio gagal dimuat — tap tombol untuk coba lagi'
+              : 'Which character did you hear?'}
+        </p>
         {selected !== null && (
           <p className="text-xs text-gray-500 dark:text-gray-400">
             <TonedPinyin py={step.py} className="font-mono" /> · {step.en}
@@ -619,7 +645,8 @@ export default function LearningSession() {
       if (token) {
         introWords.forEach((zh, i) => {
           setTimeout(() => {
-            fetchTTSAudio({ text: zh }).catch(() => { /* silent */ })
+            // Warm backend cache + IndexedDB; the browser shim can't be cached
+            fetchTTSAudio({ text: zh, allowBrowserFallback: false }).catch(() => { /* silent */ })
           }, i * 300)
         })
       }

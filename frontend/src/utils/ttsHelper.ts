@@ -59,7 +59,17 @@ interface TTSOptions {
   language?: string
   /** Override voice (ignores preference). Omit to use user's stored preference. */
   voiceName?: string
+  /**
+   * When false, NEVER substitute the robotic browser speechSynthesis voice —
+   * throw instead so the caller can retry/show state. Use for listening
+   * exercises where a different voice defeats the purpose. Default true.
+   */
+  allowBrowserFallback?: boolean
+  /** Extra retries against the backend on network error (cold start). Default 0. */
+  retries?: number
 }
+
+const RETRY_DELAY_MS = 2500
 
 /**
  * Fetch audio from backend and return a ready-to-play HTMLAudioElement.
@@ -72,6 +82,8 @@ export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioEleme
     speakingRate,
     language = 'cmn-CN',
     voiceName,
+    allowBrowserFallback = true,
+    retries = 0,
   } = options
 
   const token = localStorage.getItem('access_token')
@@ -91,17 +103,36 @@ export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioEleme
     return audio
   }
 
-  // Layer 2: Backend (file cache → edge-tts on miss)
+  // Layer 2: Backend (file cache → edge-tts on miss). Network errors are
+  // retried — usually the Koyeb free tier waking up from cold start.
   let response
-  try {
-    response = await axios.post(
-      `${API_URL}/tts/synthesize`,
-      { text, language, voice_name: voice, speaking_rate: rate },
-      { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' }
-    )
-  } catch (err) {
-    // Network error (backend unreachable) → silent fallback to browser TTS
-    if (axios.isAxiosError(err) && !err.response && typeof speechSynthesis !== 'undefined') {
+  const maxAttempts = 1 + Math.max(0, retries)
+  let lastErr: unknown
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    if (attempt > 0) await new Promise(r => setTimeout(r, RETRY_DELAY_MS))
+    try {
+      response = await axios.post(
+        `${API_URL}/tts/synthesize`,
+        { text, language, voice_name: voice, speaking_rate: rate },
+        { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' }
+      )
+      break
+    } catch (err) {
+      lastErr = err
+      const isNetworkErr = axios.isAxiosError(err) && !err.response
+      if (!isNetworkErr) break // real API error — retrying won't help
+    }
+  }
+
+  if (!response) {
+    const err = lastErr
+    // Network error (backend unreachable) → silent fallback to browser TTS,
+    // unless the caller demands the real (Edge) voice
+    if (
+      allowBrowserFallback &&
+      axios.isAxiosError(err) && !err.response &&
+      typeof speechSynthesis !== 'undefined'
+    ) {
       if (!_fallbackLogged) {
         _fallbackLogged = true
         ttsHelperLogger.debug('Backend unreachable — falling back to browser TTS for this session')

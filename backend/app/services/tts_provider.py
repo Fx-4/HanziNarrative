@@ -191,11 +191,19 @@ TTS_PROVIDERS = [
         "name": "edge_tts",
         "fn": _synthesize_edge,
         "available_check": lambda: True,  # Always available — no API key needed
+        # Edge failures are usually transient throttling — retry the whole
+        # provider once before switching voice engines, so the user keeps
+        # hearing the same (Edge) voice.
+        "attempts": 2,
     },
     {
         "name": "google_cloud_tts",
         "fn": _synthesize_google,
-        "available_check": _is_google_tts_available,
+        # Set TTS_DISABLE_GOOGLE=1 to force an Edge-only experience
+        "available_check": lambda: (
+            os.getenv("TTS_DISABLE_GOOGLE") != "1" and _is_google_tts_available()
+        ),
+        "attempts": 1,
     },
 ]
 
@@ -218,18 +226,20 @@ async def synthesize_speech(
             logger.debug(f"Skipping TTS provider {provider['name']} — not available")
             continue
 
-        try:
-            logger.info(f"Trying TTS provider: {provider['name']}")
-            audio_bytes = await provider["fn"](text, language, voice_name, speaking_rate)
-            if audio_bytes and len(audio_bytes) > 0:
-                logger.info(f"TTS success with provider: {provider['name']}")
-                return audio_bytes, provider["name"]
-            raise ValueError("Empty audio from provider")
-        except Exception as e:
-            error_msg = f"{provider['name']}: {type(e).__name__}: {str(e)[:200]}"
-            logger.warning(f"TTS provider failed — {error_msg}")
-            errors.append(error_msg)
-            continue
+        attempts = provider.get("attempts", 1)
+        for attempt in range(attempts):
+            try:
+                logger.info(f"Trying TTS provider: {provider['name']} (attempt {attempt + 1}/{attempts})")
+                audio_bytes = await provider["fn"](text, language, voice_name, speaking_rate)
+                if audio_bytes and len(audio_bytes) > 0:
+                    logger.info(f"TTS success with provider: {provider['name']}")
+                    return audio_bytes, provider["name"]
+                raise ValueError("Empty audio from provider")
+            except Exception as e:
+                error_msg = f"{provider['name']}: {type(e).__name__}: {str(e)[:200]}"
+                logger.warning(f"TTS provider failed — {error_msg}")
+                errors.append(error_msg)
+                continue
 
     all_errors = " | ".join(errors) if errors else "No TTS providers available"
     raise RuntimeError(f"All TTS providers failed. {all_errors}")
