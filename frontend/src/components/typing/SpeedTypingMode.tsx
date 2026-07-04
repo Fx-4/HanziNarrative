@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import type { HanziWord, TypingAttempt } from '@/types'
 import { typingApi } from '@/services/api'
-import { calculateWPM } from '@/utils/pinyinInput'
+import { calculateWPM, comparePinyin, convertNumberedPinyin, normalizePinyin } from '@/utils/pinyinInput'
 import { toast } from 'react-hot-toast'
 import { Clock, Zap, Trophy, TrendingUp } from 'lucide-react'
 import { createLogger } from '@/utils/debugLogger'
@@ -56,6 +56,15 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
     }
   }, [inputValue, startTime, isFinished])
 
+  // Accept all common pinyin input styles:
+  //   tone marks ("nǐ hǎo"), tone numbers ("ni3 hao3"), and toneless ("ni hao")
+  const matchesTarget = (value: string) => {
+    const typed = normalizePinyin(convertNumberedPinyin(value))
+    const target = normalizePinyin(currentWord.pinyin)
+    if (typed === target) return true
+    return comparePinyin(typed, target).isCorrect
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isFinished) return
 
@@ -63,14 +72,14 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
     setInputValue(value)
 
     // Auto-submit when correct
-    if (value.trim().toLowerCase() === currentWord.pinyin.trim().toLowerCase()) {
+    if (matchesTarget(value)) {
       handleSubmit(value.trim())
     }
   }
 
-  const handleSubmit = async (value: string) => {
+  const handleSubmit = (value: string) => {
     const timeTaken = (Date.now() - startTime) / 1000
-    const correct = value.toLowerCase() === currentWord.pinyin.trim().toLowerCase()
+    const correct = matchesTarget(value)
     const wpm = calculateWPM(value, timeTaken, false)
 
     const result: WordResult = {
@@ -81,23 +90,7 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
 
     setSessionResults([...sessionResults, result])
 
-    // Record attempt
-    try {
-      const attempt: TypingAttempt = {
-        word_id: currentWord.id,
-        mode: 'speed',
-        is_correct: correct,
-        time_taken: timeTaken,
-        typed_text: value,
-        expected_text: currentWord.pinyin,
-        wpm: wpm
-      }
-      await typingApi.recordAttempt(attempt)
-    } catch (error) {
-      speedTypingModeLogger.error('Failed to record attempt:', error)
-    }
-
-    // Move to next
+    // Advance IMMEDIATELY — this is speed typing; never block on the network
     if (currentIndex < words.length - 1) {
       setCurrentIndex(currentIndex + 1)
       setInputValue('')
@@ -110,6 +103,20 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
         icon: '🏆'
       })
     }
+
+    // Record attempt in the background (fire-and-forget)
+    const attempt: TypingAttempt = {
+      word_id: currentWord.id,
+      mode: 'speed',
+      is_correct: correct,
+      time_taken: timeTaken,
+      typed_text: value,
+      expected_text: currentWord.pinyin,
+      wpm: wpm
+    }
+    typingApi.recordAttempt(attempt).catch(error => {
+      speedTypingModeLogger.error('Failed to record attempt:', error)
+    })
   }
 
   const formatTime = (seconds: number) => {
@@ -249,6 +256,9 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
           />
           <p className="text-sm text-gray-600 mt-2 text-center dark:text-gray-400">
             Target: <span className="font-semibold text-primary-600 dark:text-primary-400">{currentWord.pinyin}</span>
+          </p>
+          <p className="text-xs text-gray-400 mt-1 text-center dark:text-gray-500">
+            Tones optional — "ni hao", "ni3 hao3", and "nǐ hǎo" all count
           </p>
         </div>
 

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import type { HanziWord, TypingAttempt } from '@/types'
 import { typingApi } from '@/services/api'
-import { comparePinyin } from '@/utils/pinyinInput'
+import { comparePinyin, convertNumberedPinyin } from '@/utils/pinyinInput'
 import { toast } from 'react-hot-toast'
 import { CheckCircle, XCircle, ArrowRight, Sparkles } from 'lucide-react'
 import { createLogger } from '@/utils/debugLogger'
@@ -40,7 +40,8 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
     const finalInput = inputValue.trim()
     const expected = currentWord.pinyin.trim()
 
-    const { isCorrect: correct } = comparePinyin(finalInput, expected)
+    // Accept tone numbers too ("ni3 hao3") — convert before comparing
+    const { isCorrect: correct } = comparePinyin(convertNumberedPinyin(finalInput), expected)
     setIsCorrect(correct)
     setShowFeedback(true)
     setSessionResults([...sessionResults, correct])
