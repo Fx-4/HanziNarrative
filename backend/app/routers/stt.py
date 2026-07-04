@@ -5,10 +5,17 @@ Uses Google Cloud Speech-to-Text API with separate credentials.
 
 import os
 import json
+import re
 import logging
 import base64
+from difflib import SequenceMatcher
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from pydantic import BaseModel
+try:
+    from pypinyin import lazy_pinyin, Style
+    PYPINYIN_AVAILABLE = True
+except ImportError:
+    PYPINYIN_AVAILABLE = False
 try:
     from google.cloud import speech
     from google.oauth2 import service_account
@@ -75,33 +82,68 @@ class STTResponse(BaseModel):
     feedback: str
 
 
+def _contains_sublist(haystack: list, needle: list) -> bool:
+    """True if needle appears as a contiguous sublist of haystack."""
+    if not needle or len(needle) > len(haystack):
+        return False
+    return any(
+        haystack[i:i + len(needle)] == needle
+        for i in range(len(haystack) - len(needle) + 1)
+    )
+
+
 def calculate_accuracy(transcript: str, expected: str) -> tuple:
-    """Compare transcript with expected text and return accuracy score + feedback."""
+    """Compare transcript with expected text and return accuracy score + feedback.
+
+    Scoring is PRONUNCIATION-based (pinyin), not character-based: STT frequently
+    transcribes a correctly-pronounced word as a homophone, so comparing
+    characters positionally punishes users who spoke perfectly.
+    """
     if not expected:
         return 100, "Speech recognized successfully!"
 
-    # Normalize: remove punctuation and whitespace
-    import re
+    # Normalize: keep only Han characters
     clean_transcript = re.sub(r'[^\u4e00-\u9fff]', '', transcript)
     clean_expected = re.sub(r'[^\u4e00-\u9fff]', '', expected)
 
     if not clean_expected:
         return 100, "Good!"
+    if not clean_transcript:
+        return 0, "Could not hear any Chinese speech. Try again closer to the microphone."
 
-    # Character-level accuracy
-    correct = 0
-    total = max(len(clean_transcript), len(clean_expected))
+    # Tier 1: exact characters (also accept the word inside a longer utterance)
+    if clean_transcript == clean_expected or clean_expected in clean_transcript:
+        return 100, "Excellent pronunciation! Perfect match!"
 
-    for i in range(min(len(clean_transcript), len(clean_expected))):
-        if clean_transcript[i] == clean_expected[i]:
-            correct += 1
+    if PYPINYIN_AVAILABLE:
+        t_toned = lazy_pinyin(clean_transcript, style=Style.TONE3)
+        e_toned = lazy_pinyin(clean_expected, style=Style.TONE3)
 
-    accuracy = round((correct / total) * 100) if total > 0 else 0
+        # Tier 2: same pronunciation incl. tones \u2014 STT just picked homophone characters
+        if t_toned == e_toned or _contains_sublist(t_toned, e_toned):
+            return 95, "Perfect pronunciation! We heard the right sounds and tones."
+
+        # Tier 3: same syllables but different tone(s)
+        t_plain = lazy_pinyin(clean_transcript)
+        e_plain = lazy_pinyin(clean_expected)
+        if t_plain == e_plain or _contains_sublist(t_plain, e_plain):
+            return 65, "Right sounds, but check your tones! The tone changes the meaning \u2014 listen again and match it."
+
+        # Tier 4: fuzzy syllable similarity (handles extra/missing/near-miss syllables)
+        accuracy = round(SequenceMatcher(None, ' '.join(t_toned), ' '.join(e_toned)).ratio() * 100)
+    else:
+        # Fallback without pypinyin: character-level positional accuracy
+        correct = sum(
+            1 for i in range(min(len(clean_transcript), len(clean_expected)))
+            if clean_transcript[i] == clean_expected[i]
+        )
+        total = max(len(clean_transcript), len(clean_expected))
+        accuracy = round((correct / total) * 100) if total > 0 else 0
 
     if accuracy >= 90:
         feedback = "Excellent pronunciation! 太棒了！"
     elif accuracy >= 70:
-        feedback = "Good job! A few characters were different. 不错！"
+        feedback = "Good job! Very close — listen once more and try again. 不错！"
     elif accuracy >= 50:
         feedback = "Keep practicing! Try speaking more slowly and clearly. 加油！"
     else:
@@ -126,12 +168,19 @@ async def recognize_speech(
         audio_data = base64.b64decode(request.audio_base64)
 
         audio = speech.RecognitionAudio(content=audio_data)
+        # Bias recognition toward the expected word — dramatically improves
+        # single-word accuracy (otherwise STT often picks a homophone/other word)
+        speech_contexts = (
+            [speech.SpeechContext(phrases=[request.expected_text], boost=15.0)]
+            if request.expected_text else []
+        )
         config = speech.RecognitionConfig(
             encoding=speech.RecognitionConfig.AudioEncoding.WEBM_OPUS,
             sample_rate_hertz=48000,
             language_code=request.language,
             enable_automatic_punctuation=True,
             model="default",
+            speech_contexts=speech_contexts,
         )
 
         logger.info(f"Processing STT request, audio size: {len(audio_data)} bytes")
