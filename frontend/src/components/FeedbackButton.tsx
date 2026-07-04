@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageSquarePlus, X, Bug, Lightbulb, MessageSquare, AlertTriangle, Loader2, CheckCircle, Sparkles, RefreshCw, Image as ImageIcon, MousePointer2, Trash2 } from 'lucide-react'
+import { MessageSquarePlus, X, Bug, Lightbulb, MessageSquare, AlertTriangle, Loader2, CheckCircle, Sparkles, RefreshCw, Image as ImageIcon, MousePointer2, Trash2, Mic } from 'lucide-react'
 import { feedbackApi } from '@/services/api'
 import { useLocation } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
+import { useLocaleStore } from '@/store/localeStore'
 import toast from 'react-hot-toast'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -23,6 +24,40 @@ const TEMPLATES: Record<FeedbackType, string> = {
   feature: 'Feature request:\n\n\nWhy it would be useful:\n\n\nPossible implementation (optional):\n',
   error: 'Error encountered:\n\n\nWhen it happens:\n\n\nBrowser / Device:\n',
 }
+
+// ── Web Speech API (dictation) ─────────────────────────────────────────────────
+// lib.dom.d.ts has no SpeechRecognition typings, so we declare the minimal shape we use
+
+interface SpeechRecognitionResultLike {
+  isFinal: boolean
+  0: { transcript: string }
+}
+
+interface SpeechRecognitionEventLike {
+  resultIndex: number
+  results: { length: number; [index: number]: SpeechRecognitionResultLike }
+}
+
+interface SpeechRecognitionLike {
+  lang: string
+  continuous: boolean
+  interimResults: boolean
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null
+  onend: (() => void) | null
+  onerror: ((event: { error: string }) => void) | null
+  start: () => void
+  stop: () => void
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition?: new () => SpeechRecognitionLike
+    webkitSpeechRecognition?: new () => SpeechRecognitionLike
+  }
+}
+
+const getSpeechRecognitionImpl = () =>
+  typeof window !== 'undefined' ? (window.SpeechRecognition ?? window.webkitSpeechRecognition) : undefined
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -65,11 +100,21 @@ export default function FeedbackButton() {
   const [submitting, setSubmitting] = useState(false)
   const [improving, setImproving] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [listening, setListening] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const location = useLocation()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null)
+  const typeRef = useRef(type)
+  const { locale } = useLocaleStore()
+  const sttSupported = !!getSpeechRecognitionImpl()
 
   const currentMessage = messages[type]
+
+  useEffect(() => { typeRef.current = type }, [type])
+
+  // Stop any running dictation on unmount
+  useEffect(() => () => { recognitionRef.current?.stop() }, [])
 
   const reset = () => {
     setType('general')
@@ -85,6 +130,7 @@ export default function FeedbackButton() {
 
   const handleClose = () => {
     if (isSelecting) return // Prevent closing while selecting
+    recognitionRef.current?.stop()
     setOpen(false)
     setTimeout(reset, 300)
   }
@@ -198,6 +244,52 @@ export default function FeedbackButton() {
     setOpen(false)
     setIsSelecting(true)
     toast('Click on an element to highlight it', { icon: '🎯' })
+  }
+
+  // ── Voice Dictation (STT) ────────────────────────────────────────────────────
+
+  const toggleDictation = () => {
+    if (listening) {
+      recognitionRef.current?.stop()
+      return
+    }
+    const Impl = getSpeechRecognitionImpl()
+    if (!Impl) return
+
+    const recognition = new Impl()
+    recognition.lang = locale === 'id' ? 'id-ID' : 'en-US'
+    recognition.continuous = true
+    recognition.interimResults = false
+
+    recognition.onresult = (event) => {
+      let transcript = ''
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const result = event.results[i]
+        if (result.isFinal) transcript += result[0].transcript
+      }
+      transcript = transcript.trim()
+      if (!transcript) return
+      setMessages(prev => {
+        const current = prev[typeRef.current]
+        const joined = current && !/\s$/.test(current) ? `${current} ${transcript}` : `${current}${transcript}`
+        return { ...prev, [typeRef.current]: joined.slice(0, 2000) }
+      })
+    }
+
+    recognition.onerror = (event) => {
+      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+        toast.error('Microphone access denied')
+      } else if (event.error !== 'aborted' && event.error !== 'no-speech') {
+        toast.error('Voice input failed. Please try again.')
+      }
+      setListening(false)
+    }
+
+    recognition.onend = () => setListening(false)
+
+    recognitionRef.current = recognition
+    recognition.start()
+    setListening(true)
   }
 
   // ── Actions ──────────────────────────────────────────────────────────────────
@@ -425,7 +517,24 @@ export default function FeedbackButton() {
                           )}
                           {improving ? 'Improving…' : 'Improve with AI'}
                         </button>
-                        
+
+                        {sttSupported && (
+                          <button
+                            type="button"
+                            onClick={toggleDictation}
+                            disabled={submitting}
+                            title={listening ? 'Stop dictation' : 'Dictate with your voice'}
+                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                              listening
+                                ? 'text-error-600 dark:text-error-400 bg-error-50 dark:bg-error-900/20 animate-pulse'
+                                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                            }`}
+                          >
+                            <Mic className="w-3 h-3" />
+                            {listening ? 'Listening…' : 'Dictate'}
+                          </button>
+                        )}
+
                         {TEMPLATES[type] && (
                           <button
                             type="button"
