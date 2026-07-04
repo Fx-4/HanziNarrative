@@ -19,6 +19,10 @@ export interface Word {
   py: string   // pinyin with tone marks
   en: string   // English meaning
   note?: string
+  /** Usage-in-context example shown on the intro card */
+  example?: { zh: string; py: string; en: string }
+  /** "Why" cultural explanation (e.g. why 喂 is phone-only) — rendered as a fun-fact box */
+  funFact?: string
 }
 
 export interface FillBlank {
