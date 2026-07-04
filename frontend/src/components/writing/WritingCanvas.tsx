@@ -43,6 +43,8 @@ export default function WritingCanvas({
   const writerRef = useRef<any>(null)
   const [canvasSize, setCanvasSize] = useState(260)
   const [showHints, setShowHints] = useState(true)
+  // Write-from-memory: the answer character stays hidden until the user asks (free toggle)
+  const [hanziRevealed, setHanziRevealed] = useState(false)
   const [strokesCompleted, setStrokesCompleted] = useState(0)
   const [totalStrokes, setTotalStrokes] = useState(0)
   const [mistakes, setMistakes] = useState(0)
@@ -151,6 +153,7 @@ export default function WritingCanvas({
     setTotalStrokes(0)
     setIsComplete(false)
     setAccuracy(0)
+    setHanziRevealed(false)
     startTimeRef.current = null
     mistakesRef.current = 0
     totalStrokesRef.current = 0
@@ -175,6 +178,15 @@ export default function WritingCanvas({
         drawingWidth: 4,
         strokeAnimationSpeed: 1,
         delayBetweenStrokes: 200,
+        onLoadCharDataSuccess: (data: { strokes?: unknown[] }) => {
+          // Know the stroke count up front — "0 / 6" from the start, and the
+          // stroke guide can tell which strokes remain before the first mistake
+          const n = data?.strokes?.length ?? 0
+          if (n > 0) {
+            totalStrokesRef.current = n
+            setTotalStrokes(n)
+          }
+        },
         onLoadCharDataError: (err: unknown) => {
           writingCanvasLogger.warn(`HanziWriter: failed to load "${char}"`, err)
           setLoadError(true)
@@ -220,22 +232,42 @@ export default function WritingCanvas({
   const toggleHints = () => setShowHints(h => !h)
 
   const handlePlayStrokeGuide = () => {
-    if (!writerRef.current || isAnimating) return
+    const writer = writerRef.current
+    if (!writer || isAnimating) return
+    const total = totalStrokesRef.current
+    // Mid-quiz: demo only the remaining strokes and resume where the user was.
+    // Already complete (or count unknown): full demo + fresh restart.
+    const startFrom = !isComplete && total > 0 && strokesCompleted < total ? strokesCompleted : 0
     setIsAnimating(true)
-    writerRef.current.cancelQuiz()
-    writerRef.current.showCharacter()
-    writerRef.current.showOutline()
-    writerRef.current.animateCharacter({
-      onComplete: () => {
-        if (!writerRef.current) return
-        setIsAnimating(false)
-        writerRef.current.hideCharacter()
-        // Restart quiz after animation — from stroke 0, so progress must reset
-        // too or the counter/bar continue from the old value and overflow
-        writerRef.current.quiz(quizCallbacks)
-        resetProgress()
+    writer.cancelQuiz()
+    writer.showOutline()
+
+    const resumeQuiz = () => {
+      if (!writerRef.current) return
+      setIsAnimating(false)
+      writerRef.current.hideCharacter()
+      // quizStartStrokeNum redraws earlier strokes automatically, so the
+      // counter/bar keep their value instead of resetting or overflowing
+      writerRef.current.quiz({ ...quizCallbacks, quizStartStrokeNum: startFrom })
+      if (startFrom === 0) resetProgress()
+    }
+
+    if (total === 0) {
+      // Char data not loaded yet — fall back to full-character demo
+      writer.showCharacter()
+      writer.animateCharacter({ onComplete: resumeQuiz })
+      return
+    }
+
+    const animateFrom = (n: number) => {
+      if (!writerRef.current) return
+      if (n >= total) {
+        resumeQuiz()
+        return
       }
-    })
+      writerRef.current.animateStroke(n, { onComplete: () => animateFrom(n + 1) })
+    }
+    animateFrom(startFrom)
   }
 
   const progress = totalStrokes > 0 ? (strokesCompleted / totalStrokes) * 100 : 0
@@ -246,12 +278,34 @@ export default function WritingCanvas({
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-3 sm:p-4">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div className="flex items-center gap-3">
-            <span className="text-4xl sm:text-5xl font-chinese">{character.simplified}</span>
+            {/* Answer hidden by default — tap to toggle (write from memory) */}
+            <button
+              type="button"
+              onClick={() => setHanziRevealed(r => !r)}
+              title={hanziRevealed ? 'Hide character' : 'Show character (hint)'}
+              className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl border-2 flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer ${
+                hanziRevealed
+                  ? 'border-primary-200 dark:border-primary-800 bg-primary-50 dark:bg-primary-950/30'
+                  : 'border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 hover:border-primary-400 dark:hover:border-primary-600'
+              }`}
+            >
+              {hanziRevealed ? (
+                <span className="text-3xl sm:text-4xl font-chinese text-gray-900 dark:text-gray-100">{character.simplified}</span>
+              ) : (
+                <>
+                  <span className="text-2xl sm:text-3xl font-chinese text-gray-300 dark:text-gray-600 select-none">？</span>
+                  <Eye className="w-3.5 h-3.5 text-gray-400 absolute bottom-1 right-1" />
+                </>
+              )}
+            </button>
             <div>
               <div className="text-base sm:text-xl text-primary-600 dark:text-primary-400 font-semibold">
                 {character.pinyin}
               </div>
               <div className="text-sm sm:text-base text-gray-700 dark:text-gray-300">{character.english}</div>
+              {!hanziRevealed && (
+                <div className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">Tap ？ for a hint</div>
+              )}
             </div>
           </div>
 

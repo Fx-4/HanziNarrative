@@ -66,11 +66,12 @@ export default function CharacterGrid({
     return 'text-orange-600 dark:text-orange-400'
   }
 
+  const inactivePill = 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
   const filters = [
-    { key: 'all' as const,      label: `All (${characters.length})`, icon: null,      activeClass: 'bg-primary-600 text-white', inactiveClass: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
-    { key: 'new' as const,      label: 'New',                        icon: Sparkles,  activeClass: 'bg-purple-600 text-white',  inactiveClass: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
-    { key: 'learning' as const, label: 'Learning',                   icon: TrendingUp,activeClass: 'bg-blue-600 text-white',    inactiveClass: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
-    { key: 'mastered' as const, label: 'Mastered',                   icon: Award,     activeClass: 'bg-success-600 text-white', inactiveClass: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
+    { key: 'all' as const,      label: `All (${characters.length})`, icon: null,      activeClass: 'bg-primary-600 text-white', inactiveClass: inactivePill },
+    { key: 'new' as const,      label: 'New',                        icon: Sparkles,  activeClass: 'bg-purple-600 text-white',  inactiveClass: inactivePill },
+    { key: 'learning' as const, label: 'Learning',                   icon: TrendingUp,activeClass: 'bg-blue-600 text-white',    inactiveClass: inactivePill },
+    { key: 'mastered' as const, label: 'Mastered',                   icon: Award,     activeClass: 'bg-success-600 text-white', inactiveClass: inactivePill },
   ]
 
   return (
@@ -129,9 +130,10 @@ export default function CharacterGrid({
                     <MasteryIcon className={`w-3.5 h-3.5 text-${mastery.color}-500`} />
                   </div>
 
-                  {/* Chinese Character */}
-                  <div className="text-3xl font-chinese leading-tight mb-1 text-gray-900 dark:text-gray-50">
-                    {character.simplified}
+                  {/* Chinese Character — hidden so the list doesn't leak the answer;
+                      writing practice is from memory (reveal via Hint on the canvas card) */}
+                  <div className="text-3xl font-chinese leading-tight mb-1 text-gray-300 dark:text-gray-600 select-none">
+                    ？
                   </div>
 
                   {/* Pinyin */}
