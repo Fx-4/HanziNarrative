@@ -12,9 +12,10 @@ import { pinyin as toPinyin } from 'pinyin-pro'
 const PARTICLE_PINYIN: Record<string, string> = { '了': 'le' }
 import {
   Volume2, ChevronRight, CheckCircle, X, Star, Zap,
-  ArrowLeft, Loader2, Trophy, RefreshCw,
+  ArrowLeft, Loader2, Trophy, RefreshCw, Info,
 } from 'lucide-react'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { useTranslation } from 'react-i18next'
 import toast from 'react-hot-toast'
 import { createLogger } from '@/utils/debugLogger'
 import TonedPinyin from '@/components/TonedPinyin'
@@ -152,8 +153,12 @@ function generateSteps(
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function IntroCard({ step, onNext, imageUrl }: { step: StepIntro; onNext: () => void; imageUrl?: string }) {
+  const { t } = useTranslation()
   const [playing, setPlaying] = useState(false)
+  const [showToneHelp, setShowToneHelp] = useState(false)
+  const [examplePlaying, setExamplePlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const exampleAudioRef = useRef<HTMLAudioElement | null>(null)
   const fetchPromiseRef = useRef<Promise<HTMLAudioElement> | null>(null)
 
   // Pre-fetch audio as soon as card mounts, auto-play if browser allows.
@@ -177,6 +182,8 @@ function IntroCard({ step, onNext, imageUrl }: { step: StepIntro; onNext: () => 
       cancelled = true
       audioRef.current?.pause()
       audioRef.current = null
+      exampleAudioRef.current?.pause()
+      exampleAudioRef.current = null
       fetchPromiseRef.current = null
     }
   }, [step.word.zh])
@@ -197,9 +204,27 @@ function IntroCard({ step, onNext, imageUrl }: { step: StepIntro; onNext: () => 
       }
     } catch (err) {
       learningSessionLogger.error('[TTS] play failed:', err)
-      toast.error('Gagal memutar audio', { duration: 2000 })
+      toast.error(t('session.audioPlayFailed'), { duration: 2000 })
     }
     setPlaying(false)
+  }
+
+  const playExample = async () => {
+    if (!step.word.example || examplePlaying) return
+    setExamplePlaying(true)
+    try {
+      let audio = exampleAudioRef.current
+      if (!audio) {
+        audio = await fetchTTSAudio({ text: step.word.example.zh, retries: 1 })
+        exampleAudioRef.current = audio
+      }
+      audio.currentTime = 0
+      await audio.play()
+    } catch (err) {
+      learningSessionLogger.error('[TTS] example play failed:', err)
+      toast.error(t('session.audioPlayFailed'), { duration: 2000 })
+    }
+    setExamplePlaying(false)
   }
 
   return (
@@ -224,38 +249,137 @@ function IntroCard({ step, onNext, imageUrl }: { step: StepIntro; onNext: () => 
 
       <div>
         <p className="font-chinese text-7xl font-bold text-gray-900 dark:text-gray-50">{step.word.zh}</p>
-        <p className="text-lg mt-2"><TonedPinyin py={step.word.py} /></p>
+        <p className="text-lg mt-2 flex items-center justify-center gap-1.5">
+          <TonedPinyin py={step.word.py} />
+          <button
+            type="button"
+            onClick={() => setShowToneHelp(s => !s)}
+            title={t('session.toneTitle')}
+            className="p-1 rounded-full text-gray-400 hover:text-sky-500 hover:bg-sky-50 dark:hover:bg-sky-950/40 transition-colors"
+          >
+            <Info className="w-3.5 h-3.5" />
+          </button>
+        </p>
         <p className="text-gray-600 dark:text-gray-300 text-xl font-semibold mt-1">{step.word.en}</p>
         {step.word.note && (
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 max-w-xs mx-auto italic">{step.word.note}</p>
         )}
       </div>
 
+      {/* Tone explanation for absolute beginners — why the pinyin is colored */}
+      <AnimatePresence>
+        {showToneHelp && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="w-full max-w-xs overflow-hidden"
+          >
+            <div className="bg-sky-50 dark:bg-sky-950/30 border border-sky-100 dark:border-sky-900/40 rounded-2xl p-4 text-left">
+              <p className="text-xs font-bold text-sky-700 dark:text-sky-300 mb-1.5">{t('session.toneTitle')}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-2">{t('session.toneIntro')}</p>
+              <ul className="space-y-1 text-xs font-semibold">
+                <li className="text-red-600 dark:text-red-400">{t('session.tone1')}</li>
+                <li className="text-emerald-600 dark:text-emerald-400">{t('session.tone2')}</li>
+                <li className="text-blue-600 dark:text-blue-400">{t('session.tone3')}</li>
+                <li className="text-violet-600 dark:text-violet-400">{t('session.tone4')}</li>
+                <li className="text-gray-500 dark:text-gray-400">{t('session.tone5')}</li>
+              </ul>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Usage in context */}
+      {step.word.example && (
+        <div className="w-full max-w-xs bg-primary-50/60 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900/40 rounded-2xl p-3.5 text-left">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-[10px] font-bold text-primary-500 uppercase tracking-widest">{t('session.inContext')}</p>
+            <button
+              type="button"
+              onClick={playExample}
+              disabled={examplePlaying}
+              className="p-1.5 rounded-lg bg-white dark:bg-gray-800 text-primary-500 hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-colors disabled:opacity-60"
+            >
+              {examplePlaying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Volume2 className="w-3.5 h-3.5" />}
+            </button>
+          </div>
+          <p className="font-chinese text-xl text-gray-900 dark:text-gray-100">{step.word.example.zh}</p>
+          <p className="text-xs mt-0.5"><TonedPinyin py={step.word.example.py} /></p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 italic mt-0.5">{step.word.example.en}</p>
+        </div>
+      )}
+
+      {/* Fun fact — the "why" behind the word */}
+      {step.word.funFact && (
+        <div className="w-full max-w-xs bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/40 rounded-2xl p-3.5 text-left">
+          <p className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-1">💡 {t('session.funFact')}</p>
+          <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">{step.word.funFact}</p>
+        </div>
+      )}
+
       <button onClick={onNext}
         className="mt-2 w-full max-w-xs py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors"
       >
-        Continue <ChevronRight className="w-4 h-4" />
+        {t('session.continue')} <ChevronRight className="w-4 h-4" />
       </button>
     </motion.div>
   )
 }
 
 function GrammarCard({ step, onNext }: { step: StepGrammar; onNext: () => void }) {
+  const { t } = useTranslation()
   const gp = step.point
+  const [playingIdx, setPlayingIdx] = useState<number | null>(null)
+  const audioCacheRef = useRef<Record<string, HTMLAudioElement>>({})
+
+  // Stop any playing example when the card unmounts
+  useEffect(() => () => {
+    Object.values(audioCacheRef.current).forEach(a => a.pause())
+  }, [])
+
+  const playExample = async (zh: string, idx: number) => {
+    if (playingIdx !== null) return
+    setPlayingIdx(idx)
+    try {
+      let audio = audioCacheRef.current[zh]
+      if (!audio) {
+        audio = await fetchTTSAudio({ text: zh, retries: 1 })
+        audioCacheRef.current[zh] = audio
+      }
+      audio.currentTime = 0
+      await audio.play()
+    } catch (err) {
+      learningSessionLogger.error('[TTS] grammar example play failed:', err)
+      toast.error(t('session.audioPlayFailed'), { duration: 2000 })
+    }
+    setPlayingIdx(null)
+  }
+
   return (
     <motion.div key={gp.pattern} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
       <div className="text-center">
-        <span className="text-xs font-bold text-violet-600 uppercase tracking-widest dark:text-violet-400">Grammar</span>
+        <span className="text-xs font-bold text-violet-600 uppercase tracking-widest dark:text-violet-400">{t('session.grammar')}</span>
         <p className="text-lg font-extrabold text-gray-900 dark:text-gray-50 mt-1">{gp.pattern}</p>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">{gp.explanation}</p>
       </div>
 
       <div className="bg-violet-50 dark:bg-violet-950/30 rounded-2xl p-4 space-y-3">
         {gp.examples.map((ex, i) => (
-          <div key={i} className="border-b border-violet-100 dark:border-violet-900/40 last:border-0 pb-2 last:pb-0">
-            <p className="font-chinese text-xl text-gray-800 dark:text-gray-200">{ex.zh}</p>
-            <p className="text-xs text-violet-500">{ex.py}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 italic">{ex.en}</p>
+          <div key={i} className="border-b border-violet-100 dark:border-violet-900/40 last:border-0 pb-2 last:pb-0 flex items-start gap-2.5">
+            <button
+              type="button"
+              onClick={() => playExample(ex.zh, i)}
+              disabled={playingIdx !== null}
+              className="mt-0.5 p-2 rounded-xl bg-white dark:bg-gray-800 text-violet-500 hover:bg-violet-100 dark:hover:bg-violet-900/40 transition-colors disabled:opacity-60 flex-shrink-0"
+            >
+              {playingIdx === i ? <Loader2 className="w-4 h-4 animate-spin" /> : <Volume2 className="w-4 h-4" />}
+            </button>
+            <div className="min-w-0">
+              <p className="font-chinese text-xl text-gray-800 dark:text-gray-200">{ex.zh}</p>
+              <p className="text-xs text-violet-500">{ex.py}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 italic">{ex.en}</p>
+            </div>
           </div>
         ))}
       </div>
@@ -263,7 +387,7 @@ function GrammarCard({ step, onNext }: { step: StepGrammar; onNext: () => void }
       <button onClick={onNext}
         className="w-full py-3 bg-violet-600 hover:bg-violet-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors"
       >
-        Got it! <ChevronRight className="w-4 h-4" />
+        {t('session.gotIt')} <ChevronRight className="w-4 h-4" />
       </button>
     </motion.div>
   )
@@ -318,6 +442,7 @@ function MatchCard({ step, onNext, onHit, onMiss }: {
   onHit: (zh: string) => void
   onMiss: (zh: string) => void
 }) {
+  const { t } = useTranslation()
   const [leftSel, setLeftSel] = useState<string | null>(null)
   const [matched, setMatched] = useState<Set<string>>(new Set())
   const [flash, setFlash] = useState<string | null>(null)
@@ -356,7 +481,7 @@ function MatchCard({ step, onNext, onHit, onMiss }: {
   return (
     <motion.div key="match" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
       <p className="text-center text-sm font-semibold text-gray-600 dark:text-gray-400">
-        Tap a character, then tap its English meaning.
+        {t('session.matchInstruction')}
       </p>
       <div className="grid grid-cols-2 gap-2.5">
         <div className="space-y-2">
@@ -382,7 +507,7 @@ function MatchCard({ step, onNext, onHit, onMiss }: {
       </div>
       {matched.size < step.pairs.length * 2 && (
         <p className="text-center text-xs text-gray-500 dark:text-gray-400">
-          {matched.size / 2} / {step.pairs.length} matched
+          {t('session.matched', { done: matched.size / 2, total: step.pairs.length })}
         </p>
       )}
     </motion.div>
@@ -390,6 +515,7 @@ function MatchCard({ step, onNext, onHit, onMiss }: {
 }
 
 function FillCard({ step, onCorrect, onWrong }: { step: StepFill; onCorrect: () => void; onWrong: () => void }) {
+  const { t } = useTranslation()
   const [selected, setSelected] = useState<number | null>(null)
   const fb = step.fb
 
@@ -411,7 +537,7 @@ function FillCard({ step, onCorrect, onWrong }: { step: StepFill; onCorrect: () 
         <p className="text-xs font-mono text-primary-500 leading-relaxed">{sentencePy}</p>
         <p className="text-xs text-gray-500 dark:text-gray-400 italic">{fb.sentence_en}</p>
       </div>
-      <p className="text-center text-sm font-semibold text-gray-600 dark:text-gray-400">Choose the correct word:</p>
+      <p className="text-center text-sm font-semibold text-gray-600 dark:text-gray-400">{t('session.chooseWord')}</p>
       <div className="grid grid-cols-2 gap-2">
         {fb.options.map((opt, i) => {
           const isSel = selected === i
@@ -437,6 +563,7 @@ function FillCard({ step, onCorrect, onWrong }: { step: StepFill; onCorrect: () 
 }
 
 function ListenCard({ step, onCorrect, onWrong }: { step: StepListen; onCorrect: () => void; onWrong: () => void }) {
+  const { t } = useTranslation()
   const [selected, setSelected] = useState<number | null>(null)
   const [playing, setPlaying] = useState(false)
   // loading = fetching from backend · ready = audio in hand · error = tap to retry
@@ -491,7 +618,7 @@ function ListenCard({ step, onCorrect, onWrong }: { step: StepListen; onCorrect:
       audio.currentTime = 0
       await audio.play()
     } catch {
-      toast.error('Audio belum siap — coba lagi sebentar', { duration: 2500 })
+      toast.error(t('session.audioNotReady'), { duration: 2500 })
     }
     setPlaying(false)
   }
@@ -507,7 +634,7 @@ function ListenCard({ step, onCorrect, onWrong }: { step: StepListen; onCorrect:
   return (
     <motion.div key={step.zh} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
       <div className="text-center space-y-3">
-        <span className="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-widest">Listening</span>
+        <span className="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-widest">{t('session.listening')}</span>
         <button onClick={play} disabled={playing}
           className="w-20 h-20 mx-auto rounded-3xl bg-sky-50 dark:bg-sky-950/40 flex items-center justify-center hover:bg-sky-100 dark:hover:bg-sky-900/40 transition-colors disabled:opacity-60"
         >
@@ -519,10 +646,10 @@ function ListenCard({ step, onCorrect, onWrong }: { step: StepListen; onCorrect:
         </button>
         <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
           {audioState === 'loading'
-            ? 'Menyiapkan audio…'
+            ? t('session.preparingAudio')
             : audioState === 'error'
-              ? 'Audio gagal dimuat — tap tombol untuk coba lagi'
-              : 'Which character did you hear?'}
+              ? t('session.audioError')
+              : t('session.whichCharacter')}
         </p>
         {selected !== null && (
           <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -555,6 +682,7 @@ function ListenCard({ step, onCorrect, onWrong }: { step: StepListen; onCorrect:
 // ── Main Session Player ───────────────────────────────────────────────────────
 
 export default function LearningSession() {
+  const { t } = useTranslation()
   const { sessionId } = useParams<{ sessionId: string }>()
   const navigate = useNavigate()
   const [steps, setSteps] = useState<Step[]>([])
@@ -608,7 +736,7 @@ export default function LearningSession() {
           setWrong(save.wrong ?? 0)
           setStepKey(save.currentIdx)
           fetchImages(save.steps)
-          toast('▶ Melanjutkan sesi yang belum selesai', { duration: 2500 })
+          toast(t('session.resume'), { duration: 2500 })
           return
         }
         sessionStorage.removeItem(getSaveKey(sessionId))
@@ -804,7 +932,7 @@ export default function LearningSession() {
         learningApi.seedWords(session.words.map(w => w.zh)).catch(() => {})
       }
     } catch {
-      toast.error('Gagal menyimpan progress — coba ulangi sesi')
+      toast.error(t('session.saveFailed'))
     } finally {
       setSaving(false)
     }
@@ -814,12 +942,12 @@ export default function LearningSession() {
     return (
       <div className="max-w-md mx-auto px-4 pb-16 pt-16 text-center space-y-4">
         <p className="text-4xl">🔒</p>
-        <p className="text-gray-700 dark:text-gray-300 font-semibold">Konten sesi ini belum tersedia.</p>
+        <p className="text-gray-700 dark:text-gray-300 font-semibold">{t('session.noContent')}</p>
         <button
           onClick={() => navigate('/path')}
           className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" /> Kembali ke Kursus
+          <ArrowLeft className="w-4 h-4" /> {t('session.backToCourse')}
         </button>
       </div>
     )
@@ -888,7 +1016,7 @@ export default function LearningSession() {
 
           <div>
             <h2 className="text-2xl font-extrabold text-gray-900 dark:text-gray-50">
-              {score >= 90 ? 'Sempurna! 🎉' : score >= 70 ? 'Bagus! 👍' : 'Selesai! 💪'}
+              {score >= 90 ? t('session.perfect') : score >= 70 ? t('session.good') : t('session.done')}
             </h2>
             <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{sessionMeta?.title}</p>
           </div>
@@ -896,9 +1024,9 @@ export default function LearningSession() {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-3">
             {[
-              { label: 'Skor',   value: `${score}%`,   color: score >= 70 ? 'text-success-600 dark:text-success-400' : 'text-orange-600 dark:text-orange-400' },
-              { label: 'Benar', value: correct,         color: 'text-success-600 dark:text-success-400' },
-              { label: 'Salah', value: wrong,           color: wrong > 0 ? 'text-error-500' : 'text-gray-500 dark:text-gray-400' },
+              { label: t('session.score'),   value: `${score}%`,   color: score >= 70 ? 'text-success-600 dark:text-success-400' : 'text-orange-600 dark:text-orange-400' },
+              { label: t('session.correct'), value: correct,         color: 'text-success-600 dark:text-success-400' },
+              { label: t('session.wrong'),   value: wrong,           color: wrong > 0 ? 'text-error-500' : 'text-gray-500 dark:text-gray-400' },
             ].map(({ label, value, color }) => (
               <div key={label} className="bg-gray-50 dark:bg-surface-card rounded-2xl p-3 text-center">
                 <p className={`text-2xl font-extrabold ${color}`}>{value}</p>
@@ -916,11 +1044,11 @@ export default function LearningSession() {
               className="flex items-center justify-center gap-2 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-2xl py-3 px-4"
             >
               <Zap className="w-5 h-5 text-amber-500" />
-              <span className="font-bold text-amber-700 dark:text-amber-400">+{xpEarned} XP earned!</span>
+              <span className="font-bold text-amber-700 dark:text-amber-400">{t('session.xpEarned', { xp: xpEarned })}</span>
             </motion.div>
           )}
           {!isNew && (
-            <p className="text-xs text-gray-500 dark:text-gray-400">Session reviewed — no extra XP for repeats.</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t('session.noRepeatXp')}</p>
           )}
 
           {saving && <Loader2 className="w-5 h-5 animate-spin text-primary-500 mx-auto" />}
@@ -934,10 +1062,10 @@ export default function LearningSession() {
               className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-2xl p-3 text-center"
             >
               <span className="text-2xl">🎊</span>
-              <p className="font-bold text-amber-800 dark:text-amber-300 text-sm mt-1">Unit Selesai!</p>
+              <p className="font-bold text-amber-800 dark:text-amber-300 text-sm mt-1">{t('session.unitComplete')}</p>
               {nextUnitInfo && (
                 <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
-                  {nextUnitInfo.emoji} Berikutnya: {nextUnitInfo.title} · {nextUnitInfo.subtitle}
+                  {t('session.nextUp', { emoji: nextUnitInfo.emoji, title: nextUnitInfo.title, subtitle: nextUnitInfo.subtitle })}
                 </p>
               )}
             </motion.div>
@@ -952,15 +1080,15 @@ export default function LearningSession() {
               >
                 <ChevronRight className="w-4 h-4" />
                 {isLastInUnit && nextUnitInfo
-                  ? `Mulai ${nextUnitInfo.title}`
-                  : 'Lanjut ke Sesi Berikutnya'}
+                  ? t('session.startUnit', { title: nextUnitInfo.title })
+                  : t('session.nextSession')}
               </button>
             ) : (
               <button
                 onClick={() => navigate('/path')}
                 className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors"
               >
-                <Trophy className="w-4 h-4" /> Lihat Semua Kursus
+                <Trophy className="w-4 h-4" /> {t('session.viewAllCourses')}
               </button>
             )}
 
@@ -970,7 +1098,7 @@ export default function LearningSession() {
                 onClick={() => navigate('/path')}
                 className="w-full py-2.5 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm"
               >
-                Kembali ke Kursus
+                {t('session.backToCourse')}
               </button>
             )}
 
@@ -986,7 +1114,7 @@ export default function LearningSession() {
               }}
               className="w-full py-2.5 text-gray-500 dark:text-gray-400 font-medium rounded-xl hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm"
             >
-              Ulangi Sesi
+              {t('session.replay')}
             </button>
           </div>
         </motion.div>

@@ -267,6 +267,23 @@ export default function LearningPath() {
                       transition={{ duration: 0.25, ease: 'easeInOut' }}
                       style={{ overflow: 'hidden' }}
                     >
+                      {/* Lesson-design intro — first unit only: explains why sessions
+                          have no back button (memorization by retrieval, not re-reading) */}
+                      {unitIdx === 0 && (
+                        <div className="border-t border-gray-100 dark:border-gray-800 px-4 py-3">
+                          <div className="flex gap-2.5 bg-sky-50 dark:bg-sky-950/30 border border-sky-100 dark:border-sky-900/40 rounded-xl p-3">
+                            <span className="text-base leading-none">🧭</span>
+                            <div className="min-w-0">
+                              <p className="text-[10px] font-bold uppercase tracking-wide text-sky-700 dark:text-sky-400">
+                                {t('learningPath.lessonDesignTitle')}
+                              </p>
+                              <p className="text-xs text-sky-800 dark:text-sky-300/90 leading-relaxed mt-0.5">
+                                {t('learningPath.lessonDesign')}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       {/* Cultural tip — context that makes the unit memorable */}
                       {unit.culturalNote && (
                         <div className="border-t border-gray-100 dark:border-gray-800 px-4 py-3">
