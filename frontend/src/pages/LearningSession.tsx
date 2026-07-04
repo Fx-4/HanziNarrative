@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next'
 import toast from 'react-hot-toast'
 import { createLogger } from '@/utils/debugLogger'
 import TonedPinyin from '@/components/TonedPinyin'
+import HanziBreakdown from '@/components/HanziBreakdown'
 import { playFeedback } from '@/utils/feedbackSfx'
 
 const learningSessionLogger = createLogger('LearningSession')
@@ -248,7 +249,11 @@ function IntroCard({ step, onNext, imageUrl }: { step: StepIntro; onNext: () => 
       )}
 
       <div>
-        <p className="font-chinese text-7xl font-bold text-gray-900 dark:text-gray-50">{step.word.zh}</p>
+        {/* Each character is tappable — shows that hanzi's own pinyin + meaning */}
+        <p>
+          <HanziBreakdown text={step.word.zh} className="font-chinese text-7xl font-bold text-gray-900 dark:text-gray-50" />
+        </p>
+        <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-1.5">{t('session.tapChar')}</p>
         <p className="text-lg mt-2 flex items-center justify-center gap-1.5">
           <TonedPinyin py={step.word.py} />
           <button
@@ -304,7 +309,7 @@ function IntroCard({ step, onNext, imageUrl }: { step: StepIntro; onNext: () => 
               {examplePlaying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Volume2 className="w-3.5 h-3.5" />}
             </button>
           </div>
-          <p className="font-chinese text-xl text-gray-900 dark:text-gray-100">{step.word.example.zh}</p>
+          <p><HanziBreakdown text={step.word.example.zh} className="font-chinese text-xl text-gray-900 dark:text-gray-100" /></p>
           <p className="text-xs mt-0.5"><TonedPinyin py={step.word.example.py} /></p>
           <p className="text-xs text-gray-500 dark:text-gray-400 italic mt-0.5">{step.word.example.en}</p>
         </div>
