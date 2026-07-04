@@ -1070,6 +1070,26 @@ const FEEDBACK_TYPE_META: Record<string, { label: string; icon: React.ElementTyp
   error: { label: 'Error', icon: AlertTriangle, color: 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30' },
 }
 
+function buildFeedbackCopyText(item: FeedbackItem): string {
+  const meta = FEEDBACK_TYPE_META[item.type] ?? FEEDBACK_TYPE_META.general
+  const lines: string[] = [
+    `Type: ${meta.label}`,
+    `Subject: ${item.subject}`,
+    `From: ${item.username ?? 'Anonymous'} · ${new Date(item.created_at).toLocaleString()}`,
+  ]
+  if (item.page_url) lines.push(`Page: ${item.page_url}`)
+  lines.push('', 'Message:', item.message)
+  if (item.element_selectors && item.element_selectors.length > 0) {
+    lines.push('', item.element_selectors.length > 1 ? 'Elements:' : 'Element:')
+    item.element_selectors.forEach(sel => lines.push(sel))
+  }
+  if (item.attachment_urls && item.attachment_urls.length > 0) {
+    lines.push('', 'Attachments:')
+    item.attachment_urls.forEach(url => lines.push(url))
+  }
+  return lines.join('\n')
+}
+
 function InboxTab({ onUnreadChange }: { onUnreadChange: (n: number) => void }) {
   const [items, setItems] = useState<FeedbackItem[]>([])
   const [total, setTotal] = useState(0)
@@ -1143,6 +1163,37 @@ function InboxTab({ onUnreadChange }: { onUnreadChange: (n: number) => void }) {
     setCopiedId(id)
     toast.success('Copied to clipboard!')
     setTimeout(() => setCopiedId(null), 2000)
+  }
+
+  const handleCopyAll = async (item: FeedbackItem) => {
+    const text = buildFeedbackCopyText(item)
+    const markCopied = (msg: string) => {
+      setCopiedId(`all-${item.id}`)
+      toast.success(msg)
+      setTimeout(() => setCopiedId(null), 2000)
+    }
+    try {
+      if (item.attachment_urls && item.attachment_urls.length > 0 && typeof ClipboardItem !== 'undefined') {
+        // text/html variant so rich editors (Word, Gmail, Notion) paste the images inline
+        const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+        const html =
+          `<pre style="font-family:inherit;white-space:pre-wrap">${esc(text)}</pre>` +
+          item.attachment_urls.map(url => `<img src="${esc(url)}" alt="feedback attachment" style="max-width:480px" />`).join('<br/>')
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            'text/plain': new Blob([text], { type: 'text/plain' }),
+            'text/html': new Blob([html], { type: 'text/html' }),
+          }),
+        ])
+        markCopied('Full feedback copied!')
+      } else {
+        await navigator.clipboard.writeText(text)
+        markCopied('Full feedback copied!')
+      }
+    } catch {
+      await navigator.clipboard.writeText(text)
+      markCopied('Feedback copied (text only)')
+    }
   }
 
   return (
@@ -1226,9 +1277,18 @@ function InboxTab({ onUnreadChange }: { onUnreadChange: (n: number) => void }) {
                     <p className={`text-sm font-medium truncate ${item.is_read ? 'text-gray-700 dark:text-gray-300' : 'text-gray-900 dark:text-gray-100'}`}>
                       {item.subject}
                     </p>
-                    <span className="text-xs text-gray-400 shrink-0">
-                      {new Date(item.created_at).toLocaleDateString()}
-                    </span>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <span className="text-xs text-gray-400">
+                        {new Date(item.created_at).toLocaleDateString()}
+                      </span>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleCopyAll(item) }}
+                        title="Copy full feedback (type, subject, message, elements, images)"
+                        className="p-1 rounded-lg text-gray-300 dark:text-gray-600 hover:text-primary-500 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+                      >
+                        {copiedId === `all-${item.id}` ? <Check className="w-3.5 h-3.5 text-success-500" /> : <Copy className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
                   </div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                     {item.username ?? 'Anonymous'}
@@ -1317,6 +1377,13 @@ function InboxTab({ onUnreadChange }: { onUnreadChange: (n: number) => void }) {
                       )}
 
                       <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleCopyAll(item)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 hover:bg-primary-100 dark:hover:bg-primary-900/30 cursor-pointer transition-colors"
+                        >
+                          {copiedId === `all-${item.id}` ? <Check className="w-3.5 h-3.5 text-success-500" /> : <Copy className="w-3.5 h-3.5" />}
+                          Copy all
+                        </button>
                         <button
                           onClick={() => handleMarkRead(item)}
                           disabled={actionId === item.id}
