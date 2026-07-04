@@ -1,7 +1,6 @@
 ﻿import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { playTTS } from '@/utils/ttsHelper'
-import { API_URL } from '@/lib/env'
 import { vocabularyApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { HanziWord } from '@/types'
@@ -24,9 +23,6 @@ import {
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import BlurText from '@/components/animations/BlurText'
-import { createLogger } from '@/utils/debugLogger'
-
-const mockTestLogger = createLogger('MockTest')
 
 type TestSection = 'listening' | 'reading' | 'writing'
 
@@ -260,18 +256,18 @@ export default function MockTest() {
     // Track current section answers via ref to avoid stale closure issues
     const answersRef = useRef<(number | null)[]>([])
 
-    // SSE timer
-    const timerAbortRef = useRef<AbortController | null>(null)
+    // Local countdown timer
+    const timerIdRef = useRef<ReturnType<typeof setInterval> | null>(null)
     const testStartRef = useRef<number>(0)
 
     const currentSection = SECTION_ORDER[sectionIndex]
     const meta = SECTION_META[currentSection]
     const SectionIcon = meta.icon
 
-    // Stop TTS on unmount
+    // Stop timer on unmount
     useEffect(() => {
         return () => {
-            timerAbortRef.current?.abort()
+            if (timerIdRef.current) clearInterval(timerIdRef.current)
         }
     }, [])
 
@@ -288,14 +284,23 @@ export default function MockTest() {
         stopSpeech()
         setIsSpeaking(true)
         try {
-            const audio = await playTTS({ text, speakingRate: 0.85 })
+            // playTTS already starts playback — don't call play() twice
+            const audio = await playTTS({ text, speakingRate: 0.85, retries: 1 })
             audioRef.current = audio
             audio.onended = () => setIsSpeaking(false)
             audio.onerror = () => setIsSpeaking(false)
-            await audio.play()
-        } catch (e) {
-            // Fallback to browser
-            setIsSpeaking(false)
+        } catch {
+            // Last resort: browser speechSynthesis so listening questions never go silent
+            try {
+                const utter = new SpeechSynthesisUtterance(text)
+                utter.lang = 'zh-CN'
+                utter.onend = () => setIsSpeaking(false)
+                utter.onerror = () => setIsSpeaking(false)
+                speechSynthesis.cancel()
+                speechSynthesis.speak(utter)
+            } catch {
+                setIsSpeaking(false)
+            }
         }
     }, [stopSpeech])
 
@@ -312,67 +317,13 @@ export default function MockTest() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentQ, sectionIndex, page])
 
-    // ── SSE Timer ─────────────────────────────────────────────────────────────
+    // ── Question countdown (local interval — reliable, no backend dependency) ──
     const stopTimer = () => {
-        timerAbortRef.current?.abort()
-        timerAbortRef.current = null
+        if (timerIdRef.current) {
+            clearInterval(timerIdRef.current)
+            timerIdRef.current = null
+        }
     }
-
-    const startTimer = useCallback((seconds: number) => {
-        stopTimer()
-        const token = localStorage.getItem('access_token')
-        const abort = new AbortController()
-        timerAbortRef.current = abort
-        setTimeLeft(seconds)
-
-        fetch(`${API_URL}/mock-test/timer-stream?seconds=${seconds}`, {
-            headers: token ? { Authorization: `Bearer ${token}` } : {},
-            signal: abort.signal,
-        })
-            .then(res => {
-                if (!res.ok || !res.body) return
-                const reader = res.body.getReader()
-                const decoder = new TextDecoder()
-                let buffer = ''
-                const pump = (): Promise<void> =>
-                    reader.read().then(({ done, value }) => {
-                        if (done || abort.signal.aborted) return
-                        buffer += decoder.decode(value, { stream: true })
-                        const parts = buffer.split('\n\n')
-                        buffer = parts.pop() ?? ''
-                        for (const part of parts) {
-                            const line = part.trim()
-                            if (!line.startsWith('data:')) continue
-                            try {
-                                const payload = JSON.parse(line.slice(5).trim())
-                                if (payload.type === 'tick') {
-                                    setTimeLeft(payload.remaining)
-                                } else if (payload.type === 'done') {
-                                    autoAdvance()
-                                    return
-                                }
-                            } catch { /* malformed SSE line — skip */ }
-                        }
-                        return pump()
-                    })
-                return pump()
-            })
-            .catch(err => {
-                if (err?.name !== 'AbortError') {
-                    mockTestLogger.error('Timer SSE error — falling back to local countdown', err)
-                    let remaining = seconds
-                    const id = setInterval(() => {
-                        remaining -= 1
-                        setTimeLeft(remaining)
-                        if (remaining <= 0) {
-                            clearInterval(id)
-                            autoAdvance()
-                        }
-                    }, 1000)
-                }
-            })
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
 
     const autoAdvance = () => {
         // Mark current question as timed-out (-1)
@@ -391,11 +342,30 @@ export default function MockTest() {
         }
     }
 
-    // Re-start timer when question changes
+    // Interval callbacks must see the LATEST autoAdvance (fresh state), not the
+    // closure from the render that created the interval
+    const autoAdvanceRef = useRef(autoAdvance)
+    autoAdvanceRef.current = autoAdvance
+
+    // (Re)start countdown when the question changes
     useEffect(() => {
-        if (page === 'question') startTimer(meta.timePerQ)
+        if (page !== 'question') return
+        stopTimer()
+        let remaining = meta.timePerQ
+        setTimeLeft(remaining)
+        const id = setInterval(() => {
+            remaining -= 1
+            setTimeLeft(remaining)
+            if (remaining <= 0) {
+                clearInterval(id)
+                if (timerIdRef.current === id) timerIdRef.current = null
+                autoAdvanceRef.current()
+            }
+        }, 1000)
+        timerIdRef.current = id
+        return () => clearInterval(id)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentQ, page])
+    }, [currentQ, sectionIndex, page])
 
     // ── Test flow ─────────────────────────────────────────────────────────────
     const startTest = async () => {
