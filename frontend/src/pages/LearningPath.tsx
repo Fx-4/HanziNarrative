@@ -7,7 +7,7 @@ import { fetchTTSAudio } from '@/utils/ttsHelper'
 import {
   CheckCircle, Lock, PlayCircle, RotateCcw, ChevronDown,
   BookOpen, Brain, Dumbbell, Star, Zap, Trophy,
-  RefreshCw,
+  RefreshCw, HelpCircle, X,
 } from 'lucide-react'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useTranslation } from 'react-i18next'
@@ -54,6 +54,19 @@ export default function LearningPath() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [expandedUnit, setExpandedUnit] = useState<string | null>(null)
+  // Beginner guide — auto-opens once for new users, reopenable via the Guide button
+  const [showGuide, setShowGuide] = useState(false)
+
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem('lp-guide-seen')) setShowGuide(true)
+    } catch { /* storage unavailable */ }
+  }, [])
+
+  const closeGuide = () => {
+    setShowGuide(false)
+    try { localStorage.setItem('lp-guide-seen', '1') } catch { /* ignore */ }
+  }
 
   const applyProgress = useCallback((completedIds: string[], statsData: ProgressCache['stats']) => {
     const set = new Set(completedIds)
@@ -143,13 +156,70 @@ export default function LearningPath() {
 
       {/* ── Header ── */}
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="pt-2">
-        <h1 className="text-2xl font-extrabold text-gray-900 dark:text-gray-50">
-          {t('learningPath.title')}
-        </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-          {t('learningPath.subtitle')}
-        </p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-extrabold text-gray-900 dark:text-gray-50">
+              {t('learningPath.title')}
+            </h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+              {t('learningPath.subtitle')}
+            </p>
+          </div>
+          <button
+            onClick={() => setShowGuide(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/40 border border-sky-100 dark:border-sky-900/40 hover:bg-sky-100 dark:hover:bg-sky-900/40 transition-colors flex-shrink-0 mt-1"
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
+            {t('learningPath.guideButton')}
+          </button>
+        </div>
       </motion.div>
+
+      {/* ── Beginner guide modal (auto-opens once; reopenable) ── */}
+      <AnimatePresence>
+        {showGuide && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={closeGuide}
+              className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 16 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+              className="fixed inset-x-4 top-[8vh] z-50 mx-auto max-w-lg max-h-[84vh] overflow-y-auto bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-700 shadow-2xl p-6"
+            >
+              <div className="flex items-start justify-between gap-3 mb-2">
+                <h2 className="text-lg font-extrabold text-gray-900 dark:text-gray-50">{t('learningPath.guide.title')}</h2>
+                <button onClick={closeGuide} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex-shrink-0">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{t('learningPath.guide.intro')}</p>
+
+              <div className="space-y-3">
+                {(['s1', 's2', 's3', 's4'] as const).map(s => (
+                  <div key={s} className="bg-gray-50 dark:bg-gray-800/60 border border-gray-100 dark:border-gray-800 rounded-2xl p-3.5">
+                    <p className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-1">{t(`learningPath.guide.${s}Title`)}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">{t(`learningPath.guide.${s}Body`)}</p>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={closeGuide}
+                className="mt-5 w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-colors"
+              >
+                {t('learningPath.guide.gotIt')}
+              </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* ── Stats bar ── */}
       {stats && (

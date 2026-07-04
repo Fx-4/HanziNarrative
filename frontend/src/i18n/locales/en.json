@@ -121,7 +121,7 @@
       "sub":   "One platform, every tool — from beginner vocabulary to advanced fluency.",
       "items": {
         "aiStories":     { "title": "AI-Generated Stories",  "desc": "Gemini AI crafts immersive narratives calibrated to your HSK level — vocabulary lands in meaningful context, not isolated flashcards." },
-        "vocabulary":    { "title": "HSK 1–6 Vocabulary",    "desc": "1,536 words organized by level with pinyin, tones, definitions, and example sentences. Your entire HSK journey in one place." },
+        "vocabulary":    { "title": "HSK 1–6 Vocabulary",    "desc": "3,500+ words organized by level with pinyin, tones, definitions, audio, and images. Your entire HSK journey in one place." },
         "srs":           { "title": "Spaced Repetition",     "desc": "Our SRS algorithm surfaces forgotten words at exactly the right moment — so you remember more with less review time." },
         "gamification":  { "title": "Gamification",          "desc": "Earn XP, maintain daily streaks, climb the leaderboard, and unlock achievement badges as you master each HSK level." },
         "speaking":      { "title": "Speaking & Listening",  "desc": "Tone trainer, dictation, and pronunciation practice. Chinese tones are hard — we give you dedicated tools to master them." },
@@ -293,7 +293,7 @@
       "subtitle": "Let's set up your personalized Chinese learning experience. It only takes a minute.",
       "cta":      "Let's Get Started",
       "features": {
-        "vocab":   { "title": "HSK 1–6 Vocabulary",   "desc": "1,536 words with pinyin and example sentences." },
+        "vocab":   { "title": "HSK 1–6 Vocabulary",   "desc": "3,500+ words with pinyin, audio, and images." },
         "stories": { "title": "AI-Generated Stories", "desc": "Gemini AI writes stories tailored to your level." },
         "srs":     { "title": "Spaced Repetition",    "desc": "Smart scheduling surfaces words at the right moment." }
       }
@@ -342,7 +342,7 @@
       "showPinyin":     "Show Pinyin by default",
       "showPinyinDesc": "Display romanization with Chinese characters",
       "reminders":      "Daily reminders",
-      "remindersDesc":  "Get notified to practice every day",
+      "remindersDesc":  "Coming soon — we'll remember your choice and enable it when notifications launch",
       "complete":       "Complete Setup"
     },
     "completion": {
@@ -389,6 +389,20 @@
     "culturalTip":  "Cultural tip",
     "lessonDesignTitle": "How lessons work",
     "lessonDesign": "Lessons move forward only — there's no back button inside a session. That's by design: every word comes back later in the lesson (and in Review) so you memorize it instead of re-reading it, and wrong answers are automatically re-queued until you get them right.",
+    "guideButton": "Guide",
+    "guide": {
+      "title":       "New to Mandarin? Start here 👋",
+      "intro":       "No experience needed — this course assumes you know zero Chinese. Here's how everything works:",
+      "s1Title":     "📚 Units & sessions",
+      "s1Body":      "Each unit is a theme (greetings, family, food…) made of short sessions: word lessons, grammar, and a review. Finish a session to unlock the next and earn XP + stars.",
+      "s2Title":     "🎧 Inside a lesson",
+      "s2Body":      "New words come as cards — listen to the audio, read the example, tap any character to see its meaning, and tap ⓘ next to the pinyin to learn about tones. Then quick exercises test you: multiple choice, listening, matching, fill-in-the-blank. Wrong answers simply come back later until you get them right.",
+      "s3Title":     "🎨 Colors = tones",
+      "s3Body":      "Mandarin is tonal: the pitch changes the meaning (mā 妈 mother vs mǎ 马 horse). Pinyin here is color-coded by tone — red 1st, green 2nd, blue 3rd, purple 4th, gray neutral. Learning the tone IS learning the word.",
+      "s4Title":     "🔁 Your daily routine",
+      "s4Body":      "1) Do one or two course sessions. 2) Open Review every day — it schedules exactly the words you're about to forget. 3) After a few units, reinforce with Practice: Writing, Typing, Speaking, and games.",
+      "gotIt":       "Got it — let's learn!"
+    },
     "loadError":    "Failed to load progress.",
     "retry":        "Try again",
     "start":        "Start",
@@ -862,6 +876,7 @@
     "listening":      "Listening",
     "inContext":      "In context",
     "funFact":        "Fun fact",
+    "tapChar":        "Tap any character to see its own meaning",
     "toneTitle":      "Why is the pinyin colored?",
     "toneIntro":      "Mandarin is a tonal language — the pitch of a syllable changes the meaning entirely. mā (妈 mother) and mǎ (马 horse) differ only by tone, so learning the tone IS learning the word. Colors help you remember each tone:",
     "tone1":          "1st tone — high & flat (ā)",

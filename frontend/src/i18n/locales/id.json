@@ -121,7 +121,7 @@
       "sub":   "Satu platform, semua alat — dari kosakata pemula hingga kelancaran tingkat lanjut.",
       "items": {
         "aiStories":     { "title": "Cerita Buatan AI",        "desc": "Gemini AI menciptakan narasi imersif yang disesuaikan dengan level HSK kamu — kosakata hadir dalam konteks bermakna, bukan flashcard terpisah." },
-        "vocabulary":    { "title": "Kosakata HSK 1–6",        "desc": "1.536 kata terorganisir per level dengan pinyin, nada, definisi, dan contoh kalimat. Seluruh perjalanan HSK kamu dalam satu tempat." },
+        "vocabulary":    { "title": "Kosakata HSK 1–6",        "desc": "3.500+ kata terorganisir per level dengan pinyin, nada, definisi, audio, dan gambar. Seluruh perjalanan HSK kamu dalam satu tempat." },
         "srs":           { "title": "Pengulangan Terjadwal",   "desc": "Algoritma SRS kami menampilkan kata yang terlupakan pada waktu yang tepat — sehingga kamu mengingat lebih banyak dengan waktu ulasan lebih sedikit." },
         "gamification":  { "title": "Gamifikasi",              "desc": "Kumpulkan XP, jaga streak harian, naiki papan peringkat, dan buka lencana pencapaian saat kamu menguasai setiap level HSK." },
         "speaking":      { "title": "Berbicara & Mendengarkan","desc": "Pelatih nada, dikte, dan latihan pengucapan. Nada bahasa Mandarin itu sulit — kami berikan alat khusus untuk menguasainya." },
@@ -293,7 +293,7 @@
       "subtitle": "Ayo siapkan pengalaman belajar Mandarin yang dipersonalisasi untukmu. Hanya butuh semenit.",
       "cta":      "Ayo Mulai",
       "features": {
-        "vocab":   { "title": "Kosakata HSK 1–6",   "desc": "1.536 kata dengan pinyin dan contoh kalimat." },
+        "vocab":   { "title": "Kosakata HSK 1–6",   "desc": "3.500+ kata dengan pinyin, audio, dan gambar." },
         "stories": { "title": "Cerita Buatan AI",   "desc": "Gemini AI menulis cerita sesuai levelmu." },
         "srs":     { "title": "Spaced Repetition",  "desc": "Penjadwalan pintar memunculkan kata di saat yang tepat." }
       }
@@ -342,7 +342,7 @@
       "showPinyin":     "Tampilkan Pinyin secara default",
       "showPinyinDesc": "Tampilkan romanisasi bersama karakter Mandarin",
       "reminders":      "Pengingat harian",
-      "remindersDesc":  "Dapatkan notifikasi untuk berlatih setiap hari",
+      "remindersDesc":  "Segera hadir — pilihanmu disimpan dan aktif saat notifikasi dirilis",
       "complete":       "Selesaikan Pengaturan"
     },
     "completion": {
@@ -389,6 +389,20 @@
     "culturalTip":  "Tips budaya",
     "lessonDesignTitle": "Cara kerja pelajaran",
     "lessonDesign": "Pelajaran hanya bergerak maju — tidak ada tombol kembali di dalam sesi. Ini disengaja: setiap kata akan muncul lagi nanti dalam pelajaran (dan di Review) supaya benar-benar hafal, bukan sekadar membaca ulang. Jawaban salah otomatis diulang sampai benar.",
+    "guideButton": "Panduan",
+    "guide": {
+      "title":       "Baru belajar Mandarin? Mulai di sini 👋",
+      "intro":       "Tidak perlu pengalaman — kursus ini mengasumsikan kamu belum tahu bahasa Mandarin sama sekali. Begini cara kerjanya:",
+      "s1Title":     "📚 Unit & sesi",
+      "s1Body":      "Setiap unit adalah satu tema (salam, keluarga, makanan…) berisi sesi-sesi pendek: pelajaran kata, tata bahasa, dan review. Selesaikan sesi untuk membuka sesi berikutnya dan dapatkan XP + bintang.",
+      "s2Title":     "🎧 Di dalam pelajaran",
+      "s2Body":      "Kata baru muncul sebagai kartu — dengarkan audionya, baca contoh kalimat, tap karakter mana pun untuk lihat artinya, dan tap ⓘ di samping pinyin untuk belajar soal nada. Lalu latihan singkat mengujimu: pilihan ganda, menyimak, mencocokkan, isi titik-titik. Jawaban salah otomatis muncul lagi sampai benar.",
+      "s3Title":     "🎨 Warna = nada",
+      "s3Body":      "Mandarin bahasa bernada: tinggi-rendah suara mengubah arti (mā 妈 ibu vs mǎ 马 kuda). Pinyin di sini diberi warna per nada — merah nada 1, hijau nada 2, biru nada 3, ungu nada 4, abu-abu netral. Menghafal nada = menghafal katanya.",
+      "s4Title":     "🔁 Rutinitas harianmu",
+      "s4Body":      "1) Kerjakan satu-dua sesi kursus. 2) Buka Review setiap hari — ia menjadwalkan tepat kata-kata yang hampir kamu lupakan. 3) Setelah beberapa unit, perkuat lewat Practice: Writing, Typing, Speaking, dan game.",
+      "gotIt":       "Mengerti — ayo belajar!"
+    },
     "loadError":    "Gagal memuat progress.",
     "retry":        "Coba lagi",
     "start":        "Mulai",
@@ -862,6 +876,7 @@
     "listening":      "Menyimak",
     "inContext":      "Dalam konteks",
     "funFact":        "Fakta menarik",
+    "tapChar":        "Tap karakter mana pun untuk lihat artinya sendiri",
     "toneTitle":      "Kenapa pinyin-nya berwarna?",
     "toneIntro":      "Mandarin adalah bahasa bernada — tinggi-rendah suku kata mengubah arti sepenuhnya. mā (妈 ibu) dan mǎ (马 kuda) hanya beda nada, jadi menghafal nada = menghafal katanya. Warna membantumu mengingat tiap nada:",
     "tone1":          "Nada 1 — tinggi & datar (ā)",
