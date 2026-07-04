@@ -7,9 +7,9 @@
  */
 
 import axios from 'axios'
+import api from '@/services/api'
 import { getVoiceName, getSpeakingRate } from '@/utils/voicePreference'
 import { buildCacheKey, getAudio, saveAudio } from '@/utils/ttsCache'
-import { API_URL } from '@/lib/env'
 import { createLogger } from '@/utils/debugLogger'
 
 const ttsHelperLogger = createLogger('TTS')
@@ -38,12 +38,16 @@ function createSpeechShim(text: string, lang: string): HTMLAudioElement {
     set onended(fn: (() => void) | null) { _onended = fn },
     get onerror()  { return _onerror },
     set onerror(fn:  (() => void) | null) { _onerror = fn },
-    play: () => new Promise<void>(resolve => {
-      utter.onend   = () => { _onended?.(); resolve() }
-      utter.onerror = () => { _onerror?.();  resolve() }
+    // Resolve at playback START (like a real HTMLAudioElement), not at the end —
+    // callers assign onended AFTER play(), so resolving at the end would fire
+    // the callbacks before they exist and leave "speaking" state stuck.
+    play: () => {
+      utter.onend   = () => { _onended?.() }
+      utter.onerror = () => { _onerror?.() }
       speechSynthesis.cancel()
       speechSynthesis.speak(utter)
-    }),
+      return Promise.resolve()
+    },
     pause: () => { speechSynthesis.cancel() },
     get currentTime() { return 0 },
     set currentTime(_: number) {},
@@ -103,18 +107,19 @@ export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioEleme
     return audio
   }
 
-  // Layer 2: Backend (file cache → edge-tts on miss). Network errors are
-  // retried — usually the Koyeb free tier waking up from cold start.
+  // Layer 2: Backend (file cache → edge-tts on miss) via the shared api instance,
+  // so TTS gets 401 auto-refresh + backend wake-up retry for free. Network errors
+  // are additionally retried here — usually the Koyeb free tier cold start.
   let response
   const maxAttempts = 1 + Math.max(0, retries)
   let lastErr: unknown
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     if (attempt > 0) await new Promise(r => setTimeout(r, RETRY_DELAY_MS))
     try {
-      response = await axios.post(
-        `${API_URL}/tts/synthesize`,
+      response = await api.post(
+        '/tts/synthesize',
         { text, language, voice_name: voice, speaking_rate: rate },
-        { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' }
+        { responseType: 'blob' }
       )
       break
     } catch (err) {
