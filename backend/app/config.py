@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     # Pixabay — free image API fallback (register at https://pixabay.com/api/docs/)
     PIXABAY_API_KEY: str = ""
 
+    # Giphy — fun/motivation GIFs (register at https://developers.giphy.com/)
+    # Optional: feature hides gracefully when empty
+    GIPHY_API_KEY: str = ""
+
     # Frontend URL (for OAuth callbacks and reset links)
     FRONTEND_URL: str = "http://localhost:5173"
     ALLOWED_REDIRECT_ORIGINS: str = "https://hanzi-narrative.vercel.app,http://localhost:5173,http://127.0.0.1:5173"

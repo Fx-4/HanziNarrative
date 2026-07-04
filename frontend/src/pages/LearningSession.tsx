@@ -2,7 +2,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getSession, getUnitWords, ALL_UNITS, Word, GrammarPoint, FillBlank } from '@/data/curriculum'
-import { learningPathApi, learningApi } from '@/services/api'
+import { learningPathApi, learningApi, funApi } from '@/services/api'
 import { fetchTTSAudio } from '@/utils/ttsHelper'
 import { pinyin as toPinyin } from 'pinyin-pro'
 
@@ -703,6 +703,8 @@ export default function LearningSession() {
   const [nextSessionId, setNextSessionId] = useState<string | null>(null)
   const [isLastInUnit, setIsLastInUnit] = useState(false)
   const [nextUnitInfo, setNextUnitInfo] = useState<{ title: string; subtitle: string; emoji: string } | null>(null)
+  // Giphy morale booster on the completion screen (hidden when backend has no key)
+  const [funGif, setFunGif] = useState<string | null>(null)
 
   useEffect(() => {
     if (!sessionId) return
@@ -872,6 +874,12 @@ export default function LearningSession() {
     setDone(true)
     sessionStorage.setItem('lp-cache-invalid', '1')
 
+    // Meme booster (fire-and-forget) — celebratory when passing, motivational otherwise
+    setFunGif(null)
+    funApi.getGif(score >= 70 ? 'celebrate' : 'motivate')
+      .then(r => { if (r.available && r.url) setFunGif(r.url) })
+      .catch(() => { /* optional feature */ })
+
     // Feed per-word results into SRS (fire-and-forget): a word answered
     // wrong at least once this session schedules an earlier review (SM-2 q=2)
     const resultEntries = Object.entries(resultsRef.current)
@@ -1020,6 +1028,18 @@ export default function LearningSession() {
             </h2>
             <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{sessionMeta?.title}</p>
           </div>
+
+          {/* Meme booster (Giphy) — only renders when the backend has a key */}
+          {funGif && (
+            <motion.img
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              src={funGif}
+              alt="celebration gif"
+              loading="lazy"
+              className="mx-auto rounded-2xl max-h-48 shadow-md"
+            />
+          )}
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-3">

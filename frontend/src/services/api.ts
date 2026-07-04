@@ -1064,6 +1064,16 @@ export const adminApi = {
   },
 }
 
+// ── Fun API (Giphy morale boosters) ────────────────────────────────────────────
+
+export const funApi = {
+  /** mood: 'celebrate' | 'motivate' | 'break' — available=false when GIPHY_API_KEY unset */
+  getGif: async (mood: 'celebrate' | 'motivate' | 'break') => {
+    const response = await api.get('/fun/gif', { params: { mood } })
+    return response.data as { available: boolean; url: string | null; title: string | null }
+  },
+}
+
 // ── Feedback API (user-facing) ─────────────────────────────────────────────────
 
 export const feedbackApi = {
