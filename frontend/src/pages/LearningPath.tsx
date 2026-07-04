@@ -1,8 +1,9 @@
-﻿import { useState, useEffect, useCallback } from 'react'
+﻿import { useState, useEffect, useCallback, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CURRICULUM, UnitDef, SessionDef } from '@/data/curriculum'
 import { learningPathApi, LessonProgressRecord } from '@/services/api'
+import { fetchTTSAudio } from '@/utils/ttsHelper'
 import {
   CheckCircle, Lock, PlayCircle, RotateCcw, ChevronDown,
   BookOpen, Brain, Dumbbell, Star, Zap, Trophy,
@@ -107,6 +108,33 @@ export default function LearningPath() {
   useEffect(() => {
     loadProgress()
   }, [loadProgress])
+
+  // ── TTS pre-warm per unit ─────────────────────────────────────────────────
+  // When a unit is expanded, quietly fetch every audio the unit's sessions will
+  // play (words, example sentences, grammar examples) into the IndexedDB/backend
+  // cache — so inside the session there is no per-word loading wait.
+  const prewarmedUnitsRef = useRef<Set<string>>(new Set())
+
+  useEffect(() => {
+    if (!expandedUnit || prewarmedUnitsRef.current.has(expandedUnit)) return
+    if (!localStorage.getItem('access_token')) return
+    const unit = (CURRICULUM[activeLevel] ?? []).find(u => u.id === expandedUnit)
+    if (!unit || unit.locked) return
+    prewarmedUnitsRef.current.add(expandedUnit)
+
+    const texts = [...new Set(unit.sessions.flatMap(s => [
+      ...(s.words ?? []).flatMap(w => [w.zh, ...(w.example ? [w.example.zh] : [])]),
+      ...(s.grammarPoints ?? []).flatMap(gp => gp.examples.map(ex => ex.zh)),
+    ]))]
+
+    // Staggered fire-and-forget — cached items resolve instantly from IndexedDB,
+    // misses warm the backend file cache without hammering it
+    texts.forEach((zh, i) => {
+      setTimeout(() => {
+        fetchTTSAudio({ text: zh, allowBrowserFallback: false }).catch(() => { /* silent */ })
+      }, i * 250)
+    })
+  }, [expandedUnit, activeLevel])
 
   const units = CURRICULUM[activeLevel] ?? []
 
