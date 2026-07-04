@@ -9,6 +9,13 @@
       "port": 5173
     },
     {
+      "name": "backend",
+      "runtimeExecutable": "C:\\Users\\Haikal\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "runtimeArgs": ["-m", "uvicorn", "app.main:app", "--port", "8000"],
+      "cwd": "D:\\uii\\belajar mandiri\\learn-HSK\\backend",
+      "port": 8000
+    },
+    {
       "name": "promo",
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "4321", "--directory", "marketing"],
