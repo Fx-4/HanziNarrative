@@ -94,6 +94,44 @@ export default function WritingCanvas({
     }
   }
 
+  // Shared quiz callbacks — used by initial mount, Reset, and Stroke Guide restart
+  // so the three paths can never drift apart again
+  const quizCallbacks = {
+    onMistake: (strokeData: HanziStrokeData) => {
+      mistakesRef.current = strokeData.totalMistakes ?? (mistakesRef.current + 1)
+      setMistakes(mistakesRef.current)
+      if (strokeData.strokeNum !== undefined && strokeData.strokesRemaining !== undefined) {
+        const total = strokeData.strokeNum + strokeData.strokesRemaining + 1
+        totalStrokesRef.current = total
+        setTotalStrokes(total)
+      }
+    },
+    onCorrectStroke: (strokeData: HanziStrokeData) => {
+      if (strokeData.strokeNum !== undefined && strokeData.strokesRemaining !== undefined) {
+        const total = strokeData.strokeNum + strokeData.strokesRemaining + 1
+        totalStrokesRef.current = total
+        setTotalStrokes(total)
+      }
+      setStrokesCompleted(prev => {
+        const newCount = prev + 1
+        if (newCount === 1) startTimeRef.current = Date.now()
+        return newCount
+      })
+    },
+    onComplete: (summaryData: HanziSummaryData) => handleCompleteRef.current(summaryData)
+  }
+
+  // Quiz always restarts from stroke 0, so the visible progress must restart too —
+  // otherwise the counter/bar keep their old value and overflow past 100%
+  const resetProgress = () => {
+    mistakesRef.current = 0
+    startTimeRef.current = null
+    setStrokesCompleted(0)
+    setMistakes(0)
+    setIsComplete(false)
+    setAccuracy(0)
+  }
+
   useEffect(() => {
     if (!canvasRef.current || canvasSize === 0) return
 
@@ -145,34 +183,7 @@ export default function WritingCanvas({
 
       writerRef.current = writer
 
-      writer.quiz({
-        onMistake: (strokeData: HanziStrokeData) => {
-          mistakesRef.current = strokeData.totalMistakes ?? (mistakesRef.current + 1)
-          setMistakes(mistakesRef.current)
-          if (strokeData.strokeNum !== undefined && strokeData.strokesRemaining !== undefined) {
-            const total = strokeData.strokeNum + strokeData.strokesRemaining + 1
-            totalStrokesRef.current = total
-            setTotalStrokes(total)
-          }
-        },
-        onCorrectStroke: (strokeData: HanziStrokeData) => {
-          if (strokeData.strokeNum !== undefined && strokeData.strokesRemaining !== undefined) {
-            const total = strokeData.strokeNum + strokeData.strokesRemaining + 1
-            totalStrokesRef.current = total
-            setTotalStrokes(total)
-          }
-          setStrokesCompleted(prev => {
-            const newCount = prev + 1
-            if (newCount === 1) {
-              startTimeRef.current = Date.now()
-            }
-            return newCount
-          })
-        },
-        onComplete: (summaryData: HanziSummaryData) => {
-          handleCompleteRef.current(summaryData)
-        }
-      })
+      writer.quiz(quizCallbacks)
     } catch (error) {
       writingCanvasLogger.error(`Error creating HanziWriter for ${character.simplified}:`, error)
     }
@@ -201,40 +212,9 @@ export default function WritingCanvas({
   const handleReset = () => {
     if (!writerRef.current) return
     writerRef.current.cancelQuiz()
-
-    // Reset refs
-    mistakesRef.current = 0
     totalStrokesRef.current = 0
-
-    writerRef.current.quiz({
-      onMistake: (strokeData: HanziStrokeData) => {
-        mistakesRef.current = strokeData.totalMistakes ?? (mistakesRef.current + 1)
-        setMistakes(mistakesRef.current)
-        if (strokeData.strokeNum !== undefined && strokeData.strokesRemaining !== undefined) {
-          const total = strokeData.strokeNum + strokeData.strokesRemaining + 1
-          totalStrokesRef.current = total
-          setTotalStrokes(total)
-        }
-      },
-      onCorrectStroke: (strokeData: HanziStrokeData) => {
-        if (strokeData.strokeNum !== undefined && strokeData.strokesRemaining !== undefined) {
-          const total = strokeData.strokeNum + strokeData.strokesRemaining + 1
-          totalStrokesRef.current = total
-          setTotalStrokes(total)
-        }
-        setStrokesCompleted(prev => {
-          const newCount = prev + 1
-          if (newCount === 1) startTimeRef.current = Date.now()
-          return newCount
-        })
-      },
-      onComplete: (summaryData: HanziSummaryData) => handleCompleteRef.current(summaryData)
-    })
-    setStrokesCompleted(0)
-    setMistakes(0)
-    startTimeRef.current = null
-    setIsComplete(false)
-    setAccuracy(0)
+    writerRef.current.quiz(quizCallbacks)
+    resetProgress()
   }
 
   const toggleHints = () => setShowHints(h => !h)
@@ -250,31 +230,10 @@ export default function WritingCanvas({
         if (!writerRef.current) return
         setIsAnimating(false)
         writerRef.current.hideCharacter()
-        // Restart quiz after animation
-        writerRef.current.quiz({
-          onMistake: (strokeData: HanziStrokeData) => {
-            mistakesRef.current = strokeData.totalMistakes ?? (mistakesRef.current + 1)
-            setMistakes(mistakesRef.current)
-            if (strokeData.strokeNum !== undefined && strokeData.strokesRemaining !== undefined) {
-              const total = strokeData.strokeNum + strokeData.strokesRemaining + 1
-              totalStrokesRef.current = total
-              setTotalStrokes(total)
-            }
-          },
-          onCorrectStroke: (strokeData: HanziStrokeData) => {
-            if (strokeData.strokeNum !== undefined && strokeData.strokesRemaining !== undefined) {
-              const total = strokeData.strokeNum + strokeData.strokesRemaining + 1
-              totalStrokesRef.current = total
-              setTotalStrokes(total)
-            }
-            setStrokesCompleted(prev => {
-              const newCount = prev + 1
-              if (newCount === 1) startTimeRef.current = Date.now()
-              return newCount
-            })
-          },
-          onComplete: (summaryData: HanziSummaryData) => handleCompleteRef.current(summaryData)
-        })
+        // Restart quiz after animation — from stroke 0, so progress must reset
+        // too or the counter/bar continue from the old value and overflow
+        writerRef.current.quiz(quizCallbacks)
+        resetProgress()
       }
     })
   }
