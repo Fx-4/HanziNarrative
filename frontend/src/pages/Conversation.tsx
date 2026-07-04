@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { fetchTTSAudio } from '@/utils/ttsHelper'
+import { getShowPinyinPref } from '@/utils/uiPrefs'
 
 interface ConversationMessage {
   role: 'user' | 'assistant'
@@ -34,7 +35,7 @@ export default function Conversation() {
   const [messages, setMessages] = useState<ConversationMessage[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [showPinyin, setShowPinyin] = useState(true)
+  const [showPinyin, setShowPinyin] = useState(() => getShowPinyinPref())
   const [showEnglish, setShowEnglish] = useState(false)
   const [topicsLoading, setTopicsLoading] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)

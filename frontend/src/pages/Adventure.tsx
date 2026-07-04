@@ -26,6 +26,7 @@ import {
 import { toast } from 'react-hot-toast'
 import BlurText from '@/components/animations/BlurText'
 import { fetchTTSAudio } from '@/utils/ttsHelper'
+import { getShowPinyinPref } from '@/utils/uiPrefs'
 
 interface Choice {
     id: number
@@ -72,7 +73,7 @@ export default function Adventure() {
     const [storySteps, setStorySteps] = useState<StoryStep[]>([])
     const [stepNumber, setStepNumber] = useState(0)
     const [loading, setLoading] = useState(false)
-    const [showPinyin, setShowPinyin] = useState(true)
+    const [showPinyin, setShowPinyin] = useState(() => getShowPinyinPref())
     const [showTranslation, setShowTranslation] = useState(false)
     const [usageStats, setUsageStats] = useState<{ adventure_start?: { remaining_daily: number; remaining_hourly: number; limit_daily: number }; adventure_continue?: { remaining_daily: number; limit_daily: number } } | null>(null)
     const [isPlaying, setIsPlaying] = useState(false)

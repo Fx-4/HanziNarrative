@@ -5,6 +5,7 @@ import { useAuthStore } from '@/store/authStore'
 import { onboardingApi } from '@/services/api'
 import type { Goals, Preferences, OnboardingCompleteResponse } from '@/types'
 import toast from 'react-hot-toast'
+import { saveShowPinyinPref } from '@/utils/uiPrefs'
 
 // Components
 import ProgressIndicator from '@/components/onboarding/ProgressIndicator'
@@ -111,6 +112,9 @@ const Onboarding = () => {
 
   const handlePreferencesNext = async (selectedPreferences: Preferences) => {
     setPreferences(selectedPreferences)
+    // Mirror to localStorage so reading pages (stories, adventure, chat)
+    // honor the choice without an extra API call
+    saveShowPinyinPref(selectedPreferences.show_pinyin_by_default ?? true)
 
     // Optimistic: show completion screen immediately with sensible defaults
     setCompletionData({

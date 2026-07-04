@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { parse as parsePinyin, splitPinyinTokens } from '@/components/PinyinText'
 import { fetchTTSAudio } from '@/utils/ttsHelper'
+import { getShowPinyinPref } from '@/utils/uiPrefs'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { pinyin } from 'pinyin-pro'
@@ -57,7 +58,7 @@ export default function StoryReader() {
 
   // Interactive features state
   const [showTranslation, setShowTranslation] = useState(false)
-  const [showPinyin, setShowPinyin] = useState(true)
+  const [showPinyin, setShowPinyin] = useState(() => getShowPinyinPref())
   const [isReading, setIsReading] = useState(false)
   const [showVocabulary, setShowVocabulary] = useState(false)
   const [showQuiz, setShowQuiz] = useState(false)

@@ -199,13 +199,16 @@ def submit_assessment(
             level_performance[level]["correct"] += 1
 
     # Determine recommended level
+    # Cap at HSK 4: the course (/path) only has content up to HSK 4 — recommending
+    # 5/6 would land new users on locked units with nothing to study
+    MAX_COURSE_LEVEL = 4
     determined_level = 1
     for level in sorted(level_performance.keys(), reverse=True):
         perf = level_performance[level]
         accuracy = perf["correct"] / perf["total"] if perf["total"] > 0 else 0
 
         if accuracy >= 0.7:  # 70% threshold
-            determined_level = min(level + 1, 6)  # Start one level above mastery
+            determined_level = min(level + 1, MAX_COURSE_LEVEL)  # Start one level above mastery
             break
 
     # Calculate overall score
