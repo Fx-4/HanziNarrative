@@ -42,8 +42,11 @@ export default function WritingCanvas({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const writerRef = useRef<any>(null)
   const [canvasSize, setCanvasSize] = useState(260)
-  const [showHints, setShowHints] = useState(true)
-  // Write-from-memory: the answer character stays hidden until the user asks (free toggle)
+  // Write-from-memory: canvas outline starts HIDDEN too — the outline is the
+  // answer's shape, so showing it on open defeats the memory practice.
+  // User reveals it with the Show Hints toggle (or per-stroke flash after 2 misses).
+  const [showHints, setShowHints] = useState(false)
+  // The answer character stays hidden until the user asks (free toggle)
   const [hanziRevealed, setHanziRevealed] = useState(false)
   const [strokesCompleted, setStrokesCompleted] = useState(0)
   const [totalStrokes, setTotalStrokes] = useState(0)
@@ -246,6 +249,8 @@ export default function WritingCanvas({
       if (!writerRef.current) return
       setIsAnimating(false)
       writerRef.current.hideCharacter()
+      // The demo turned the outline on — restore the user's hint preference
+      if (!showHints) writerRef.current.hideOutline()
       // quizStartStrokeNum redraws earlier strokes automatically, so the
       // counter/bar keep their value instead of resetting or overflowing
       writerRef.current.quiz({ ...quizCallbacks, quizStartStrokeNum: startFrom })
