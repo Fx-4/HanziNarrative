@@ -10,18 +10,24 @@ export default function DiceRoll({ value }: { value: number }) {
 
   useEffect(() => {
     setSettled(false)
-    let ticks = 0
-    const iv = setInterval(() => {
-      ticks++
-      if (ticks >= 8) {
-        clearInterval(iv)
+    let cancelled = false
+    let tick = 0
+    const TOTAL_TICKS = 12
+    // Decelerating timeout chain (~2s total) — tumbles fast at first then slows
+    // down like a real die, instead of a fixed-interval blur that ends too fast
+    const step = () => {
+      if (cancelled) return
+      tick++
+      if (tick >= TOTAL_TICKS) {
         setFace(value)
         setSettled(true)
-      } else {
-        setFace(Math.floor(Math.random() * 6) + 1)
+        return
       }
-    }, 90)
-    return () => clearInterval(iv)
+      setFace(Math.floor(Math.random() * 6) + 1)
+      setTimeout(step, 70 + tick * 18)
+    }
+    step()
+    return () => { cancelled = true }
   }, [value])
 
   return (
