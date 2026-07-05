@@ -1,7 +1,7 @@
 ﻿import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { getSession, getUnitWords, ALL_UNITS, Word, GrammarPoint, FillBlank } from '@/data/curriculum'
+import { getSession, getUnitWords, ALL_UNITS, Word, GrammarPoint, FillBlank, UnitDef } from '@/data/curriculum'
 import { learningPathApi, learningApi, funApi } from '@/services/api'
 import { fetchTTSAudio } from '@/utils/ttsHelper'
 import { pinyin as toPinyin } from 'pinyin-pro'
@@ -49,6 +49,51 @@ function shuffle<T>(arr: T[]): T[] {
     ;[a[i], a[j]] = [a[j], a[i]]
   }
   return a
+}
+
+// ── Context example lookup ────────────────────────────────────────────────────
+
+type ContextExample = { zh: string; py: string; en: string }
+
+/**
+ * "In context" fallback for words without a handcrafted example: reuse a REAL
+ * sentence from the curriculum itself — grammar examples first (curated zh/py/en),
+ * then fill-blank sentences whose answer is this word. Searches the word's own
+ * unit first, then the rest of its HSK level. Works for every level, no extra
+ * content writing needed.
+ */
+function findContextExample(word: Word, unit: UnitDef): ContextExample | null {
+  const levelUnits = [unit, ...ALL_UNITS.filter(u => u.hsk_level === unit.hsk_level && u.id !== unit.id && !u.locked)]
+
+  // Pass 1: curated grammar examples containing the word
+  for (const u of levelUnits) {
+    for (const s of u.sessions) {
+      for (const gp of s.grammarPoints ?? []) {
+        const ex = gp.examples.find(e => e.zh.includes(word.zh))
+        if (ex) return ex
+      }
+    }
+  }
+
+  // Pass 2: fill-blank sentences whose correct answer is this word
+  for (const u of levelUnits) {
+    for (const s of u.sessions) {
+      for (const gp of s.grammarPoints ?? []) {
+        for (const fb of gp.fillBlanks) {
+          if (fb.options[fb.correct] === word.zh) {
+            const zh = fb.sentence_zh.replace('___', word.zh)
+            return {
+              zh,
+              py: toPinyin(zh, { toneType: 'symbol', type: 'string' }),
+              en: fb.sentence_en,
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return null
 }
 
 function mcqFromWord(word: Word, pool: Word[], askMeaning = true): StepMCQ {
@@ -153,7 +198,13 @@ function generateSteps(
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function IntroCard({ step, onNext, imageUrl }: { step: StepIntro; onNext: () => void; imageUrl?: string }) {
+function IntroCard({ step, onNext, imageUrl, example }: {
+  step: StepIntro
+  onNext: () => void
+  imageUrl?: string
+  /** Handcrafted example, or automatic fallback found in the unit/level material */
+  example: ContextExample | null
+}) {
   const { t } = useTranslation()
   const [playing, setPlaying] = useState(false)
   const [showToneHelp, setShowToneHelp] = useState(false)
@@ -211,12 +262,12 @@ function IntroCard({ step, onNext, imageUrl }: { step: StepIntro; onNext: () => 
   }
 
   const playExample = async () => {
-    if (!step.word.example || examplePlaying) return
+    if (!example || examplePlaying) return
     setExamplePlaying(true)
     try {
       let audio = exampleAudioRef.current
       if (!audio) {
-        audio = await fetchTTSAudio({ text: step.word.example.zh, retries: 1 })
+        audio = await fetchTTSAudio({ text: example.zh, retries: 1 })
         exampleAudioRef.current = audio
       }
       audio.currentTime = 0
@@ -296,7 +347,7 @@ function IntroCard({ step, onNext, imageUrl }: { step: StepIntro; onNext: () => 
       </AnimatePresence>
 
       {/* Usage in context */}
-      {step.word.example && (
+      {example && (
         <div className="w-full max-w-xs bg-primary-50/60 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900/40 rounded-2xl p-3.5 text-left">
           <div className="flex items-center justify-between mb-1">
             <p className="text-[10px] font-bold text-primary-500 uppercase tracking-widest">{t('session.inContext')}</p>
@@ -309,9 +360,9 @@ function IntroCard({ step, onNext, imageUrl }: { step: StepIntro; onNext: () => 
               {examplePlaying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Volume2 className="w-3.5 h-3.5" />}
             </button>
           </div>
-          <p><HanziBreakdown text={step.word.example.zh} className="font-chinese text-xl text-gray-900 dark:text-gray-100" /></p>
-          <p className="text-xs mt-0.5"><TonedPinyin py={step.word.example.py} /></p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 italic mt-0.5">{step.word.example.en}</p>
+          <p><HanziBreakdown text={example.zh} className="font-chinese text-xl text-gray-900 dark:text-gray-100" /></p>
+          <p className="text-xs mt-0.5"><TonedPinyin py={example.py} /></p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 italic mt-0.5">{example.en}</p>
         </div>
       )}
 
@@ -1193,7 +1244,14 @@ export default function LearningSession() {
       {/* Exercise */}
       <AnimatePresence mode="wait">
         <div key={stepKey}>
-          {step?.kind === 'intro'   && <IntroCard   step={step} onNext={goNext} imageUrl={wordImages[step.word.zh]} />}
+          {step?.kind === 'intro'   && (
+            <IntroCard
+              step={step}
+              onNext={goNext}
+              imageUrl={wordImages[step.word.zh]}
+              example={step.word.example ?? (unitMeta ? findContextExample(step.word, unitMeta) : null)}
+            />
+          )}
           {step?.kind === 'grammar' && <GrammarCard step={step} onNext={goNext} />}
           {step?.kind === 'mcq'     && <MCQCard     step={step} onCorrect={() => handleAnswer(step, true)} onWrong={() => handleAnswer(step, false)} />}
           {step?.kind === 'listen'  && <ListenCard  step={step} onCorrect={() => handleAnswer(step, true)} onWrong={() => handleAnswer(step, false)} />}
