@@ -363,7 +363,8 @@ export const HSK4: UnitDef[] = [
           { zh: '儿童',  py: 'értóng',    en: 'Children' },
           { zh: '老板',  py: 'lǎobǎn',    en: 'Boss / Employer' },
           { zh: '教授',  py: 'jiàoshòu',  en: 'Professor' },
-          { zh: '律师',  py: 'lǜshī',     en: 'Lawyer / Attorney' },
+          { zh: '律师',  py: 'lǜshī',     en: 'Lawyer / Attorney',
+            funFact: '律 = "law / statute" + 师 = "master / expert" → a "law expert". The suffix 师 marks skilled professionals: 老师 (teacher), 医师 (physician), 工程师 (engineer).' },
         ],
       },
       {
@@ -416,7 +417,8 @@ export const HSK4: UnitDef[] = [
         title: '工作与职场', subtitle: 'Work & workplace vocabulary',
         words: [
           { zh: '工资',  py: 'gōngzī',    en: 'Salary / Wages' },
-          { zh: '收入',  py: 'shōurù',    en: 'Income / Revenue' },
+          { zh: '收入',  py: 'shōurù',    en: 'Income / Revenue',
+            funFact: '收 = "to receive/collect" + 入 = "to enter" → money that "comes in". Its opposite is 支出 (expenses = "pay out"), where 出 = "to go out".' },
           { zh: '工程',  py: 'gōngchéng', en: 'Engineering / Project' },
           { zh: '工具',  py: 'gōngjù',    en: 'Tool / Instrument' },
           { zh: '功能',  py: 'gōngnéng',  en: 'Function / Feature' },
@@ -466,8 +468,10 @@ export const HSK4: UnitDef[] = [
         words: [
           { zh: '资源',  py: 'zīyuán',    en: 'Resources' },
           { zh: '能源',  py: 'néngyuán',  en: 'Energy (source)' },
-          { zh: '环境',  py: 'huánjìng',  en: 'Environment / Surroundings' },
-          { zh: '气候',  py: 'qìhòu',     en: 'Climate' },
+          { zh: '环境',  py: 'huánjìng',  en: 'Environment / Surroundings',
+            funFact: '环 = "ring / to encircle" + 境 = "boundary / territory" → everything that "rings" you: your surroundings. The same 环 appears in 环节 (link in a chain) and 循环 (to cycle).' },
+          { zh: '气候',  py: 'qìhòu',     en: 'Climate',
+            funFact: '气 = "air / weather" + 候 = "season / period". Climate is the long-run pattern of weather across the seasons — 候 is the same character as in 时候 (time).' },
           { zh: '污染',  py: 'wūrǎn',     en: 'Pollution / Contamination' },
           { zh: '地区',  py: 'dìqū',      en: 'Region / Area / District' },
           { zh: '农村',  py: 'nóngcūn',   en: 'Rural area / Countryside' },

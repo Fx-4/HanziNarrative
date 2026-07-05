@@ -20,6 +20,7 @@ import toast from 'react-hot-toast'
 import { createLogger } from '@/utils/debugLogger'
 import TonedPinyin from '@/components/TonedPinyin'
 import HanziBreakdown from '@/components/HanziBreakdown'
+import GiphyAttribution from '@/components/GiphyAttribution'
 import { playFeedback } from '@/utils/feedbackSfx'
 
 const learningSessionLogger = createLogger('LearningSession')
@@ -761,12 +762,20 @@ export default function LearningSession() {
   const [nextUnitInfo, setNextUnitInfo] = useState<{ title: string; subtitle: string; emoji: string } | null>(null)
   // Giphy morale booster on the completion screen (hidden when backend has no key)
   const [funGif, setFunGif] = useState<string | null>(null)
+  // Blocking audio preload on session start — loads all TTS up front so there's
+  // no per-card wait inside the lesson
+  const [preparingAudio, setPreparingAudio] = useState(false)
+  const [preloadPct, setPreloadPct] = useState(0)
+  const preloadCancelRef = useRef(false)
 
   useEffect(() => {
     if (!sessionId) return
     const found = getSession(sessionId)
     if (!found) return
     const { session, unit } = found
+
+    let cancelled = false
+    preloadCancelRef.current = false
 
     // Fetch vocab images for intro cards (backend Pexels/Pixabay cache)
     const fetchImages = (stepsList: Step[]) => {
@@ -822,22 +831,59 @@ export default function LearningSession() {
     // without this flag the skeleton below would spin forever
     setNoContent(generated.length === 0)
 
-    // Pre-warm TTS for all intro + listening words in this session (fire-and-forget)
-    const introWords = [...new Set(generated.flatMap(s =>
-      s.kind === 'intro' ? [s.word.zh] : s.kind === 'listen' ? [s.zh] : []
-    ))]
-    if (introWords.length > 0) {
-      const token = localStorage.getItem('access_token')
-      if (token) {
-        introWords.forEach((zh, i) => {
-          setTimeout(() => {
-            // Warm backend cache + IndexedDB; the browser shim can't be cached
-            fetchTTSAudio({ text: zh, allowBrowserFallback: false }).catch(() => { /* silent */ })
-          }, i * 300)
-        })
+    // ── Blocking TTS preload ──────────────────────────────────────────────
+    // Fetch EVERY audio this session will play (words, example sentences,
+    // listening) before showing content, so nothing loads mid-lesson. Cached
+    // items resolve instantly from IndexedDB; a hard cap keeps a cold backend
+    // from stalling the start forever.
+    const audioTexts = [...new Set(generated.flatMap(s => {
+      if (s.kind === 'intro') {
+        const ex = s.word.example ?? findContextExample(s.word, unit)
+        return ex ? [s.word.zh, ex.zh] : [s.word.zh]
       }
+      if (s.kind === 'listen') return [s.zh]
+      return []
+    }))]
+
+    const token = localStorage.getItem('access_token')
+    if (audioTexts.length === 0 || !token) return
+
+    setPreparingAudio(true)
+    setPreloadPct(0)
+
+    const finish = () => {
+      if (cancelled || preloadCancelRef.current) return
+      preloadCancelRef.current = true
+      setPreparingAudio(false)
+    }
+    // Hard cap (~9 s): proceed even if a cold backend hasn't answered yet
+    const capTimer = setTimeout(finish, 9000)
+
+    let done = 0
+    Promise.allSettled(
+      audioTexts.map(zh =>
+        fetchTTSAudio({ text: zh, allowBrowserFallback: false }).finally(() => {
+          done++
+          if (!cancelled) setPreloadPct(Math.round((done / audioTexts.length) * 100))
+        })
+      )
+    ).then(() => {
+      clearTimeout(capTimer)
+      finish()
+    })
+
+    return () => {
+      cancelled = true
+      preloadCancelRef.current = true
+      clearTimeout(capTimer)
     }
   }, [sessionId])
+
+  // Let the user bail out of the preload wait and start immediately
+  const skipPreload = () => {
+    preloadCancelRef.current = true
+    setPreparingAudio(false)
+  }
 
   // Auto-save progress after each step (skip idx=0 — nothing to resume from start)
   useEffect(() => {
@@ -1017,6 +1063,46 @@ export default function LearningSession() {
     )
   }
 
+  // ── Audio preload screen ── (steps are ready; audio is warming up)
+  if (preparingAudio) {
+    const meta = getSession(sessionId ?? '')
+    return (
+      <div className="max-w-md mx-auto px-4 pb-16 min-h-[70vh] flex flex-col items-center justify-center text-center gap-6">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="w-20 h-20 rounded-3xl bg-primary-50 dark:bg-primary-950/40 flex items-center justify-center"
+        >
+          <Volume2 className="w-9 h-9 text-primary-500 animate-pulse" />
+        </motion.div>
+        <div>
+          <p className="text-lg font-extrabold text-gray-900 dark:text-gray-50">{t('session.preparingTitle')}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-xs">{t('session.preparingSub')}</p>
+          {meta?.session?.title && (
+            <p className="text-xs text-primary-500 font-bold uppercase tracking-widest mt-3">{meta.session.title}</p>
+          )}
+        </div>
+        {/* Progress bar */}
+        <div className="w-full max-w-xs">
+          <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+            <motion.div
+              className="h-full bg-primary-500 rounded-full"
+              animate={{ width: `${preloadPct}%` }}
+              transition={{ duration: 0.3 }}
+            />
+          </div>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{preloadPct}%</p>
+        </div>
+        <button
+          onClick={skipPreload}
+          className="text-sm text-gray-500 dark:text-gray-400 font-medium hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+        >
+          {t('session.skipWait')}
+        </button>
+      </div>
+    )
+  }
+
   if (!sessionId || steps.length === 0) {
     return (
       <div className="max-w-md mx-auto px-4 pb-16">
@@ -1085,16 +1171,22 @@ export default function LearningSession() {
             <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{sessionMeta?.title}</p>
           </div>
 
-          {/* Meme booster (Giphy) — only renders when the backend has a key */}
+          {/* Meme booster (Giphy) — only renders when the backend has a key.
+              "Powered by GIPHY" attribution is required by GIPHY's API terms. */}
           {funGif && (
-            <motion.img
+            <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              src={funGif}
-              alt="celebration gif"
-              loading="lazy"
-              className="mx-auto rounded-2xl max-h-48 shadow-md"
-            />
+              className="flex flex-col items-center gap-1.5"
+            >
+              <img
+                src={funGif}
+                alt="celebration gif"
+                loading="lazy"
+                className="mx-auto rounded-2xl max-h-48 shadow-md"
+              />
+              <GiphyAttribution />
+            </motion.div>
           )}
 
           {/* Stats */}
