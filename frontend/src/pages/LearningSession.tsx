@@ -859,9 +859,12 @@ export default function LearningSession() {
     // from stalling the start forever.
     const audioTexts = [...new Set(generated.flatMap(s => {
       if (s.kind === 'intro') {
+        // Word + its "in context" example (manual or auto-found) — both have play buttons
         const ex = s.word.example ?? findContextExample(s.word, unit)
         return ex ? [s.word.zh, ex.zh] : [s.word.zh]
       }
+      // Grammar card plays each example sentence — preload them too
+      if (s.kind === 'grammar') return s.point.examples.map(e => e.zh)
       if (s.kind === 'listen') return [s.zh]
       return []
     }))]

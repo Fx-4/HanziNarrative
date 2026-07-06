@@ -2,10 +2,10 @@
  * "Powered by GIPHY" attribution mark — required by GIPHY's API terms and needed
  * to upgrade from a beta key to a production key.
  *
- * Prefers GIPHY's OFFICIAL downloadable mark if the app ships one at
- * `public/giphy-attribution.png` (recommended for review approval — download it
- * from the link in the GIPHY app form). Falls back to an inline SVG wordmark in
- * GIPHY's brand gradient so attribution is always visible even without the asset.
+ * Uses GIPHY's official horizontal "POWERED BY GIPHY" mark shipped at
+ * public/giphy-attribution.png (neutral gray — legible on both light and dark
+ * backgrounds). Falls back to an inline SVG wordmark if the asset is missing so
+ * attribution is always present.
  */
 
 import { useState } from 'react'
@@ -13,14 +13,13 @@ import { useState } from 'react'
 export default function GiphyAttribution({ className = '' }: { className?: string }) {
   const [officialFailed, setOfficialFailed] = useState(false)
 
-  // Official mark (drop the PNG at frontend/public/giphy-attribution.png)
   if (!officialFailed) {
     return (
       <img
         src="/giphy-attribution.png"
         alt="Powered by GIPHY"
         onError={() => setOfficialFailed(true)}
-        className={`h-4 w-auto select-none ${className}`}
+        className={`h-3.5 w-auto select-none opacity-90 ${className}`}
       />
     )
   }
