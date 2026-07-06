@@ -772,15 +772,38 @@ export default function LearningSession() {
   const finishedRef = useRef(false)
 
   // Fetch a GIF from GIPHY (via backend) — reused for the initial reward and the
-  // "another one" refresh button so the GIPHY fetch is visible/repeatable on demand
+  // "another one" refresh button so the GIPHY fetch is visible/repeatable on demand.
+  // Retries on network error: Koyeb's free tier sleeps and takes ~30-60s to wake,
+  // so the completion-screen call often lands mid cold-start — keep trying until
+  // the backend is up instead of silently showing no GIF.
   const loadFunGif = useCallback((mood: 'celebrate' | 'motivate') => {
     gifMoodRef.current = mood
     const reqId = ++gifReqRef.current
     setLoadingGif(true)
-    funApi.getGif(mood)
-      .then(r => { if (reqId === gifReqRef.current && r.available && r.url) setFunGif(r.url) })
-      .catch(() => { /* optional feature */ })
-      .finally(() => { if (reqId === gifReqRef.current) setLoadingGif(false) })
+
+    const attempt = (triesLeft: number) => {
+      funApi.getGif(mood)
+        .then(r => {
+          if (reqId !== gifReqRef.current) return
+          if (r.available && r.url) {
+            setFunGif(r.url)
+            setLoadingGif(false)
+          } else {
+            // Backend responded but has no GIF (no key / rate-limited) — don't retry
+            setLoadingGif(false)
+          }
+        })
+        .catch(() => {
+          if (reqId !== gifReqRef.current) return
+          // Network error (backend waking up) — retry a few times, then give up
+          if (triesLeft > 0) {
+            setTimeout(() => { if (reqId === gifReqRef.current) attempt(triesLeft - 1) }, 4000)
+          } else {
+            setLoadingGif(false)
+          }
+        })
+    }
+    attempt(4) // up to 5 tries × 4s ≈ 20s of cold-start tolerance
   }, [])
   // Blocking audio preload on session start — loads all TTS up front so there's
   // no per-card wait inside the lesson
