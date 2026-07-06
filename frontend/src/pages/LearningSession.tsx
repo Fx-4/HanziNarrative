@@ -797,6 +797,10 @@ export default function LearningSession() {
     let cancelled = false
     preloadCancelRef.current = false
     finishedRef.current = false
+    // Clear any preload screen left over from a previous session — the component
+    // stays mounted across sessionId changes, and the resume path below returns
+    // early. The fresh-start path re-sets this true synchronously (no flash).
+    setPreparingAudio(false)
 
     // Fetch vocab images for intro cards (backend Pexels/Pixabay cache)
     const fetchImages = (stepsList: Step[]) => {
