@@ -776,13 +776,15 @@ export default function LearningSession() {
   // Retries on network error: Koyeb's free tier sleeps and takes ~30-60s to wake,
   // so the completion-screen call often lands mid cold-start — keep trying until
   // the backend is up instead of silently showing no GIF.
-  const loadFunGif = useCallback((mood: 'celebrate' | 'motivate') => {
+  // fresh=true forces a new Giphy pull (the "another one" button); the initial
+  // completion reward serves from the cached pool to save Giphy quota
+  const loadFunGif = useCallback((mood: 'celebrate' | 'motivate', fresh = false) => {
     gifMoodRef.current = mood
     const reqId = ++gifReqRef.current
     setLoadingGif(true)
 
     const attempt = (triesLeft: number) => {
-      funApi.getGif(mood)
+      funApi.getGif(mood, fresh)
         .then(r => {
           if (reqId !== gifReqRef.current) return
           if (r.available && r.url) {
@@ -1250,7 +1252,7 @@ export default function LearningSession() {
               <div className="flex items-center justify-between w-full max-w-[240px]">
                 <GiphyAttribution />
                 <button
-                  onClick={() => loadFunGif(gifMoodRef.current)}
+                  onClick={() => loadFunGif(gifMoodRef.current, true)}
                   disabled={loadingGif}
                   className="flex items-center gap-1 text-xs font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 disabled:opacity-50 transition-colors"
                 >

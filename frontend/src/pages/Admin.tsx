@@ -10,10 +10,10 @@ import {
   TrendingUp, FileText, Loader2, RefreshCw, AlertTriangle, Menu, X,
   RotateCcw, Clock, Inbox, Bug, Lightbulb, MessageSquare, CheckCircle2,
   Circle, Filter, ExternalLink, MousePointer2, Image as ImageIcon,
-  Copy, Check, Sun, Moon,
+  Copy, Check, Sun, Moon, Film, Download, Trash,
 } from 'lucide-react'
-import { adminApi } from '@/services/api'
-import type { FeedbackItem } from '@/services/api'
+import { adminApi, funApi } from '@/services/api'
+import type { FeedbackItem, FunGifItem } from '@/services/api'
 import { useAuthStore } from '@/store/authStore'
 import { useThemeStore } from '@/store/themeStore'
 import toast from 'react-hot-toast'
@@ -63,7 +63,7 @@ interface AIEntry {
   timestamp: string
 }
 
-type Tab = 'overview' | 'users' | 'stories' | 'ai-usage' | 'trash' | 'inbox'
+type Tab = 'overview' | 'users' | 'stories' | 'ai-usage' | 'trash' | 'inbox' | 'memes'
 
 const HSK_COLORS = ['#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
 
@@ -1429,6 +1429,228 @@ function InboxTab({ onUnreadChange }: { onUnreadChange: (n: number) => void }) {
   )
 }
 
+// ── Tab: Memes (cached Giphy pool curation) ─────────────────────────────────────
+
+const MOOD_OPTIONS = ['celebrate', 'motivate', 'break'] as const
+const MOOD_COLOR: Record<string, string> = {
+  celebrate: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
+  motivate: 'bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300',
+  break: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
+}
+
+function MemesTab() {
+  // Cached Giphy pool curation
+  const [gifs, setGifs] = useState<FunGifItem[]>([])
+  const [total, setTotal] = useState(0)
+  const [counts, setCounts] = useState<{ total: number; approved: number; by_mood: Record<string, number> } | null>(null)
+  const [page, setPage] = useState(1)
+  const [moodFilter, setMoodFilter] = useState<string>('')
+  const [approvedFilter, setApprovedFilter] = useState<boolean | undefined>(undefined)
+  const [loading, setLoading] = useState(true)
+  const [actionId, setActionId] = useState<number | null>(null)
+  const [fetching, setFetching] = useState(false)
+  const [fetchMood, setFetchMood] = useState<string>('celebrate')
+
+  const PAGE_SIZE = 24
+
+  const load = useCallback(async () => {
+    try {
+      setLoading(true)
+      const data = await funApi.adminList({
+        page,
+        page_size: PAGE_SIZE,
+        mood: moodFilter || undefined,
+        approved: approvedFilter,
+      })
+      setGifs(data.gifs)
+      setTotal(data.total)
+      setCounts(data.counts)
+    } finally {
+      setLoading(false)
+    }
+  }, [page, moodFilter, approvedFilter])
+
+  useEffect(() => { load() }, [load])
+
+  const toggleApproved = async (g: FunGifItem) => {
+    setActionId(g.id)
+    try {
+      const updated = await funApi.adminUpdate(g.id, { is_approved: !g.is_approved })
+      setGifs(prev => prev.map(x => x.id === g.id ? updated : x))
+    } finally {
+      setActionId(null)
+    }
+  }
+
+  const changeMood = async (g: FunGifItem, mood: string) => {
+    setActionId(g.id)
+    try {
+      const updated = await funApi.adminUpdate(g.id, { mood })
+      setGifs(prev => prev.map(x => x.id === g.id ? updated : x))
+    } finally {
+      setActionId(null)
+    }
+  }
+
+  const remove = async (g: FunGifItem) => {
+    setActionId(g.id)
+    try {
+      await funApi.adminDelete(g.id)
+      setGifs(prev => prev.filter(x => x.id !== g.id))
+      setTotal(t => t - 1)
+    } finally {
+      setActionId(null)
+    }
+  }
+
+  const pullFresh = async () => {
+    setFetching(true)
+    try {
+      const r = await funApi.adminFetch(fetchMood, 8)
+      toast.success(`Added ${r.added} new GIF${r.added === 1 ? '' : 's'} to "${fetchMood}"`)
+      setPage(1)
+      await load()
+    } catch {
+      toast.error('Pull failed — is GIPHY_API_KEY set on the backend?')
+    } finally {
+      setFetching(false)
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Header: counts + pull */}
+      <div className="flex flex-wrap items-center gap-3">
+        {counts && (
+          <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+            <span><strong className="text-gray-900 dark:text-gray-100">{counts.total}</strong> cached</span>
+            <span className="text-success-600 dark:text-success-400"><strong>{counts.approved}</strong> approved</span>
+            {MOOD_OPTIONS.map(m => (
+              <span key={m} className="hidden sm:inline">{m}: <strong>{counts.by_mood?.[m] ?? 0}</strong></span>
+            ))}
+          </div>
+        )}
+        <div className="flex items-center gap-2 ml-auto">
+          <select
+            value={fetchMood}
+            onChange={e => setFetchMood(e.target.value)}
+            className="px-2.5 py-1.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 cursor-pointer"
+          >
+            {MOOD_OPTIONS.map(m => <option key={m} value={m}>{m}</option>)}
+          </select>
+          <button
+            onClick={pullFresh}
+            disabled={fetching}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium bg-primary-600 hover:bg-primary-700 text-white cursor-pointer transition-colors disabled:opacity-50"
+          >
+            {fetching ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+            Pull fresh
+          </button>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-1.5 text-sm text-gray-500"><Filter className="w-3.5 h-3.5" /></div>
+        <select
+          value={moodFilter}
+          onChange={e => { setMoodFilter(e.target.value); setPage(1) }}
+          className="px-3 py-1.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 cursor-pointer"
+        >
+          <option value="">All moods</option>
+          {MOOD_OPTIONS.map(m => <option key={m} value={m}>{m}</option>)}
+        </select>
+        {([['All', undefined], ['Approved', true], ['Rejected', false]] as const).map(([label, val]) => (
+          <button
+            key={label}
+            onClick={() => { setApprovedFilter(val); setPage(1) }}
+            className={`px-3 py-1.5 rounded-xl text-sm font-medium border cursor-pointer transition-colors ${
+              approvedFilter === val
+                ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border-primary-200 dark:border-primary-700'
+                : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Grid */}
+      {loading ? (
+        <div className="flex justify-center py-12"><Loader2 className="w-5 h-5 animate-spin text-primary-500" /></div>
+      ) : gifs.length === 0 ? (
+        <div className="flex flex-col items-center gap-3 py-16 text-gray-400">
+          <Film className="w-8 h-8" />
+          <p className="text-sm">No GIFs yet — click "Pull fresh" to stock the pool</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          {gifs.map(g => (
+            <div
+              key={g.id}
+              className={`rounded-2xl border overflow-hidden bg-white dark:bg-gray-900 transition-colors ${
+                g.is_approved ? 'border-gray-100 dark:border-gray-800' : 'border-error-200 dark:border-error-900/50 opacity-60'
+              }`}
+            >
+              <div className="relative aspect-square bg-black/5 dark:bg-black/20">
+                <img src={g.url} alt={g.title || 'gif'} loading="lazy" className="w-full h-full object-cover" />
+                <span className={`absolute top-1.5 left-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-md ${MOOD_COLOR[g.mood] ?? MOOD_COLOR.celebrate}`}>
+                  {g.mood}
+                </span>
+                {!g.is_approved && (
+                  <span className="absolute top-1.5 right-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-error-500 text-white">
+                    rejected
+                  </span>
+                )}
+              </div>
+              <div className="p-2 space-y-2">
+                <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate" title={g.title}>
+                  {g.title || 'Untitled'} · {g.times_served}×
+                </p>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => toggleApproved(g)}
+                    disabled={actionId === g.id}
+                    className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors disabled:opacity-50 ${
+                      g.is_approved
+                        ? 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                        : 'bg-success-50 dark:bg-success-900/30 text-success-700 dark:text-success-400 hover:bg-success-100'
+                    }`}
+                  >
+                    {actionId === g.id ? <Loader2 className="w-3 h-3 animate-spin" /> : g.is_approved ? <EyeOff className="w-3 h-3" /> : <Check className="w-3 h-3" />}
+                    {g.is_approved ? 'Reject' : 'Approve'}
+                  </button>
+                  <select
+                    value={g.mood}
+                    onChange={e => changeMood(g, e.target.value)}
+                    disabled={actionId === g.id}
+                    title="Change mood"
+                    className="py-1.5 px-1 rounded-lg text-xs border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 cursor-pointer"
+                  >
+                    {MOOD_OPTIONS.map(m => <option key={m} value={m}>{m[0].toUpperCase()}</option>)}
+                  </select>
+                  <button
+                    onClick={() => remove(g)}
+                    disabled={actionId === g.id}
+                    title="Delete"
+                    className="p-1.5 rounded-lg bg-error-50 dark:bg-error-900/20 text-error-600 dark:text-error-400 hover:bg-error-100 cursor-pointer transition-colors disabled:opacity-50"
+                  >
+                    <Trash className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {total > PAGE_SIZE && (
+        <Pagination page={page} total={total} pageSize={PAGE_SIZE} onChange={setPage} />
+      )}
+    </div>
+  )
+}
+
 // ── Main Admin Page ────────────────────────────────────────────────────────────
 
 const NAV_ITEMS: { tab: Tab; label: string; icon: React.ElementType }[] = [
@@ -1437,6 +1659,7 @@ const NAV_ITEMS: { tab: Tab; label: string; icon: React.ElementType }[] = [
   { tab: 'stories', label: 'Stories', icon: BookOpen },
   { tab: 'ai-usage', label: 'AI Usage', icon: Zap },
   { tab: 'inbox', label: 'Inbox', icon: Inbox },
+  { tab: 'memes', label: 'Memes', icon: Film },
   { tab: 'trash', label: 'Trash', icon: Trash2 },
 ]
 
@@ -1592,6 +1815,7 @@ export default function Admin() {
               {activeTab === 'stories' && <StoriesTab />}
               {activeTab === 'ai-usage' && <AIUsageTab />}
               {activeTab === 'inbox' && <InboxTab onUnreadChange={setUnreadCount} />}
+              {activeTab === 'memes' && <MemesTab />}
               {activeTab === 'trash' && <TrashTab currentUserId={user?.id ?? -1} />}
             </motion.div>
           </AnimatePresence>

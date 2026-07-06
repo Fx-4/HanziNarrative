@@ -360,6 +360,26 @@ class Feedback(Base):
     user = relationship("User")
 
 
+class FunGif(Base):
+    """Cached Giphy GIFs for the completion-screen morale booster.
+
+    Fetched GIFs are saved here so the feature serves from this pool instead of
+    hitting Giphy every time — saves the rate-limited beta quota and keeps the GIF
+    working even when Giphy is unreachable or Koyeb is cold-starting. Admins curate
+    the pool (approve/reject/delete) from the admin panel.
+    """
+    __tablename__ = "fun_gifs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    giphy_id = Column(String, unique=True, index=True, nullable=True)  # dedupe fetched GIFs
+    url = Column(String, nullable=False)
+    title = Column(String, default="")
+    mood = Column(String, default="celebrate", index=True)  # celebrate | motivate | break
+    is_approved = Column(Boolean, default=True, server_default='true', nullable=False, index=True)
+    times_served = Column(Integer, default=0)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 class UserLessonProgress(Base):
     """Tracks which structured-curriculum sessions a user has completed."""
     __tablename__ = "user_lesson_progress"

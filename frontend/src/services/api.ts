@@ -1066,11 +1066,42 @@ export const adminApi = {
 
 // ── Fun API (Giphy morale boosters) ────────────────────────────────────────────
 
+export interface FunGifItem {
+  id: number
+  giphy_id: string | null
+  url: string
+  title: string
+  mood: string
+  is_approved: boolean
+  times_served: number
+}
+
 export const funApi = {
-  /** mood: 'celebrate' | 'motivate' | 'break' — available=false when GIPHY_API_KEY unset */
-  getGif: async (mood: 'celebrate' | 'motivate' | 'break') => {
-    const response = await api.get('/fun/gif', { params: { mood } })
+  /** mood: 'celebrate' | 'motivate' | 'break'. fresh=true forces a new Giphy pull. */
+  getGif: async (mood: 'celebrate' | 'motivate' | 'break', fresh = false) => {
+    const response = await api.get('/fun/gif', { params: { mood, fresh } })
     return response.data as { available: boolean; url: string | null; title: string | null }
+  },
+
+  // ── Admin: cached-GIF pool curation ──
+  adminList: async (params?: { mood?: string; approved?: boolean; page?: number; page_size?: number }) => {
+    const response = await api.get('/fun/admin/gifs', { params })
+    return response.data as {
+      gifs: FunGifItem[]
+      total: number
+      counts: { total: number; approved: number; by_mood: Record<string, number> }
+    }
+  },
+  adminUpdate: async (id: number, data: { is_approved?: boolean; mood?: string; title?: string }) => {
+    const response = await api.patch(`/fun/admin/gifs/${id}`, data)
+    return response.data as FunGifItem
+  },
+  adminDelete: async (id: number) => {
+    await api.delete(`/fun/admin/gifs/${id}`)
+  },
+  adminFetch: async (mood: string, count = 5) => {
+    const response = await api.post('/fun/admin/gifs/fetch', null, { params: { mood, count } })
+    return response.data as { added: number; requested: number; pool_total_for_mood: number }
   },
 }
 
