@@ -888,6 +888,7 @@
     "preparingTitle": "Loading your lesson…",
     "preparingSub": "Downloading all the audio now so nothing loads mid-lesson.",
     "skipWait": "Skip and start now",
+    "anotherMeme": "Another one",
     "audioError":     "Audio failed to load — tap the button to retry",
     "whichCharacter": "Which character did you hear?",
     "audioNotReady":  "Audio not ready yet — try again in a moment",

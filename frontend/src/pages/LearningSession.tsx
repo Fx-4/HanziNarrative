@@ -762,6 +762,26 @@ export default function LearningSession() {
   const [nextUnitInfo, setNextUnitInfo] = useState<{ title: string; subtitle: string; emoji: string } | null>(null)
   // Giphy morale booster on the completion screen (hidden when backend has no key)
   const [funGif, setFunGif] = useState<string | null>(null)
+  const [loadingGif, setLoadingGif] = useState(false)
+  const gifMoodRef = useRef<'celebrate' | 'motivate'>('celebrate')
+  // Monotonic request id: only the latest loadFunGif call may write state, so a
+  // stale in-flight fetch (or a duplicate finishSession under React StrictMode /
+  // slow backend) can never wipe a newer GIF
+  const gifReqRef = useRef(0)
+  // Guards finishSession against double execution (StrictMode / last-step re-render)
+  const finishedRef = useRef(false)
+
+  // Fetch a GIF from GIPHY (via backend) — reused for the initial reward and the
+  // "another one" refresh button so the GIPHY fetch is visible/repeatable on demand
+  const loadFunGif = useCallback((mood: 'celebrate' | 'motivate') => {
+    gifMoodRef.current = mood
+    const reqId = ++gifReqRef.current
+    setLoadingGif(true)
+    funApi.getGif(mood)
+      .then(r => { if (reqId === gifReqRef.current && r.available && r.url) setFunGif(r.url) })
+      .catch(() => { /* optional feature */ })
+      .finally(() => { if (reqId === gifReqRef.current) setLoadingGif(false) })
+  }, [])
   // Blocking audio preload on session start — loads all TTS up front so there's
   // no per-card wait inside the lesson
   const [preparingAudio, setPreparingAudio] = useState(false)
@@ -776,6 +796,7 @@ export default function LearningSession() {
 
     let cancelled = false
     preloadCancelRef.current = false
+    finishedRef.current = false
 
     // Fetch vocab images for intro cards (backend Pexels/Pixabay cache)
     const fetchImages = (stepsList: Step[]) => {
@@ -963,6 +984,11 @@ export default function LearningSession() {
 
   const finishSession = async () => {
     if (!sessionId) return
+    // Run exactly once per session run — the completion effect can fire twice
+    // (React StrictMode dev double-invoke, or steps.length changing on the last
+    // step). A double run would submit XP twice AND race the GIF fetch to null.
+    if (finishedRef.current) return
+    finishedRef.current = true
     const found = getSession(sessionId)
     if (!found) return
     const { session, unit } = found
@@ -976,11 +1002,10 @@ export default function LearningSession() {
     setDone(true)
     sessionStorage.setItem('lp-cache-invalid', '1')
 
-    // Meme booster (fire-and-forget) — celebratory when passing, motivational otherwise
-    setFunGif(null)
-    funApi.getGif(score >= 70 ? 'celebrate' : 'motivate')
-      .then(r => { if (r.available && r.url) setFunGif(r.url) })
-      .catch(() => { /* optional feature */ })
+    // Meme booster — celebratory when passing, motivational otherwise.
+    // (No setFunGif(null) here — loadFunGif's request-id guard handles staleness;
+    // clearing first would let a duplicate finishSession wipe an already-loaded GIF.)
+    loadFunGif(score >= 70 ? 'celebrate' : 'motivate')
 
     // Feed per-word results into SRS (fire-and-forget): a word answered
     // wrong at least once this session schedules an earlier review (SM-2 q=2)
@@ -1177,15 +1202,32 @@ export default function LearningSession() {
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex flex-col items-center gap-1.5"
+              className="flex flex-col items-center gap-2"
             >
-              <img
-                src={funGif}
-                alt="celebration gif"
-                loading="lazy"
-                className="mx-auto rounded-2xl max-h-48 shadow-md"
-              />
-              <GiphyAttribution />
+              <div className="relative">
+                <img
+                  src={funGif}
+                  alt="celebration gif"
+                  loading="lazy"
+                  className="mx-auto rounded-2xl max-h-48 shadow-md"
+                />
+                {loadingGif && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-2xl">
+                    <Loader2 className="w-6 h-6 text-white animate-spin" />
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center justify-between w-full max-w-[240px]">
+                <GiphyAttribution />
+                <button
+                  onClick={() => loadFunGif(gifMoodRef.current)}
+                  disabled={loadingGif}
+                  className="flex items-center gap-1 text-xs font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 disabled:opacity-50 transition-colors"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${loadingGif ? 'animate-spin' : ''}`} />
+                  {t('session.anotherMeme')}
+                </button>
+              </div>
             </motion.div>
           )}
 
@@ -1278,6 +1320,8 @@ export default function LearningSession() {
                 setSteps(prev => prev.filter(s => !('retry' in s && s.retry)))
                 resultsRef.current = {}
                 setCombo(0)
+                finishedRef.current = false
+                setFunGif(null)
                 setCurrentIdx(0); setCorrect(0); setWrong(0); setDone(false); setStepKey(k => k + 1)
               }}
               className="w-full py-2.5 text-gray-500 dark:text-gray-400 font-medium rounded-xl hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm"
