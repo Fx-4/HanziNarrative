@@ -8,11 +8,29 @@
 
 import axios from 'axios'
 import api from '@/services/api'
+import { TTS_STATIC_URL } from '@/lib/env'
 import { getVoiceName, getSpeakingRate } from '@/utils/voicePreference'
 import { buildCacheKey, getAudio, saveAudio } from '@/utils/ttsCache'
 import { createLogger } from '@/utils/debugLogger'
 
 const ttsHelperLogger = createLogger('TTS')
+
+// SHA-256 hex of a string — must match the Python generator's naming
+// (hashlib.sha256(key).hexdigest()) so the client resolves the right static file.
+async function sha256Hex(input: string): Promise<string> {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input))
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
+// Wrap a fetched blob as a ready-to-play Audio element (revokes its object URL
+// once done). Shared by the CDN and IndexedDB paths.
+function audioFromBlob(blob: Blob): HTMLAudioElement {
+  const url = URL.createObjectURL(blob)
+  const audio = new Audio(url)
+  audio.addEventListener('ended', () => URL.revokeObjectURL(url), { once: true })
+  audio.addEventListener('error', () => URL.revokeObjectURL(url), { once: true })
+  return audio
+}
 
 // Browser-TTS fallback is expected behaviour (e.g. backend sleeping on free tier),
 // not an error. Log it once per session at debug level so the console isn't spammed
@@ -103,12 +121,25 @@ export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioEleme
   // Layer 1: IndexedDB — zero network if heard before
   const cacheKey = buildCacheKey(text, language, voice, rate)
   const cached = await getAudio(cacheKey)
-  if (cached) {
-    const url = URL.createObjectURL(cached)
-    const audio = new Audio(url)
-    audio.addEventListener('ended', () => URL.revokeObjectURL(url), { once: true })
-    audio.addEventListener('error', () => URL.revokeObjectURL(url), { once: true })
-    return audio
+  if (cached) return audioFromBlob(cached)
+
+  // Layer 1.5: Pre-generated static audio on the CDN (Supabase Storage). The
+  // course content is fixed, so the two voices at normal speed are generated once
+  // and served straight from the CDN — no backend, no cold start. Only tried at
+  // the normal rate (the only rate we pre-generate); slow/fast go to the backend.
+  // A miss (not-yet-generated word, CDN down) silently falls through.
+  if (TTS_STATIC_URL && rate === 1) {
+    try {
+      const name = await sha256Hex(cacheKey)
+      const res = await fetch(`${TTS_STATIC_URL}/${name}.mp3`)
+      if (res.ok) {
+        const blob = await res.blob()
+        if (blob.size > 0) {
+          saveAudio(cacheKey, blob) // populate IndexedDB for zero-network replays
+          return audioFromBlob(blob)
+        }
+      }
+    } catch { /* CDN unreachable — fall through to backend */ }
   }
 
   // Layer 2: Backend (file cache → edge-tts on miss) via the shared api instance,
@@ -170,12 +201,7 @@ export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioEleme
   // Save to IndexedDB for future plays (fire-and-forget)
   saveAudio(cacheKey, blob)
 
-  const url = URL.createObjectURL(blob)
-  const audio = new Audio(url)
-  audio.addEventListener('ended', () => URL.revokeObjectURL(url), { once: true })
-  audio.addEventListener('error', () => URL.revokeObjectURL(url), { once: true })
-
-  return audio
+  return audioFromBlob(blob)
 }
 
 /**
