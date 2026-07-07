@@ -92,7 +92,7 @@ export default function WritingFeedback({
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-2xl font-bold text-gray-900 mb-2"
+              className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2"
             >
               {feedbackLevel.message}
             </motion.h3>
@@ -101,7 +101,7 @@ export default function WritingFeedback({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="flex flex-wrap items-center gap-4 text-sm text-gray-700"
+              className="flex flex-wrap items-center gap-4 text-sm text-gray-700 dark:text-gray-300"
             >
               <div className="flex items-center gap-2">
                 <Target className="w-4 h-4" />
@@ -136,28 +136,28 @@ export default function WritingFeedback({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-gray-300"
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-gray-300 dark:border-gray-700"
         >
           <div>
-            <div className="text-xs text-gray-600 mb-1">Strokes</div>
-            <div className="text-xl font-bold text-gray-900">{totalStrokes}</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Strokes</div>
+            <div className="text-xl font-bold text-gray-900 dark:text-gray-100">{totalStrokes}</div>
           </div>
 
           <div>
-            <div className="text-xs text-gray-600 mb-1">Mistakes</div>
-            <div className="text-xl font-bold text-gray-900">{mistakes}</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Mistakes</div>
+            <div className="text-xl font-bold text-gray-900 dark:text-gray-100">{mistakes}</div>
           </div>
 
           <div>
-            <div className="text-xs text-gray-600 mb-1">Speed</div>
-            <div className="text-xl font-bold text-gray-900">
+            <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Speed</div>
+            <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
               {totalStrokes > 0 ? (timeTaken / totalStrokes).toFixed(1) : '—'}s/stroke
             </div>
           </div>
 
           {improvement !== 0 && (
             <div>
-              <div className="text-xs text-gray-600 mb-1">Improvement</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Improvement</div>
               <div className={`text-xl font-bold ${improvement > 0 ? 'text-success-600 dark:text-success-400' : 'text-error-600 dark:text-error-400'}`}>
                 {improvement > 0 ? '+' : ''}{improvement}%
               </div>
@@ -171,9 +171,9 @@ export default function WritingFeedback({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="mt-4 p-3 bg-white/50 rounded-lg"
+            className="mt-4 p-3 bg-white/50 dark:bg-white/5 rounded-lg"
           >
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-700 dark:text-gray-300">
               <strong>Tip:</strong> {mistakes > 3
                 ? "Watch the stroke order animation carefully before trying again."
                 : "Try to slow down and focus on accuracy rather than speed."}
@@ -188,7 +188,7 @@ export default function WritingFeedback({
             transition={{ delay: 0.7 }}
             className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200 dark:bg-yellow-950/30 dark:border-yellow-800"
           >
-            <p className="text-sm font-semibold text-yellow-900">
+            <p className="text-sm font-semibold text-yellow-900 dark:text-yellow-200">
               New Personal Record! Keep up the great work!
             </p>
           </motion.div>
