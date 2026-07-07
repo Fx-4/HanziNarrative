@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { CURRICULUM, UnitDef, SessionDef } from '@/data/curriculum'
 import { learningPathApi, LessonProgressRecord } from '@/services/api'
 import { fetchTTSAudio } from '@/utils/ttsHelper'
+import { ensureBackendReady } from '@/lib/backendStatus'
 import {
   CheckCircle, Lock, PlayCircle, RotateCcw, ChevronDown,
   BookOpen, Brain, Dumbbell, Star, Zap, Trophy,
@@ -140,13 +141,23 @@ export default function LearningPath() {
       ...(s.grammarPoints ?? []).flatMap(gp => gp.examples.map(ex => ex.zh)),
     ]))]
 
-    // Staggered fire-and-forget — cached items resolve instantly from IndexedDB,
-    // misses warm the backend file cache without hammering it
-    texts.forEach((zh, i) => {
-      setTimeout(() => {
-        fetchTTSAudio({ text: zh, allowBrowserFallback: false }).catch(() => { /* silent */ })
-      }, i * 250)
-    })
+    let cancelled = false
+    const timers: ReturnType<typeof setTimeout>[] = []
+    ;(async () => {
+      // Wake the backend once first — otherwise a sleeping free-tier server turns
+      // every prewarm request into a network error and warms nothing.
+      try { await ensureBackendReady() } catch { return }
+      if (cancelled) return
+      // Staggered fire-and-forget — cached items resolve instantly from IndexedDB,
+      // misses warm the backend file cache without hammering it
+      texts.forEach((zh, i) => {
+        timers.push(setTimeout(() => {
+          fetchTTSAudio({ text: zh, allowBrowserFallback: false }).catch(() => { /* silent */ })
+        }, i * 250))
+      })
+    })()
+
+    return () => { cancelled = true; timers.forEach(clearTimeout) }
   }, [expandedUnit, activeLevel])
 
   const units = CURRICULUM[activeLevel] ?? []

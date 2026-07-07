@@ -18,6 +18,10 @@ const ttsHelperLogger = createLogger('TTS')
 // not an error. Log it once per session at debug level so the console isn't spammed
 // with one warning per word/sentence the user plays.
 let _fallbackLogged = false
+// Same idea for the no-fallback path: a cold Koyeb backend fails every prefetch
+// request with a network error until it wakes. That's expected (callers prewarm
+// via ensureBackendReady and/or retry), so log it once at debug — not once per word.
+let _coldStartLogged = false
 
 // Wraps browser SpeechSynthesis as a fake HTMLAudioElement so callers
 // get a consistent interface even when the backend is unreachable.
@@ -131,11 +135,12 @@ export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioEleme
 
   if (!response) {
     const err = lastErr
+    const isNetworkErr = axios.isAxiosError(err) && !err.response
     // Network error (backend unreachable) → silent fallback to browser TTS,
     // unless the caller demands the real (Edge) voice
     if (
       allowBrowserFallback &&
-      axios.isAxiosError(err) && !err.response &&
+      isNetworkErr &&
       typeof speechSynthesis !== 'undefined'
     ) {
       if (!_fallbackLogged) {
@@ -144,7 +149,17 @@ export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioEleme
       }
       return createSpeechShim(text, language)
     }
-    ttsHelperLogger.error('TTS synthesis failed', err)
+    // Cold-start network errors are expected, not bugs — log once at debug so the
+    // console isn't flooded with one error per prefetched word. Only genuine
+    // API/server errors (those that came back with a response) get ERROR level.
+    if (isNetworkErr) {
+      if (!_coldStartLogged) {
+        _coldStartLogged = true
+        ttsHelperLogger.debug('TTS backend unreachable (cold start) — prefetch will retry once it wakes')
+      }
+    } else {
+      ttsHelperLogger.error('TTS synthesis failed', err)
+    }
     throw err
   }
 

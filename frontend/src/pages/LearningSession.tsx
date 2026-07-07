@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { getSession, getUnitWords, ALL_UNITS, Word, GrammarPoint, FillBlank, UnitDef } from '@/data/curriculum'
 import { learningPathApi, learningApi, funApi } from '@/services/api'
 import { fetchTTSAudio } from '@/utils/ttsHelper'
+import { ensureBackendReady } from '@/lib/backendStatus'
 import { pinyin as toPinyin } from 'pinyin-pro'
 
 // Single-char lookup override: 了 defaults to liǎo in isolation, but in HSK fill-
@@ -805,12 +806,19 @@ export default function LearningSession() {
           }
         })
     }
-    attempt(4) // up to 5 tries × 4s ≈ 20s of cold-start tolerance
+    // Wake the backend first so the retry budget isn't burned on the cold start —
+    // by the completion screen it's usually already warm, so this resolves instantly.
+    ensureBackendReady()
+      .catch(() => { /* still down — try anyway, the retries cover a late wake */ })
+      .finally(() => { if (reqId === gifReqRef.current) attempt(4) }) // 5 tries × 4s cold-start tolerance
   }, [])
   // Blocking audio preload on session start — loads all TTS up front so there's
   // no per-card wait inside the lesson
   const [preparingAudio, setPreparingAudio] = useState(false)
   const [preloadPct, setPreloadPct] = useState(0)
+  // True while we're waiting for a sleeping backend to answer /health, before the
+  // audio fetches start — lets the preload screen show a "waking server" state.
+  const [warmingServer, setWarmingServer] = useState(false)
   const preloadCancelRef = useRef(false)
 
   useEffect(() => {
@@ -903,27 +911,41 @@ export default function LearningSession() {
 
     setPreparingAudio(true)
     setPreloadPct(0)
+    setWarmingServer(false)
 
     const finish = () => {
       if (cancelled || preloadCancelRef.current) return
       preloadCancelRef.current = true
       setPreparingAudio(false)
+      setWarmingServer(false)
     }
-    // Hard cap (~9 s): proceed even if a cold backend hasn't answered yet
-    const capTimer = setTimeout(finish, 9000)
+    // Safety cap so a truly dead backend can never trap the user on this screen.
+    // Generous on purpose: a sleeping Koyeb free-tier backend takes ~30-60 s to
+    // wake, and once it's up the (mostly cached) audio finishes in a second or two.
+    const capTimer = setTimeout(finish, 75000)
 
-    let done = 0
-    Promise.allSettled(
-      audioTexts.map(zh =>
-        fetchTTSAudio({ text: zh, allowBrowserFallback: false }).finally(() => {
-          done++
-          if (!cancelled) setPreloadPct(Math.round((done / audioTexts.length) * 100))
-        })
+    ;(async () => {
+      // Wake the backend ONCE before the barrage. Firing every TTS request into a
+      // cold server makes them all fail with a network error (warming nothing);
+      // waiting for /health first means the fetches below all hit a live backend,
+      // so the preload actually completes instead of bailing at the cap.
+      setWarmingServer(true)
+      try { await ensureBackendReady() } catch { /* still down — fetches fall back */ }
+      if (cancelled || preloadCancelRef.current) return
+      setWarmingServer(false)
+
+      let done = 0
+      await Promise.allSettled(
+        audioTexts.map(zh =>
+          fetchTTSAudio({ text: zh, allowBrowserFallback: false }).finally(() => {
+            done++
+            if (!cancelled) setPreloadPct(Math.round((done / audioTexts.length) * 100))
+          })
+        )
       )
-    ).then(() => {
       clearTimeout(capTimer)
       finish()
-    })
+    })()
 
     return () => {
       cancelled = true
@@ -1134,21 +1156,33 @@ export default function LearningSession() {
         </motion.div>
         <div>
           <p className="text-lg font-extrabold text-gray-900 dark:text-gray-50">{t('session.preparingTitle')}</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-xs">{t('session.preparingSub')}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-xs">
+            {warmingServer ? t('session.wakingServer') : t('session.preparingSub')}
+          </p>
           {meta?.session?.title && (
             <p className="text-xs text-primary-500 font-bold uppercase tracking-widest mt-3">{meta.session.title}</p>
           )}
         </div>
-        {/* Progress bar */}
+        {/* Progress bar — indeterminate sweep while the server wakes, then real % */}
         <div className="w-full max-w-xs">
           <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-primary-500 rounded-full"
-              animate={{ width: `${preloadPct}%` }}
-              transition={{ duration: 0.3 }}
-            />
+            {warmingServer ? (
+              <motion.div
+                className="h-full w-1/3 bg-primary-500 rounded-full"
+                animate={{ x: ['-120%', '360%'] }}
+                transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+              />
+            ) : (
+              <motion.div
+                className="h-full bg-primary-500 rounded-full"
+                animate={{ width: `${preloadPct}%` }}
+                transition={{ duration: 0.3 }}
+              />
+            )}
           </div>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{preloadPct}%</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+            {warmingServer ? t('session.wakingServerHint') : `${preloadPct}%`}
+          </p>
         </div>
         <button
           onClick={skipPreload}
@@ -1229,7 +1263,17 @@ export default function LearningSession() {
           </div>
 
           {/* Meme booster (Giphy) — only renders when the backend has a key.
-              "Powered by GIPHY" attribution is required by GIPHY's API terms. */}
+              "Powered by GIPHY" attribution is required by GIPHY's API terms.
+              While it's still being fetched (Koyeb cold start), show a placeholder
+              so the user sees a reward is coming instead of an empty gap. */}
+          {!funGif && loadingGif && (
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-44 h-32 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                <Loader2 className="w-6 h-6 text-primary-500 animate-spin" />
+              </div>
+              <p className="text-xs text-gray-400 dark:text-gray-500">{t('session.loadingMeme')}</p>
+            </div>
+          )}
           {funGif && (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
