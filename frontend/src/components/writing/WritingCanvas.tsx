@@ -53,6 +53,11 @@ export default function WritingCanvas({
   const [mistakes, setMistakes] = useState(0)
   const mistakesRef = useRef(0)
   const totalStrokesRef = useRef(0)
+  // Monotonic id for the Stroke-Guide animation loop. Bumping it cancels any
+  // in-flight recursion, so a demo started on one character can't keep firing
+  // animateStroke() after the user switched to a shorter character — that would
+  // index past the new character's stroke list and crash inside hanzi-writer.
+  const strokeGuideRunRef = useRef(0)
   const startTimeRef = useRef<number | null>(null)
   const [isComplete, setIsComplete] = useState(false)
   const [accuracy, setAccuracy] = useState(0)
@@ -103,6 +108,7 @@ export default function WritingCanvas({
   // so the three paths can never drift apart again
   const quizCallbacks = {
     onMistake: (strokeData: HanziStrokeData) => {
+      if (!strokeData) return
       mistakesRef.current = strokeData.totalMistakes ?? (mistakesRef.current + 1)
       setMistakes(mistakesRef.current)
       if (strokeData.strokeNum !== undefined && strokeData.strokesRemaining !== undefined) {
@@ -112,6 +118,7 @@ export default function WritingCanvas({
       }
     },
     onCorrectStroke: (strokeData: HanziStrokeData) => {
+      if (!strokeData) return
       if (strokeData.strokeNum !== undefined && strokeData.strokesRemaining !== undefined) {
         const total = strokeData.strokeNum + strokeData.strokesRemaining + 1
         totalStrokesRef.current = total
@@ -139,6 +146,10 @@ export default function WritingCanvas({
 
   useEffect(() => {
     if (!canvasRef.current || canvasSize === 0) return
+
+    // Switching character/size: invalidate any running Stroke-Guide loop so it
+    // can't animate strokes on the writer we're about to replace.
+    strokeGuideRunRef.current++
 
     // Clean up previous writer BEFORE creating new one
     if (writerRef.current) {
@@ -204,6 +215,8 @@ export default function WritingCanvas({
     }
 
     return () => {
+      // Stop any Stroke-Guide recursion before tearing down the writer
+      strokeGuideRunRef.current++
       if (writerRef.current) {
         try {
           writerRef.current.cancelQuiz()
@@ -226,6 +239,9 @@ export default function WritingCanvas({
 
   const handleReset = () => {
     if (!writerRef.current) return
+    // Cancel any running Stroke-Guide loop and re-enable its button
+    strokeGuideRunRef.current++
+    setIsAnimating(false)
     writerRef.current.cancelQuiz()
     totalStrokesRef.current = 0
     writerRef.current.quiz(quizCallbacks)
@@ -237,6 +253,8 @@ export default function WritingCanvas({
   const handlePlayStrokeGuide = () => {
     const writer = writerRef.current
     if (!writer || isAnimating) return
+    // New run — supersedes any earlier (interrupted) guide loop
+    const runId = ++strokeGuideRunRef.current
     const total = totalStrokesRef.current
     // Mid-quiz: demo only the remaining strokes and resume where the user was.
     // Already complete (or count unknown): full demo + fresh restart.
@@ -245,15 +263,19 @@ export default function WritingCanvas({
     writer.cancelQuiz()
     writer.showOutline()
 
+    // Abort if this run was superseded (Reset / character switch / unmount) or the
+    // writer was swapped out — never touch a stale writer.
+    const superseded = () => runId !== strokeGuideRunRef.current || writerRef.current !== writer
+
     const resumeQuiz = () => {
-      if (!writerRef.current) return
+      if (superseded()) return
       setIsAnimating(false)
-      writerRef.current.hideCharacter()
+      writer.hideCharacter()
       // The demo turned the outline on — restore the user's hint preference
-      if (!showHints) writerRef.current.hideOutline()
+      if (!showHints) writer.hideOutline()
       // quizStartStrokeNum redraws earlier strokes automatically, so the
       // counter/bar keep their value instead of resetting or overflowing
-      writerRef.current.quiz({ ...quizCallbacks, quizStartStrokeNum: startFrom })
+      writer.quiz({ ...quizCallbacks, quizStartStrokeNum: startFrom })
       if (startFrom === 0) resetProgress()
     }
 
@@ -264,13 +286,17 @@ export default function WritingCanvas({
       return
     }
 
+    // Always drive the SAME writer we captured (never writerRef.current, which may
+    // have been replaced by a shorter character mid-animation) and stop the moment
+    // the run is superseded — hanzi-writer crashes if asked to animate a stroke
+    // index past the current character's stroke count.
     const animateFrom = (n: number) => {
-      if (!writerRef.current) return
+      if (superseded()) return
       if (n >= total) {
         resumeQuiz()
         return
       }
-      writerRef.current.animateStroke(n, { onComplete: () => animateFrom(n + 1) })
+      writer.animateStroke(n, { onComplete: () => animateFrom(n + 1) })
     }
     animateFrom(startFrom)
   }
