@@ -44,9 +44,10 @@ let _coldStartLogged = false
 // Wraps browser SpeechSynthesis as a fake HTMLAudioElement so callers
 // get a consistent interface even when the backend is unreachable.
 // onended / onerror are properly fired so callers can track play state.
-function createSpeechShim(text: string, lang: string): HTMLAudioElement {
+function createSpeechShim(text: string, lang: string, rate = 1): HTMLAudioElement {
   const utter = new SpeechSynthesisUtterance(text)
   utter.lang = lang
+  utter.rate = rate
   const voices = speechSynthesis.getVoices()
   const match = voices.find(v => v.lang.startsWith('zh'))
   if (match) utter.voice = match
@@ -118,17 +119,33 @@ export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioEleme
   const voice = voiceName || getVoiceName()
   const rate = speakingRate ?? getSpeakingRate()
 
+  // Speed is applied on the CLIENT via playbackRate, so audio is only ever
+  // fetched & cached at NORMAL speed. One file per voice then serves slow/normal/
+  // fast, so neither the static CDN nor the backend cache fragments by rate.
+  // preservesPitch keeps 0.7×/1.3× sounding natural (no chipmunk / deep voice).
+  const applySpeed = (audio: HTMLAudioElement): HTMLAudioElement => {
+    if (rate !== 1) {
+      const a = audio as HTMLAudioElement & {
+        preservesPitch?: boolean; mozPreservesPitch?: boolean; webkitPreservesPitch?: boolean
+      }
+      a.preservesPitch = a.mozPreservesPitch = a.webkitPreservesPitch = true
+      audio.playbackRate = rate
+    }
+    return audio
+  }
+
+  // Cache / CDN / backend are all keyed at normal speed (see applySpeed above)
+  const cacheKey = buildCacheKey(text, language, voice, 1)
+
   // Layer 1: IndexedDB — zero network if heard before
-  const cacheKey = buildCacheKey(text, language, voice, rate)
   const cached = await getAudio(cacheKey)
-  if (cached) return audioFromBlob(cached)
+  if (cached) return applySpeed(audioFromBlob(cached))
 
   // Layer 1.5: Pre-generated static audio on the CDN (Supabase Storage). The
-  // course content is fixed, so the two voices at normal speed are generated once
-  // and served straight from the CDN — no backend, no cold start. Only tried at
-  // the normal rate (the only rate we pre-generate); slow/fast go to the backend.
-  // A miss (not-yet-generated word, CDN down) silently falls through.
-  if (TTS_STATIC_URL && rate === 1) {
+  // course content is fixed, so both voices are generated once and served straight
+  // from the CDN — no backend, no cold start, at ANY speed (playbackRate handles
+  // slow/fast). A miss (not-yet-generated word, CDN down) silently falls through.
+  if (TTS_STATIC_URL) {
     try {
       const name = await sha256Hex(cacheKey)
       const res = await fetch(`${TTS_STATIC_URL}/${name}.mp3`)
@@ -136,7 +153,7 @@ export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioEleme
         const blob = await res.blob()
         if (blob.size > 0) {
           saveAudio(cacheKey, blob) // populate IndexedDB for zero-network replays
-          return audioFromBlob(blob)
+          return applySpeed(audioFromBlob(blob))
         }
       }
     } catch { /* CDN unreachable — fall through to backend */ }
@@ -153,7 +170,7 @@ export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioEleme
     try {
       response = await api.post(
         '/tts/synthesize',
-        { text, language, voice_name: voice, speaking_rate: rate },
+        { text, language, voice_name: voice, speaking_rate: 1 },
         { responseType: 'blob' }
       )
       break
@@ -178,7 +195,7 @@ export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioEleme
         _fallbackLogged = true
         ttsHelperLogger.debug('Backend unreachable — falling back to browser TTS for this session')
       }
-      return createSpeechShim(text, language)
+      return createSpeechShim(text, language, rate)
     }
     // Cold-start network errors are expected, not bugs — log once at debug so the
     // console isn't flooded with one error per prefetched word. Only genuine
@@ -201,7 +218,7 @@ export async function fetchTTSAudio(options: TTSOptions): Promise<HTMLAudioEleme
   // Save to IndexedDB for future plays (fire-and-forget)
   saveAudio(cacheKey, blob)
 
-  return audioFromBlob(blob)
+  return applySpeed(audioFromBlob(blob))
 }
 
 /**
