@@ -72,3 +72,20 @@ export function resetBackendStatus(): void {
   _status = 'unknown'
   _notify()
 }
+
+/**
+ * Drop a stale health result so the NEXT ensureBackendReady() re-polls.
+ *
+ * The cached promise is sticky: once it resolves 'ready' it stays ready forever.
+ * But a free-tier backend can go back to sleep after the app has been idle, and a
+ * poll that timed out leaves a stuck 'failed'. In both cases the cached result is
+ * no longer trustworthy — call this from the network-error path so a later request
+ * triggers a fresh warm-up instead of retrying against a server we wrongly believe
+ * is up (or giving up on one that has since recovered). A poll already in progress
+ * ('warming') is left alone so concurrent failures share the one re-poll.
+ */
+export function invalidateIfStale(): void {
+  if (_status === 'ready' || _status === 'failed') {
+    resetBackendStatus()
+  }
+}

@@ -1,6 +1,6 @@
 ﻿import axios from 'axios'
 import { API_URL } from '@/lib/env'
-import { ensureBackendReady } from '@/lib/backendStatus'
+import { ensureBackendReady, invalidateIfStale } from '@/lib/backendStatus'
 import type {
   User,
   Story,
@@ -112,6 +112,10 @@ api.interceptors.response.use(
       const originalRequest = error.config as typeof error.config & { _networkRetry?: boolean }
       if (!originalRequest._networkRetry) {
         originalRequest._networkRetry = true
+        // If we previously judged the backend 'ready' (it has since slept) or
+        // 'failed' (it may have since recovered), drop that stale verdict so the
+        // call below re-polls /health instead of trusting a cached result.
+        invalidateIfStale()
         apiLogger.warn(`← NETWORK_ERROR ${method} ${url} — waiting for backend to wake up`)
         try {
           await ensureBackendReady()
