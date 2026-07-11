@@ -5,6 +5,7 @@ import { getSession, getUnitWords, ALL_UNITS, Word, GrammarPoint, FillBlank, Uni
 import { learningPathApi, learningApi, funApi } from '@/services/api'
 import { fetchTTSAudio } from '@/utils/ttsHelper'
 import { ensureBackendReady } from '@/lib/backendStatus'
+import { TTS_STATIC_URL } from '@/lib/env'
 import { pinyin as toPinyin } from 'pinyin-pro'
 
 // Single-char lookup override: 了 defaults to liǎo in isolation, but in HSK fill-
@@ -929,10 +930,17 @@ export default function LearningSession() {
       // cold server makes them all fail with a network error (warming nothing);
       // waiting for /health first means the fetches below all hit a live backend,
       // so the preload actually completes instead of bailing at the cap.
-      setWarmingServer(true)
-      try { await ensureBackendReady() } catch { /* still down — fetches fall back */ }
-      if (cancelled || preloadCancelRef.current) return
-      setWarmingServer(false)
+      // With the static CDN configured the audio never touches the backend, so
+      // don't hold the preload hostage to a cold Koyeb — warm it in the
+      // background instead (word images / completion GIF / XP need it later).
+      if (TTS_STATIC_URL) {
+        ensureBackendReady().catch(() => { /* background warm-up only */ })
+      } else {
+        setWarmingServer(true)
+        try { await ensureBackendReady() } catch { /* still down — fetches fall back */ }
+        if (cancelled || preloadCancelRef.current) return
+        setWarmingServer(false)
+      }
 
       let done = 0
       await Promise.allSettled(
