@@ -1,16 +1,9 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { toast } from 'react-hot-toast'
-import axios from 'axios'
-import { buildCacheKey, getAudio, saveAudio } from '@/utils/ttsCache'
 import { getVoiceName, getSpeakingRate } from '@/utils/voicePreference'
-import { API_URL } from '@/lib/env'
+import { fetchTTSAudio } from '@/utils/ttsHelper'
 import { createLogger } from '@/utils/debugLogger'
 
 const useTTSLogger = createLogger('useTTS')
-
-// Network fallback (backend sleeping) is expected — notify the user only once
-// per session instead of toasting on every word played.
-let _ttsFallbackToasted = false
 
 interface UseTTSOptions {
   language?: string
@@ -63,21 +56,6 @@ export function useTTS(options: UseTTSOptions = {}): UseTTSReturn {
     setIsSpeaking(false)
   }, [])
 
-  const playBlob = useCallback((blob: Blob) => {
-    const audioUrl = URL.createObjectURL(blob)
-    const audio = new Audio(audioUrl)
-    audioRef.current = audio
-    audio.onended = () => {
-      setIsSpeaking(false)
-      URL.revokeObjectURL(audioUrl)
-    }
-    audio.onerror = () => {
-      setIsSpeaking(false)
-      URL.revokeObjectURL(audioUrl)
-    }
-    return audio.play()
-  }, [])
-
   const speakFallback = useCallback((text: string) => {
     if (!('speechSynthesis' in window)) return
     window.speechSynthesis.cancel()
@@ -102,52 +80,20 @@ export function useTTS(options: UseTTSOptions = {}): UseTTSReturn {
 
     setIsSpeaking(true)
 
-    // Layer 1: IndexedDB — zero network if heard before
-    const cacheKey = buildCacheKey(text, language, voiceName, rate)
-    const cached = await getAudio(cacheKey)
-    if (cached) {
-      try {
-        await playBlob(cached)
-        return
-      } catch {
-        // cached blob may be corrupt, fall through to network
-      }
-    }
-
-    // Layer 2: Backend (file cache → multi-provider TTS on miss)
+    // fetchTTSAudio layers everything: IndexedDB → static CDN → backend, with
+    // browser-voice shim on network error and playbackRate for slow/fast.
     try {
-      const response = await axios.post(
-        `${API_URL}/tts/synthesize`,
-        { text, language, voice_name: voiceName, speaking_rate: rate },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          responseType: 'blob',
-        }
-      )
-
-      const audioBlob = new Blob([response.data], { type: 'audio/mpeg' })
-
-      // Save to IndexedDB for future plays (fire-and-forget)
-      saveAudio(cacheKey, audioBlob)
-
-      await playBlob(audioBlob)
+      const audio = await fetchTTSAudio({ text, language, voiceName, speakingRate: rate })
+      audioRef.current = audio
+      audio.onended = () => setIsSpeaking(false)
+      audio.onerror = () => setIsSpeaking(false)
+      await audio.play()
     } catch (error) {
-      // A missing response = network error (backend asleep / offline). That's an
-      // expected fallback, not a real failure — log quietly and toast once.
-      const isNetworkError = axios.isAxiosError(error) && !error.response
-      if (isNetworkError) {
-        useTTSLogger.debug('Backend unreachable — using browser voice', { text: text.slice(0, 20) })
-      } else {
-        useTTSLogger.error('TTS synthesis failed, falling back to browser voice', error)
-      }
+      useTTSLogger.error('TTS synthesis failed, falling back to browser voice', error)
       setIsSpeaking(false)
       speakFallback(text)
-      if (!_ttsFallbackToasted) {
-        _ttsFallbackToasted = true
-        toast('Using your browser voice for audio', { icon: '🔊' })
-      }
     }
-  }, [language, rate, voiceName, stop, speakFallback, playBlob])
+  }, [language, rate, voiceName, stop, speakFallback])
 
   return { speak, stop, isSpeaking, isSupported }
 }
