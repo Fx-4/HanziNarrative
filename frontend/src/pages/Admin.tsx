@@ -194,8 +194,10 @@ function OverviewTab() {
   useEffect(() => { load() }, [load])
 
   if (loading) return (
-    <div className="flex items-center justify-center h-48">
-      <Loader2 className="w-6 h-6 animate-spin text-primary-500" />
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-2xl h-24" />
+      ))}
     </div>
   )
 
@@ -387,11 +389,13 @@ function UsersTab({ currentUserId }: { currentUserId: number }) {
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td colSpan={6} className="px-4 py-12 text-center text-gray-400">
-                    <Loader2 className="w-5 h-5 animate-spin mx-auto" />
-                  </td>
-                </tr>
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i}>
+                    <td colSpan={6} className="px-4 py-3">
+                      <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-lg h-6" />
+                    </td>
+                  </tr>
+                ))
               ) : users.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-4 py-12 text-center text-gray-400">No users found</td>

@@ -2,7 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Trophy, Medal, TrendingUp, Zap, Target, Award,
-  Loader2, RotateCcw, Users, Calendar, BookOpen, Clock,
+  RotateCcw, Users, Calendar, BookOpen, Clock,
 } from 'lucide-react'
 import CountUp from '@/components/animations/CountUp'
 import { API_URL } from '@/lib/env'
@@ -380,9 +380,15 @@ export default function Leaderboard() {
 
       {/* ── Leaderboard List ────────────────────────────────────────────── */}
       {loading ? (
-        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-12 flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
-          <p className="text-sm text-gray-400">{loadingMessage || 'Loading leaderboard…'}</p>
+        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6 space-y-3">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-full w-9 h-9 shrink-0" />
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-lg h-4 flex-1" />
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-lg h-4 w-16" />
+            </div>
+          ))}
+          {loadingMessage && <p className="text-xs text-center text-gray-400 pt-2">{loadingMessage}</p>}
         </div>
       ) : error ? (
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-10 text-center">

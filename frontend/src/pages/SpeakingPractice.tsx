@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { sttApi, vocabularyApi } from '@/services/api'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Skeleton, SessionSkeleton } from '@/components/ui/Skeleton'
 import {
     Mic,
@@ -373,7 +372,7 @@ export default function SpeakingPractice() {
                             disabled={loading}
                             className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white rounded-2xl px-8 py-4 font-semibold text-lg cursor-pointer transition-all flex items-center gap-3 mx-auto disabled:opacity-50"
                         >
-                            {loading ? <LoadingSpinner size="sm" /> : <Mic className="w-6 h-6" />}
+                            <Mic className="w-6 h-6" />
                             {t('speaking.start')}
                         </button>
                     </motion.div>

@@ -1,7 +1,6 @@
 ﻿import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { dictationApi } from '@/services/api'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { SessionSkeleton } from '@/components/ui/Skeleton'
 import {
     Headphones,
@@ -254,7 +253,7 @@ export default function Dictation() {
                             disabled={loading}
                             className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white rounded-2xl px-8 py-4 font-semibold text-lg cursor-pointer transition-all flex items-center gap-3 mx-auto disabled:opacity-50"
                         >
-                            {loading ? <LoadingSpinner size="sm" /> : <Headphones className="w-6 h-6" />}
+                            <Headphones className="w-6 h-6" />
                             {t('dictation.start')}
                         </button>
                     </motion.div>

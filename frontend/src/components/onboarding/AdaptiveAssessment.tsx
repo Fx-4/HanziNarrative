@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { onboardingApi } from '@/services/api'
 import type { QuestionData, AssessmentAnswer } from '@/types'
-import { Loader2, Award, Check, X, AlertCircle, RefreshCw } from 'lucide-react'
+import { Award, Check, X, AlertCircle, RefreshCw } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createLogger } from '@/utils/debugLogger'
 
@@ -168,10 +168,14 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
   }
 
   if (loading) {
+    // Question card skeleton (prompt + 4 options) while the assessment loads
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
-        <p className="text-sm text-gray-500">Loading assessment questions…</p>
+      <div className="min-h-[400px] max-w-xl mx-auto w-full space-y-4 py-6">
+        <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-full h-2" />
+        <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-3xl h-32" />
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-2xl h-12" />
+        ))}
       </div>
     )
   }

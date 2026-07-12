@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { storiesApi } from '@/services/api'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { SessionSkeleton } from '@/components/ui/Skeleton'
 import {
     BookOpen,
@@ -194,7 +193,7 @@ export default function FillBlank() {
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center">
                         <button onClick={startSession} disabled={loading}
                             className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white rounded-2xl px-8 py-4 font-semibold text-lg cursor-pointer transition-all flex items-center gap-3 mx-auto disabled:opacity-50">
-                            {loading ? <LoadingSpinner size="sm" /> : <Lightbulb className="w-6 h-6" />}
+                            <Lightbulb className="w-6 h-6" />
                             Start Reading
                         </button>
                     </motion.div>

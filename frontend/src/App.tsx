@@ -70,12 +70,17 @@ function BackendBanner() {
 }
 
 // ── Minimal loading fallback ──────────────────────────────────────
+// Generic page skeleton (title + content card + tiles) shown while a lazy
+// route chunk loads — keeps every page transition in the skeleton family.
 function PageLoader() {
   return (
-    <div className="min-h-[60vh] flex items-center justify-center">
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-8 h-8 border-3 border-primary-200 dark:border-primary-800 border-t-primary-600 dark:border-t-primary-400 rounded-full animate-spin" />
-        <span className="text-sm text-gray-500 dark:text-gray-400">Loading...</span>
+    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+      <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-lg h-8 w-56" />
+      <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-3xl h-40" />
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {[0, 1, 2, 3].map(i => (
+          <div key={i} className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-2xl h-24" />
+        ))}
       </div>
     </div>
   )
@@ -123,8 +128,8 @@ function AdminGuard({ children }: { children: React.ReactElement }) {
   // Wait for auth to finish initializing before deciding
   if (!authInitialized) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
-        <div className="w-8 h-8 border-3 border-primary-200 dark:border-primary-800 border-t-primary-600 dark:border-t-primary-400 rounded-full animate-spin" />
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+        <PageLoader />
       </div>
     )
   }

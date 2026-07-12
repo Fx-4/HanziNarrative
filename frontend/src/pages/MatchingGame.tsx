@@ -1,7 +1,6 @@
 ﻿import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { vocabularyApi } from '@/services/api'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { HanziWord } from '@/types'
 import {
@@ -181,7 +180,7 @@ export default function MatchingGame() {
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-center">
                         <button onClick={startGame} disabled={loading}
                             className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white rounded-2xl px-8 py-4 font-semibold text-lg cursor-pointer transition-all flex items-center gap-3 mx-auto disabled:opacity-50">
-                            {loading ? <LoadingSpinner size="sm" /> : <Grid3X3 className="w-6 h-6" />}
+                            <Grid3X3 className="w-6 h-6" />
                             {t('matchingGame.start')}
                         </button>
                     </motion.div>

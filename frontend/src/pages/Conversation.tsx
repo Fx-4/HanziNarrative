@@ -1,7 +1,6 @@
 ﻿import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { conversationApi } from '@/services/api'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { TileGridSkeleton } from '@/components/ui/Skeleton'
 import {
   MessageCircle, Send, ArrowLeft, Eye, EyeOff,
@@ -313,12 +312,8 @@ export default function Conversation() {
           disabled={loading || !selectedTopic}
           className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 disabled:opacity-50 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all cursor-pointer flex items-center justify-center gap-2"
         >
-          {loading ? <LoadingSpinner /> : (
-            <>
-              <MessageCircle className="w-4 h-4" />
-              Start Conversation
-            </>
-          )}
+          <MessageCircle className="w-4 h-4" />
+          Start Conversation
         </motion.button>
       </div>
     )

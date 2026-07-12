@@ -15,7 +15,6 @@ import LevelSelector from '@/components/onboarding/LevelSelector'
 import AdaptiveAssessment from '@/components/onboarding/AdaptiveAssessment'
 import PreferencesCustomizer from '@/components/onboarding/PreferencesCustomizer'
 import CompletionScreen from '@/components/onboarding/CompletionScreen'
-import { Loader2 } from 'lucide-react'
 import { createLogger } from '@/utils/debugLogger'
 import { useTranslation } from 'react-i18next'
 
@@ -157,9 +156,13 @@ const Onboarding = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-primary-50 via-white to-violet-50 gap-3">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
-        <p className="text-sm text-gray-500">{t('onboarding.loading')}</p>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-primary-50 via-white to-violet-50 px-4">
+        <div className="w-full max-w-lg space-y-4">
+          <div className="animate-pulse bg-gray-200 rounded-lg h-8 w-2/3 mx-auto" />
+          <div className="animate-pulse bg-gray-200 rounded-3xl h-48" />
+          <div className="animate-pulse bg-gray-200 rounded-2xl h-12 w-40 mx-auto" />
+          <p className="text-sm text-center text-gray-500">{t('onboarding.loading')}</p>
+        </div>
       </div>
     )
   }

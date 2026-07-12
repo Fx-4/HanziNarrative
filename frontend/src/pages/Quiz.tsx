@@ -1,7 +1,6 @@
 ﻿import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { quizApi } from '@/services/api'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { SessionSkeleton } from '@/components/ui/Skeleton'
 import { Brain, CheckCircle, XCircle, Trophy, RotateCcw, Flame, Star, Dumbbell, Target, Gem, Check, PenLine, RefreshCw } from 'lucide-react'
 import { toast } from 'react-hot-toast'
@@ -527,7 +526,7 @@ export default function Quiz() {
                 disabled={loading}
                 className="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-2xl px-6 py-3 sm:py-4 font-semibold text-base sm:text-lg transition-all shadow-md"
               >
-                {loading ? <LoadingSpinner size="sm" /> : <Brain className="w-5 h-5" />}
+                <Brain className="w-5 h-5" />
                 {t('quiz.start')}
               </button>
             </div>

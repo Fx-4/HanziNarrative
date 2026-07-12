@@ -2,7 +2,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { playTTS } from '@/utils/ttsHelper'
 import { vocabularyApi } from '@/services/api'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { SessionSkeleton } from '@/components/ui/Skeleton'
 import { HanziWord } from '@/types'
 import {
@@ -587,7 +586,7 @@ export default function MockTest() {
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center">
                         <button onClick={startTest} disabled={loading}
                             className="bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-700 hover:to-purple-700 text-white rounded-2xl px-10 py-4 font-bold text-lg cursor-pointer transition-all shadow-lg shadow-primary-200 dark:shadow-primary-900/30 flex items-center gap-3 mx-auto disabled:opacity-50">
-                            {loading ? <LoadingSpinner size="sm" /> : <Target className="w-6 h-6" />}
+                            <Target className="w-6 h-6" />
                             Start Mock Test
                         </button>
                         <p className="text-xs text-gray-400 mt-3">Requires ≥ 25 words in selected HSK level</p>
