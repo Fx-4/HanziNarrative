@@ -3,6 +3,7 @@ import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from '@dnd-kit/
 import { SortableContext, arrayMove } from '@dnd-kit/sortable';
 import { useAuthStore } from '../store/authStore';
 import { vocabularyApi, storiesApi } from '@/services/api';
+import { Skeleton } from '@/components/ui/Skeleton';
 import DraggableWord from '../components/sentencebuilder/DraggableWord';
 import SentenceDropZone from '../components/sentencebuilder/SentenceDropZone';
 import ValidationResult from '../components/sentencebuilder/ValidationResult';
@@ -57,6 +58,7 @@ export default function SentenceBuilder() {
   const [hintLevel, setHintLevel] = useState(0); // 0 = no hints, 1-3 = progressive hints
   const [targetSentence, setTargetSentence] = useState<string>(''); // For example sentence
   const [usageStats, setUsageStats] = useState<UsageStats | null>(null);
+  const [wordsLoading, setWordsLoading] = useState(true);
 
   // Fetch vocabulary for the selected HSK level
   useEffect(() => {
@@ -88,6 +90,7 @@ export default function SentenceBuilder() {
   };
 
   const fetchVocabulary = async () => {
+    setWordsLoading(true);
     try {
       const allWords = await vocabularyApi.getByHSKLevel(hskLevel);
       // Randomly select 10-15 words for the exercise
@@ -102,7 +105,9 @@ export default function SentenceBuilder() {
     } catch (error) {
       sentenceBuilderLogger.warn('Could not fetch vocabulary (server might be waking up)');
       // Only show toast for manual refreshes, not on initial mount if network error
-      // toast.error('Failed to load vocabulary'); 
+      // toast.error('Failed to load vocabulary');
+    } finally {
+      setWordsLoading(false);
     }
   };
 
@@ -455,6 +460,13 @@ export default function SentenceBuilder() {
             <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
               {`${t('sentenceBuilder.wordBank')} 词库`}
             </h2>
+            {wordsLoading && selectedWords.length === 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <Skeleton key={i} className="h-20 rounded-lg" />
+                ))}
+              </div>
+            )}
             <SortableContext items={selectedWords.map(w => w.id.toString())}>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                 {selectedWords.map(word => (

@@ -10,6 +10,7 @@ import { useAuthStore } from '@/store/authStore'
 import { ladderApi } from '@/services/api'
 import { useLadderWebSocket } from '@/hooks/useLadderWebSocket'
 import Board, { tokenColor } from '@/components/ladder/Board'
+import { Skeleton } from '@/components/ui/Skeleton'
 import QuestionModal from '@/components/ladder/QuestionModal'
 import DiceRoll from '@/components/ladder/DiceRoll'
 
@@ -135,9 +136,13 @@ export default function LadderRace() {
   // ── Connection states ─────────────────────────────────────────────────────
   if (connectionStatus === 'connecting' || connectionStatus === 'idle') {
     return (
-      <div className="max-w-md mx-auto px-4 pt-20 text-center space-y-3">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-500 mx-auto" />
-        <p className="text-sm text-gray-500 dark:text-gray-400">{t('ladder.connecting')}</p>
+      <div className="max-w-2xl mx-auto px-4 py-8 space-y-4">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-8 w-36" />
+          <Skeleton className="h-8 w-24" />
+        </div>
+        <Skeleton className="aspect-square w-full max-w-md mx-auto rounded-3xl" />
+        <p className="text-sm text-gray-500 dark:text-gray-400 text-center">{t('ladder.connecting')}</p>
       </div>
     )
   }

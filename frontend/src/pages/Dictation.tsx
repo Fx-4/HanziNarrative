@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { dictationApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { SessionSkeleton } from '@/components/ui/Skeleton'
 import {
     Headphones,
     Play,
@@ -153,6 +154,11 @@ export default function Dictation() {
             if (showResult) handleNext()
             else handleSubmit()
         }
+    }
+
+    // Preparing sentences + audio — skeleton of the upcoming exercise
+    if (loading && !sessionStarted) {
+        return <SessionSkeleton options={2} />
     }
 
     // Mode selection screen

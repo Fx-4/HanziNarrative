@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { adventureApi } from '@/services/api'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { Skeleton, SessionSkeleton } from '@/components/ui/Skeleton'
 import {
     Map,
     Sparkles,
@@ -204,6 +204,12 @@ export default function Adventure() {
     const continueQuota = usageStats?.adventure_continue
     const canStart = !startQuota || (startQuota.remaining_daily > 0 && startQuota.remaining_hourly > 0)
 
+    // First scene is being written — skeleton of the story screen (the stream
+    // isn't visible until the landing is replaced, so show shape, not a spinner)
+    if (loading && storySteps.length === 0) {
+        return <SessionSkeleton options={3} />
+    }
+
     // Landing screen
     if (storySteps.length === 0) {
         return (
@@ -325,7 +331,7 @@ export default function Adventure() {
                             disabled={loading || !canStart}
                             className="bg-gradient-to-r from-success-600 to-success-600 hover:from-success-700 hover:to-success-700 text-white rounded-2xl px-8 py-4 font-semibold text-lg cursor-pointer transition-all flex items-center gap-3 mx-auto disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {loading ? <LoadingSpinner size="sm" /> : <Map className="w-6 h-6" />}
+                            <Map className="w-6 h-6" />
                             {canStart ? 'Start Adventure' : 'Quota exhausted — try tomorrow'}
                         </button>
                     </motion.div>
@@ -461,9 +467,13 @@ export default function Adventure() {
 
                 {/* Choices or Ending */}
                 {loading && streamingText === null ? (
-                    <div className="flex items-center justify-center py-8">
-                        <LoadingSpinner size="lg" />
-                        <span className="ml-3 text-gray-600 dark:text-gray-400">Writing the next chapter...</span>
+                    <div className="space-y-3 py-4">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-5/6" />
+                        <Skeleton className="h-4 w-2/3 mb-6" />
+                        {Array.from({ length: 3 }).map((_, i) => (
+                            <Skeleton key={i} className="h-12 rounded-2xl" />
+                        ))}
                     </div>
                 ) : loading ? (
                     /* streaming in progress — choices will appear after done */

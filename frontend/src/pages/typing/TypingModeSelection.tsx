@@ -1,6 +1,6 @@
 ﻿import { motion } from 'framer-motion'
 import type { TypingStats, TypingMode } from '@/types'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { StatsCardSkeleton } from '@/components/ui/Skeleton'
 import {
   Keyboard,
   Zap,
@@ -42,13 +42,7 @@ export default function TypingModeSelection({
     if (!user) return null
 
     if (statsLoading) {
-      return (
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 sm:p-6 dark:bg-surface-card dark:border-gray-800">
-          <div className="flex items-center justify-center">
-            <LoadingSpinner size="sm" />
-          </div>
-        </div>
-      )
+      return <StatsCardSkeleton className="mb-8" />
     }
 
     if (!stats) return null

@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion'
 import { quizApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { SessionSkeleton } from '@/components/ui/Skeleton'
 import { Brain, CheckCircle, XCircle, Trophy, RotateCcw, Flame, Star, Dumbbell, Target, Gem, Check, PenLine, RefreshCw } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
@@ -445,6 +446,11 @@ export default function Quiz() {
         </div>
       </div>
     )
+  }
+
+  // Generating the quiz — skeleton of the upcoming questions
+  if (loading && !quiz) {
+    return <SessionSkeleton />
   }
 
   return (

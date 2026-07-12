@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { conversationApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { TileGridSkeleton } from '@/components/ui/Skeleton'
 import {
   MessageCircle, Send, ArrowLeft, Eye, EyeOff,
   AlertCircle, BookOpen, Volume2, RotateCcw,
@@ -281,7 +282,7 @@ export default function Conversation() {
         >
           <h2 className="font-bold text-gray-900 text-sm mb-3 dark:text-gray-50">Choose a Topic</h2>
           {topicsLoading ? (
-            <LoadingSpinner />
+            <TileGridSkeleton tiles={6} />
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {topics.map(topic => (

@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { vocabularyApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { Skeleton } from '@/components/ui/Skeleton'
 import { HanziWord } from '@/types'
 import {
     Grid3X3,
@@ -119,6 +120,25 @@ export default function MatchingGame() {
     }
 
     const formatTime = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`
+
+    // Building the board — skeleton grid of face-down cards
+    if (loading) {
+        return (
+            <div className="min-h-screen py-6 sm:py-8 px-3 sm:px-4">
+                <div className="max-w-4xl mx-auto">
+                    <div className="flex items-center justify-between mb-6">
+                        <Skeleton className="h-8 w-40" />
+                        <Skeleton className="h-8 w-24" />
+                    </div>
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                        {Array.from({ length: 12 }).map((_, i) => (
+                            <Skeleton key={i} className="aspect-square rounded-2xl" />
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     // Landing
     if (!gameStarted && !gameFinished) {

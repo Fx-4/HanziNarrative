@@ -1,6 +1,6 @@
 ﻿import { motion } from 'framer-motion'
 import { WritingStats } from '@/types'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { StatsCardSkeleton } from '@/components/ui/Skeleton'
 import {
   Pencil,
   Clock,
@@ -42,13 +42,7 @@ export default function WritingModeSelection({
   const { t } = useTranslation()
   const renderStatsCard = () => {
     if (statsLoading) {
-      return (
-        <div className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden p-4 sm:p-6">
-          <div className="flex items-center justify-center">
-            <LoadingSpinner size="sm" />
-          </div>
-        </div>
-      )
+      return <StatsCardSkeleton className="mb-8" />
     }
 
     if (!stats) return null

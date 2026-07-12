@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { sttApi, vocabularyApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { SessionSkeleton } from '@/components/ui/Skeleton'
 import {
     Mic,
     MicOff,
@@ -198,6 +199,11 @@ export default function SpeakingPractice() {
     const handleRevealHint = () => {
         setHintRevealed(true)
         setUsedHint(true)
+    }
+
+    // Preparing the session (words + audio) — skeleton of the upcoming exercise
+    if (loading && !sessionStarted) {
+        return <SessionSkeleton options={2} />
     }
 
     // Landing screen

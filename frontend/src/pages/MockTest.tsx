@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { playTTS } from '@/utils/ttsHelper'
 import { vocabularyApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { SessionSkeleton } from '@/components/ui/Skeleton'
 import { HanziWord } from '@/types'
 import {
     Clock,
@@ -490,6 +491,11 @@ export default function MockTest() {
             })}
         </div>
     )
+
+    // Assembling the test — skeleton of the upcoming questions
+    if (loading && page === 'cover') {
+        return <SessionSkeleton />
+    }
 
     // ── COVER PAGE ────────────────────────────────────────────────────────────
     if (page === 'cover') {

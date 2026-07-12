@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { storiesApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { SessionSkeleton } from '@/components/ui/Skeleton'
 import {
     BookOpen,
     CheckCircle,
@@ -134,6 +135,11 @@ export default function FillBlank() {
                 setStarted(false)
             }
         }, 1200)
+    }
+
+    // Generating questions — skeleton of the upcoming exercise
+    if (loading) {
+        return <SessionSkeleton />
     }
 
     // Landing

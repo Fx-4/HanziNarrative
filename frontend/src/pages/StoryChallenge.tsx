@@ -2,7 +2,7 @@
 import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { storiesApi, dailyChallengeApi } from '@/services/api'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { Skeleton } from '@/components/ui/Skeleton'
 import WritingCanvas from '@/components/writing/WritingCanvas'
 import { HanziWord, AttemptResult } from '@/types'
 import {
@@ -309,7 +309,11 @@ export default function StoryChallenge() {
                         transition={{ delay: 0.15 }}
                     >
                         {loading ? (
-                            <div className="flex justify-center py-12"><LoadingSpinner size="lg" /></div>
+                            <div className="grid sm:grid-cols-2 gap-4">
+                                {Array.from({ length: 4 }).map((_, i) => (
+                                    <Skeleton key={i} className="h-28 rounded-3xl" />
+                                ))}
+                            </div>
                         ) : stories.length === 0 ? (
                             <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 text-center dark:bg-surface-card dark:border-surface-border">
                                 <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />

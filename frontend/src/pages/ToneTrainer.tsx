@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { vocabularyApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { SessionSkeleton } from '@/components/ui/Skeleton'
 import { HanziWord } from '@/types'
 import { fetchTTSAudio } from '@/utils/ttsHelper'
 import {
@@ -128,6 +129,11 @@ export default function ToneTrainer() {
         } catch {
             setIsPlaying(false)
         }
+    }
+
+    // Generating the session — skeleton of the upcoming exercise
+    if (loading) {
+        return <SessionSkeleton />
     }
 
     // Landing
