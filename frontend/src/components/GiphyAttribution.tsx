@@ -3,9 +3,10 @@
  * to upgrade from a beta key to a production key.
  *
  * Uses GIPHY's official horizontal "POWERED BY GIPHY" mark shipped at
- * public/giphy-attribution.png (neutral gray — legible on both light and dark
- * backgrounds). Falls back to an inline SVG wordmark if the asset is missing so
- * attribution is always present.
+ * public/giphy-attribution.png. The asset's grays are too dark to read on dark
+ * backgrounds, so dark mode lifts the whole (grayscale) mark to white with a
+ * brightness filter. Falls back to an inline SVG wordmark if the asset is
+ * missing so attribution is always present.
  */
 
 import { useState } from 'react'
@@ -19,7 +20,7 @@ export default function GiphyAttribution({ className = '' }: { className?: strin
         src="/giphy-attribution.png"
         alt="Powered by GIPHY"
         onError={() => setOfficialFailed(true)}
-        className={`h-3.5 w-auto select-none opacity-90 ${className}`}
+        className={`h-3.5 w-auto select-none opacity-90 dark:brightness-[3.5] ${className}`}
       />
     )
   }
