@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { typingApi } from '@/services/api'
 import type { HanziWord, TypingStats, TypingMode } from '@/types'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { Skeleton } from '@/components/ui/Skeleton'
 import { ArrowLeft } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { useAuthStore } from '@/store/authStore'
@@ -95,9 +95,19 @@ export default function Typing() {
 
   const renderPracticeMode = () => {
     if (loading) {
+      // Words are being fetched — skeleton mirroring the typing screen
+      // (back button, progress, prompt card + input)
       return (
-        <div className="flex items-center justify-center min-h-screen">
-          <LoadingSpinner size="lg" />
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="mb-6">
+            <Skeleton className="h-10 w-40 rounded-2xl" />
+          </div>
+          <Skeleton className="h-2.5 rounded-full mb-6" />
+          <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden p-8 sm:p-12 flex flex-col items-center gap-6">
+            <Skeleton className="h-20 w-48 rounded-2xl" />
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-12 w-full max-w-md rounded-2xl" />
+          </div>
         </div>
       )
     }

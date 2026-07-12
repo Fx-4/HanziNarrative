@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { sttApi, vocabularyApi } from '@/services/api'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { SessionSkeleton } from '@/components/ui/Skeleton'
+import { Skeleton, SessionSkeleton } from '@/components/ui/Skeleton'
 import {
     Mic,
     MicOff,
@@ -424,11 +424,7 @@ export default function SpeakingPractice() {
     }
 
     if (loading || !currentWord) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <LoadingSpinner size="lg" />
-            </div>
-        )
+        return <SessionSkeleton options={2} />
     }
 
     const isVocabMode = practiceMode === 'vocabulary'
@@ -588,9 +584,11 @@ export default function SpeakingPractice() {
                         {!showResult ? (
                             <div className="space-y-4">
                                 {isProcessing ? (
-                                    <div className="flex flex-col items-center gap-3 py-4">
-                                        <LoadingSpinner size="lg" />
-                                        <p className="text-gray-600 dark:text-gray-400">
+                                    <div className="space-y-3 py-4 max-w-sm mx-auto">
+                                        <Skeleton className="h-16 w-16 rounded-full mx-auto" />
+                                        <Skeleton className="h-4 w-3/4 mx-auto" />
+                                        <Skeleton className="h-4 w-1/2 mx-auto" />
+                                        <p className="text-sm text-center text-gray-600 dark:text-gray-400">
                                             {isVocabMode ? t('speaking.checkingVocab') : t('speaking.analyzing')}
                                         </p>
                                     </div>

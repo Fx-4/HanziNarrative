@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HanziWord } from '@/types'
 import {
-  X, BookOpen, Brush, Hash, Tag, Globe, Loader2,
+  X, BookOpen, Brush, Hash, Tag, Globe,
   ScrollText, ExternalLink
 } from 'lucide-react'
 import AudioButton from './AudioButton'
@@ -256,12 +256,7 @@ export default function WordDetailsModal({ word, isOpen, onClose }: WordDetailsM
                 {/* ── Visual Section (Pexels image) ── */}
                 <div className="relative">
                   {imageLoading ? (
-                    <div className="aspect-video bg-gray-100 flex items-center justify-center dark:bg-gray-800">
-                      <div className="flex flex-col items-center gap-2">
-                        <Loader2 className="w-7 h-7 text-gray-400 animate-spin dark:text-gray-500" />
-                        <p className="text-xs text-gray-400 dark:text-gray-500">Loading visual reference…</p>
-                      </div>
-                    </div>
+                    <div className="aspect-video animate-pulse bg-gray-200 dark:bg-gray-700" />
                   ) : imageUrl ? (
                     <div className="relative w-full aspect-[4/3] bg-gray-900/5 overflow-hidden">
                       <img

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HanziWord } from '@/types'
-import { X, BookMarked, BookOpen, Brush, Hash, Tag, Loader2 } from 'lucide-react'
+import { X, BookMarked, BookOpen, Brush, Hash, Tag } from 'lucide-react'
 import AudioButton from './AudioButton'
 import toast from 'react-hot-toast'
 
@@ -210,14 +210,7 @@ export default function HanziWordPopup({
           {/* ── Row 3: Visual image (Wikipedia / fallback) ── */}
           <div className="mx-3 mb-3 h-36 rounded-xl overflow-hidden relative bg-gray-100 dark:bg-gray-800">
             {wikiLoading ? (
-              /* Shimmer skeleton */
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 flex items-center justify-center"
-                animate={{ backgroundPosition: ['0% 0%', '100% 0%', '0% 0%'] }}
-                transition={{ duration: 1.4, repeat: Infinity }}
-              >
-                <Loader2 className="w-5 h-5 text-gray-400 animate-spin dark:text-gray-500" />
-              </motion.div>
+              <div className="absolute inset-0 animate-pulse bg-gray-200 dark:bg-gray-700" />
             ) : imageUrl ? (
               <>
                 <img

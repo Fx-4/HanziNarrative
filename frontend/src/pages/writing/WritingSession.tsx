@@ -1,6 +1,6 @@
 ﻿import { motion, AnimatePresence } from 'framer-motion'
 import { HanziWord, WritingProgress, AttemptResult } from '@/types'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { Skeleton } from '@/components/ui/Skeleton'
 import {
   Clock,
   Target,
@@ -53,9 +53,30 @@ export default function WritingSession({
   onCharacterSelect
 }: WritingSessionProps) {
   if (loading) {
+    // Characters are being fetched — skeleton mirroring the session layout
+    // (header + progress, canvas card, character strip)
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner size="lg" />
+      <div className="max-w-7xl mx-auto px-2 sm:px-4">
+        <div className="mb-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-10 w-24 rounded-2xl" />
+          </div>
+          <Skeleton className="h-3 rounded-full" />
+        </div>
+        <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Skeleton key={i} className="aspect-square rounded-xl" />
+          ))}
+        </div>
+        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden p-6 sm:p-8 flex flex-col items-center gap-6">
+          <Skeleton className="h-8 w-40" />
+          <Skeleton className="w-64 h-64 sm:w-80 sm:h-80 rounded-2xl" />
+          <div className="flex gap-3">
+            <Skeleton className="h-11 w-28 rounded-2xl" />
+            <Skeleton className="h-11 w-28 rounded-2xl" />
+          </div>
+        </div>
       </div>
     )
   }

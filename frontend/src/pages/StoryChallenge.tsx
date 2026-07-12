@@ -37,6 +37,7 @@ export default function StoryChallenge() {
     const [stories, setStories] = useState<{ id: number; title: string; title_pinyin?: string; is_published: boolean; difficulty_level?: number; key_vocabulary?: { simplified: string }[] }[]>([])
     const [selectedStory, setSelectedStory] = useState<Story | null>(null)
     const [loading, setLoading] = useState(false)
+    const [openingStory, setOpeningStory] = useState(false)
     const [hiddenWords, setHiddenWords] = useState<Set<string>>(new Set())
     const [unlockedWords, setUnlockedWords] = useState<Set<string>>(new Set())
     const [writingChar, setWritingChar] = useState<HanziWord | null>(null)
@@ -71,7 +72,7 @@ export default function StoryChallenge() {
     }
 
     const selectStory = async (storyId: number) => {
-        setLoading(true)
+        setOpeningStory(true)
         try {
             const data = await storiesApi.getById(storyId)
 
@@ -112,7 +113,7 @@ export default function StoryChallenge() {
             console.warn('[StoryChallenge] Could not load story details (server might be waking up)');
             toast.error('Failed to load story')
         } finally {
-            setLoading(false)
+            setOpeningStory(false)
         }
     }
 
@@ -252,6 +253,29 @@ export default function StoryChallenge() {
     }, [allUnlocked, isDailyChallenge, dailyChallengeCompleted])
 
     // Landing screen
+    // Story is being opened — skeleton of the reading screen (title + paragraphs + word chips)
+    if (openingStory && !selectedStory) {
+        return (
+            <div className="min-h-screen py-6 sm:py-8 px-3 sm:px-4">
+                <div className="max-w-3xl mx-auto space-y-4">
+                    <Skeleton className="h-6 w-32" />
+                    <Skeleton className="h-9 w-2/3" />
+                    <div className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-surface-border p-6 space-y-3">
+                        <Skeleton className="h-5 w-full" />
+                        <Skeleton className="h-5 w-11/12" />
+                        <Skeleton className="h-5 w-full" />
+                        <Skeleton className="h-5 w-3/4" />
+                    </div>
+                    <div className="flex gap-2">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <Skeleton key={i} className="h-10 w-20 rounded-xl" />
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     if (!selectedStory) {
         return (
             <div className="min-h-screen py-6 sm:py-8 px-3 sm:px-4">
