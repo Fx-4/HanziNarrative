@@ -42,6 +42,15 @@ const SESSION_SAVE_TTL = 2 * 60 * 60 * 1000 // 2 hours
 const getSaveKey = (id: string) => `session-save-${id}`
 type SessionSave = { steps: Step[]; currentIdx: number; correct: number; wrong: number; savedAt: number }
 
+// Completion-screen meme mood on a pass: mostly plain celebration, occasionally a
+// Chinese-culture or nerdy/study meme for variety (admin-curated pools).
+function pickCelebrateMood(): 'celebrate' | 'chinese' | 'nerd' {
+  const r = Math.random()
+  if (r < 0.6) return 'celebrate'
+  if (r < 0.8) return 'chinese'
+  return 'nerd'
+}
+
 // ── Exercise generation ────────────────────────────────────────────────────────
 
 function shuffle<T>(arr: T[]): T[] {
@@ -765,7 +774,7 @@ export default function LearningSession() {
   // Giphy morale booster on the completion screen (hidden when backend has no key)
   const [funGif, setFunGif] = useState<string | null>(null)
   const [loadingGif, setLoadingGif] = useState(false)
-  const gifMoodRef = useRef<'celebrate' | 'motivate'>('celebrate')
+  const gifMoodRef = useRef<'celebrate' | 'motivate' | 'chinese' | 'nerd'>('celebrate')
   // Monotonic request id: only the latest loadFunGif call may write state, so a
   // stale in-flight fetch (or a duplicate finishSession under React StrictMode /
   // slow backend) can never wipe a newer GIF
@@ -780,7 +789,7 @@ export default function LearningSession() {
   // the backend is up instead of silently showing no GIF.
   // fresh=true forces a new Giphy pull (the "another one" button); the initial
   // completion reward serves from the cached pool to save Giphy quota
-  const loadFunGif = useCallback((mood: 'celebrate' | 'motivate', fresh = false) => {
+  const loadFunGif = useCallback((mood: 'celebrate' | 'motivate' | 'chinese' | 'nerd', fresh = false) => {
     gifMoodRef.current = mood
     const reqId = ++gifReqRef.current
     setLoadingGif(true)
@@ -1064,10 +1073,11 @@ export default function LearningSession() {
     setDone(true)
     sessionStorage.setItem('lp-cache-invalid', '1')
 
-    // Meme booster — celebratory when passing, motivational otherwise.
+    // Meme booster — celebratory when passing (mostly plain celebration, occasionally
+    // a Chinese-culture or nerdy/study meme for variety), motivational otherwise.
     // (No setFunGif(null) here — loadFunGif's request-id guard handles staleness;
     // clearing first would let a duplicate finishSession wipe an already-loaded GIF.)
-    loadFunGif(score >= 70 ? 'celebrate' : 'motivate')
+    loadFunGif(score >= 70 ? pickCelebrateMood() : 'motivate')
 
     // Feed per-word results into SRS (fire-and-forget): a word answered
     // wrong at least once this session schedules an earlier review (SM-2 q=2)

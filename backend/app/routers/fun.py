@@ -17,7 +17,7 @@ import logging
 
 import httpx
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
 
@@ -31,6 +31,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/fun", tags=["fun"])
 
 GIPHY_RANDOM_URL = "https://api.giphy.com/v1/gifs/random"
+GIPHY_SEARCH_URL = "https://api.giphy.com/v1/gifs/search"
 
 # Keep the pool at least this big per mood before relying purely on cache
 MIN_POOL_PER_MOOD = 8
@@ -49,6 +50,14 @@ MOOD_TAGS: dict[str, list[str]] = {
     ],
     "break": [
         "funny cat", "funny panda", "relax", "coffee break", "wholesome meme",
+    ],
+    "chinese": [
+        "chinese meme", "chinese culture", "learning chinese", "mandarin",
+        "chinese new year", "kung fu panda", "chinese food", "chinese dragon",
+    ],
+    "nerd": [
+        "nerd joke", "study fail", "exam stress", "geek humor",
+        "smart meme", "school meme", "brainy", "science joke",
     ],
 }
 
@@ -72,6 +81,12 @@ class GifUpdate(BaseModel):
     is_approved: bool | None = None
     mood: str | None = None
     title: str | None = None
+
+
+class GifCreate(BaseModel):
+    url: HttpUrl
+    title: str = ""
+    mood: str = "celebrate"
 
 
 # ── Giphy fetch + cache helpers ─────────────────────────────────────────────────
@@ -208,6 +223,72 @@ def admin_list_gifs(
         "total": total,
         "counts": counts,
     }
+
+
+@router.post("/admin/gifs", response_model=GifOut)
+def admin_create_gif(
+    payload: GifCreate,
+    db: Session = Depends(get_db),
+    admin: models.User = Depends(get_admin_user),
+):
+    """Manually add a hand-picked meme/GIF straight into the pool — no Giphy fetch.
+
+    Lets admins stock moods (e.g. Chinese meme templates) that Giphy doesn't have.
+    """
+    mood = payload.mood if payload.mood in MOOD_TAGS else "celebrate"
+    gif = models.FunGif(
+        giphy_id=None,
+        url=str(payload.url),
+        title=payload.title,
+        mood=mood,
+        is_approved=True,
+    )
+    db.add(gif)
+    db.commit()
+    db.refresh(gif)
+    return GifOut.model_validate(gif)
+
+
+@router.get("/admin/giphy-search")
+async def admin_search_giphy(
+    q: str,
+    limit: int = 12,
+    admin: models.User = Depends(get_admin_user),
+):
+    """Free-text live search against Giphy for admin preview (nothing is saved until
+    the admin explicitly adds a result via POST /admin/gifs)."""
+    if not settings.GIPHY_API_KEY:
+        raise HTTPException(status_code=503, detail="GIPHY_API_KEY not configured")
+    limit = max(1, min(limit, 25))
+    try:
+        async with httpx.AsyncClient(timeout=8.0) as client:
+            resp = await client.get(GIPHY_SEARCH_URL, params={
+                "api_key": settings.GIPHY_API_KEY,
+                "q": q,
+                "limit": limit,
+                "rating": "g",
+            })
+        if resp.status_code != 200:
+            raise HTTPException(status_code=502, detail="Giphy search failed")
+        data = resp.json().get("data") or []
+    except httpx.HTTPError:
+        raise HTTPException(status_code=502, detail="Giphy search failed")
+
+    results = []
+    for item in data:
+        images = item.get("images") or {}
+        url = (
+            (images.get("downsized_medium") or {}).get("url")
+            or (images.get("original") or {}).get("url")
+        )
+        if not url:
+            continue
+        results.append({
+            "giphy_id": item.get("id"),
+            "url": url.split("?")[0],
+            "title": item.get("title") or "",
+        })
+    return {"results": results}
 
 
 @router.patch("/admin/gifs/{gif_id}", response_model=GifOut)

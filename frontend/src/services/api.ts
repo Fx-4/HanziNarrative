@@ -1081,8 +1081,8 @@ export interface FunGifItem {
 }
 
 export const funApi = {
-  /** mood: 'celebrate' | 'motivate' | 'break'. fresh=true forces a new Giphy pull. */
-  getGif: async (mood: 'celebrate' | 'motivate' | 'break', fresh = false) => {
+  /** mood: 'celebrate' | 'motivate' | 'break' | 'chinese' | 'nerd'. fresh=true forces a new Giphy pull. */
+  getGif: async (mood: 'celebrate' | 'motivate' | 'break' | 'chinese' | 'nerd', fresh = false) => {
     const response = await api.get('/fun/gif', { params: { mood, fresh } })
     return response.data as { available: boolean; url: string | null; title: string | null }
   },
@@ -1106,6 +1106,16 @@ export const funApi = {
   adminFetch: async (mood: string, count = 5) => {
     const response = await api.post('/fun/admin/gifs/fetch', null, { params: { mood, count } })
     return response.data as { added: number; requested: number; pool_total_for_mood: number }
+  },
+  /** Manually add a hand-picked GIF/meme URL straight into the pool. */
+  adminCreate: async (data: { url: string; title?: string; mood: string }) => {
+    const response = await api.post('/fun/admin/gifs', data)
+    return response.data as FunGifItem
+  },
+  /** Free-text live search against Giphy for admin preview (not saved until added). */
+  adminSearchGiphy: async (q: string, limit = 12) => {
+    const response = await api.get('/fun/admin/giphy-search', { params: { q, limit } })
+    return response.data as { results: { giphy_id: string | null; url: string; title: string }[] }
   },
 }
 

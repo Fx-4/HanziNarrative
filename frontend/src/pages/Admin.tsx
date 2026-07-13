@@ -10,7 +10,7 @@ import {
   TrendingUp, FileText, Loader2, RefreshCw, AlertTriangle, Menu, X,
   RotateCcw, Clock, Inbox, Bug, Lightbulb, MessageSquare, CheckCircle2,
   Circle, Filter, ExternalLink, MousePointer2, Image as ImageIcon,
-  Copy, Check, Sun, Moon, Film, Download, Trash,
+  Copy, Check, Sun, Moon, Film, Download, Trash, Plus,
 } from 'lucide-react'
 import { adminApi, funApi } from '@/services/api'
 import type { FeedbackItem, FunGifItem } from '@/services/api'
@@ -1435,11 +1435,17 @@ function InboxTab({ onUnreadChange }: { onUnreadChange: (n: number) => void }) {
 
 // ── Tab: Memes (cached Giphy pool curation) ─────────────────────────────────────
 
-const MOOD_OPTIONS = ['celebrate', 'motivate', 'break'] as const
+const MOOD_OPTIONS = ['celebrate', 'motivate', 'break', 'chinese', 'nerd'] as const
 const MOOD_COLOR: Record<string, string> = {
   celebrate: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
   motivate: 'bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300',
   break: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
+  chinese: 'bg-error-100 text-error-700 dark:bg-error-900/40 dark:text-error-300',
+  nerd: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
+}
+// First-letter abbreviations collide (celebrate/chinese both "C"), so spell these out
+const MOOD_ABBR: Record<string, string> = {
+  celebrate: 'Cel', motivate: 'Mot', break: 'Brk', chinese: 'Chn', nerd: 'Nrd',
 }
 
 function MemesTab() {
@@ -1454,6 +1460,19 @@ function MemesTab() {
   const [actionId, setActionId] = useState<number | null>(null)
   const [fetching, setFetching] = useState(false)
   const [fetchMood, setFetchMood] = useState<string>('celebrate')
+
+  // Manual add (paste a custom meme/GIF URL straight into the pool)
+  const [manualUrl, setManualUrl] = useState('')
+  const [manualTitle, setManualTitle] = useState('')
+  const [manualMood, setManualMood] = useState<string>('chinese')
+  const [addingManual, setAddingManual] = useState(false)
+
+  // Free-text Giphy search (preview results, add selectively)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchMood, setSearchMood] = useState<string>('chinese')
+  const [searchResults, setSearchResults] = useState<{ giphy_id: string | null; url: string; title: string }[]>([])
+  const [searching, setSearching] = useState(false)
+  const [addingUrl, setAddingUrl] = useState<string | null>(null)
 
   const PAGE_SIZE = 24
 
@@ -1521,6 +1540,54 @@ function MemesTab() {
     }
   }
 
+  const submitManual = async () => {
+    if (!manualUrl.trim()) return
+    setAddingManual(true)
+    try {
+      await funApi.adminCreate({ url: manualUrl.trim(), title: manualTitle.trim(), mood: manualMood })
+      toast.success(`Added to "${manualMood}"`)
+      setManualUrl('')
+      setManualTitle('')
+      setPage(1)
+      setMoodFilter('')
+      await load()
+    } catch {
+      toast.error('Add failed — check the URL is a direct image/GIF link')
+    } finally {
+      setAddingManual(false)
+    }
+  }
+
+  const runSearch = async () => {
+    if (!searchQuery.trim()) return
+    setSearching(true)
+    try {
+      const r = await funApi.adminSearchGiphy(searchQuery.trim())
+      setSearchResults(r.results)
+      if (r.results.length === 0) toast('No results for that search', { icon: '🔍' })
+    } catch {
+      toast.error('Search failed — is GIPHY_API_KEY set on the backend?')
+    } finally {
+      setSearching(false)
+    }
+  }
+
+  const addFromSearch = async (result: { url: string; title: string }) => {
+    setAddingUrl(result.url)
+    try {
+      await funApi.adminCreate({ url: result.url, title: result.title, mood: searchMood })
+      toast.success(`Added to "${searchMood}"`)
+      setSearchResults(prev => prev.filter(r => r.url !== result.url))
+      setPage(1)
+      setMoodFilter('')
+      await load()
+    } catch {
+      toast.error('Add failed')
+    } finally {
+      setAddingUrl(null)
+    }
+  }
+
   return (
     <div className="space-y-4">
       {/* Header: counts + pull */}
@@ -1550,6 +1617,87 @@ function MemesTab() {
             {fetching ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
             Pull fresh
           </button>
+        </div>
+      </div>
+
+      {/* Add custom meme + search Giphy */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <div className="p-3 rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 space-y-2">
+          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">Add custom meme (paste URL)</p>
+          <div className="flex flex-wrap gap-2">
+            <input
+              value={manualUrl}
+              onChange={e => setManualUrl(e.target.value)}
+              placeholder="https://... direct image/GIF link"
+              className="flex-1 min-w-[160px] px-3 py-1.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100"
+            />
+            <input
+              value={manualTitle}
+              onChange={e => setManualTitle(e.target.value)}
+              placeholder="Title (optional)"
+              className="w-40 px-3 py-1.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100"
+            />
+            <select
+              value={manualMood}
+              onChange={e => setManualMood(e.target.value)}
+              className="px-2.5 py-1.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 cursor-pointer"
+            >
+              {MOOD_OPTIONS.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+            <button
+              onClick={submitManual}
+              disabled={addingManual || !manualUrl.trim()}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium bg-primary-600 hover:bg-primary-700 text-white cursor-pointer transition-colors disabled:opacity-50"
+            >
+              {addingManual ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
+              Add
+            </button>
+          </div>
+        </div>
+
+        <div className="p-3 rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 space-y-2">
+          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">Search Giphy (e.g. "chinese meme", "打工人", "nerd joke")</p>
+          <div className="flex flex-wrap gap-2">
+            <input
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') runSearch() }}
+              placeholder="Search term"
+              className="flex-1 min-w-[140px] px-3 py-1.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100"
+            />
+            <select
+              value={searchMood}
+              onChange={e => setSearchMood(e.target.value)}
+              className="px-2.5 py-1.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 cursor-pointer"
+            >
+              {MOOD_OPTIONS.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+            <button
+              onClick={runSearch}
+              disabled={searching || !searchQuery.trim()}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-pointer transition-colors disabled:opacity-50"
+            >
+              {searching ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
+              Search
+            </button>
+          </div>
+          {searchResults.length > 0 && (
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {searchResults.map(r => (
+                <div key={r.url} className="relative shrink-0 w-24 aspect-square rounded-lg overflow-hidden bg-black/5 dark:bg-black/20 group">
+                  <img src={r.url} alt={r.title || 'result'} loading="lazy" className="w-full h-full object-cover" />
+                  <button
+                    onClick={() => addFromSearch(r)}
+                    disabled={addingUrl === r.url}
+                    title={`Add to "${searchMood}"`}
+                    className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer disabled:opacity-100"
+                  >
+                    {addingUrl === r.url ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : <Plus className="w-5 h-5 text-white" />}
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -1631,7 +1779,7 @@ function MemesTab() {
                     title="Change mood"
                     className="py-1.5 px-1 rounded-lg text-xs border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 cursor-pointer"
                   >
-                    {MOOD_OPTIONS.map(m => <option key={m} value={m}>{m[0].toUpperCase()}</option>)}
+                    {MOOD_OPTIONS.map(m => <option key={m} value={m}>{MOOD_ABBR[m]}</option>)}
                   </select>
                   <button
                     onClick={() => remove(g)}

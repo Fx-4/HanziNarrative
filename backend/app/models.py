@@ -374,7 +374,7 @@ class FunGif(Base):
     giphy_id = Column(String, unique=True, index=True, nullable=True)  # dedupe fetched GIFs
     url = Column(String, nullable=False)
     title = Column(String, default="")
-    mood = Column(String, default="celebrate", index=True)  # celebrate | motivate | break
+    mood = Column(String, default="celebrate", index=True)  # celebrate | motivate | break | chinese | nerd
     is_approved = Column(Boolean, default=True, server_default='true', nullable=False, index=True)
     times_served = Column(Integer, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
