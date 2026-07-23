@@ -1,280 +1,232 @@
-﻿import { Link } from 'react-router-dom'
-import { useAuthStore } from '@/store/authStore'
-import {
-  BookOpen, PenLine, PenTool, Target, BarChart3,
-  ArrowRight, Sparkles, GraduationCap, Zap,
-} from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
+import {
+  ArrowRight, BarChart3, BookOpen, Brain, CheckCircle2, LayoutGrid, Play,
+} from 'lucide-react'
+import { useAuthStore } from '@/store/authStore'
+import { learningApi, learningPathApi } from '@/services/api'
+import { ALL_UNITS } from '@/data/curriculum'
 import DailyChallengeCard from '@/components/DailyChallengeCard'
+import { hasPlayedIntro, markIntroPlayed } from '@/utils/uiPrefs'
 
-// Feature data
-const FEATURES = [
-  {
-    Icon: BookOpen,
-    title: 'Interactive Stories',
-    desc: 'Read engaging stories with clickable words that reveal Pinyin, meaning, and illustrations.',
-    bg: 'bg-primary-600', shadow: 'shadow-primary-500/20',
-  },
-  {
-    Icon: Target,
-    title: 'HSK Focused',
-    desc: 'Content organized by HSK levels 1–6, from everyday beginner vocabulary to advanced topics.',
-    bg: 'bg-success-600', shadow: 'shadow-success-500/20',
-  },
-  {
-    Icon: BarChart3,
-    title: 'Track Progress',
-    desc: 'Save words, review with flashcards, and watch your mastery grow over time.',
-    bg: 'bg-violet-600', shadow: 'shadow-violet-500/20',
-  },
-]
-
-const STEPS = [
-  {
-    n: '1',
-    title: 'Choose Your Level',
-    desc: 'Select stories matching your HSK level or challenge yourself with something harder.',
-  },
-  {
-    n: '2',
-    title: 'Read & Click',
-    desc: 'Tap any character to instantly see its pronunciation, English meaning, and an image.',
-  },
-  {
-    n: '3',
-    title: 'Review & Master',
-    desc: 'Save words to your personal collection and reinforce them with spaced-repetition review.',
-  },
-]
-
-const TOOLS = [
-  {
-    href: '/stories',
-    Icon: BookOpen,
-    label: 'Stories',
-    desc: 'Interactive Chinese stories with clickable word lookups',
-    accent: 'indigo',
-    cta: 'Start Reading',
-  },
-  {
-    href: '/writing',
-    Icon: PenLine,
-    label: 'Writing',
-    desc: 'Stroke order guidance and real-time character feedback',
-    accent: 'violet',
-    cta: 'Practice Writing',
-  },
-  {
-    href: '/sentence-builder',
-    Icon: PenTool,
-    label: 'Sentences',
-    desc: 'Arrange words into correct Chinese sentences to master grammar',
-    accent: 'emerald',
-    cta: 'Build Sentences',
-  },
-]
-
-const accentMap: Record<string, { bg: string; text: string; border: string; light: string }> = {
-  indigo: { bg: 'bg-primary-600', text: 'text-primary-600 dark:text-primary-400', border: 'border-primary-200 dark:border-primary-800', light: 'bg-primary-50 dark:bg-primary-950/30' },
-  violet: { bg: 'bg-violet-600', text: 'text-violet-600 dark:text-violet-400', border: 'border-violet-200 dark:border-violet-800', light: 'bg-violet-50 dark:bg-violet-950/30' },
-  emerald: { bg: 'bg-success-600', text: 'text-success-600 dark:text-success-400', border: 'border-success-200 dark:border-success-800', light: 'bg-success-50 dark:bg-success-950/30' },
+interface NextLesson {
+  sessionId: string
+  sessionTitle: string
+  sessionSubtitle: string
+  unitTitle: string
+  unitEmoji: string
+  done: number
+  total: number
 }
 
+/** Sesi pertama yang belum selesai, mengikuti urutan kurikulum (unit terkunci dilewati). */
+function findNextLesson(completed: Set<string>): NextLesson | null {
+  for (const unit of ALL_UNITS) {
+    if (unit.locked) continue
+    const next = unit.sessions.find(s => !completed.has(s.id))
+    if (next) {
+      return {
+        sessionId: next.id,
+        sessionTitle: next.title,
+        sessionSubtitle: next.subtitle,
+        unitTitle: unit.title,
+        unitEmoji: unit.emoji,
+        done: unit.sessions.filter(s => completed.has(s.id)).length,
+        total: unit.sessions.length,
+      }
+    }
+  }
+  return null
+}
+
+const SHORTCUTS = [
+  { to: '/stories',   key: 'stories', icon: BookOpen },
+  { to: '/library',   key: 'library', icon: LayoutGrid },
+  { to: '/dashboard', key: 'stats',   icon: BarChart3 },
+]
+
 export default function Home() {
-  const { isAuthenticated } = useAuthStore()
+  const { t } = useTranslation()
+  const { user } = useAuthStore()
+  const intro = !hasPlayedIntro('home')
+  useEffect(() => { markIntroPlayed('home') }, [])
+
+  const [loading, setLoading] = useState(true)
+  const [started, setStarted] = useState(false)
+  const [next, setNext] = useState<NextLesson | null>(null)
+  const [reviewCount, setReviewCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    const load = async () => {
+      const [progressRes, countRes] = await Promise.allSettled([
+        learningPathApi.getProgress(),
+        learningApi.getReviewCount(),
+      ])
+      if (cancelled) return
+      const completed = progressRes.status === 'fulfilled'
+        ? new Set(progressRes.value.map(r => r.session_id))
+        : new Set<string>()
+      setStarted(completed.size > 0)
+      setNext(findNextLesson(completed))
+      setReviewCount(countRes.status === 'fulfilled' ? countRes.value.count : 0)
+      setLoading(false)
+    }
+    load()
+    return () => { cancelled = true }
+  }, [])
+
+  const name = user?.full_name || user?.username || ''
 
   return (
     <div className="max-w-4xl mx-auto px-4 pb-20">
 
-      {/* ── Hero ────────────────────────────────────────────────────────── */}
-      <section className="text-center py-16 sm:py-20">
+      {/* ── Greeting ── */}
+      <motion.header
+        initial={intro ? { opacity: 0, y: 12 } : false}
+        animate={{ opacity: 1, y: 0 }}
+        className="pt-8 sm:pt-10 pb-6"
+      >
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-50 mb-1">
+          {t('home.greeting', { name })}
+        </h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{t('home.subtitle')}</p>
+      </motion.header>
 
-        {/* Decorative character */}
-        <motion.div
-          initial={{ scale: 0.5, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', duration: 0.8 }}
-          className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-br from-primary-500 to-violet-600 flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-primary-500/30"
-        >
-          <span className="text-white text-4xl sm:text-5xl font-bold font-chinese">汉</span>
-        </motion.div>
+      {/* ── Lanjutkan belajar ── */}
+      <motion.section
+        initial={intro ? { opacity: 0, y: 12 } : false}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="mb-4"
+      >
+        {loading ? (
+          <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-3xl h-40" />
+        ) : (
+          <div className="bg-gradient-to-br from-primary-600 to-violet-600 rounded-3xl p-6 sm:p-7 text-white shadow-xl shadow-primary-500/20">
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-xs font-bold uppercase tracking-widest text-white/70 mb-2">
+                  {t('home.continueTitle')}
+                </p>
+                {next ? (
+                  <>
+                    <p className="text-sm text-white/80 mb-0.5">
+                      {next.unitEmoji} {next.unitTitle}
+                    </p>
+                    <h2 className="text-xl sm:text-2xl font-extrabold leading-tight mb-1 text-white">
+                      {next.sessionTitle}
+                    </h2>
+                    <p className="text-sm text-white/70">{next.sessionSubtitle}</p>
+                  </>
+                ) : (
+                  <h2 className="text-xl sm:text-2xl font-extrabold leading-tight text-white">
+                    {t('home.viewPath')}
+                  </h2>
+                )}
+              </div>
+            </div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="text-3xl sm:text-5xl font-extrabold text-gray-900 mb-4 leading-tight dark:text-gray-50"
-        >
-          Learn HSK Through
-          <span className="block bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-violet-600">
-            Immersive Stories
-          </span>
-        </motion.h1>
+            {next && (
+              <div className="mt-4">
+                <div className="flex items-center justify-between text-xs text-white/70 mb-1.5">
+                  <span>{t('home.unitProgress', { done: next.done, total: next.total })}</span>
+                </div>
+                <div className="h-2 rounded-full bg-white/20 overflow-hidden">
+                  <motion.div
+                    className="h-full rounded-full bg-white"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(next.done / next.total) * 100}%` }}
+                    transition={{ duration: 0.6, ease: 'easeOut' }}
+                  />
+                </div>
+              </div>
+            )}
 
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="text-base sm:text-lg text-gray-500 mb-8 max-w-2xl mx-auto dark:text-gray-400"
-        >
-          Click any Chinese word to see its Pinyin, English meaning, and an illustrative image.
-          Transform rote memorization into an intuitive, story-driven experience.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="flex flex-col sm:flex-row gap-3 justify-center"
-        >
-          <Link
-            to="/stories"
-            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/20 transition-colors"
-          >
-            <BookOpen className="w-4 h-4" />
-            Start Reading
-          </Link>
-          {!isAuthenticated && (
-            <Link
-              to="/register"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50 text-gray-700 font-semibold rounded-xl transition-colors dark:border-gray-700 dark:text-gray-300 dark:hover:bg-primary-950/30"
-            >
-              Sign Up Free
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          )}
-        </motion.div>
-      </section>
-
-      {/* ── Daily Challenge ──────────────────────────────────────────────── */}
-      {isAuthenticated && (
-        <section className="mb-8">
-          <DailyChallengeCard />
-        </section>
-      )}
-
-      {/* ── Feature Cards ───────────────────────────────────────────────── */}
-      <section className="mb-16">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {FEATURES.map(({ Icon, title, desc, bg, shadow }, i) => (
-            <motion.div
-              key={title}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + i * 0.1 }}
-              className={`${bg} rounded-2xl p-5 text-white shadow-lg ${shadow}`}
-            >
-              <Icon className="w-7 h-7 mb-3 opacity-90" />
-              <h3 className="font-extrabold text-base mb-1">{title}</h3>
-              <p className="text-sm opacity-80 leading-relaxed">{desc}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── How It Works ────────────────────────────────────────────────── */}
-      <section className="mb-16">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 dark:bg-surface-card dark:border-gray-800"
-        >
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 text-center mb-2 flex items-center justify-center gap-2 dark:text-gray-50">
-            <Sparkles className="w-6 h-6 text-primary-500" />
-            How It Works
-          </h2>
-          <p className="text-center text-gray-400 text-sm mb-8 dark:text-gray-500">Three simple steps to Chinese fluency</p>
-
-          <div className="space-y-6">
-            {STEPS.map(({ n, title, desc }, i) => (
-              <motion.div
-                key={n}
-                initial={{ opacity: 0, x: -16 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="flex items-start gap-4"
+            <div className="mt-5 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <Link
+                to={next ? `/path/session/${next.sessionId}` : '/path'}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-primary-700 font-bold rounded-xl hover:bg-primary-50 transition-colors shadow-lg text-sm"
               >
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary-500 to-violet-600 flex items-center justify-center text-white font-extrabold text-base shrink-0 shadow-lg shadow-primary-500/20">
-                  {n}
-                </div>
-                <div className="pt-1">
-                  <h3 className="font-extrabold text-gray-900 text-base mb-0.5 dark:text-gray-50">{title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed dark:text-gray-400">{desc}</p>
-                </div>
-              </motion.div>
-            ))}
+                <Play className="w-4 h-4" />
+                {started ? t('home.continueCta') : t('home.startCta')}
+              </Link>
+              <Link
+                to="/path"
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-3 text-sm font-semibold text-white/80 hover:text-white transition-colors"
+              >
+                {t('home.viewPath')} <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
-        </motion.div>
-      </section>
+        )}
+      </motion.section>
 
-      {/* ── Learning Tools ───────────────────────────────────────────────── */}
-      <section className="mb-16">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-6"
-        >
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 flex items-center justify-center gap-2 dark:text-gray-50">
-            <GraduationCap className="w-6 h-6 text-primary-500" />
-            Learning Tools
-          </h2>
-          <p className="text-sm text-gray-400 dark:text-gray-500">Everything you need to master Chinese</p>
-        </motion.div>
+      {/* ── Review + Daily Challenge ── */}
+      <motion.section
+        initial={intro ? { opacity: 0, y: 12 } : false}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"
+      >
+        <div className="bg-white dark:bg-surface-card rounded-2xl border border-gray-200 dark:border-gray-800 p-5 flex flex-col">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-950/40 flex items-center justify-center">
+              <Brain className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+            </div>
+            <h3 className="font-bold text-gray-900 dark:text-gray-50 text-sm">
+              {t('nav.items.review.label')}
+            </h3>
+          </div>
 
-        <div className="grid sm:grid-cols-3 gap-4">
-          {TOOLS.map(({ href, Icon, label, desc, accent, cta }, i) => {
-            const a = accentMap[accent]
-            return (
-              <motion.div
-                key={label}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
+          {loading || reviewCount === null ? (
+            <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-xl h-16 flex-1" />
+          ) : reviewCount > 0 ? (
+            <>
+              <p className="text-sm text-gray-600 dark:text-gray-300 flex-1">
+                {t('home.reviewDue', { count: reviewCount })}
+              </p>
+              <Link
+                to="/review"
+                className="mt-4 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors"
               >
-                <Link
-                  to={href}
-                  className={`flex flex-col h-full bg-white rounded-2xl border dark:bg-surface-card ${a.border} hover:shadow-lg transition-shadow p-5 group`}
-                >
-                  <div className={`w-10 h-10 rounded-xl ${a.light} flex items-center justify-center mb-3`}>
-                    <Icon className={`w-5 h-5 ${a.text}`} />
-                  </div>
-                  <h3 className="font-extrabold text-gray-900 text-sm mb-1 dark:text-gray-50">{label}</h3>
-                  <p className="text-xs text-gray-500 leading-relaxed flex-1 mb-3 dark:text-gray-400">{desc}</p>
-                  <span className={`text-xs font-semibold ${a.text} flex items-center gap-1 group-hover:gap-2 transition-all`}>
-                    {cta} <ArrowRight className="w-3 h-3" />
-                  </span>
-                </Link>
-              </motion.div>
-            )
-          })}
+                {t('home.reviewCta')} <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </>
+          ) : (
+            <div className="flex-1 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+              <CheckCircle2 className="w-4 h-4 text-success-500 shrink-0" />
+              {t('home.reviewNone')}
+            </div>
+          )}
         </div>
-      </section>
 
-      {/* ── CTA Banner ──────────────────────────────────────────────────── */}
-      {!isAuthenticated && (
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="bg-gradient-to-r from-primary-600 to-violet-600 rounded-3xl p-8 text-center text-white shadow-2xl shadow-primary-500/25"
-        >
-          <Zap className="w-10 h-10 mx-auto mb-4 opacity-90" />
-          <h2 className="text-2xl font-extrabold mb-2">Ready to start?</h2>
-          <p className="text-primary-100 text-sm mb-6">Create a free account and begin your Chinese journey today.</p>
+        <DailyChallengeCard />
+      </motion.section>
+
+      {/* ── Shortcuts ── */}
+      <motion.section
+        initial={intro ? { opacity: 0, y: 12 } : false}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="grid grid-cols-3 gap-3"
+      >
+        {SHORTCUTS.map(({ to, key, icon: Icon }) => (
           <Link
-            to="/register"
-            className="inline-flex items-center gap-2 px-8 py-3 bg-white text-primary-700 font-bold rounded-xl hover:bg-primary-50 transition-colors shadow-lg dark:bg-surface-card dark:text-primary-300 dark:hover:bg-primary-950/30"
+            key={to}
+            to={to}
+            className="flex flex-col items-center gap-2 py-4 rounded-2xl bg-white dark:bg-surface-card border border-gray-200 dark:border-gray-800 hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-md transition-all"
           >
-            Get Started Free <ArrowRight className="w-4 h-4" />
+            <Icon className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+            <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+              {t(`nav.items.${key}.label`)}
+            </span>
           </Link>
-        </motion.div>
-      )}
+        ))}
+      </motion.section>
 
     </div>
   )
 }
-

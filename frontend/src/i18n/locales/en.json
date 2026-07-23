@@ -4,6 +4,7 @@
       "review":          { "label": "Review",          "desc": "Spaced repetition" },
       "course":          { "label": "Course",          "desc": "Learning path HSK" },
       "stories":         { "label": "Stories",         "desc": "" },
+      "library":         { "label": "Library",         "desc": "All tools & games" },
       "stats":           { "label": "Stats",           "desc": "Your progress" },
       "profile":         { "label": "Profile",         "desc": "Your account" },
       "flashcards":      { "label": "Flashcards",      "desc": "Spaced repetition" },
@@ -54,6 +55,27 @@
       "dueToday":   "{{count}} due today",
       "description": "Spaced repetition"
     }
+  },
+
+  "library": {
+    "title":             "Library",
+    "subtitle":          "All practice tools and games in one place",
+    "searchPlaceholder": "Search tools…",
+    "noResults":         "No tools match \"{{query}}\"",
+    "unlockHint":        "Unlocks at {{count}} words learned"
+  },
+
+  "home": {
+    "greeting":      "Hi, {{name}} 👋",
+    "subtitle":      "Here's your plan for today",
+    "continueTitle": "Continue learning",
+    "continueCta":   "Continue lesson",
+    "startCta":      "Start your first lesson",
+    "viewPath":      "View full course",
+    "unitProgress":  "{{done}}/{{total}} sessions",
+    "reviewDue":     "{{count}} words due today",
+    "reviewNone":    "All caught up — nothing due today!",
+    "reviewCta":     "Review now"
   },
 
   "landing": {

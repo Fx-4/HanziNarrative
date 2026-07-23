@@ -6,11 +6,8 @@ import type { User as UserProfile } from '@/types'
 import { useThemeStore } from '@/store/themeStore'
 import { useTranslation } from 'react-i18next'
 import {
-  BookOpen, BookMarked, User, LogOut, PenTool, GraduationCap, Brain,
-  BarChart3, Type, ChevronDown, Menu, X, Moon, Sun,
-  Layers, Keyboard, Trophy, ChevronRight, Headphones, Map, Mic, Lock,
-  Target, Grid3X3, Music, Heart, MessageCircle, Shield, Swords, Zap,
-  Calendar, HelpCircle, Route, Dice5,
+  BookOpen, User, LogOut, Brain, BarChart3, ChevronDown, Menu, X,
+  Moon, Sun, Trophy, ChevronRight, Heart, Shield, Route, LayoutGrid,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useState, useEffect, useRef } from 'react'
@@ -28,13 +25,6 @@ interface MenuItem {
   badge?: boolean
 }
 
-interface DropdownMenu {
-  key: string
-  icon: NavIcon
-  items: MenuItem[]
-  cols?: 1 | 2
-}
-
 /* ─── animation variants ─── */
 const drawerVariants = {
   hidden: { x: '100%', opacity: 0 },
@@ -48,56 +38,14 @@ const backdropVariants = {
   exit: { opacity: 0, transition: { duration: 0.2 } },
 }
 
-const itemVariants = {
-  hidden: { opacity: 0, x: 24 },
-  visible: (i: number) => ({
-    opacity: 1, x: 0,
-    transition: { delay: i * 0.05, duration: 0.22, ease: 'easeOut' },
-  }),
-}
-
 /* ─── Navigation data ─── */
 
+// 4 pintu utama — semua alat latihan/permainan lain hidup di /library.
 const primaryLinks: MenuItem[] = [
-  { to: '/review',    key: 'review',  icon: Brain,    badge: true },
-  { to: '/path',      key: 'course',  icon: Route },
-  { to: '/stories',   key: 'stories', icon: BookOpen },
-  { to: '/dashboard', key: 'stats',   icon: BarChart3 },
-]
-
-const dropdownMenus: DropdownMenu[] = [
-  {
-    key: 'practice',
-    icon: GraduationCap,
-    cols: 2,
-    items: [
-      { to: '/flashcards',       key: 'flashcards',      icon: Layers },
-      { to: '/writing',          key: 'writing',         icon: PenTool },
-      { to: '/typing',           key: 'typing',          icon: Keyboard },
-      { to: '/speaking',         key: 'speaking',        icon: Mic },
-      { to: '/dictation',        key: 'dictation',       icon: Headphones },
-      { to: '/quiz',             key: 'quiz',            icon: Target },
-      { to: '/tones',            key: 'tones',           icon: Music },
-      { to: '/mock-test',        key: 'mockTest',        icon: GraduationCap },
-      { to: '/vocabulary',       key: 'vocabulary',      icon: BookMarked },
-      { to: '/explorer',         key: 'storyBlanks',     icon: HelpCircle },
-    ],
-  },
-  {
-    key: 'play',
-    icon: Zap,
-    cols: 1,
-    items: [
-      { to: '/battle',           key: 'battle',          icon: Swords },
-      { to: '/ladder',           key: 'ladderRace',      icon: Dice5 },
-      { to: '/adventure',        key: 'adventure',       icon: Map },
-      { to: '/conversation',     key: 'aiChat',          icon: MessageCircle },
-      { to: '/matching',         key: 'matchGame',       icon: Grid3X3 },
-      { to: '/sentence-builder', key: 'sentenceBuilder', icon: Type },
-      { to: '/story-challenge',  key: 'storyChallenge',  icon: Lock },
-      { to: '/daily-challenge',  key: 'dailyChallenge',  icon: Calendar },
-    ],
-  },
+  { to: '/review',  key: 'review',  icon: Brain,    badge: true },
+  { to: '/path',    key: 'course',  icon: Route },
+  { to: '/stories', key: 'stories', icon: BookOpen },
+  { to: '/library', key: 'library', icon: LayoutGrid },
 ]
 
 const trackItems: MenuItem[] = [
@@ -113,17 +61,15 @@ export default function Navbar() {
   const location = useLocation()
   const [reviewCount, setReviewCount] = useState(0)
   const [showUserMenu, setShowUserMenu] = useState(false)
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    practice: true, play: false, track: false,
+    track: true,
   })
 
   const toggleSection = (key: string) =>
     setOpenSections(prev => ({ ...prev, [key]: !prev[key] }))
 
   const userMenuRef = useRef<HTMLDivElement>(null)
-  const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
 
   useEffect(() => { setMobileMenuOpen(false) }, [location.pathname])
 
@@ -147,8 +93,6 @@ export default function Navbar() {
     const handler = (e: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node))
         setShowUserMenu(false)
-      const outside = Object.values(dropdownRefs.current).every(r => !r || !r.contains(e.target as Node))
-      if (outside) setActiveDropdown(null)
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
@@ -160,7 +104,6 @@ export default function Navbar() {
     toast.success(t('nav.user.loggedOut'))
   }
   const isActive = (path: string) => location.pathname === path
-  const isDropdownActive = (items: MenuItem[]) => items.some(i => isActive(i.to))
 
   return (
     <>
@@ -175,10 +118,7 @@ export default function Navbar() {
 
             {/* ── Logo ── */}
             <Link to="/" className="flex-shrink-0">
-              <motion.div
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-              >
+              <motion.div whileTap={{ scale: 0.96 }}>
                 <Logo size={32} wordmarkClassName="hidden sm:inline" />
               </motion.div>
             </Link>
@@ -195,20 +135,6 @@ export default function Navbar() {
                   link={link}
                   active={isActive(link.to)}
                   badgeCount={link.badge ? reviewCount : 0}
-                />
-              ))}
-
-              {dropdownMenus.map(menu => (
-                <DesktopDropdown
-                  key={menu.key}
-                  menu={menu}
-                  active={isDropdownActive(menu.items)}
-                  isOpen={activeDropdown === menu.key}
-                  reviewCount={reviewCount}
-                  isActive={isActive}
-                  onToggle={() => setActiveDropdown(activeDropdown === menu.key ? null : menu.key)}
-                  onClose={() => setActiveDropdown(null)}
-                  ref={(el: HTMLDivElement | null) => { dropdownRefs.current[menu.key] = el }}
                 />
               ))}
 
@@ -262,7 +188,7 @@ export default function Navbar() {
               <motion.button
                 onClick={() => setMobileMenuOpen(true)}
                 className="flex items-center justify-center w-9 h-9 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                whileTap={{ scale: 0.9 }}
+                whileTap={{ scale: 0.95 }}
                 aria-label={t('nav.a11y.openMenu')}
               >
                 <Menu className="w-5 h-5 text-gray-700 dark:text-gray-300" />
@@ -329,7 +255,7 @@ export default function Navbar() {
                   </p>
 
                   {/* Review */}
-                  <motion.div custom={0} variants={itemVariants} initial="hidden" animate="visible">
+                  <div>
                     <Link to="/review" onClick={() => setMobileMenuOpen(false)}>
                       <div className={`flex items-center justify-between px-3 py-3 rounded-xl transition-colors mb-0.5 ${
                         isActive('/review')
@@ -353,10 +279,10 @@ export default function Navbar() {
                         }
                       </div>
                     </Link>
-                  </motion.div>
+                  </div>
 
                   {/* Course */}
-                  <motion.div custom={1} variants={itemVariants} initial="hidden" animate="visible">
+                  <div>
                     <Link to="/path" onClick={() => setMobileMenuOpen(false)}>
                       <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
                         isActive('/path')
@@ -371,10 +297,10 @@ export default function Navbar() {
                         {isActive('/path') && <ChevronRight className="w-3.5 h-3.5 ml-auto opacity-50" />}
                       </div>
                     </Link>
-                  </motion.div>
+                  </div>
 
                   {/* Stories */}
-                  <motion.div custom={2} variants={itemVariants} initial="hidden" animate="visible">
+                  <div>
                     <Link to="/stories" onClick={() => setMobileMenuOpen(false)}>
                       <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
                         isActive('/stories')
@@ -386,34 +312,15 @@ export default function Navbar() {
                         {isActive('/stories') && <ChevronRight className="w-3.5 h-3.5 ml-auto opacity-50" />}
                       </div>
                     </Link>
-                  </motion.div>
+                  </div>
                 </div>
 
-                {/* ── Practice section ── */}
-                <DrawerSection
-                  label={t('nav.sections.practice')}
-                  isOpen={openSections.practice}
-                  onToggle={() => toggleSection('practice')}
-                  hasActive={dropdownMenus[0].items.some(i => isActive(i.to))}
-                  animIndex={3}
-                >
-                  {dropdownMenus[0].items.map((item) => (
-                    <DrawerItem key={item.to} item={item} active={isActive(item.to)} onClose={() => setMobileMenuOpen(false)} />
-                  ))}
-                </DrawerSection>
-
-                {/* ── Play section ── */}
-                <DrawerSection
-                  label={t('nav.sections.play')}
-                  isOpen={openSections.play}
-                  onToggle={() => toggleSection('play')}
-                  hasActive={dropdownMenus[1].items.some(i => isActive(i.to))}
-                  animIndex={12}
-                >
-                  {dropdownMenus[1].items.map((item) => (
-                    <DrawerItem key={item.to} item={item} active={isActive(item.to)} onClose={() => setMobileMenuOpen(false)} />
-                  ))}
-                </DrawerSection>
+                {/* ── Library (semua alat & permainan) ── */}
+                <DrawerItem
+                  item={{ to: '/library', key: 'library', icon: LayoutGrid }}
+                  active={isActive('/library')}
+                  onClose={() => setMobileMenuOpen(false)}
+                />
 
                 {/* ── Track section ── */}
                 <DrawerSection
@@ -421,7 +328,6 @@ export default function Navbar() {
                   isOpen={openSections.track}
                   onToggle={() => toggleSection('track')}
                   hasActive={isActive('/dashboard') || isActive('/leaderboard')}
-                  animIndex={18}
                 >
                   {trackItems.map((item) => (
                     <DrawerItem key={item.to} item={item} active={isActive(item.to)} onClose={() => setMobileMenuOpen(false)} />
@@ -484,22 +390,17 @@ export default function Navbar() {
 
 /* ─── Mobile drawer section (collapsible) ─── */
 function DrawerSection({
-  label, isOpen, onToggle, hasActive, animIndex, children,
+  label, isOpen, onToggle, hasActive, children,
 }: {
   label: string
   isOpen: boolean
   onToggle: () => void
   hasActive: boolean
-  animIndex: number
   children: React.ReactNode
 }) {
   return (
     <div>
       <motion.button
-        custom={animIndex}
-        variants={itemVariants}
-        initial="hidden"
-        animate="visible"
         onClick={onToggle}
         className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition-colors ${
           hasActive
@@ -568,8 +469,7 @@ function DarkModeButton({ isDarkMode, toggle }: { isDarkMode: boolean; toggle: (
     <motion.button
       onClick={toggle}
       className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors overflow-hidden"
-      whileHover={{ scale: 1.08 }}
-      whileTap={{ scale: 0.92 }}
+      whileTap={{ scale: 0.95 }}
       aria-label={label}
       title={label}
     >
@@ -597,8 +497,6 @@ function DesktopNavLink({ link, active, badgeCount = 0 }: {
             ? 'text-primary-600 bg-primary-50 dark:bg-primary-950/50 dark:text-primary-400'
             : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 hover:bg-gray-50 dark:hover:bg-gray-800/50 dark:hover:text-primary-400'
         }`}
-        whileHover={{ scale: 1.04 }}
-        whileTap={{ scale: 0.96 }}
       >
         <Icon className="w-4 h-4" />
         <span className="hidden lg:inline">{t(`nav.items.${link.key}.label`)}</span>
@@ -618,87 +516,6 @@ function DesktopNavLink({ link, active, badgeCount = 0 }: {
   )
 }
 
-/* ─── Desktop dropdown ─── */
-const DesktopDropdown = forwardRef<HTMLDivElement, {
-  menu: DropdownMenu; active: boolean; isOpen: boolean; reviewCount: number
-  isActive: (p: string) => boolean; onToggle: () => void; onClose: () => void
-}>(function DesktopDropdown({ menu, active, isOpen, isActive, onToggle, onClose }, ref) {
-  const { t } = useTranslation()
-  const Icon = menu.icon
-  const isTwoCol = menu.cols === 2
-
-  return (
-    <div ref={ref} className="relative">
-      <motion.div
-        className={`flex items-center gap-1 px-2 lg:px-3 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
-          active || isOpen
-            ? 'text-primary-600 bg-primary-50 dark:bg-primary-950/50 dark:text-primary-400'
-            : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 hover:bg-gray-50 dark:hover:bg-gray-800/50 dark:hover:text-primary-400'
-        }`}
-        whileHover={{ scale: 1.04 }}
-        whileTap={{ scale: 0.96 }}
-        onClick={onToggle}
-      >
-        <Icon className="w-4 h-4" />
-        <span>{t(`nav.sections.${menu.key}`)}</span>
-        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-          <ChevronDown className="w-3.5 h-3.5" />
-        </motion.div>
-        {active && (
-          <motion.div
-            className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary-600 rounded-full"
-            layoutId="nav-underline"
-          />
-        )}
-      </motion.div>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -8, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.96 }}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
-            className={`absolute left-0 top-full mt-1.5 bg-white dark:bg-surface-card rounded-xl shadow-xl border border-gray-200/80 dark:border-gray-700 overflow-hidden z-50 ${
-              isTwoCol ? 'w-[380px]' : 'w-52'
-            }`}
-          >
-            <div className={`p-1.5 ${isTwoCol ? 'grid grid-cols-2 gap-0.5' : ''}`}>
-              {menu.items.map((item, i) => {
-                const ItemIcon = item.icon
-                const itemActive = isActive(item.to)
-                const desc = t(`nav.items.${item.key}.desc`)
-                return (
-                  <motion.div
-                    key={item.to}
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.03 }}
-                  >
-                    <Link to={item.to} onClick={onClose}>
-                      <div className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
-                        itemActive ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600 dark:text-primary-400' : 'text-gray-700 dark:text-gray-300'
-                      }`}>
-                        <ItemIcon className="w-3.5 h-3.5 flex-shrink-0" />
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium leading-none">{t(`nav.items.${item.key}.label`)}</p>
-                          {desc && (
-                            <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">{desc}</p>
-                          )}
-                        </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                )
-              })}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  )
-})
-
 /* ─── Desktop user menu ─── */
 const UserMenu = forwardRef<HTMLDivElement, {
   user: UserProfile | null; showMenu: boolean; onToggle: () => void; onClose: () => void; onLogout: () => void
@@ -708,8 +525,6 @@ const UserMenu = forwardRef<HTMLDivElement, {
     <div ref={ref} className="relative ml-1">
       <motion.div
         className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer"
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.97 }}
         onClick={onToggle}
       >
         {user?.profile_picture
@@ -738,6 +553,12 @@ const UserMenu = forwardRef<HTMLDivElement, {
                 <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300">
                   <User className="w-4 h-4" />
                   <span className="text-sm">{t('nav.items.profile.label')}</span>
+                </div>
+              </Link>
+              <Link to="/dashboard" onClick={onClose}>
+                <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300">
+                  <BarChart3 className="w-4 h-4" />
+                  <span className="text-sm">{t('nav.items.stats.label')}</span>
                 </div>
               </Link>
               <Link to="/leaderboard" onClick={onClose}>

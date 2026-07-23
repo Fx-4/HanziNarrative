@@ -42,6 +42,7 @@ const AuthCallback = lazy(() => import('./pages/AuthCallback'))
 const DailyChallenge = lazy(() => import('./pages/DailyChallenge'))
 const LearningPath = lazy(() => import('./pages/LearningPath'))
 const LearningSession = lazy(() => import('./pages/LearningSession'))
+const Library = lazy(() => import('./pages/Library'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 const MaintenancePage = lazy(() => import('./pages/Maintenance'))
 const About = lazy(() => import('./pages/About'))
@@ -263,6 +264,7 @@ function App() {
           <Route path="daily-challenge" element={<LazyPage name="DailyChallenge"><DailyChallenge /></LazyPage>} />
           <Route path="path" element={<LazyPage name="LearningPath"><LearningPath /></LazyPage>} />
           <Route path="path/session/:sessionId" element={<LazyPage name="LearningSession"><LearningSession /></LazyPage>} />
+          <Route path="library" element={<LazyPage name="Library"><Library /></LazyPage>} />
         </Route>
 
         {/* 404 catch-all */}

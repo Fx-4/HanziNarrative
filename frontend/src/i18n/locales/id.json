@@ -4,6 +4,7 @@
       "review":          { "label": "Ulasan",           "desc": "Pengulangan terjadwal" },
       "course":          { "label": "Kursus",           "desc": "Jalur belajar HSK" },
       "stories":         { "label": "Cerita",           "desc": "" },
+      "library":         { "label": "Pustaka",          "desc": "Semua alat & permainan" },
       "stats":           { "label": "Statistik",        "desc": "Progres kamu" },
       "profile":         { "label": "Profil",           "desc": "Akun kamu" },
       "flashcards":      { "label": "Kartu Kosakata",   "desc": "Pengulangan terjadwal" },
@@ -54,6 +55,27 @@
       "dueToday":    "{{count}} harus ditinjau",
       "description": "Pengulangan terjadwal"
     }
+  },
+
+  "library": {
+    "title":             "Pustaka",
+    "subtitle":          "Semua alat latihan dan permainan di satu tempat",
+    "searchPlaceholder": "Cari alat…",
+    "noResults":         "Tidak ada alat yang cocok dengan \"{{query}}\"",
+    "unlockHint":        "Terbuka setelah {{count}} kata dipelajari"
+  },
+
+  "home": {
+    "greeting":      "Hai, {{name}} 👋",
+    "subtitle":      "Ini rencana belajarmu hari ini",
+    "continueTitle": "Lanjutkan belajar",
+    "continueCta":   "Lanjutkan lesson",
+    "startCta":      "Mulai lesson pertamamu",
+    "viewPath":      "Lihat semua unit",
+    "unitProgress":  "{{done}}/{{total}} sesi",
+    "reviewDue":     "{{count}} kata harus ditinjau hari ini",
+    "reviewNone":    "Semua beres — tidak ada ulasan hari ini!",
+    "reviewCta":     "Tinjau sekarang"
   },
 
   "landing": {
