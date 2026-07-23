@@ -372,6 +372,7 @@ export default function Dictation() {
                             <div className="flex justify-center gap-3">
                                 <button
                                     onClick={isPlaying ? stopAudio : playAudio}
+                                    aria-label={isPlaying ? 'Stop audio' : 'Play audio'}
                                     className={`w-20 h-20 rounded-full flex items-center justify-center cursor-pointer transition-all shadow-lg ${isPlaying
                                         ? 'bg-error-500 hover:bg-error-600 animate-pulse'
                                         : 'bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700'

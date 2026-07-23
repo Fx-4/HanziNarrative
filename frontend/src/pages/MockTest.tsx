@@ -954,6 +954,7 @@ export default function MockTest() {
                                         {/* Big audio button — don't show the Chinese word to force listening */}
                                         <button
                                             onClick={() => speakText(q.audioText)}
+                                            aria-label="Play audio to listen"
                                             className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 transition-all shadow-lg ${isSpeaking ? 'bg-primary-600 text-white scale-110 animate-pulse' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-300 hover:bg-primary-200 hover:scale-105'}`}
                                         >
                                             {isSpeaking ? <Volume2 className="w-10 h-10" /> : <Play className="w-10 h-10" />}

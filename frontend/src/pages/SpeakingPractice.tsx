@@ -620,6 +620,7 @@ export default function SpeakingPractice() {
                                     <>
                                         <button
                                             onClick={isRecording ? stopRecording : startRecording}
+                                            aria-label={isRecording ? 'Stop recording' : 'Start recording'}
                                             className={`w-24 h-24 rounded-full flex items-center justify-center cursor-pointer transition-all shadow-lg mx-auto ${isRecording
                                                 ? 'bg-error-500 hover:bg-error-600 animate-pulse'
                                                 : isVocabMode
