@@ -184,6 +184,27 @@ export default function Flashcards() {
     })
   }
 
+  // Keyboard (ala Anki): Space/Enter membalik kartu; setelah terbuka,
+  // 1/2/3 = Hard / Good / Perfect. Diabaikan saat mengetik & saat sesi selesai.
+  useEffect(() => {
+    if (!sessionStarted || loading) return
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return
+      if (currentIndex >= words.length) return // sesi selesai — abaikan
+      if (!isFlipped) {
+        if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setIsFlipped(true) }
+        return
+      }
+      if (e.key === '1') recordReview(1)
+      else if (e.key === '2') recordReview(3)
+      else if (e.key === '3') recordReview(5)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFlipped, sessionStarted, loading, currentIndex, words.length])
+
   // ─── Settings Screen ───────────────────────────────────────────────────────
   if (!sessionStarted && showSettings) {
     return (
@@ -598,18 +619,21 @@ export default function Flashcards() {
                 className="rounded-xl py-3 text-sm font-semibold transition-all bg-error-50 dark:bg-error-950/40 text-error-600 dark:text-error-400 hover:bg-error-100 border border-error-100 dark:border-error-900/50 dark:hover:bg-error-900/40"
               >
                 {t('flashcards.hard')}
+                <kbd className="hidden sm:inline-flex items-center justify-center h-4 min-w-[16px] px-1 ml-1.5 rounded border border-current text-[10px] leading-none opacity-50 font-sans align-middle">1</kbd>
               </button>
               <button
                 onClick={() => recordReview(3)}
                 className="rounded-xl py-3 text-sm font-semibold transition-all bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-100 border border-amber-100 dark:border-amber-900/50 dark:hover:bg-amber-900/40"
               >
                 {t('flashcards.good')}
+                <kbd className="hidden sm:inline-flex items-center justify-center h-4 min-w-[16px] px-1 ml-1.5 rounded border border-current text-[10px] leading-none opacity-50 font-sans align-middle">2</kbd>
               </button>
               <button
                 onClick={() => recordReview(5)}
                 className="rounded-xl py-3 text-sm font-semibold transition-all bg-primary-600 text-white hover:bg-primary-700"
               >
                 {t('flashcards.perfect')}
+                <kbd className="hidden sm:inline-flex items-center justify-center h-4 min-w-[16px] px-1 ml-1.5 rounded border border-white/40 text-[10px] leading-none opacity-80 font-sans align-middle">3</kbd>
               </button>
             </div>
           </motion.div>
@@ -617,8 +641,12 @@ export default function Flashcards() {
 
         {/* Instruction text – before flip */}
         {!isFlipped && (
-          <p className="text-center text-sm text-gray-400 mt-6 dark:text-gray-500">
+          <p className="text-center text-sm text-gray-400 mt-6 dark:text-gray-500 flex items-center justify-center gap-1.5 flex-wrap">
             {t('flashcards.instruction')}
+            <span className="hidden sm:inline-flex items-center gap-1 text-gray-300 dark:text-gray-600">
+              ·
+              <kbd className="inline-flex items-center justify-center h-4 px-1.5 rounded border border-current text-[10px] leading-none font-sans">Space</kbd>
+            </span>
           </p>
         )}
       </div>

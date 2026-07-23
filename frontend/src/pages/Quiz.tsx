@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { quizApi } from '@/services/api'
 import { SessionSkeleton } from '@/components/ui/Skeleton'
@@ -137,6 +137,27 @@ export default function Quiz() {
       toast(t('quiz.toasts.keepPracticing', { pct: percentage }))
     }
   }
+
+  // Keyboard: Enter drives the primary action of whatever stage you're on —
+  // setup → mulai, mengerjakan → submit, hasil → kuis baru. Enter di dalam
+  // input fill-blank diabaikan supaya tak submit tak sengaja saat mengetik.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Enter') return
+      const tag = (e.target as HTMLElement)?.tagName
+      if (!quiz) {
+        if (!loading) startQuiz()
+      } else if (showResults) {
+        setQuiz(null)
+      } else {
+        if (tag === 'INPUT' || tag === 'TEXTAREA') return
+        submitQuiz()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quiz, showResults, loading, answers, hskLevel, quizType, numQuestions])
 
   const renderMultipleChoice = () => (
     <div className="space-y-4 sm:space-y-6">
@@ -528,6 +549,7 @@ export default function Quiz() {
               >
                 <Brain className="w-5 h-5" />
                 {t('quiz.start')}
+                <kbd className="hidden sm:inline-flex items-center justify-center h-5 px-1.5 ml-1 rounded border border-white/40 text-[11px] leading-none font-sans">↵</kbd>
               </button>
             </div>
           </div>
@@ -613,6 +635,7 @@ export default function Quiz() {
                 className="flex-1 flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-6 py-3 sm:py-4 font-semibold text-base sm:text-lg transition-all shadow-md"
               >
                 {t('quiz.submit')}
+                <kbd className="hidden sm:inline-flex items-center justify-center h-5 px-1.5 ml-1 rounded border border-white/40 text-[11px] leading-none font-sans">↵</kbd>
               </button>
             ) : (
               <button
@@ -621,6 +644,7 @@ export default function Quiz() {
               >
                 <RotateCcw className="w-5 h-5" />
                 {t('quiz.newQuiz')}
+                <kbd className="hidden sm:inline-flex items-center justify-center h-5 px-1.5 ml-1 rounded border border-white/40 text-[11px] leading-none font-sans">↵</kbd>
               </button>
             )}
           </div>

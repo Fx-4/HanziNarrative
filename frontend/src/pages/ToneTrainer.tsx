@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { vocabularyApi } from '@/services/api'
 import { SessionSkeleton } from '@/components/ui/Skeleton'
@@ -129,6 +129,19 @@ export default function ToneTrainer() {
             setIsPlaying(false)
         }
     }
+
+    // Keyboard: tekan 1-4 untuk memilih nada (hanya sebelum menjawab).
+    useEffect(() => {
+        if (!sessionStarted || selected !== null) return
+        const onKey = (e: KeyboardEvent) => {
+            const tag = (e.target as HTMLElement)?.tagName
+            if (tag === 'INPUT' || tag === 'TEXTAREA') return
+            if (['1', '2', '3', '4'].includes(e.key)) handleAnswer(Number(e.key))
+        }
+        window.addEventListener('keydown', onKey)
+        return () => window.removeEventListener('keydown', onKey)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sessionStarted, selected, currentQ, questions])
 
     // Generating the session — skeleton of the upcoming exercise
     if (loading) {
@@ -262,7 +275,10 @@ export default function ToneTrainer() {
                                 }
                                 return (
                                     <button key={tone} onClick={() => handleAnswer(tone)} disabled={selected !== null}
-                                        className={`rounded-2xl p-4 font-medium cursor-pointer transition-all text-center ${btnClass} disabled:cursor-default`}>
+                                        className={`relative rounded-2xl p-4 font-medium cursor-pointer transition-all text-center ${btnClass} disabled:cursor-default`}>
+                                        {selected === null && (
+                                            <kbd className="hidden sm:inline-flex items-center justify-center absolute top-2 right-2.5 h-4 min-w-[16px] px-1 rounded border border-current text-[10px] leading-none opacity-40 font-sans">{tone}</kbd>
+                                        )}
                                         <p className="text-lg font-bold">{t('toneTrainer.toneN', { n: tone })}</p>
                                         <p className="text-sm text-gray-500 dark:text-gray-400">{t(`toneTrainer.tones.${tone}`)}</p>
                                         {selected !== null && tone === q.correctTone && <CheckCircle className="w-4 h-4 text-success-600 mx-auto mt-1 dark:text-success-400" />}

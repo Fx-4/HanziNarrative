@@ -414,6 +414,28 @@ export default function MockTest() {
         setTimeout(() => advanceQuestion(), 800)
     }
 
+    // Keyboard: 1-4 atau A-D memilih opsi (badge A/B/C/D di tiap opsi
+    // sekaligus jadi petunjuk tombolnya). Hanya aktif di layar soal & sebelum menjawab.
+    useEffect(() => {
+        if (page !== 'question' || selectedAnswer !== null) return
+        const onKey = (e: KeyboardEvent) => {
+            const tag = (e.target as HTMLElement)?.tagName
+            if (tag === 'INPUT' || tag === 'TEXTAREA') return
+            const q = sectionQuestions[sectionIndex]?.[currentQ]
+            if (!q) return
+            let idx = -1
+            if (['1', '2', '3', '4'].includes(e.key)) idx = Number(e.key) - 1
+            else {
+                const k = e.key.toLowerCase()
+                if (['a', 'b', 'c', 'd'].includes(k)) idx = ['a', 'b', 'c', 'd'].indexOf(k)
+            }
+            if (idx >= 0 && idx < q.options.length) handleAnswer(idx)
+        }
+        window.addEventListener('keydown', onKey)
+        return () => window.removeEventListener('keydown', onKey)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page, selectedAnswer, currentQ, sectionIndex, sectionQuestions])
+
     const finishSection = () => {
         stopTimer()
         stopSpeech()
