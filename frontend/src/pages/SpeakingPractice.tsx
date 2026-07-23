@@ -18,7 +18,9 @@ import {
     ChevronDown,
     ChevronUp,
     Lightbulb,
-    Brain
+    Brain,
+    XCircle,
+    Music2
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import BlurText from '@/components/animations/BlurText'
@@ -657,11 +659,11 @@ export default function SpeakingPractice() {
                                     {isVocabMode && (
                                         <div className="flex justify-center gap-4 mb-3">
                                             <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold ${result?.is_correct ? 'bg-success-100 text-success-700 dark:bg-success-900/40 dark:text-success-300' : 'bg-error-100 text-error-700 dark:bg-error-900/40 dark:text-error-300'}`}>
-                                                {result?.is_correct ? '✅' : '❌'}
+                                                {result?.is_correct ? <CheckCircle className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
                                                 {t('speaking.vocabLabel')} {result?.is_correct ? t('speaking.correctWord') : t('speaking.wrongWord')}
                                             </div>
                                             <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold ${(result?.accuracy_score ?? 0) >= 70 ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'}`}>
-                                                🎵 {t('speaking.toneLabel')} {(result?.accuracy_score ?? 0) >= 70 ? t('speaking.tonePerfect') : t('speaking.toneNeedsWork')}
+                                                <Music2 className="w-4 h-4" /> {t('speaking.toneLabel')} {(result?.accuracy_score ?? 0) >= 70 ? t('speaking.tonePerfect') : t('speaking.toneNeedsWork')}
                                             </div>
                                         </div>
                                     )}

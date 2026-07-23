@@ -3,6 +3,7 @@ import { useEffect, useState, lazy, Suspense } from 'react'
 import Layout from './components/Layout'
 import { Toaster } from './components/ui/Toast'
 import ErrorBoundary from './components/ErrorBoundary'
+import { AlertTriangle } from 'lucide-react'
 import { useAuthStore } from './store/authStore'
 import { appLogger } from './utils/debugLogger'
 import { ensureBackendReady, subscribeBackendStatus, type BackendStatus } from './lib/backendStatus'
@@ -63,7 +64,7 @@ function BackendBanner() {
   if (status === 'failed') {
     return (
       <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-500 text-white text-sm font-medium shadow-lg">
-        ⚠ Server unreachable — check your connection
+        <AlertTriangle className="w-4 h-4 shrink-0" /> Server unreachable — check your connection
       </div>
     )
   }
