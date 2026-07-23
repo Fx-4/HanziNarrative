@@ -6,9 +6,11 @@ import { UserProgress, GamificationStats, OnboardingStatus } from '@/types'
 import {
   Trophy, Flame, Target, Award, LogOut, Download, Sparkles,
   Camera, Timer, BookOpen, TrendingUp, Zap, Star, CheckCircle2,
-  Loader2,
+  Loader2, SlidersHorizontal,
 } from 'lucide-react'
 import { Skeleton } from '@/components/ui/Skeleton'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
+import VoiceSelector from '@/components/VoiceSelector'
 import { motion, AnimatePresence } from 'framer-motion'
 import CountUp from '@/components/animations/CountUp'
 import { createLogger } from '@/utils/debugLogger'
@@ -256,6 +258,34 @@ export default function Profile() {
             <p className="text-xs text-gray-400 mt-1 dark:text-gray-500">
               Member since {new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
             </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ── Preferences ─────────────────────────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08 }}
+        className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 dark:bg-surface-card dark:border-gray-800"
+      >
+        <h2 className="font-extrabold text-gray-900 text-lg mb-4 flex items-center gap-2 dark:text-gray-50">
+          <SlidersHorizontal className="w-5 h-5 text-primary-500 dark:text-primary-400" /> Preferences
+        </h2>
+        <div className="divide-y divide-gray-100 dark:divide-gray-800">
+          <div className="flex items-center justify-between gap-4 py-3 first:pt-0">
+            <div>
+              <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">Interface language</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">Language of buttons, labels &amp; menus</p>
+            </div>
+            <LanguageSwitcher />
+          </div>
+          <div className="flex items-start justify-between gap-4 py-3 last:pb-0">
+            <div className="pt-1">
+              <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">Audio voice &amp; speed</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">Pronunciation voice and playback speed</p>
+            </div>
+            <VoiceSelector />
           </div>
         </div>
       </motion.div>

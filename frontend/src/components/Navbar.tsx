@@ -125,9 +125,9 @@ export default function Navbar() {
 
             {/* ── Desktop nav ── */}
             <div className="hidden md:flex items-center gap-0.5 lg:gap-1">
+              {/* Voice & Language pindah ke Profile — chrome navbar disisakan
+                  hanya untuk aksi frekuensi-tinggi (dark mode). */}
               <DarkModeButton isDarkMode={isDarkMode} toggle={toggleDarkMode} />
-              <LanguageSwitcher compact />
-              <VoiceSelector compact />
 
               {primaryLinks.map(link => (
                 <DesktopNavLink
