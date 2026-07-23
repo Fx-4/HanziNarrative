@@ -48,6 +48,36 @@ const NotFound = lazy(() => import('./pages/NotFound'))
 const MaintenancePage = lazy(() => import('./pages/Maintenance'))
 const About = lazy(() => import('./pages/About'))
 
+// ── Per-route document title ──────────────────────────────────────
+// Tanpa ini setiap halaman menampilkan judul tab yang sama, jadi tab
+// browser & riwayat back/forward tak memberi tahu kamu ada di mana.
+const BASE_TITLE = 'HanziNarrative — Belajar Mandarin HSK Interaktif'
+const ROUTE_TITLES: Record<string, string> = {
+  '/': 'Hari Ini', '/review': 'Review', '/path': 'Kursus', '/stories': 'Cerita',
+  '/library': 'Pustaka', '/dashboard': 'Statistik', '/flashcards': 'Kartu Kosakata',
+  '/writing': 'Menulis', '/typing': 'Mengetik', '/speaking': 'Berbicara',
+  '/dictation': 'Dikte', '/quiz': 'Kuis', '/tones': 'Nada', '/mock-test': 'Tes Simulasi',
+  '/vocabulary': 'Kosakata', '/explorer': 'Story Blanks', '/battle': 'Duel',
+  '/ladder': 'Ular Tangga', '/adventure': 'Petualangan', '/conversation': 'Chat AI',
+  '/matching': 'Cocokkan', '/sentence-builder': 'Susun Kalimat', '/story-challenge': 'Tantangan Cerita',
+  '/daily-challenge': 'Tantangan Harian', '/profile': 'Profil', '/leaderboard': 'Peringkat',
+  '/bookmarks': 'Tersimpan', '/login': 'Masuk', '/register': 'Daftar', '/about': 'Tentang',
+  '/onboarding': 'Mulai', '/admin': 'Admin',
+}
+
+function RouteTitle() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    let name = ROUTE_TITLES[pathname]
+    if (name === undefined) {
+      if (pathname.startsWith('/stories/')) name = 'Cerita'
+      else if (pathname.startsWith('/path/session/')) name = 'Lesson'
+    }
+    document.title = name ? `${name} · HanziNarrative` : BASE_TITLE
+  }, [pathname])
+  return null
+}
+
 // ── Backend warm-up banner (Koyeb free tier cold start) ──────────
 function BackendBanner() {
   const [status, setStatus] = useState<BackendStatus>('unknown')
@@ -196,6 +226,7 @@ function App() {
   return (
     <>
       <Toaster />
+      <RouteTitle />
       <BackendBanner />
       <Routes>
         {/* Public routes */}
