@@ -94,7 +94,9 @@ export default function ReviewExercise({ item, allItems, onRate }: Props) {
     setSelected(i)
     setAttempted(true)
     setIsCorrect(i === correctIndex)
-    setTimeout(() => setShowAnswer(true), 900)
+    // 350ms: cukup bagi mata menangkap perubahan warna opsi sebelum panel
+    // jawaban muncul — lebih lama dari ini terasa sebagai dead time.
+    setTimeout(() => setShowAnswer(true), 350)
   }
 
   const modeLabel: Record<ExerciseMode, string> = {
@@ -166,7 +168,20 @@ export default function ReviewExercise({ item, allItems, onRate }: Props) {
               }
 
               return (
-                <button key={i} className={cls} onClick={() => pick(i)} disabled={answered}>
+                <motion.button
+                  key={i}
+                  className={cls}
+                  onClick={() => pick(i)}
+                  disabled={answered}
+                  animate={
+                    answered && isSel
+                      ? isCorr
+                        ? { scale: [1, 1.04, 1] }
+                        : { x: [0, -7, 7, -5, 5, 0] }
+                      : {}
+                  }
+                  transition={{ duration: 0.3 }}
+                >
                   <div className="flex items-center justify-between gap-2">
                     <span className={mode === 'char_recall' ? 'font-chinese text-3xl' : 'text-sm sm:text-base'}>
                       {opt}
@@ -174,7 +189,7 @@ export default function ReviewExercise({ item, allItems, onRate }: Props) {
                     {answered && isCorr && <CheckCircle className="w-5 h-5 text-success-600 shrink-0 dark:text-success-400" />}
                     {answered && isSel && !isCorr && <XCircle className="w-5 h-5 text-error-600 shrink-0 dark:text-error-400" />}
                   </div>
-                </button>
+                </motion.button>
               )
             })}
           </div>

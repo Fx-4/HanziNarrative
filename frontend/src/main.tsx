@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
+import { MotionConfig } from 'framer-motion'
 import App from './App.tsx'
 import './index.css'
 import './i18n/config'
@@ -20,7 +21,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         v7_relativeSplatPath: true,
       }}
     >
-      <App />
+      {/* reducedMotion="user": seluruh animasi framer-motion otomatis
+          nonaktif bila OS user menyetel prefers-reduced-motion */}
+      <MotionConfig reducedMotion="user">
+        <App />
+      </MotionConfig>
     </BrowserRouter>
   </React.StrictMode>,
 )

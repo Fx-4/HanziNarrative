@@ -1,5 +1,6 @@
+import { useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import {
   BookOpen, Sparkles, Trophy, Zap, Layers,
@@ -71,6 +72,11 @@ export default function Landing() {
   const freeFeatures = t('landing.pricing.free.features', { returnObjects: true }) as string[]
   const premiumFeatures = t('landing.pricing.premium.features', { returnObjects: true }) as string[]
 
+  // Loop infinite di hero (floats + badges) hanya jalan saat hero terlihat —
+  // tanpa gate ini animasinya terus membebani main thread saat user scroll ke bawah.
+  const heroRef = useRef<HTMLElement>(null)
+  const heroInView = useInView(heroRef)
+
   return (
     <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
 
@@ -103,14 +109,14 @@ export default function Landing() {
       </header>
 
       {/* ══ HERO ══ */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-50 via-white to-violet-50">
+      <section ref={heroRef} className="relative overflow-hidden bg-gradient-to-br from-primary-50 via-white to-violet-50">
         {FLOATS.map((f, i) => (
           <motion.span
             key={i}
             className="absolute select-none pointer-events-none font-chinese font-bold text-primary-900 hidden sm:block"
             style={{ top: f.top, left: f.left, fontSize: f.size, opacity: f.op }}
-            animate={{ y: [0, -18, 0] }}
-            transition={{ duration: f.dur, delay: f.del, repeat: Infinity, ease: 'easeInOut' }}
+            animate={heroInView ? { y: [0, -18, 0] } : { y: 0 }}
+            transition={heroInView ? { duration: f.dur, delay: f.del, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.3 }}
           >
             {f.char}
           </motion.span>
@@ -263,8 +269,8 @@ export default function Landing() {
 
                 <motion.div
                   className="absolute -bottom-4 -left-4 bg-white border border-amber-200 rounded-xl px-3 md:px-4 py-2 md:py-2.5 shadow-lg flex items-center gap-2"
-                  animate={{ y: [0, -6, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                  animate={heroInView ? { y: [0, -6, 0] } : { y: 0 }}
+                  transition={heroInView ? { duration: 3, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.3 }}
                 >
                   <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-amber-100 flex items-center justify-center">
                     <Trophy className="w-3.5 h-3.5 md:w-4 md:h-4 text-amber-600" />
@@ -277,8 +283,8 @@ export default function Landing() {
 
                 <motion.div
                   className="absolute -top-4 -right-4 bg-white border border-success-200 rounded-xl px-3 md:px-4 py-2 md:py-2.5 shadow-lg flex items-center gap-2"
-                  animate={{ y: [0, -6, 0] }}
-                  transition={{ duration: 3.5, delay: 1, repeat: Infinity, ease: 'easeInOut' }}
+                  animate={heroInView ? { y: [0, -6, 0] } : { y: 0 }}
+                  transition={heroInView ? { duration: 3.5, delay: 1, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.3 }}
                 >
                   <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-success-100 flex items-center justify-center">
                     <Zap className="w-3.5 h-3.5 md:w-4 md:h-4 text-success-600" />

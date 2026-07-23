@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { learningApi } from '@/services/api'
 import { useAuthStore } from '@/store/authStore'
+import { hasPlayedIntro, markIntroPlayed } from '@/utils/uiPrefs'
 import { useThemeStore } from '@/store/themeStore'
 import { useTranslation } from 'react-i18next'
 import GamificationWidget from '@/components/GamificationWidget'
@@ -105,6 +106,8 @@ export default function Dashboard() {
   const { isAuthenticated } = useAuthStore()
   const isDarkMode = useThemeStore(s => s.isDarkMode)
   const { t } = useTranslation()
+  const intro = !hasPlayedIntro('dashboard')
+  useEffect(() => { markIntroPlayed('dashboard') }, [])
 
   // Theme-aware chart styling so axes/grid/tooltips stay legible in dark mode
   const chartTheme = useMemo(() => ({
@@ -253,7 +256,7 @@ export default function Dashboard() {
 
       {/* ── Page Header ─────────────────────────────────────────────────── */}
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
+        initial={intro ? { opacity: 0, y: 16 } : false}
         animate={{ opacity: 1, y: 0 }}
         className="bg-white dark:bg-surface-card rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden"
       >
@@ -276,7 +279,7 @@ export default function Dashboard() {
 
       {/* ── Widgets 2×2 ─────────────────────────────────────────────────── */}
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={intro ? { opacity: 0, y: 12 } : false}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
         className="grid grid-cols-1 md:grid-cols-2 gap-4"
@@ -297,7 +300,7 @@ export default function Dashboard() {
         ].map(({ Icon, label, value, suffix, decimals, bg, shadow, to }, i) => {
           const card = (
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={intro ? { opacity: 0, y: 12 } : false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + i * 0.05 }}
               className={`${bg} rounded-2xl p-4 text-white shadow-lg ${shadow}${to ? ' hover:opacity-90 transition-opacity' : ''}`}
@@ -316,7 +319,7 @@ export default function Dashboard() {
 
       {/* ── Charts: Progress by HSK + Mastery Pie ───────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+        <motion.div initial={intro ? { opacity: 0, y: 16 } : false} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <SectionCard title={t('dashboard.charts.progressByHsk')} icon={TrendingUp}>
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={hskProgressData} barSize={16}>
@@ -342,7 +345,7 @@ export default function Dashboard() {
           </SectionCard>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+        <motion.div initial={intro ? { opacity: 0, y: 16 } : false} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
           <SectionCard title={t('dashboard.charts.masteryDist')} icon={Target}>
             <div className="relative">
               <ResponsiveContainer width="100%" height={240}>
@@ -393,7 +396,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── Accuracy Line Chart ──────────────────────────────────────────── */}
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+      <motion.div initial={intro ? { opacity: 0, y: 16 } : false} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
         <SectionCard title={t('dashboard.charts.accuracyByHsk')} icon={Award}>
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={hskProgressData}>
@@ -416,7 +419,7 @@ export default function Dashboard() {
       </motion.div>
 
       {/* ── Overall Statistics ───────────────────────────────────────────── */}
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
+      <motion.div initial={intro ? { opacity: 0, y: 16 } : false} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
         <SectionCard title={t('dashboard.overall.title')} icon={BookOpen}>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[

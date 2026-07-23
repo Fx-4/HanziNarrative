@@ -23,3 +23,21 @@ export function getShowPinyinPref(fallback = true): boolean {
     return fallback
   }
 }
+
+/**
+ * Entrance-animation gate — intro sebuah halaman hanya diputar pada mount
+ * pertama per pemuatan app; kunjungan ulang (navigasi SPA) render langsung
+ * tanpa replay koreografi. Module-level Set: reload = reset, itu disengaja.
+ *
+ * Tandai lewat useEffect (bukan saat render) agar aman dari double-render
+ * StrictMode di dev.
+ */
+const introPlayed = new Set<string>()
+
+export function hasPlayedIntro(page: string): boolean {
+  return introPlayed.has(page)
+}
+
+export function markIntroPlayed(page: string): void {
+  introPlayed.add(page)
+}
