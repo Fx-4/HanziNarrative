@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useEffect, useState, lazy, Suspense } from 'react'
+import { useTranslation } from 'react-i18next'
 import Layout from './components/Layout'
 import { Toaster } from './components/ui/Toast'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -67,6 +68,8 @@ const ROUTE_TITLES: Record<string, string> = {
 
 function RouteTitle() {
   const { pathname } = useLocation()
+  const { i18n } = useTranslation()
+
   useEffect(() => {
     let name = ROUTE_TITLES[pathname]
     if (name === undefined) {
@@ -75,6 +78,13 @@ function RouteTitle() {
     }
     document.title = name ? `${name} · HanziNarrative` : BASE_TITLE
   }, [pathname])
+
+  // Keep <html lang> in sync with the UI language so screen readers pronounce
+  // the interface correctly and browsers offer the right translation prompt.
+  useEffect(() => {
+    document.documentElement.lang = i18n.language?.startsWith('id') ? 'id' : 'en'
+  }, [i18n.language])
+
   return null
 }
 
