@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { storiesApi } from '@/services/api'
 import { SessionSkeleton } from '@/components/ui/Skeleton'
@@ -135,6 +135,24 @@ export default function FillBlank() {
             }
         }, 1200)
     }
+
+    // Keyboard: tekan 1-4 untuk memilih opsi (hanya sebelum menjawab).
+    useEffect(() => {
+        if (!started || selected !== null) return
+        const onKey = (e: KeyboardEvent) => {
+            const tag = (e.target as HTMLElement)?.tagName
+            if (tag === 'INPUT' || tag === 'TEXTAREA') return
+            const q = questions[currentQ]
+            if (!q) return
+            if (['1', '2', '3', '4'].includes(e.key)) {
+                const idx = Number(e.key) - 1
+                if (idx < q.options.length) handleAnswer(idx)
+            }
+        }
+        window.addEventListener('keydown', onKey)
+        return () => window.removeEventListener('keydown', onKey)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [started, selected, currentQ, questions])
 
     // Generating questions — skeleton of the upcoming exercise
     if (loading) {
@@ -289,7 +307,10 @@ export default function FillBlank() {
                                     }
                                     return (
                                         <button key={i} onClick={() => handleAnswer(i)} disabled={selected !== null}
-                                            className={`rounded-2xl p-4 font-medium cursor-pointer transition-all text-center ${btnClass} disabled:cursor-default`}>
+                                            className={`relative rounded-2xl p-4 font-medium cursor-pointer transition-all text-center ${btnClass} disabled:cursor-default`}>
+                                            {selected === null && (
+                                                <kbd className="hidden sm:inline-flex items-center justify-center absolute top-2 right-2.5 h-4 min-w-[16px] px-1 rounded border border-current text-[10px] leading-none opacity-40 font-sans">{i + 1}</kbd>
+                                            )}
                                             <span className="text-2xl font-chinese">{opt}</span>
                                             {selected !== null && i === q.correctIndex && <CheckCircle className="w-4 h-4 text-success-600 mx-auto mt-1 dark:text-success-400" />}
                                             {selected !== null && i === selected && i !== q.correctIndex && <XCircle className="w-4 h-4 text-error-500 mx-auto mt-1" />}

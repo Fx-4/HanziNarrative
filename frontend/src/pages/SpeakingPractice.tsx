@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { sttApi, vocabularyApi } from '@/services/api'
 import { Skeleton, SessionSkeleton } from '@/components/ui/Skeleton'
@@ -199,6 +199,29 @@ export default function SpeakingPractice() {
         setHintRevealed(true)
         setUsedHint(true)
     }
+
+    // Keyboard: Space = rekam / berhenti; setelah hasil, Enter = lanjut.
+    // Diabaikan saat memproses audio & saat fokus di input.
+    useEffect(() => {
+        if (!sessionStarted) return
+        const onKey = (e: KeyboardEvent) => {
+            const tag = (e.target as HTMLElement)?.tagName
+            if (tag === 'INPUT' || tag === 'TEXTAREA') return
+            if (isProcessing) return
+            if (showResult) {
+                if (e.key === 'Enter') { e.preventDefault(); handleNext() }
+                return
+            }
+            if (e.key === ' ') {
+                e.preventDefault()
+                if (isRecording) stopRecording()
+                else startRecording()
+            }
+        }
+        window.addEventListener('keydown', onKey)
+        return () => window.removeEventListener('keydown', onKey)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sessionStarted, isProcessing, showResult, isRecording, currentIndex, words.length])
 
     // Preparing the session (words + audio) — skeleton of the upcoming exercise
     if (loading && !sessionStarted) {
@@ -608,8 +631,12 @@ export default function SpeakingPractice() {
                                                 <Mic className="w-10 h-10 text-white" />
                                             )}
                                         </button>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center gap-1.5 flex-wrap">
                                             {isRecording ? t('speaking.recording') : t('speaking.clickRecord')}
+                                            <span className="hidden sm:inline-flex items-center gap-1 text-gray-300 dark:text-gray-600">
+                                                ·
+                                                <kbd className="inline-flex items-center justify-center h-4 px-1.5 rounded border border-current text-[10px] leading-none font-sans">Space</kbd>
+                                            </span>
                                         </p>
                                     </>
                                 )}
@@ -673,6 +700,7 @@ export default function SpeakingPractice() {
                                         ) : (
                                             <>{t('speaking.finish')} <CheckCircle className="w-4 h-4" /></>
                                         )}
+                                        <kbd className="hidden sm:inline-flex items-center justify-center h-5 px-1.5 ml-0.5 rounded border border-white/40 text-[11px] leading-none font-sans">↵</kbd>
                                     </button>
                                 </div>
                             </div>
