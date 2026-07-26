@@ -45,7 +45,7 @@
 - [x] **SUX-06 · Klik karakter tak buntu** — "Click any character for details" sering berakhir toast "Word not found in vocabulary" karena `searchWords(char)` gagal untuk kata multi-karakter.
   - *Selesai bila:* saat single-char gagal, coba kata multi-karakter di sekitar posisi klik sebelum menyerah; feedback lebih baik daripada sekadar toast gagal. Build hijau.
 
-- [ ] **SUX-07 · Kuis: hapus fallback palsu** — Saat generate kuis gagal, muncul pertanyaan generik Inggris "What is the main topic of this story?" dgn `correctAnswer: 0` (selalu "benar") — menyesatkan.
+- [x] **SUX-07 · Kuis: hapus fallback palsu** — Saat generate kuis gagal, muncul pertanyaan generik Inggris "What is the main topic of this story?" dgn `correctAnswer: 0` (selalu "benar") — menyesatkan.
   - *Selesai bila:* kegagalan menampilkan pesan error jujur + tombol coba lagi (i18n), bukan pertanyaan palsu. Build hijau.
 
 - [ ] **SUX-08 · Hapus duplikasi tipe Story** — `StoryChallenge.tsx` mendefinisikan `interface Story` lokal (`difficulty_level`, `content_english`) yang beda field dari tipe global `Story` (`hsk_level`, `english_translation`) → risiko field mismatch (mis. badge `HSK {story.difficulty_level}` bisa `undefined`).
@@ -81,3 +81,4 @@
 - 2026-07-27 SUX-04 0390942 Delete Story: tombol hanya pemilik/admin + modal konfirmasi bergaya (Esc/backdrop), ganti window.confirm, build hijau
 - 2026-07-27 SUX-05 2f30ceb Vocabulary sidebar: definisi asli via getStoryWords + fallback jujur, backdrop/Esc/aria-label, build hijau
 - 2026-07-27 SUX-06 aacecc3 Klik karakter: PinyinText kirim konteks tetangga, handler coba kata multi-karakter (longest-first, exact-preference), build hijau
+- 2026-07-27 SUX-07 b784cc4 Kuis: hapus fallback palsu → error state + retry + loading skeleton, build hijau
