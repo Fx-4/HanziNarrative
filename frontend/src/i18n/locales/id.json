@@ -401,6 +401,77 @@
     "empty":             "Belum ada cerita untuk level ini. Cek lagi nanti!"
   },
 
+  "storyReader": {
+    "back": "Kembali ke Cerita",
+    "backShort": "Kembali",
+    "delete": "Hapus Cerita",
+    "deleteShort": "Hapus",
+    "aiGenerated": "Buatan AI",
+    "curated": "Kurasi",
+    "hint": "Klik karakter mana pun untuk detail • Gunakan kontrol di atas untuk fitur interaktif",
+    "notFound": "Cerita tidak ditemukan",
+    "controls": {
+      "showPinyin": "Tampilkan Pinyin",
+      "hidePinyin": "Sembunyikan Pinyin",
+      "showTranslation": "Tampilkan Terjemahan",
+      "hideTranslation": "Sembunyikan Terjemahan",
+      "readAloud": "Bacakan",
+      "stop": "Stop",
+      "vocabulary": "Kosakata",
+      "takeQuiz": "Kerjakan Kuis",
+      "hideQuiz": "Sembunyikan Kuis",
+      "loadingQuiz": "Memuat Kuis...",
+      "save": "Simpan",
+      "saved": "Tersimpan"
+    },
+    "toast": {
+      "loadFailed": "Gagal memuat cerita",
+      "bookmarkRemoved": "Bookmark dihapus",
+      "bookmarked": "Cerita disimpan!",
+      "bookmarkFailed": "Gagal memperbarui bookmark",
+      "reading": "Membacakan cerita...",
+      "deleted": "Cerita berhasil dihapus",
+      "deleteNotFound": "Cerita tidak ditemukan",
+      "deleteUnauthorized": "Kamu harus masuk untuk menghapus cerita",
+      "deleteFailed": "Gagal menghapus cerita. Kamu hanya bisa menghapus cerita buatanmu.",
+      "quizLoaded": "Kuis berhasil dimuat!",
+      "quizLoadFailed": "Gagal memuat pertanyaan kuis",
+      "wordNotFound": "Kata tidak ditemukan di kosakata",
+      "openingVocab": "Membuka halaman kosakata...",
+      "answerAll": "Jawab semua pertanyaan dulu",
+      "scoreGreat": "Kerja bagus! Skormu {{score}}%",
+      "scoreGood": "Usaha bagus! Skor: {{score}}%",
+      "scoreKeep": "Terus berlatih! Skor: {{score}}%"
+    },
+    "deleteConfirm": "Yakin ingin menghapus cerita ini? Tindakan ini tidak bisa dibatalkan.",
+    "translation": {
+      "title": "Terjemahan Bahasa Inggris",
+      "unavailable": "Terjemahan bahasa Inggris tidak tersedia untuk cerita ini."
+    },
+    "quiz": {
+      "title": "Kuis Pemahaman",
+      "submit": "Kirim Kuis",
+      "retry": "Ulangi Kuis",
+      "explanation": "Penjelasan:",
+      "fallbackQuestion": "Apa topik utama cerita ini?",
+      "fallbackOpt1": "Kehidupan & aktivitas sehari-hari",
+      "fallbackOpt2": "Peristiwa sejarah",
+      "fallbackOpt3": "Penemuan ilmiah",
+      "fallbackOpt4": "Olahraga & permainan",
+      "fallbackExplanation": "Tidak dapat membuat pertanyaan spesifik untuk cerita ini. Silakan coba lagi."
+    },
+    "vocab": {
+      "title": "Daftar Kosakata",
+      "count": "{{count}} karakter unik dalam cerita ini",
+      "clickToSee": "Klik untuk lihat definisi lengkap",
+      "character": "Karakter:",
+      "pinyin": "Pinyin:",
+      "meaning": "Arti:",
+      "meaningPlaceholder": "Klik halaman kosakata untuk lihat arti detail dan contoh penggunaan.",
+      "viewInVocab": "Lihat di Kosakata"
+    }
+  },
+
   "learningPath": {
     "title":        "📚 Kursus HSK",
     "subtitle":     "Belajar bertahap dari HSK 1 — teori, kosakata, dan latihan terintegrasi.",

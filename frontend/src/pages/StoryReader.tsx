@@ -35,6 +35,7 @@ import {
   Heart
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { createLogger } from '@/utils/debugLogger'
 
 const storyReaderLogger = createLogger('StoryReader')
@@ -47,6 +48,7 @@ interface ComprehensionQuestion {
 }
 
 export default function StoryReader() {
+  const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const location = useLocation()
@@ -106,7 +108,7 @@ export default function StoryReader() {
       setIsBookmarked(bm.is_bookmarked)
     } catch (error) {
       storyReaderLogger.error('Failed to load story:', error)
-      toast.error('Failed to load story')
+      toast.error(t('storyReader.toast.loadFailed'))
     } finally {
       setLoading(false)
     }
@@ -119,14 +121,14 @@ export default function StoryReader() {
       if (isBookmarked) {
         await storiesApi.unbookmarkStory(story.id)
         setIsBookmarked(false)
-        toast.success('Bookmark removed')
+        toast.success(t('storyReader.toast.bookmarkRemoved'))
       } else {
         await storiesApi.bookmarkStory(story.id)
         setIsBookmarked(true)
-        toast.success('Story bookmarked!')
+        toast.success(t('storyReader.toast.bookmarked'))
       }
     } catch {
-      toast.error('Failed to update bookmark')
+      toast.error(t('storyReader.toast.bookmarkFailed'))
     } finally {
       setBookmarkLoading(false)
     }
@@ -193,7 +195,7 @@ export default function StoryReader() {
 
     setIsReading(true)
     isReadingRef.current = true
-    toast.success('Reading story aloud...')
+    toast.success(t('storyReader.toast.reading'))
 
     for (const chunk of chunks) {
       if (!isReadingRef.current) break
@@ -207,22 +209,22 @@ export default function StoryReader() {
   const handleDeleteStory = async () => {
     if (!story) return
 
-    const confirmed = window.confirm('Are you sure you want to delete this story? This action cannot be undone.')
+    const confirmed = window.confirm(t('storyReader.deleteConfirm'))
     if (!confirmed) return
 
     try {
       await storiesApi.delete(story.id)
-      toast.success('Story deleted successfully')
+      toast.success(t('storyReader.toast.deleted'))
       navigate('/stories')
     } catch (error) {
       const err = error as { response?: { status?: number } }
       storyReaderLogger.error('Failed to delete story:', error)
       if (err.response?.status === 404) {
-        toast.error('Story not found')
+        toast.error(t('storyReader.toast.deleteNotFound'))
       } else if (err.response?.status === 401) {
-        toast.error('You must be logged in to delete stories')
+        toast.error(t('storyReader.toast.deleteUnauthorized'))
       } else {
-        toast.error('Failed to delete story. You can only delete stories you created.')
+        toast.error(t('storyReader.toast.deleteFailed'))
       }
     }
   }
@@ -234,22 +236,22 @@ export default function StoryReader() {
     try {
       const quizData = await storiesApi.getStoryQuiz(story.id)
       setQuestions(quizData.questions)
-      toast.success('Quiz loaded successfully!')
+      toast.success(t('storyReader.toast.quizLoaded'))
     } catch (error) {
       storyReaderLogger.error('Failed to load quiz:', error)
-      toast.error('Failed to load quiz questions')
+      toast.error(t('storyReader.toast.quizLoadFailed'))
       // Set fallback generic question
       setQuestions([
         {
-          question: "What is the main topic of this story?",
+          question: t('storyReader.quiz.fallbackQuestion'),
           options: [
-            "Daily life and activities",
-            "Historical events",
-            "Scientific discoveries",
-            "Sports and games"
+            t('storyReader.quiz.fallbackOpt1'),
+            t('storyReader.quiz.fallbackOpt2'),
+            t('storyReader.quiz.fallbackOpt3'),
+            t('storyReader.quiz.fallbackOpt4')
           ],
           correctAnswer: 0,
-          explanation: "Unable to generate story-specific questions. Please try again."
+          explanation: t('storyReader.quiz.fallbackExplanation')
         }
       ])
     } finally {
@@ -265,7 +267,7 @@ export default function StoryReader() {
 
   const handleSubmitQuiz = () => {
     if (quizAnswers.length < questions.length) {
-      toast.error('Please answer all questions first')
+      toast.error(t('storyReader.toast.answerAll'))
       return
     }
     setShowResults(true)
@@ -274,11 +276,11 @@ export default function StoryReader() {
     const score = Math.round((correctCount / questions.length) * 100)
 
     if (score >= 80) {
-      toast.success(`Great job! You scored ${score}%`)
+      toast.success(t('storyReader.toast.scoreGreat', { score }))
     } else if (score >= 60) {
-      toast('Good effort! Score: ' + score + '%', { icon: '👍' })
+      toast(t('storyReader.toast.scoreGood', { score }), { icon: '👍' })
     } else {
-      toast('Keep practicing! Score: ' + score + '%', { icon: '📚' })
+      toast(t('storyReader.toast.scoreKeep', { score }), { icon: '📚' })
     }
   }
 
@@ -325,12 +327,12 @@ export default function StoryReader() {
           y: rect.top
         })
       } else {
-        toast('Word not found in vocabulary', { icon: '📚' })
+        toast(t('storyReader.toast.wordNotFound'), { icon: '📚' })
       }
     } catch (error) {
       storyReaderLogger.error('Failed to lookup word:', error)
     }
-  }, [])
+  }, [t])
 
   const renderStoryContent = () => {
     if (!story) return null
@@ -363,7 +365,7 @@ export default function StoryReader() {
 
     // Get translation from story data
     const translation = story.english_translation ||
-                       "English translation not available for this story."
+                       t('storyReader.translation.unavailable')
 
     const paragraphs = translation.split('\n').filter(p => p.trim())
 
@@ -380,7 +382,7 @@ export default function StoryReader() {
               <div className="flex items-center gap-2 mb-4">
                 <Languages className="w-5 h-5 text-blue-600 shrink-0 dark:text-blue-400" />
                 <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-200">
-                  English Translation
+                  {t('storyReader.translation.title')}
                 </h3>
               </div>
               <div className="space-y-3">
@@ -416,7 +418,7 @@ export default function StoryReader() {
             <div className="flex justify-between items-center mb-6 sticky top-0 bg-white pb-4 border-b dark:bg-surface-card">
               <div className="flex items-center gap-2">
                 <BookMarked className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-                <h3 className="text-lg font-bold">Vocabulary List</h3>
+                <h3 className="text-lg font-bold">{t('storyReader.vocab.title')}</h3>
               </div>
               <button
                 onClick={() => setShowVocabulary(false)}
@@ -427,7 +429,7 @@ export default function StoryReader() {
             </div>
 
             <div className="text-sm text-gray-600 mb-4 dark:text-gray-400">
-              {uniqueChars.length} unique characters in this story
+              {t('storyReader.vocab.count', { count: uniqueChars.length })}
             </div>
 
             <div className="space-y-3">
@@ -463,7 +465,7 @@ export default function StoryReader() {
 
                     {!isExpanded ? (
                       <div className="text-xs text-gray-600 mt-2 dark:text-gray-400">
-                        Click to see full definition
+                        {t('storyReader.vocab.clickToSee')}
                       </div>
                     ) : (
                       <motion.div
@@ -473,18 +475,18 @@ export default function StoryReader() {
                       >
                         <div className="space-y-3">
                           <div>
-                            <p className="text-xs font-semibold text-gray-600 mb-1 dark:text-gray-400">Character:</p>
+                            <p className="text-xs font-semibold text-gray-600 mb-1 dark:text-gray-400">{t('storyReader.vocab.character')}</p>
                             <p className="text-2xl font-chinese font-bold text-gray-900 dark:text-gray-50">{char}</p>
                           </div>
                           <div>
-                            <p className="text-xs font-semibold text-gray-600 mb-1 dark:text-gray-400">Pinyin:</p>
+                            <p className="text-xs font-semibold text-gray-600 mb-1 dark:text-gray-400">{t('storyReader.vocab.pinyin')}</p>
                             <p className="text-base text-primary-700 dark:text-primary-300">{charPinyin}</p>
                           </div>
                           <div>
-                            <p className="text-xs font-semibold text-gray-600 mb-1 dark:text-gray-400">Meaning:</p>
+                            <p className="text-xs font-semibold text-gray-600 mb-1 dark:text-gray-400">{t('storyReader.vocab.meaning')}</p>
                             <p className="text-sm text-gray-700 dark:text-gray-300">
                               {/* This would come from API in real app */}
-                              Click on vocabulary page to see detailed meaning and usage examples.
+                              {t('storyReader.vocab.meaningPlaceholder')}
                             </p>
                           </div>
                           <div className="pt-2">
@@ -492,11 +494,11 @@ export default function StoryReader() {
                               onClick={(e) => {
                                 e.stopPropagation()
                                 navigate(`/vocabulary?search=${char}`)
-                                toast.success('Opening vocabulary page...')
+                                toast.success(t('storyReader.toast.openingVocab'))
                               }}
                               className="w-full bg-gray-100 hover:bg-primary-50 text-gray-700 hover:text-primary-700 rounded-2xl px-4 py-2 font-semibold cursor-pointer transition-colors text-sm dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-primary-950/30 dark:hover:text-primary-300"
                             >
-                              View in Vocabulary
+                              {t('storyReader.vocab.viewInVocab')}
                             </button>
                           </div>
                         </div>
@@ -525,7 +527,7 @@ export default function StoryReader() {
           <div className="flex items-center gap-2 mb-6">
             <HelpCircle className="w-6 h-6 text-purple-600 shrink-0 dark:text-purple-400" />
             <h3 className="text-xl font-bold text-purple-900">
-              Comprehension Quiz
+              {t('storyReader.quiz.title')}
             </h3>
           </div>
 
@@ -590,7 +592,7 @@ export default function StoryReader() {
                       <Lightbulb className="w-5 h-5 text-blue-600 mt-0.5 shrink-0 dark:text-blue-400" />
                       <div>
                         <p className="font-semibold text-blue-900 mb-1">
-                          Explanation:
+                          {t('storyReader.quiz.explanation')}
                         </p>
                         <p className="text-blue-800 text-sm dark:text-blue-300">
                           {question.explanation}
@@ -608,7 +610,7 @@ export default function StoryReader() {
               onClick={handleSubmitQuiz}
               className="mt-6 w-full bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors"
             >
-              Submit Quiz
+              {t('storyReader.quiz.submit')}
             </button>
           )}
 
@@ -621,7 +623,7 @@ export default function StoryReader() {
                 }}
                 className="bg-gray-100 hover:bg-primary-50 text-gray-700 hover:text-primary-700 rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-primary-950/30 dark:hover:text-primary-300"
               >
-                Retry Quiz
+                {t('storyReader.quiz.retry')}
               </button>
             </div>
           )}
@@ -660,12 +662,12 @@ export default function StoryReader() {
   if (!story) {
     return (
       <div className="text-center py-12 px-4">
-        <p className="text-gray-600 text-lg dark:text-gray-400">Story not found</p>
+        <p className="text-gray-600 text-lg dark:text-gray-400">{t('storyReader.notFound')}</p>
         <button
           onClick={() => navigate('/stories')}
           className="mt-4 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors"
         >
-          Back to Stories
+          {t('storyReader.back')}
         </button>
       </div>
     )
@@ -686,8 +688,8 @@ export default function StoryReader() {
             className="flex items-center gap-1.5 text-gray-600 hover:text-primary-600 font-medium px-3 py-2 rounded-2xl hover:bg-primary-50 cursor-pointer transition-colors text-sm sm:text-base dark:text-gray-400 dark:hover:text-primary-400 dark:hover:bg-primary-950/30"
           >
             <ArrowLeft className="w-4 h-4 shrink-0" />
-            <span className="hidden sm:inline">Back to Stories</span>
-            <span className="sm:hidden">Back</span>
+            <span className="hidden sm:inline">{t('storyReader.back')}</span>
+            <span className="sm:hidden">{t('storyReader.backShort')}</span>
           </button>
 
           <button
@@ -695,8 +697,8 @@ export default function StoryReader() {
             className="flex items-center gap-1.5 text-error-600 hover:text-error-700 hover:bg-error-50 font-medium px-3 py-2 rounded-2xl cursor-pointer transition-colors text-sm sm:text-base dark:text-error-400 dark:hover:text-error-300 dark:hover:bg-error-950/30"
           >
             <Trash2 className="w-4 h-4 shrink-0" />
-            <span className="hidden sm:inline">Delete Story</span>
-            <span className="sm:hidden">Delete</span>
+            <span className="hidden sm:inline">{t('storyReader.delete')}</span>
+            <span className="sm:hidden">{t('storyReader.deleteShort')}</span>
           </button>
         </div>
 
@@ -716,11 +718,11 @@ export default function StoryReader() {
             </span>
             {(story.category ?? 'curated') === 'ai_generated' ? (
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
-                ✨ AI Generated
+                ✨ {t('storyReader.aiGenerated')}
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700 dark:bg-success-900/40 dark:text-success-300">
-                📚 Curated
+                📚 {t('storyReader.curated')}
               </span>
             )}
           </div>
@@ -738,7 +740,7 @@ export default function StoryReader() {
               }`}
             >
               <Type className="w-4 h-4 shrink-0" />
-              <span>{showPinyin ? 'Hide' : 'Show'} Pinyin</span>
+              <span>{showPinyin ? t('storyReader.controls.hidePinyin') : t('storyReader.controls.showPinyin')}</span>
             </button>
 
             <button
@@ -752,7 +754,7 @@ export default function StoryReader() {
               {showTranslation
                 ? <EyeOff className="w-4 h-4 shrink-0" />
                 : <Eye className="w-4 h-4 shrink-0" />}
-              <span>{showTranslation ? 'Hide' : 'Show'} Translation</span>
+              <span>{showTranslation ? t('storyReader.controls.hideTranslation') : t('storyReader.controls.showTranslation')}</span>
             </button>
 
             <button
@@ -766,7 +768,7 @@ export default function StoryReader() {
               {isReading
                 ? <VolumeX className="w-4 h-4 shrink-0" />
                 : <Volume2 className="w-4 h-4 shrink-0" />}
-              <span>{isReading ? 'Stop' : 'Read Aloud'}</span>
+              <span>{isReading ? t('storyReader.controls.stop') : t('storyReader.controls.readAloud')}</span>
             </button>
 
             <button
@@ -778,7 +780,7 @@ export default function StoryReader() {
               }`}
             >
               <BookMarked className="w-4 h-4 shrink-0" />
-              <span>Vocabulary</span>
+              <span>{t('storyReader.controls.vocabulary')}</span>
             </button>
 
             <button
@@ -796,7 +798,7 @@ export default function StoryReader() {
               }`}
             >
               <HelpCircle className="w-4 h-4 shrink-0" />
-              <span>{loadingQuiz ? 'Loading Quiz...' : showQuiz ? 'Hide Quiz' : 'Take Quiz'}</span>
+              <span>{loadingQuiz ? t('storyReader.controls.loadingQuiz') : showQuiz ? t('storyReader.controls.hideQuiz') : t('storyReader.controls.takeQuiz')}</span>
             </button>
 
             <button
@@ -809,7 +811,7 @@ export default function StoryReader() {
               }`}
             >
               <Heart className={`w-4 h-4 shrink-0 ${isBookmarked ? 'fill-current' : ''}`} />
-              <span>{isBookmarked ? 'Saved' : 'Save'}</span>
+              <span>{isBookmarked ? t('storyReader.controls.saved') : t('storyReader.controls.save')}</span>
             </button>
           </div>
         </div>
@@ -828,7 +830,7 @@ export default function StoryReader() {
             <div className="flex items-center gap-2 text-gray-500 mb-6 dark:text-gray-400">
               <BookOpen className="w-5 h-5 shrink-0" />
               <p className="text-sm">
-                Click any character for details &bull; Use controls above for interactive features
+                {t('storyReader.hint')}
               </p>
             </div>
             {renderStoryContent()}

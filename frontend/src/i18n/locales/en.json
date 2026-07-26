@@ -401,6 +401,77 @@
     "empty":             "No stories found for this level. Check back soon!"
   },
 
+  "storyReader": {
+    "back": "Back to Stories",
+    "backShort": "Back",
+    "delete": "Delete Story",
+    "deleteShort": "Delete",
+    "aiGenerated": "AI Generated",
+    "curated": "Curated",
+    "hint": "Click any character for details • Use controls above for interactive features",
+    "notFound": "Story not found",
+    "controls": {
+      "showPinyin": "Show Pinyin",
+      "hidePinyin": "Hide Pinyin",
+      "showTranslation": "Show Translation",
+      "hideTranslation": "Hide Translation",
+      "readAloud": "Read Aloud",
+      "stop": "Stop",
+      "vocabulary": "Vocabulary",
+      "takeQuiz": "Take Quiz",
+      "hideQuiz": "Hide Quiz",
+      "loadingQuiz": "Loading Quiz...",
+      "save": "Save",
+      "saved": "Saved"
+    },
+    "toast": {
+      "loadFailed": "Failed to load story",
+      "bookmarkRemoved": "Bookmark removed",
+      "bookmarked": "Story bookmarked!",
+      "bookmarkFailed": "Failed to update bookmark",
+      "reading": "Reading story aloud...",
+      "deleted": "Story deleted successfully",
+      "deleteNotFound": "Story not found",
+      "deleteUnauthorized": "You must be logged in to delete stories",
+      "deleteFailed": "Failed to delete story. You can only delete stories you created.",
+      "quizLoaded": "Quiz loaded successfully!",
+      "quizLoadFailed": "Failed to load quiz questions",
+      "wordNotFound": "Word not found in vocabulary",
+      "openingVocab": "Opening vocabulary page...",
+      "answerAll": "Please answer all questions first",
+      "scoreGreat": "Great job! You scored {{score}}%",
+      "scoreGood": "Good effort! Score: {{score}}%",
+      "scoreKeep": "Keep practicing! Score: {{score}}%"
+    },
+    "deleteConfirm": "Are you sure you want to delete this story? This action cannot be undone.",
+    "translation": {
+      "title": "English Translation",
+      "unavailable": "English translation not available for this story."
+    },
+    "quiz": {
+      "title": "Comprehension Quiz",
+      "submit": "Submit Quiz",
+      "retry": "Retry Quiz",
+      "explanation": "Explanation:",
+      "fallbackQuestion": "What is the main topic of this story?",
+      "fallbackOpt1": "Daily life and activities",
+      "fallbackOpt2": "Historical events",
+      "fallbackOpt3": "Scientific discoveries",
+      "fallbackOpt4": "Sports and games",
+      "fallbackExplanation": "Unable to generate story-specific questions. Please try again."
+    },
+    "vocab": {
+      "title": "Vocabulary List",
+      "count": "{{count}} unique characters in this story",
+      "clickToSee": "Click to see full definition",
+      "character": "Character:",
+      "pinyin": "Pinyin:",
+      "meaning": "Meaning:",
+      "meaningPlaceholder": "Click on vocabulary page to see detailed meaning and usage examples.",
+      "viewInVocab": "View in Vocabulary"
+    }
+  },
+
   "learningPath": {
     "title":        "📚 HSK Course",
     "subtitle":     "Learn step by step from HSK 1 — theory, vocabulary, and practice integrated.",
