@@ -444,6 +444,7 @@
       "scoreKeep": "Keep practicing! Score: {{score}}%"
     },
     "deleteConfirm": "Are you sure you want to delete this story? This action cannot be undone.",
+    "deleteCancel": "Cancel",
     "translation": {
       "title": "English Translation",
       "unavailable": "English translation not available for this story."

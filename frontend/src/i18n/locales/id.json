@@ -444,6 +444,7 @@
       "scoreKeep": "Terus berlatih! Skor: {{score}}%"
     },
     "deleteConfirm": "Yakin ingin menghapus cerita ini? Tindakan ini tidak bisa dibatalkan.",
+    "deleteCancel": "Batal",
     "translation": {
       "title": "Terjemahan Bahasa Inggris",
       "unavailable": "Terjemahan bahasa Inggris tidak tersedia untuk cerita ini."

@@ -14,6 +14,7 @@ const PARTICLE_PINYIN: Record<string, string> = {
   '了': 'le',   // particle (vs. liǎo = understand/finish — rare in HSK stories)
 }
 import { storiesApi, vocabularyApi } from '@/services/api'
+import { useAuthStore } from '@/store/authStore'
 import { Story, HanziWord } from '@/types'
 import HanziWordPopup from '@/components/HanziWordPopup'
 import WordDetailsModal from '@/components/WordDetailsModal'
@@ -32,7 +33,8 @@ import {
   Lightbulb,
   Type,
   Trash2,
-  Heart
+  Heart,
+  AlertTriangle
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
@@ -49,6 +51,7 @@ interface ComprehensionQuestion {
 
 export default function StoryReader() {
   const { t } = useTranslation()
+  const user = useAuthStore(s => s.user)
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const location = useLocation()
@@ -74,6 +77,7 @@ export default function StoryReader() {
   const [showWordDetails, setShowWordDetails] = useState(false)
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [bookmarkLoading, setBookmarkLoading] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   // Refs for story audio playback (Google TTS, sequential)
   const isReadingRef = useRef(false)
@@ -85,6 +89,14 @@ export default function StoryReader() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
+
+  // Close the delete-confirm modal on Escape
+  useEffect(() => {
+    if (!showDeleteConfirm) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setShowDeleteConfirm(false) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [showDeleteConfirm])
 
   const loadStory = async (storyId: number) => {
     if (preloadedStory) {
@@ -209,8 +221,7 @@ export default function StoryReader() {
   const handleDeleteStory = async () => {
     if (!story) return
 
-    const confirmed = window.confirm(t('storyReader.deleteConfirm'))
-    if (!confirmed) return
+    setShowDeleteConfirm(false)
 
     try {
       await storiesApi.delete(story.id)
@@ -673,6 +684,10 @@ export default function StoryReader() {
     )
   }
 
+  // Only the author (or an admin) may delete — curated / other users' stories
+  // are rejected by the backend, so hiding the button avoids a confusing dead-end.
+  const canDelete = !!user && (story.author_id === user.id || user.is_admin === true)
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6">
       {/* Header */}
@@ -692,14 +707,16 @@ export default function StoryReader() {
             <span className="sm:hidden">{t('storyReader.backShort')}</span>
           </button>
 
-          <button
-            onClick={handleDeleteStory}
-            className="flex items-center gap-1.5 text-error-600 hover:text-error-700 hover:bg-error-50 font-medium px-3 py-2 rounded-2xl cursor-pointer transition-colors text-sm sm:text-base dark:text-error-400 dark:hover:text-error-300 dark:hover:bg-error-950/30"
-          >
-            <Trash2 className="w-4 h-4 shrink-0" />
-            <span className="hidden sm:inline">{t('storyReader.delete')}</span>
-            <span className="sm:hidden">{t('storyReader.deleteShort')}</span>
-          </button>
+          {canDelete && (
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="flex items-center gap-1.5 text-error-600 hover:text-error-700 hover:bg-error-50 font-medium px-3 py-2 rounded-2xl cursor-pointer transition-colors text-sm sm:text-base dark:text-error-400 dark:hover:text-error-300 dark:hover:bg-error-950/30"
+            >
+              <Trash2 className="w-4 h-4 shrink-0" />
+              <span className="hidden sm:inline">{t('storyReader.delete')}</span>
+              <span className="sm:hidden">{t('storyReader.deleteShort')}</span>
+            </button>
+          )}
         </div>
 
         {/* Title block */}
@@ -865,6 +882,49 @@ export default function StoryReader() {
           onClose={() => setShowWordDetails(false)}
         />
       )}
+
+      {/* Delete confirmation modal (styled — replaces window.confirm) */}
+      <AnimatePresence>
+        {showDeleteConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4"
+            onClick={() => setShowDeleteConfirm(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-surface-card rounded-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-sm w-full shadow-2xl"
+              onClick={e => e.stopPropagation()}
+              role="alertdialog"
+              aria-modal="true"
+            >
+              <div className="flex items-start gap-3 mb-5">
+                <AlertTriangle className="w-6 h-6 text-error-500 shrink-0 mt-0.5" />
+                <p className="text-gray-900 dark:text-gray-100 font-medium">{t('storyReader.deleteConfirm')}</p>
+              </div>
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="px-4 py-2 rounded-xl text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                >
+                  {t('storyReader.deleteCancel')}
+                </button>
+                <button
+                  onClick={handleDeleteStory}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-error-600 text-white hover:bg-error-700 cursor-pointer transition-colors"
+                >
+                  <Trash2 className="w-4 h-4 shrink-0" />
+                  {t('storyReader.deleteShort')}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
