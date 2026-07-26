@@ -472,6 +472,109 @@
     }
   },
 
+  "storyGen": {
+    "mode": {
+      "quick": "Quick",
+      "quickDesc": "Pick level & topic, generate instantly.",
+      "advanced": "Advanced",
+      "advancedDesc": "Genre, tone, setting, grammar & more."
+    },
+    "usage": {
+      "title": "Story Generation",
+      "leftToday": "left today",
+      "leftHour": "left/hour",
+      "loading": "Loading...",
+      "refresh": "Refresh stats",
+      "limitReached": "Rate limit reached. Please wait for the limit to reset."
+    },
+    "form": {
+      "settingsBasic": "Story Settings",
+      "settingsAdvanced": "Advanced Story Settings",
+      "hskLevel": "HSK Level",
+      "topic": "Topic (Optional)",
+      "topicPlaceholder": "e.g., daily life, school, travel, food...",
+      "length": "Story Length",
+      "customization": "Customization Options",
+      "genre": "Genre",
+      "tone": "Tone / Mood",
+      "setting": "Setting / Location",
+      "cultural": "Cultural Theme",
+      "perspective": "Perspective",
+      "dialogue": "Dialogue",
+      "characterNames": "Character Names (Optional)",
+      "charactersPlaceholder": "e.g., 小明, 小红, 王老师 (comma separated)",
+      "targetVocab": "Target Vocabulary (Optional)",
+      "targetVocabPlaceholder": "Words to include: 学习, 朋友, 高兴 (comma separated)",
+      "targetVocabHint": "The AI will try to use these words in the story",
+      "grammar": "Grammar Patterns (Optional)",
+      "grammarHint": "Select grammar patterns for HSK {{level}} to practice:"
+    },
+    "length": {
+      "short": "Short",
+      "medium": "Medium",
+      "long": "Long"
+    },
+    "perspective": {
+      "first": "1st Person",
+      "third": "3rd Person"
+    },
+    "dialogue": {
+      "yes": "Yes",
+      "minimal": "Minimal"
+    },
+    "generate": {
+      "connecting": "Connecting...",
+      "quickLoading": "Generating Story...",
+      "advancedLoading": "Crafting Your Custom Story...",
+      "quick": "Quick Generate",
+      "advanced": "Generate Custom Story"
+    },
+    "error": {
+      "title": "Error",
+      "failed": "Failed to generate story"
+    },
+    "result": {
+      "saved": "Story saved! Find it in Browse Stories.",
+      "view": "View",
+      "story": "Story",
+      "pinyin": "Pinyin",
+      "keyVocab": "Key Vocabulary",
+      "grammarPoints": "Grammar Points"
+    },
+    "opts": {
+      "adventure": "Adventure",
+      "romance": "Romance",
+      "mystery": "Mystery",
+      "comedy": "Comedy",
+      "sliceOfLife": "Slice of Life",
+      "fable": "Fable",
+      "sciFi": "Sci-Fi",
+      "historical": "Historical",
+      "humorous": "Humorous",
+      "heartwarming": "Heartwarming",
+      "suspenseful": "Suspenseful",
+      "inspirational": "Inspirational",
+      "lighthearted": "Lighthearted",
+      "serious": "Serious",
+      "modernCity": "Modern City",
+      "ancientChina": "Ancient China",
+      "countryside": "Countryside",
+      "school": "School",
+      "market": "Market",
+      "trainJourney": "Train Journey",
+      "restaurant": "Restaurant",
+      "park": "Park",
+      "springFestival": "Spring Festival",
+      "midAutumn": "Mid-Autumn",
+      "dragonBoat": "Dragon Boat",
+      "teaCulture": "Tea Culture",
+      "calligraphy": "Calligraphy",
+      "cuisine": "Cuisine",
+      "familyValues": "Family Values",
+      "martialArts": "Martial Arts"
+    }
+  },
+
   "learningPath": {
     "title":        "📚 HSK Course",
     "subtitle":     "Learn step by step from HSK 1 — theory, vocabulary, and practice integrated.",

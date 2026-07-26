@@ -472,6 +472,109 @@
     }
   },
 
+  "storyGen": {
+    "mode": {
+      "quick": "Cepat",
+      "quickDesc": "Pilih level & topik, langsung buat.",
+      "advanced": "Lanjutan",
+      "advancedDesc": "Genre, nada, latar, tata bahasa & lainnya."
+    },
+    "usage": {
+      "title": "Pembuatan Cerita",
+      "leftToday": "sisa hari ini",
+      "leftHour": "sisa/jam",
+      "loading": "Memuat...",
+      "refresh": "Segarkan statistik",
+      "limitReached": "Batas tercapai. Tunggu sampai batas ter-reset."
+    },
+    "form": {
+      "settingsBasic": "Pengaturan Cerita",
+      "settingsAdvanced": "Pengaturan Cerita Lanjutan",
+      "hskLevel": "Level HSK",
+      "topic": "Topik (Opsional)",
+      "topicPlaceholder": "mis. kehidupan sehari-hari, sekolah, jalan-jalan, makanan...",
+      "length": "Panjang Cerita",
+      "customization": "Opsi Kustomisasi",
+      "genre": "Genre",
+      "tone": "Nada / Suasana",
+      "setting": "Latar / Lokasi",
+      "cultural": "Tema Budaya",
+      "perspective": "Sudut Pandang",
+      "dialogue": "Dialog",
+      "characterNames": "Nama Tokoh (Opsional)",
+      "charactersPlaceholder": "mis. 小明, 小红, 王老师 (pisahkan koma)",
+      "targetVocab": "Kosakata Target (Opsional)",
+      "targetVocabPlaceholder": "Kata yang dimasukkan: 学习, 朋友, 高兴 (pisahkan koma)",
+      "targetVocabHint": "AI akan berusaha memakai kata-kata ini dalam cerita",
+      "grammar": "Pola Tata Bahasa (Opsional)",
+      "grammarHint": "Pilih pola tata bahasa HSK {{level}} untuk dilatih:"
+    },
+    "length": {
+      "short": "Pendek",
+      "medium": "Sedang",
+      "long": "Panjang"
+    },
+    "perspective": {
+      "first": "Orang Pertama",
+      "third": "Orang Ketiga"
+    },
+    "dialogue": {
+      "yes": "Ya",
+      "minimal": "Minim"
+    },
+    "generate": {
+      "connecting": "Menghubungkan...",
+      "quickLoading": "Membuat Cerita...",
+      "advancedLoading": "Menyusun Cerita Kustommu...",
+      "quick": "Buat Cepat",
+      "advanced": "Buat Cerita Kustom"
+    },
+    "error": {
+      "title": "Error",
+      "failed": "Gagal membuat cerita"
+    },
+    "result": {
+      "saved": "Cerita tersimpan! Temukan di Jelajahi Cerita.",
+      "view": "Lihat",
+      "story": "Cerita",
+      "pinyin": "Pinyin",
+      "keyVocab": "Kosakata Kunci",
+      "grammarPoints": "Poin Tata Bahasa"
+    },
+    "opts": {
+      "adventure": "Petualangan",
+      "romance": "Roman",
+      "mystery": "Misteri",
+      "comedy": "Komedi",
+      "sliceOfLife": "Keseharian",
+      "fable": "Fabel",
+      "sciFi": "Fiksi Ilmiah",
+      "historical": "Sejarah",
+      "humorous": "Lucu",
+      "heartwarming": "Menyentuh",
+      "suspenseful": "Menegangkan",
+      "inspirational": "Inspiratif",
+      "lighthearted": "Ringan",
+      "serious": "Serius",
+      "modernCity": "Kota Modern",
+      "ancientChina": "Tiongkok Kuno",
+      "countryside": "Pedesaan",
+      "school": "Sekolah",
+      "market": "Pasar",
+      "trainJourney": "Perjalanan Kereta",
+      "restaurant": "Restoran",
+      "park": "Taman",
+      "springFestival": "Tahun Baru Imlek",
+      "midAutumn": "Pertengahan Musim Gugur",
+      "dragonBoat": "Perahu Naga",
+      "teaCulture": "Budaya Teh",
+      "calligraphy": "Kaligrafi",
+      "cuisine": "Kuliner",
+      "familyValues": "Nilai Keluarga",
+      "martialArts": "Bela Diri"
+    }
+  },
+
   "learningPath": {
     "title":        "📚 Kursus HSK",
     "subtitle":     "Belajar bertahap dari HSK 1 — teori, kosakata, dan latihan terintegrasi.",

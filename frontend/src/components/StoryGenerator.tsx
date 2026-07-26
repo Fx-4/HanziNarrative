@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { storiesApi } from '@/services/api'
 import { apiLogger } from '@/utils/debugLogger'
 import { API_URL } from '@/lib/env'
@@ -51,46 +52,48 @@ interface LimitStats {
 type GenerationMode = 'quick' | 'advanced'
 
 // ─── Option presets ──────────────────────────────────────────────────
+// `value` is sent to the backend (keep as-is); `emoji` + `key` build the
+// localized display label at render time via t('storyGen.opts.<key>').
 const GENRE_OPTIONS = [
-  { value: 'adventure', label: '🗺️ Adventure', labelZh: '冒险' },
-  { value: 'romance', label: '💕 Romance', labelZh: '浪漫' },
-  { value: 'mystery', label: '🔍 Mystery', labelZh: '悬疑' },
-  { value: 'comedy', label: '😄 Comedy', labelZh: '喜剧' },
-  { value: 'slice-of-life', label: '🌿 Slice of Life', labelZh: '日常' },
-  { value: 'fable', label: '📖 Fable', labelZh: '寓言' },
-  { value: 'sci-fi', label: '🚀 Sci-Fi', labelZh: '科幻' },
-  { value: 'historical', label: '🏯 Historical', labelZh: '历史' },
+  { value: 'adventure', emoji: '🗺️', key: 'adventure', labelZh: '冒险' },
+  { value: 'romance', emoji: '💕', key: 'romance', labelZh: '浪漫' },
+  { value: 'mystery', emoji: '🔍', key: 'mystery', labelZh: '悬疑' },
+  { value: 'comedy', emoji: '😄', key: 'comedy', labelZh: '喜剧' },
+  { value: 'slice-of-life', emoji: '🌿', key: 'sliceOfLife', labelZh: '日常' },
+  { value: 'fable', emoji: '📖', key: 'fable', labelZh: '寓言' },
+  { value: 'sci-fi', emoji: '🚀', key: 'sciFi', labelZh: '科幻' },
+  { value: 'historical', emoji: '🏯', key: 'historical', labelZh: '历史' },
 ]
 
 const TONE_OPTIONS = [
-  { value: 'humorous', label: '😂 Humorous' },
-  { value: 'heartwarming', label: '🥰 Heartwarming' },
-  { value: 'suspenseful', label: '😰 Suspenseful' },
-  { value: 'inspirational', label: '✨ Inspirational' },
-  { value: 'lighthearted', label: '🌈 Lighthearted' },
-  { value: 'serious', label: '🎭 Serious' },
+  { value: 'humorous', emoji: '😂', key: 'humorous' },
+  { value: 'heartwarming', emoji: '🥰', key: 'heartwarming' },
+  { value: 'suspenseful', emoji: '😰', key: 'suspenseful' },
+  { value: 'inspirational', emoji: '✨', key: 'inspirational' },
+  { value: 'lighthearted', emoji: '🌈', key: 'lighthearted' },
+  { value: 'serious', emoji: '🎭', key: 'serious' },
 ]
 
 const SETTING_OPTIONS = [
-  { value: 'modern city', label: '🏙️ Modern City' },
-  { value: 'ancient China', label: '🏯 Ancient China' },
-  { value: 'countryside', label: '🌾 Countryside' },
-  { value: 'school', label: '🏫 School' },
-  { value: 'market', label: '🏪 Market' },
-  { value: 'train journey', label: '🚄 Train Journey' },
-  { value: 'restaurant', label: '🍜 Restaurant' },
-  { value: 'park', label: '🌳 Park' },
+  { value: 'modern city', emoji: '🏙️', key: 'modernCity' },
+  { value: 'ancient China', emoji: '🏯', key: 'ancientChina' },
+  { value: 'countryside', emoji: '🌾', key: 'countryside' },
+  { value: 'school', emoji: '🏫', key: 'school' },
+  { value: 'market', emoji: '🏪', key: 'market' },
+  { value: 'train journey', emoji: '🚄', key: 'trainJourney' },
+  { value: 'restaurant', emoji: '🍜', key: 'restaurant' },
+  { value: 'park', emoji: '🌳', key: 'park' },
 ]
 
 const CULTURAL_THEMES = [
-  { value: 'Spring Festival', label: '🧧 Spring Festival' },
-  { value: 'Mid-Autumn Festival', label: '🥮 Mid-Autumn' },
-  { value: 'Dragon Boat Festival', label: '🐉 Dragon Boat' },
-  { value: 'Tea Culture', label: '🍵 Tea Culture' },
-  { value: 'Calligraphy', label: '✍️ Calligraphy' },
-  { value: 'Chinese Cuisine', label: '🥢 Cuisine' },
-  { value: 'Family Values', label: '👨‍👩‍👧 Family Values' },
-  { value: 'Martial Arts', label: '🥋 Martial Arts' },
+  { value: 'Spring Festival', emoji: '🧧', key: 'springFestival' },
+  { value: 'Mid-Autumn Festival', emoji: '🥮', key: 'midAutumn' },
+  { value: 'Dragon Boat Festival', emoji: '🐉', key: 'dragonBoat' },
+  { value: 'Tea Culture', emoji: '🍵', key: 'teaCulture' },
+  { value: 'Calligraphy', emoji: '✍️', key: 'calligraphy' },
+  { value: 'Chinese Cuisine', emoji: '🥢', key: 'cuisine' },
+  { value: 'Family Values', emoji: '👨‍👩‍👧', key: 'familyValues' },
+  { value: 'Martial Arts', emoji: '🥋', key: 'martialArts' },
 ]
 
 const GRAMMAR_PRESETS: Record<number, string[]> = {
@@ -160,6 +163,7 @@ interface StoryGeneratorProps {
 
 // ─── Main Component ─────────────────────────────────────────────────
 export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps = {}) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   // Shared fields (both modes)
   const [hskLevel, setHskLevel] = useState(1)
@@ -196,7 +200,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
 
   const handleGenerate = async () => {
     setLoading(true)
-    setLoadingMessage('Connecting...')
+    setLoadingMessage(t('storyGen.generate.connecting'))
     setError(null)
     setGeneratedStory(null)
     setGeneratedStoryId(null)
@@ -299,13 +303,13 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
               onStoryGenerated({ ...normalized, id: newStoryId })
             }
           } else if (event.type === 'error') {
-            setError(event.message || 'Failed to generate story')
+            setError(event.message || t('storyGen.error.failed'))
           }
         }
       }
     } catch (err: unknown) {
       storyGeneratorLogger.error('[SSE] Generation error:', err)
-      setError((err instanceof Error ? err.message : null) || 'Failed to generate story')
+      setError((err instanceof Error ? err.message : null) || t('storyGen.error.failed'))
     } finally {
       setLoading(false)
       setLoadingMessage(null)
@@ -342,11 +346,11 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             <div className="flex items-center gap-2 mb-1.5">
               <Zap className={`w-5 h-5 ${!isAdvanced ? 'text-success-600 dark:text-success-400' : 'text-gray-500 dark:text-gray-400'}`} />
               <span className={`font-bold text-sm ${!isAdvanced ? 'text-success-700 dark:text-success-400' : 'text-gray-700 dark:text-gray-300'}`}>
-                Quick
+                {t('storyGen.mode.quick')}
               </span>
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-              Pick level & topic, generate instantly.
+              {t('storyGen.mode.quickDesc')}
             </p>
             {!isAdvanced && (
               <motion.div layoutId="mode-dot" className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-success-500" />
@@ -365,11 +369,11 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             <div className="flex items-center gap-2 mb-1.5">
               <SlidersHorizontal className={`w-5 h-5 ${isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400'}`} />
               <span className={`font-bold text-sm ${isAdvanced ? 'text-primary-700 dark:text-primary-400' : 'text-gray-700 dark:text-gray-300'}`}>
-                Advanced
+                {t('storyGen.mode.advanced')}
               </span>
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-              Genre, tone, setting, grammar & more.
+              {t('storyGen.mode.advancedDesc')}
             </p>
             {isAdvanced && (
               <motion.div layoutId="mode-dot" className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-primary-500" />
@@ -389,7 +393,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             <div className="flex items-center gap-2">
               <Sparkles className={`w-4 h-4 ${isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-success-600 dark:text-success-400'}`} />
               <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                Story Generation
+                {t('storyGen.usage.title')}
               </span>
             </div>
             {usageStats ? (
@@ -400,7 +404,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                   }`}>
                     {usageStats.limit_daily - usageStats.used_today}
                   </div>
-                  <div className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">left today</div>
+                  <div className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">{t('storyGen.usage.leftToday')}</div>
                 </div>
                 <div className="w-px bg-gray-200 dark:bg-gray-700 self-stretch" />
                 <div className="text-center">
@@ -409,23 +413,23 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                   }`}>
                     {usageStats.limit_hourly - usageStats.used_this_hour}
                   </div>
-                  <div className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">left/hour</div>
+                  <div className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">{t('storyGen.usage.leftHour')}</div>
                 </div>
               </div>
             ) : (
-              <span className="text-xs text-gray-400">Loading...</span>
+              <span className="text-xs text-gray-400">{t('storyGen.usage.loading')}</span>
             )}
             <button
               onClick={loadUsageStats}
               className="p-1.5 rounded-lg hover:bg-white/60 dark:hover:bg-gray-800/60 transition-colors cursor-pointer"
-              title="Refresh stats"
+              title={t('storyGen.usage.refresh')}
             >
               <RefreshCw className="w-3.5 h-3.5 text-gray-400" />
             </button>
           </div>
           {isLimitReached && (
             <div className="mt-2 text-xs text-error-600 dark:text-error-400 font-medium">
-              Rate limit reached. Please wait for the limit to reset.
+              {t('storyGen.usage.limitReached')}
             </div>
           )}
         </div>
@@ -436,7 +440,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
         <div className="bg-white dark:bg-surface-card rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-5">
           <h3 className="text-lg font-bold mb-5 flex items-center gap-2 text-gray-900 dark:text-gray-100">
             <Sparkles className={`w-5 h-5 ${isAdvanced ? 'text-primary-600 dark:text-primary-400' : 'text-success-600 dark:text-success-400'}`} />
-            {isAdvanced ? 'Advanced Story Settings' : 'Story Settings'}
+            {isAdvanced ? t('storyGen.form.settingsAdvanced') : t('storyGen.form.settingsBasic')}
           </h3>
 
           <div className="space-y-5">
@@ -444,7 +448,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             <div>
               <p className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 <GraduationCap className="w-4 h-4" />
-                HSK Level
+                {t('storyGen.form.hskLevel')}
               </p>
               <div className="flex flex-wrap gap-2">
                 {[1, 2, 3, 4, 5, 6].map(level => (
@@ -469,7 +473,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             <div>
               <label htmlFor="sg-topic" className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 <BookOpen className="w-4 h-4" />
-                Topic (Optional)
+                {t('storyGen.form.topic')}
               </label>
               <input
                 id="sg-topic"
@@ -477,7 +481,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                 type="text"
                 value={topic}
                 onChange={e => setTopic(e.target.value)}
-                placeholder="e.g., daily life, school, travel, food..."
+                placeholder={t('storyGen.form.topicPlaceholder')}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-surface-card text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
               />
             </div>
@@ -486,14 +490,14 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             <div>
               <p className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 <AlignLeft className="w-4 h-4" />
-                Story Length
+                {t('storyGen.form.length')}
               </p>
               <div className="flex gap-2">
                 {(['short', 'medium', 'long'] as const).map(len => (
                   <button
                     key={len}
                     onClick={() => setLength(len)}
-                    className={`capitalize rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors ${
+                    className={`rounded-xl px-3 py-1.5 text-sm font-semibold cursor-pointer transition-colors ${
                       length === len
                         ? isAdvanced
                           ? 'bg-primary-600 hover:bg-primary-700 text-white'
@@ -501,7 +505,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                         : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                     }`}
                   >
-                    {len}
+                    {t(`storyGen.length.${len}`)}
                   </button>
                 ))}
               </div>
@@ -520,17 +524,17 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                   <div className="space-y-5 pt-3 border-t border-gray-200 dark:border-gray-700">
                     <p className="text-xs font-medium text-primary-600 dark:text-primary-400 uppercase tracking-wider flex items-center gap-1.5">
                       <SlidersHorizontal className="w-3.5 h-3.5" />
-                      Customization Options
+                      {t('storyGen.form.customization')}
                     </p>
 
                     {/* Genre */}
                     <div>
                       <p className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <Drama className="w-4 h-4" />
-                        Genre
+                        {t('storyGen.form.genre')}
                       </p>
                       <ChipSelector
-                        options={GENRE_OPTIONS.map(g => ({ value: g.value, label: g.label }))}
+                        options={GENRE_OPTIONS.map(g => ({ value: g.value, label: `${g.emoji} ${t(`storyGen.opts.${g.key}`)}` }))}
                         value={genre}
                         onChange={v => setGenre(v as string)}
                         accentColor="indigo"
@@ -541,10 +545,10 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                     <div>
                       <p className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <Palette className="w-4 h-4" />
-                        Tone / Mood
+                        {t('storyGen.form.tone')}
                       </p>
                       <ChipSelector
-                        options={TONE_OPTIONS}
+                        options={TONE_OPTIONS.map(o => ({ value: o.value, label: `${o.emoji} ${t(`storyGen.opts.${o.key}`)}` }))}
                         value={tone}
                         onChange={v => setTone(v as string)}
                         accentColor="indigo"
@@ -555,10 +559,10 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                     <div>
                       <p className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <MapPin className="w-4 h-4" />
-                        Setting / Location
+                        {t('storyGen.form.setting')}
                       </p>
                       <ChipSelector
-                        options={SETTING_OPTIONS}
+                        options={SETTING_OPTIONS.map(o => ({ value: o.value, label: `${o.emoji} ${t(`storyGen.opts.${o.key}`)}` }))}
                         value={setting}
                         onChange={v => setSetting(v as string)}
                         accentColor="indigo"
@@ -569,10 +573,10 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                     <div>
                       <p className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <Landmark className="w-4 h-4" />
-                        Cultural Theme
+                        {t('storyGen.form.cultural')}
                       </p>
                       <ChipSelector
-                        options={CULTURAL_THEMES}
+                        options={CULTURAL_THEMES.map(o => ({ value: o.value, label: `${o.emoji} ${t(`storyGen.opts.${o.key}`)}` }))}
                         value={culturalTheme}
                         onChange={v => setCulturalTheme(v as string)}
                         accentColor="indigo"
@@ -584,7 +588,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                       <div>
                         <p className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           <PenTool className="w-4 h-4" />
-                          Perspective
+                          {t('storyGen.form.perspective')}
                         </p>
                         <div className="flex gap-2">
                           {(['first-person', 'third-person'] as const).map(p => (
@@ -597,7 +601,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                                   : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                               }`}
                             >
-                              {p === 'first-person' ? '👤 1st Person' : '👥 3rd Person'}
+                              {p === 'first-person' ? `👤 ${t('storyGen.perspective.first')}` : `👥 ${t('storyGen.perspective.third')}`}
                             </button>
                           ))}
                         </div>
@@ -606,12 +610,12 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                       <div>
                         <p className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           <MessageSquare className="w-4 h-4" />
-                          Dialogue
+                          {t('storyGen.form.dialogue')}
                         </p>
                         <div className="flex gap-2">
                           {([
-                            { val: true, label: '💬 Yes' },
-                            { val: false, label: '📝 Minimal' },
+                            { val: true, label: `💬 ${t('storyGen.dialogue.yes')}` },
+                            { val: false, label: `📝 ${t('storyGen.dialogue.minimal')}` },
                           ]).map(d => (
                             <button
                               key={String(d.val)}
@@ -633,7 +637,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                     <div>
                       <label htmlFor="sg-characters" className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <Users className="w-4 h-4" />
-                        Character Names (Optional)
+                        {t('storyGen.form.characterNames')}
                       </label>
                       <input
                         id="sg-characters"
@@ -641,7 +645,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                         type="text"
                         value={characterNames}
                         onChange={e => setCharacterNames(e.target.value)}
-                        placeholder="e.g., 小明, 小红, 王老师 (comma separated)"
+                        placeholder={t('storyGen.form.charactersPlaceholder')}
                         className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-surface-card text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
                       />
                     </div>
@@ -650,7 +654,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                     <div>
                       <label htmlFor="sg-vocab" className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <BookText className="w-4 h-4" />
-                        Target Vocabulary (Optional)
+                        {t('storyGen.form.targetVocab')}
                       </label>
                       <input
                         id="sg-vocab"
@@ -658,11 +662,11 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                         type="text"
                         value={targetVocabulary}
                         onChange={e => setTargetVocabulary(e.target.value)}
-                        placeholder="Words to include: 学习, 朋友, 高兴 (comma separated)"
+                        placeholder={t('storyGen.form.targetVocabPlaceholder')}
                         className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-surface-card text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
                       />
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        The AI will try to use these words in the story
+                        {t('storyGen.form.targetVocabHint')}
                       </p>
                     </div>
 
@@ -673,7 +677,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                         className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                       >
                         <GraduationCap className="w-4 h-4" />
-                        Grammar Patterns (Optional)
+                        {t('storyGen.form.grammar')}
                         {showGrammar ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                       </button>
                       <AnimatePresence>
@@ -686,7 +690,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                             className="overflow-hidden"
                           >
                             <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                              Select grammar patterns for HSK {hskLevel} to practice:
+                              {t('storyGen.form.grammarHint', { level: hskLevel })}
                             </p>
                             <ChipSelector
                               options={(GRAMMAR_PRESETS[hskLevel] || []).map(g => ({
@@ -720,7 +724,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
               {loading ? (
                 <>
                   <LoadingSpinner size="sm" className="mr-2" />
-                  {loadingMessage || (isAdvanced ? 'Crafting Your Custom Story...' : 'Generating Story...')}
+                  {loadingMessage || (isAdvanced ? t('storyGen.generate.advancedLoading') : t('storyGen.generate.quickLoading'))}
                 </>
               ) : (
                 <>
@@ -729,7 +733,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                   ) : (
                     <Zap className="w-5 h-5 mr-2" />
                   )}
-                  {isAdvanced ? 'Generate Custom Story' : 'Quick Generate'}
+                  {isAdvanced ? t('storyGen.generate.advanced') : t('storyGen.generate.quick')}
                 </>
               )}
             </button>
@@ -744,7 +748,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-error-600 dark:text-error-400 flex-shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-semibold text-error-900 dark:text-error-300 mb-1">Error</h4>
+                <h4 className="font-semibold text-error-900 dark:text-error-300 mb-1">{t('storyGen.error.title')}</h4>
                 <p className="text-sm text-error-700 dark:text-error-400">{error}</p>
               </div>
             </div>
@@ -771,7 +775,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                   </p>
                 )}
                 <p className="text-sm text-success-700 dark:text-success-400 font-medium">
-                  Story saved! Find it in Browse Stories.
+                  {t('storyGen.result.saved')}
                 </p>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
@@ -812,7 +816,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
                     }`}
                   >
                     <Eye className="w-4 h-4 mr-1" />
-                    View
+                    {t('storyGen.result.view')}
                   </button>
                 )}
               </div>
@@ -820,13 +824,13 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
 
             {/* Story Content */}
             <div className="bg-white dark:bg-surface-card rounded-lg p-5 mb-4">
-              <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">Story</h3>
+              <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">{t('storyGen.result.story')}</h3>
               <p className="text-gray-800 dark:text-gray-200 leading-relaxed text-lg mb-4 whitespace-pre-wrap">
                 {generatedStory.content}
               </p>
               {generatedStory.pinyin && (
                 <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <h4 className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">Pinyin</h4>
+                  <h4 className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">{t('storyGen.result.pinyin')}</h4>
                   <p className="text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap">
                     {generatedStory.pinyin}
                   </p>
@@ -837,7 +841,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             {/* Vocabulary */}
             {generatedStory.vocabulary && generatedStory.vocabulary.length > 0 && (
               <div className="bg-white dark:bg-surface-card rounded-lg p-5 mb-4">
-                <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Key Vocabulary</h3>
+                <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">{t('storyGen.result.keyVocab')}</h3>
                 <div className="grid md:grid-cols-2 gap-3">
                   {generatedStory.vocabulary.map((vocab, index) => (
                     <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
@@ -857,7 +861,7 @@ export default function StoryGenerator({ onStoryGenerated }: StoryGeneratorProps
             {/* Grammar Points */}
             {generatedStory.grammar_points && generatedStory.grammar_points.length > 0 && (
               <div className="bg-white dark:bg-surface-card rounded-lg p-5">
-                <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Grammar Points</h3>
+                <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">{t('storyGen.result.grammarPoints')}</h3>
                 <ul className="space-y-2">
                   {generatedStory.grammar_points.map((point, index) => (
                     <li key={index} className="flex items-start gap-2">
