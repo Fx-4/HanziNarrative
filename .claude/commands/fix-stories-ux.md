@@ -15,14 +15,20 @@ Kamu mengeksekusi **satu iterasi** perbaikan UX fitur Stories. Sumber kebenaran:
    - Jangan buat ulang route `/practice`.
 4. **Verifikasi:** jalankan `cd frontend && npm run build`. Harus lolos. Jika gagal → perbaiki sampai hijau sebelum lanjut.
    - Untuk task yang butuh backend (mis. SUX-10): tambah endpoint di router terkait, `alembic revision --autogenerate` + `upgrade head` bila model berubah, lalu kabari kalau perlu deploy Koyeb.
-5. **Review diff → commit → push** per concern (user setuju commit+push tiap iterasi, syarat: review diff dulu). Body list perubahan per file, contoh:
-   ```
-   feat(stories): i18n StoryReader (SUX-01)
+5. **Review diff → commit → push** per concern (user setuju commit+push tiap iterasi, syarat: review diff dulu). Body list perubahan per file.
+   - **Sintaks commit (WAJIB):** lewat tool Bash pakai heredoc, JANGAN `@'...'@` (itu here-string PowerShell; di Bash karakter `@` bocor jadi subject `@ ...`). Contoh benar:
+     ```bash
+     git commit -F - <<'EOF'
+     feat(stories): i18n StoryReader (SUX-01)
 
-   - frontend/src/pages/StoryReader.tsx: semua string ke t(), namespace storyReader.*
-   - frontend/src/i18n/locales/id.json: tambah blok storyReader
-   - frontend/src/i18n/locales/en.json: tambah blok storyReader
-   ```
+     - frontend/src/pages/StoryReader.tsx: semua string ke t(), namespace storyReader.*
+     - frontend/src/i18n/locales/id.json: tambah blok storyReader
+     - frontend/src/i18n/locales/en.json: tambah blok storyReader
+
+     Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+     EOF
+     ```
+     (Kalau pakai tool PowerShell, `@'...'@` baru benar.)
 6. **Tandai selesai** di `.claude/goals/stories-ux.md`: ubah `[ ]` task itu jadi `[x]`, dan tambah baris di bagian `## Log`:
    `- <YYYY-MM-DD> SUX-xx <hash pendek> <ringkas>`
 7. **Laporkan** singkat: task apa yang selesai, hasil build, dan task berikutnya yang tersisa.
