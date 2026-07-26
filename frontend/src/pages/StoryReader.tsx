@@ -474,7 +474,7 @@ export default function StoryReader() {
                         <div className="space-y-3">
                           <div>
                             <p className="text-xs font-semibold text-gray-600 mb-1 dark:text-gray-400">Character:</p>
-                            <p className="text-2xl font-chinese font-bold">{char}</p>
+                            <p className="text-2xl font-chinese font-bold text-gray-900 dark:text-gray-50">{char}</p>
                           </div>
                           <div>
                             <p className="text-xs font-semibold text-gray-600 mb-1 dark:text-gray-400">Pinyin:</p>

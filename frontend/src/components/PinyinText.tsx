@@ -122,8 +122,10 @@ const outerPunctStyle: React.CSSProperties = {
   display: 'inline-flex', flexDirection: 'column',
   alignItems: 'center', verticalAlign: 'bottom',
 }
+// Color intentionally omitted — set via Tailwind class so it adapts to dark mode.
+// (Inline style color would override `dark:` classes → invisible hanzi in dark.)
 const punctCharStyle: React.CSSProperties = {
-  display: 'block', fontSize: CHAR_SIZE, lineHeight: 1.2, color: '#1f2937',
+  display: 'block', fontSize: CHAR_SIZE, lineHeight: 1.2,
 }
 const punctSpacerStyle: React.CSSProperties = { display: 'block', height: PINYIN_H }
 
@@ -144,9 +146,10 @@ const pinyinStyle: React.CSSProperties = {
 // Two visibility variants — avoids spread on every character per render
 const pinyinVisibleStyle: React.CSSProperties = { ...pinyinStyle, visibility: 'visible' }
 const pinyinHiddenStyle:  React.CSSProperties = { ...pinyinStyle, visibility: 'hidden'  }
+// Color set via Tailwind class (see punctCharStyle note) so hanzi stay visible in dark mode.
 const hanziStyle: React.CSSProperties = {
   display: 'block', width: CHAR_SIZE, fontSize: CHAR_SIZE,
-  lineHeight: 1.2, textAlign: 'center', color: '#1f2937',
+  lineHeight: 1.2, textAlign: 'center',
 }
 const containerStyle: React.CSSProperties = { lineHeight: 1 }
 
@@ -190,7 +193,7 @@ export function PinyinText({
           return (
             <span key={i} style={outerPunctStyle}>
               {showPinyin && <span style={punctSpacerStyle} />}
-              <span style={punctCharStyle}>{unit.hanzi}</span>
+              <span style={punctCharStyle} className="text-gray-800 dark:text-gray-100">{unit.hanzi}</span>
             </span>
           )
         }
@@ -210,7 +213,7 @@ export function PinyinText({
             )}
             <span
               style={hanziStyle}
-              className={onCharClick ? 'hover:text-primary-600 hover:bg-primary-50 rounded transition-colors dark:hover:text-primary-400 dark:hover:bg-primary-950/30' : ''}
+              className={`text-gray-800 dark:text-gray-100 ${onCharClick ? 'hover:text-primary-600 hover:bg-primary-50 rounded transition-colors dark:hover:text-primary-400 dark:hover:bg-primary-950/30' : ''}`}
             >
               {unit.hanzi}
             </span>

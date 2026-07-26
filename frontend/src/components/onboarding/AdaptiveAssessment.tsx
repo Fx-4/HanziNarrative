@@ -265,10 +265,10 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
           className="w-full"
         >
           <div className="mb-5 p-6 bg-gray-50 dark:bg-surface-elevated border border-gray-200 dark:border-surface-border rounded-2xl text-center">
-            <p className="text-4xl font-bold text-gray-900 font-chinese mb-2">
+            <p className="text-4xl font-bold text-gray-900 dark:text-gray-50 font-chinese mb-2">
               {currentQuestion.chinese}
             </p>
-            <p className="text-base text-gray-500">{currentQuestion.pinyin}</p>
+            <p className="text-base text-gray-500 dark:text-gray-400">{currentQuestion.pinyin}</p>
           </div>
 
           <p className="text-sm text-center text-gray-500 mb-3">What does this mean?</p>
