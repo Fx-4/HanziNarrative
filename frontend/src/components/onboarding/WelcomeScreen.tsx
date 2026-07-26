@@ -31,7 +31,7 @@ const WelcomeScreen = ({ onNext }: WelcomeScreenProps) => {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
-        className="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900 mb-4"
+        className="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-gray-50 mb-4"
       >
         {t('onboarding.welcome.title')}{' '}
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-violet-600">

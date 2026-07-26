@@ -46,7 +46,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
             <div className="w-9 h-9 bg-sky-50 rounded-xl flex items-center justify-center">
               <Clock className="w-4.5 h-4.5 text-sky-500" />
             </div>
-            <span className="font-semibold text-gray-900 text-sm">{t('onboarding.goals.dailyTime')}</span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('onboarding.goals.dailyTime')}</span>
           </div>
           <input
             type="range" min="5" max="60" step="5"
@@ -71,7 +71,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
             <div className="w-9 h-9 bg-violet-50 rounded-xl flex items-center justify-center">
               <BookMarked className="w-4.5 h-4.5 text-violet-500" />
             </div>
-            <span className="font-semibold text-gray-900 text-sm">{t('onboarding.goals.dailyWords')}</span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('onboarding.goals.dailyWords')}</span>
           </div>
           <input
             type="range" min="5" max="50" step="5"
@@ -96,7 +96,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
             <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center">
               <Trophy className="w-4.5 h-4.5 text-amber-500" />
             </div>
-            <span className="font-semibold text-gray-900 text-sm">{t('onboarding.goals.targetHsk')}</span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('onboarding.goals.targetHsk')}</span>
           </div>
           <div className="flex gap-1.5">
             {[1, 2, 3, 4, 5, 6].map((level) => (
@@ -129,7 +129,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
             <div className="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center">
               <Zap className="w-4.5 h-4.5 text-emerald-500" />
             </div>
-            <span className="font-semibold text-gray-900 text-sm">{t('onboarding.goals.weeklyXp')}</span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('onboarding.goals.weeklyXp')}</span>
           </div>
           <div className="flex gap-1.5">
             {[100, 300, 500, 1000].map((xp) => (

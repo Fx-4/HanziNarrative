@@ -101,7 +101,7 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
           {/* Show pinyin */}
           <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-surface-elevated rounded-xl border border-gray-200 dark:border-surface-border">
             <div>
-              <p className="font-semibold text-gray-900 text-sm">{t('onboarding.preferences.showPinyin')}</p>
+              <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('onboarding.preferences.showPinyin')}</p>
               <p className="text-xs text-gray-500">{t('onboarding.preferences.showPinyinDesc')}</p>
             </div>
             <button
@@ -118,7 +118,7 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
               <div className="flex items-center gap-2">
                 <Bell className="w-4 h-4 text-gray-500" />
                 <div>
-                  <p className="font-semibold text-gray-900 text-sm">{t('onboarding.preferences.reminders')}</p>
+                  <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('onboarding.preferences.reminders')}</p>
                   <p className="text-xs text-gray-500">{t('onboarding.preferences.remindersDesc')}</p>
                 </div>
               </div>
