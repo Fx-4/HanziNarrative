@@ -25,7 +25,7 @@ export default function AuthCallback() {
         fetchUser()
             .then(() => {
                 const { onboardingCompleted } = useAuthStore.getState()
-                navigate(onboardingCompleted ? '/dashboard' : '/onboarding', { replace: true })
+                navigate(onboardingCompleted ? '/' : '/onboarding', { replace: true })
             })
             .catch(() => {
                 localStorage.removeItem('access_token')

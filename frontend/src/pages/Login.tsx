@@ -61,7 +61,7 @@ export default function Login() {
       if (!onboardingCompleted) {
         navigate('/onboarding')
       } else {
-        navigate('/dashboard')
+        navigate('/')
       }
     } catch {
       setErrorKey('auth.login.errors.invalidCredentials')
