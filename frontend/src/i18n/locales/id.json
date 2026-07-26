@@ -469,7 +469,12 @@
       "pinyin": "Pinyin:",
       "meaning": "Arti:",
       "meaningPlaceholder": "Klik halaman kosakata untuk lihat arti detail dan contoh penggunaan.",
-      "viewInVocab": "Lihat di Kosakata"
+      "viewInVocab": "Lihat di Kosakata",
+      "loading": "Memuat kosakata...",
+      "wordsCount": "{{count}} kata dalam cerita ini",
+      "fallbackNote": "Kosakata terperinci belum tersedia untuk cerita ini. Ketuk karakter untuk membukanya di halaman Kosakata.",
+      "noMeaning": "Arti belum tersedia",
+      "close": "Tutup"
     }
   },
 

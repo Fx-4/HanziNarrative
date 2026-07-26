@@ -469,7 +469,12 @@
       "pinyin": "Pinyin:",
       "meaning": "Meaning:",
       "meaningPlaceholder": "Click on vocabulary page to see detailed meaning and usage examples.",
-      "viewInVocab": "View in Vocabulary"
+      "viewInVocab": "View in Vocabulary",
+      "loading": "Loading vocabulary...",
+      "wordsCount": "{{count}} words in this story",
+      "fallbackNote": "Detailed vocabulary isn't available for this story yet. Tap a character to look it up on the Vocabulary page.",
+      "noMeaning": "Meaning not available yet",
+      "close": "Close"
     }
   },
 

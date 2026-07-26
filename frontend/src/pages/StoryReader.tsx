@@ -69,7 +69,8 @@ export default function StoryReader() {
   const [showQuiz, setShowQuiz] = useState(false)
   const [quizAnswers, setQuizAnswers] = useState<number[]>([])
   const [showResults, setShowResults] = useState(false)
-  const [selectedChar, setSelectedChar] = useState<string | null>(null)
+  const [vocabWords, setVocabWords] = useState<HanziWord[] | null>(null)
+  const [vocabLoading, setVocabLoading] = useState(false)
   const [questions, setQuestions] = useState<ComprehensionQuestion[]>([])
   const [loadingQuiz, setLoadingQuiz] = useState(false)
   const [selectedWord, setSelectedWord] = useState<HanziWord | null>(null)
@@ -97,6 +98,29 @@ export default function StoryReader() {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [showDeleteConfirm])
+
+  // Close the vocabulary sidebar on Escape
+  useEffect(() => {
+    if (!showVocabulary) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setShowVocabulary(false) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [showVocabulary])
+
+  // Fetch the story's linked vocabulary (real definitions) — lazily, on first open
+  const loadVocab = useCallback(async () => {
+    if (!story || vocabWords !== null) return
+    setVocabLoading(true)
+    try {
+      const words = await storiesApi.getStoryWords(story.id)
+      setVocabWords(words)
+    } catch {
+      // No linked words (or fetch failed) — fall back to the character reference
+      setVocabWords([])
+    } finally {
+      setVocabLoading(false)
+    }
+  }, [story, vocabWords])
 
   const loadStory = async (storyId: number) => {
     if (preloadedStory) {
@@ -413,113 +437,107 @@ export default function StoryReader() {
   const renderVocabularyList = () => {
     if (!story) return null
 
-    // Extract unique characters (in real app, this would be actual vocabulary)
+    // Fallback character reference — only used when the story has no linked vocabulary
     const uniqueChars = Array.from(new Set(story.content.replace(/[，。！？、；：""''（）《》【】…—\s\n]/g, '')))
-      .slice(0, 30) // Show first 30 unique characters as example
+      .slice(0, 30)
+
+    const openInVocab = (term: string) => {
+      navigate(`/vocabulary?search=${term}`)
+      toast.success(t('storyReader.toast.openingVocab'))
+    }
 
     return (
       <AnimatePresence>
         {showVocabulary && (
-          <motion.div
-            initial={{ opacity: 0, x: 300 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 300 }}
-            className="fixed right-0 top-0 h-full w-72 sm:w-80 bg-white shadow-2xl overflow-y-auto z-50 p-4 sm:p-6 dark:bg-surface-card"
-          >
-            <div className="flex justify-between items-center mb-6 sticky top-0 bg-white pb-4 border-b dark:bg-surface-card">
-              <div className="flex items-center gap-2">
-                <BookMarked className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-                <h3 className="text-lg font-bold">{t('storyReader.vocab.title')}</h3>
+          <>
+            {/* Backdrop — click to dismiss */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+              onClick={() => setShowVocabulary(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, x: 300 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 300 }}
+              className="fixed right-0 top-0 h-full w-72 sm:w-80 bg-white shadow-2xl overflow-y-auto z-50 p-4 sm:p-6 dark:bg-surface-card"
+              role="dialog"
+              aria-modal="true"
+            >
+              <div className="flex justify-between items-center mb-6 sticky top-0 bg-white pb-4 border-b dark:bg-surface-card z-10">
+                <div className="flex items-center gap-2">
+                  <BookMarked className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                  <h3 className="text-lg font-bold">{t('storyReader.vocab.title')}</h3>
+                </div>
+                <button
+                  onClick={() => setShowVocabulary(false)}
+                  aria-label={t('storyReader.vocab.close')}
+                  className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl p-1.5 cursor-pointer transition-colors dark:text-gray-400"
+                >
+                  ✕
+                </button>
               </div>
-              <button
-                onClick={() => setShowVocabulary(false)}
-                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl p-1.5 cursor-pointer transition-colors dark:text-gray-400"
-              >
-                ✕
-              </button>
-            </div>
 
-            <div className="text-sm text-gray-600 mb-4 dark:text-gray-400">
-              {t('storyReader.vocab.count', { count: uniqueChars.length })}
-            </div>
-
-            <div className="space-y-3">
-              {uniqueChars.map((char, idx) => {
-                const charPinyin = PARTICLE_PINYIN[char] ?? pinyin(char, { toneType: 'symbol' })
-                const isExpanded = selectedChar === char
-                return (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.02 }}
-                    onClick={() => setSelectedChar(isExpanded ? null : char)}
-                    className={`p-4 rounded-2xl cursor-pointer transition-all border-2 ${
-                      isExpanded
-                        ? 'bg-primary-100 border-primary-500 shadow-lg dark:bg-primary-900/40'
-                        : 'bg-gradient-to-r from-gray-50 to-primary-50 hover:from-primary-100 hover:to-purple-100 border-gray-200 hover:border-primary-300 dark:to-primary-950/30'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-baseline gap-3">
-                        <span className="text-4xl font-bold text-gray-900 dark:text-gray-50">
-                          {char}
-                        </span>
-                        <span className="text-lg text-primary-600 font-semibold dark:text-primary-400">
-                          {charPinyin}
-                        </span>
-                      </div>
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
-                        #{idx + 1}
-                      </span>
-                    </div>
-
-                    {!isExpanded ? (
-                      <div className="text-xs text-gray-600 mt-2 dark:text-gray-400">
-                        {t('storyReader.vocab.clickToSee')}
-                      </div>
-                    ) : (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        className="mt-4 pt-4 border-t border-primary-300"
+              {vocabLoading ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="h-16 rounded-2xl bg-gray-100 dark:bg-gray-800 animate-pulse" />
+                  ))}
+                </div>
+              ) : vocabWords && vocabWords.length > 0 ? (
+                <>
+                  <div className="text-sm text-gray-600 mb-4 dark:text-gray-400">
+                    {t('storyReader.vocab.wordsCount', { count: vocabWords.length })}
+                  </div>
+                  <div className="space-y-3">
+                    {vocabWords.map((w, idx) => (
+                      <motion.button
+                        key={w.id ?? idx}
+                        type="button"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: Math.min(idx, 15) * 0.02 }}
+                        onClick={() => openInVocab(w.simplified)}
+                        className="w-full text-left p-4 rounded-2xl border-2 border-gray-200 hover:border-primary-300 bg-gradient-to-r from-gray-50 to-primary-50 hover:from-primary-100 hover:to-purple-100 cursor-pointer transition-all dark:border-gray-700 dark:from-gray-800 dark:to-primary-950/30 dark:hover:border-primary-700"
                       >
-                        <div className="space-y-3">
-                          <div>
-                            <p className="text-xs font-semibold text-gray-600 mb-1 dark:text-gray-400">{t('storyReader.vocab.character')}</p>
-                            <p className="text-2xl font-chinese font-bold text-gray-900 dark:text-gray-50">{char}</p>
-                          </div>
-                          <div>
-                            <p className="text-xs font-semibold text-gray-600 mb-1 dark:text-gray-400">{t('storyReader.vocab.pinyin')}</p>
-                            <p className="text-base text-primary-700 dark:text-primary-300">{charPinyin}</p>
-                          </div>
-                          <div>
-                            <p className="text-xs font-semibold text-gray-600 mb-1 dark:text-gray-400">{t('storyReader.vocab.meaning')}</p>
-                            <p className="text-sm text-gray-700 dark:text-gray-300">
-                              {/* This would come from API in real app */}
-                              {t('storyReader.vocab.meaningPlaceholder')}
-                            </p>
-                          </div>
-                          <div className="pt-2">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                navigate(`/vocabulary?search=${char}`)
-                                toast.success(t('storyReader.toast.openingVocab'))
-                              }}
-                              className="w-full bg-gray-100 hover:bg-primary-50 text-gray-700 hover:text-primary-700 rounded-2xl px-4 py-2 font-semibold cursor-pointer transition-colors text-sm dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-primary-950/30 dark:hover:text-primary-300"
-                            >
-                              {t('storyReader.vocab.viewInVocab')}
-                            </button>
-                          </div>
+                        <div className="flex items-baseline gap-3">
+                          <span className="text-3xl font-chinese font-bold text-gray-900 dark:text-gray-50">{w.simplified}</span>
+                          <span className="text-base text-primary-600 font-semibold dark:text-primary-400">{w.pinyin}</span>
                         </div>
-                      </motion.div>
-                    )}
-                  </motion.div>
-                )
-              })}
-            </div>
-          </motion.div>
+                        <p className="text-sm text-gray-700 mt-1 dark:text-gray-300">
+                          {w.english || t('storyReader.vocab.noMeaning')}
+                        </p>
+                      </motion.button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="text-sm text-gray-600 mb-4 dark:text-gray-400">
+                    {t('storyReader.vocab.fallbackNote')}
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {uniqueChars.map((char, idx) => {
+                      const charPinyin = PARTICLE_PINYIN[char] ?? pinyin(char, { toneType: 'symbol' })
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => openInVocab(char)}
+                          className="px-2 py-2 rounded-xl border border-gray-200 hover:border-primary-300 bg-gray-50 hover:bg-primary-50 cursor-pointer transition-colors text-center dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-primary-950/30"
+                        >
+                          <span className="block text-2xl font-chinese text-gray-900 dark:text-gray-50">{char}</span>
+                          <span className="block text-xs text-primary-600 dark:text-primary-400">{charPinyin}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </>
+              )}
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     )
@@ -789,7 +807,11 @@ export default function StoryReader() {
             </button>
 
             <button
-              onClick={() => setShowVocabulary(!showVocabulary)}
+              onClick={() => {
+                const next = !showVocabulary
+                setShowVocabulary(next)
+                if (next) loadVocab()
+              }}
               className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm ${
                 showVocabulary
                   ? 'bg-primary-600 hover:bg-primary-700 text-white'
