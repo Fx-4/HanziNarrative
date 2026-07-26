@@ -348,19 +348,38 @@ export default function StoryReader() {
     })
   }, [story])
 
-  const handleCharacterClick = useCallback(async (char: string, event: React.MouseEvent) => {
-    // PinyinText only fires onCharClick for non-punct cells; guard is a safety net
+  const handleCharacterClick = useCallback(async (
+    char: string,
+    event: React.MouseEvent,
+    context?: { prev?: string; next?: string; next2?: string },
+  ) => {
+    const isHanzi = (s?: string) => !!s && /^[一-鿿]+$/.test(s)
+    // Prefer the longest multi-char word containing this character, then fall back
+    // to the single char — avoids the frequent "word not found" dead-end when the
+    // clicked character is only part of a 2- or 3-character word.
+    const candidates: string[] = []
+    if (context) {
+      const { prev, next, next2 } = context
+      if (isHanzi(next) && isHanzi(next2)) candidates.push(char + next + next2)
+      if (isHanzi(next)) candidates.push(char + next)
+      if (isHanzi(prev)) candidates.push(prev + char)
+    }
+    candidates.push(char)
+
     try {
-      // Search for this character in vocabulary
-      const words = await vocabularyApi.searchWords(char)
-      if (words.length > 0) {
-        setSelectedWord(words[0])
-        // Get position for tooltip
+      let match: HanziWord | null = null
+      let looseHit: HanziWord | null = null
+      for (const cand of candidates) {
+        const words = await vocabularyApi.searchWords(cand)
+        const exact = words.find(w => w.simplified === cand)
+        if (exact) { match = exact; break }
+        if (!looseHit && words.length > 0) looseHit = words[0]
+      }
+      const result = match ?? looseHit
+      if (result) {
+        setSelectedWord(result)
         const rect = (event.target as HTMLElement).getBoundingClientRect()
-        setWordPosition({
-          x: rect.left + rect.width / 2,
-          y: rect.top
-        })
+        setWordPosition({ x: rect.left + rect.width / 2, y: rect.top })
       } else {
         toast(t('storyReader.toast.wordNotFound'), { icon: '📚' })
       }

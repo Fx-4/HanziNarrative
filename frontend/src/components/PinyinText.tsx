@@ -158,7 +158,11 @@ interface PinyinTextProps {
   content: string
   contentPinyin?: string | null
   showPinyin?: boolean
-  onCharClick?: (char: string, event: React.MouseEvent<HTMLElement>) => void
+  onCharClick?: (
+    char: string,
+    event: React.MouseEvent<HTMLElement>,
+    context?: { prev?: string; next?: string; next2?: string },
+  ) => void
   getPinyinFallback?: (char: string) => string
 }
 
@@ -178,10 +182,21 @@ export function PinyinText({
   const handleClick = React.useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (!onCharClick) return
-      const hanzi = (e.target as HTMLElement).closest<HTMLElement>('[data-hanzi]')?.dataset.hanzi
-      if (hanzi) onCharClick(hanzi, e)
+      const cell = (e.target as HTMLElement).closest<HTMLElement>('[data-hanzi]')
+      const hanzi = cell?.dataset.hanzi
+      if (!hanzi) return
+      // Provide contiguous hanzi neighbours so the handler can try multi-char words
+      const idx = Number(cell?.dataset.idx)
+      const at = (j: number) => {
+        const u = units[j]
+        return u && !u.isPunct && !u.isBreak ? u.hanzi : undefined
+      }
+      const context = Number.isFinite(idx)
+        ? { prev: at(idx - 1), next: at(idx + 1), next2: at(idx + 2) }
+        : undefined
+      onCharClick(hanzi, e, context)
     },
-    [onCharClick],
+    [onCharClick, units],
   )
 
   return (
@@ -204,6 +219,7 @@ export function PinyinText({
           <span
             key={i}
             data-hanzi={unit.hanzi}
+            data-idx={i}
             style={onCharClick ? outerCharClickableStyle : outerCharStyle}
           >
             {showPinyin && (
