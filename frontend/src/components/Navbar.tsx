@@ -440,7 +440,7 @@ function DrawerItem({ item, active, onClose }: { item: MenuItem; active: boolean
   const Icon = item.icon
   const desc = t(`nav.items.${item.key}.desc`)
   return (
-    <Link to={item.to} onClick={onClose}>
+    <Link to={item.to} onClick={onClose} aria-current={active ? 'page' : undefined}>
       <div className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-colors ${
         active
           ? 'bg-primary-50 dark:bg-primary-950/50 text-primary-600 dark:text-primary-400'
@@ -490,7 +490,7 @@ function DesktopNavLink({ link, active, badgeCount = 0 }: {
   const { t } = useTranslation()
   const Icon = link.icon
   return (
-    <Link to={link.to}>
+    <Link to={link.to} aria-current={active ? 'page' : undefined}>
       <motion.div
         className={`relative flex items-center gap-1.5 px-2 lg:px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
           active

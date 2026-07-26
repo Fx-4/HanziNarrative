@@ -185,7 +185,7 @@ export function PinyinText({
   )
 
   return (
-    <div style={containerStyle} onClick={onCharClick ? handleClick : undefined}>
+    <div lang="zh-CN" style={containerStyle} onClick={onCharClick ? handleClick : undefined}>
       {units.map((unit, i) => {
         if (unit.isBreak) return <br key={i} />
 
