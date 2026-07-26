@@ -24,7 +24,7 @@
 
 ## P0 — Konsistensi Bahasa (i18n) — paling terlihat, app dwibahasa
 
-- [ ] **SUX-01 · i18n StoryReader** — Semua string di `StoryReader.tsx` masih hardcoded English (label tombol "Show/Hide Pinyin", "Read Aloud", "Vocabulary", "Take Quiz", "Save"; semua `toast.*`; blok "English Translation"; "Comprehension Quiz"/"Submit Quiz"/"Explanation:"/"Retry Quiz"; sidebar "Vocabulary List"/"Click to see full definition"; hint "Click any character for details"; "Story not found"; dialog delete). Pindahkan ke namespace `storyReader.*` di id.json+en.json, ganti semua ke `t()`.
+- [x] **SUX-01 · i18n StoryReader** — Semua string di `StoryReader.tsx` masih hardcoded English (label tombol "Show/Hide Pinyin", "Read Aloud", "Vocabulary", "Take Quiz", "Save"; semua `toast.*`; blok "English Translation"; "Comprehension Quiz"/"Submit Quiz"/"Explanation:"/"Retry Quiz"; sidebar "Vocabulary List"/"Click to see full definition"; hint "Click any character for details"; "Story not found"; dialog delete). Pindahkan ke namespace `storyReader.*` di id.json+en.json, ganti semua ke `t()`.
   - *Selesai bila:* tak ada literal Inggris user-facing tersisa di file; toggle bahasa mengubah seluruh UI reader; build hijau.
 
 - [ ] **SUX-02 · i18n StoryGenerator** — `StoryGenerator.tsx` hardcoded English: kartu mode "Quick"/"Advanced" + deskripsi, label form ("HSK Level", "Topic (Optional)", "Story Length", "Genre", "Tone / Mood", "Setting / Location", "Cultural Theme", "Perspective", "Dialogue", "Character Names", "Target Vocabulary", "Grammar Patterns"), pesan loading, "Story saved! Find it in Browse Stories.", heading "Story"/"Pinyin"/"Key Vocabulary"/"Grammar Points"/"Error", "Rate limit reached...", "left today"/"left/hour". Namespace `storyGen.*`.
@@ -75,3 +75,4 @@
 
 ## Log
 <!-- Iterasi menambahkan baris: `- YYYY-MM-DD SUX-xx <commit hash> ringkas` -->
+- 2026-07-26 SUX-01 4948b4a i18n StoryReader → namespace storyReader (id+en), semua string ke t(), build hijau
