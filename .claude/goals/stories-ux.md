@@ -42,7 +42,7 @@
 - [x] **SUX-05 · Vocabulary sidebar bukan placeholder** — Sidebar hanya ambil 30 karakter unik pertama & setiap "Meaning" berbunyi "Click on vocabulary page to see detailed meaning...". Ini placeholder menyamar jadi fitur.
   - *Selesai bila:* tampilkan arti asli (gunakan `storiesApi.getStoryWords(id)` / `vocabularyApi`); bila data tak ada, tampilkan state jujur (bukan kalimat placeholder). Sidebar dapat backdrop, tutup via Esc & klik-luar, tombol ✕ punya `aria-label`. Build hijau.
 
-- [ ] **SUX-06 · Klik karakter tak buntu** — "Click any character for details" sering berakhir toast "Word not found in vocabulary" karena `searchWords(char)` gagal untuk kata multi-karakter.
+- [x] **SUX-06 · Klik karakter tak buntu** — "Click any character for details" sering berakhir toast "Word not found in vocabulary" karena `searchWords(char)` gagal untuk kata multi-karakter.
   - *Selesai bila:* saat single-char gagal, coba kata multi-karakter di sekitar posisi klik sebelum menyerah; feedback lebih baik daripada sekadar toast gagal. Build hijau.
 
 - [ ] **SUX-07 · Kuis: hapus fallback palsu** — Saat generate kuis gagal, muncul pertanyaan generik Inggris "What is the main topic of this story?" dgn `correctAnswer: 0` (selalu "benar") — menyesatkan.
@@ -80,3 +80,4 @@
 - 2026-07-27 SUX-03 4bd48ae i18n StoryChallenge → namespace storyChallengePage (id+en), landing+challenge+modal ke t(), build hijau
 - 2026-07-27 SUX-04 0390942 Delete Story: tombol hanya pemilik/admin + modal konfirmasi bergaya (Esc/backdrop), ganti window.confirm, build hijau
 - 2026-07-27 SUX-05 2f30ceb Vocabulary sidebar: definisi asli via getStoryWords + fallback jujur, backdrop/Esc/aria-label, build hijau
+- 2026-07-27 SUX-06 aacecc3 Klik karakter: PinyinText kirim konteks tetangga, handler coba kata multi-karakter (longest-first, exact-preference), build hijau
