@@ -78,6 +78,14 @@ export default function Navbar() {
     return () => { document.body.style.overflow = '' }
   }, [mobileMenuOpen])
 
+  // Escape menutup drawer mobile — perilaku modal yang diharapkan keyboard user.
+  useEffect(() => {
+    if (!mobileMenuOpen) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMobileMenuOpen(false) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [mobileMenuOpen])
+
   useEffect(() => {
     if (!isAuthenticated || !user) { setReviewCount(0); return }
     const fetch = async () => {
@@ -212,6 +220,9 @@ export default function Navbar() {
 
             <motion.div
               key="drawer"
+              role="dialog"
+              aria-modal="true"
+              aria-label={t('nav.a11y.openMenu')}
               variants={drawerVariants}
               initial="hidden" animate="visible" exit="exit"
               className="fixed top-0 right-0 h-full w-[min(320px,88vw)] sm:w-[min(360px,88vw)] bg-white dark:bg-surface-card shadow-2xl z-60 flex flex-col"
