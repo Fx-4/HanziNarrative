@@ -39,7 +39,7 @@
 - [x] **SUX-04 · Delete Story aman & bergaya** — Tombol "Delete Story" merah tampil untuk SEMUA cerita (termasuk curated / bukan milik user), padahal backend menolak non-pemilik → dead-end membingungkan. Dan pakai `window.confirm` native (tak bergaya, rusak di dark mode).
   - *Selesai bila:* tombol hanya muncul untuk cerita yang boleh dihapus user (mis. `category === 'ai_generated'` / milik user); konfirmasi pakai modal bergaya design system + i18n; build hijau.
 
-- [ ] **SUX-05 · Vocabulary sidebar bukan placeholder** — Sidebar hanya ambil 30 karakter unik pertama & setiap "Meaning" berbunyi "Click on vocabulary page to see detailed meaning...". Ini placeholder menyamar jadi fitur.
+- [x] **SUX-05 · Vocabulary sidebar bukan placeholder** — Sidebar hanya ambil 30 karakter unik pertama & setiap "Meaning" berbunyi "Click on vocabulary page to see detailed meaning...". Ini placeholder menyamar jadi fitur.
   - *Selesai bila:* tampilkan arti asli (gunakan `storiesApi.getStoryWords(id)` / `vocabularyApi`); bila data tak ada, tampilkan state jujur (bukan kalimat placeholder). Sidebar dapat backdrop, tutup via Esc & klik-luar, tombol ✕ punya `aria-label`. Build hijau.
 
 - [ ] **SUX-06 · Klik karakter tak buntu** — "Click any character for details" sering berakhir toast "Word not found in vocabulary" karena `searchWords(char)` gagal untuk kata multi-karakter.
@@ -79,3 +79,4 @@
 - 2026-07-26 SUX-02 c09abf8 i18n StoryGenerator → namespace storyGen (id+en), opsi preset emoji+key, build hijau
 - 2026-07-27 SUX-03 4bd48ae i18n StoryChallenge → namespace storyChallengePage (id+en), landing+challenge+modal ke t(), build hijau
 - 2026-07-27 SUX-04 0390942 Delete Story: tombol hanya pemilik/admin + modal konfirmasi bergaya (Esc/backdrop), ganti window.confirm, build hijau
+- 2026-07-27 SUX-05 2f30ceb Vocabulary sidebar: definisi asli via getStoryWords + fallback jujur, backdrop/Esc/aria-label, build hijau
