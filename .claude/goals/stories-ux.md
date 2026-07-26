@@ -31,7 +31,7 @@
   - *Catatan:* label emoji pada opsi (genre/tone/setting/cultural) boleh tetap, tapi teksnya diterjemahkan.
   - *Selesai bila:* seluruh UI generator ikut bahasa UI; build hijau.
 
-- [ ] **SUX-03 · i18n StoryChallenge** — `StoryChallenge.tsx` hardcoded English: "Unlock the Story", "Write characters to reveal hidden words in stories", "Select HSK Level", "No stories available..."/"Generate some stories first!", blok "How it works" (1. Read / 2. Write / 3. Unlock), header "← Back"/"Listen"/"Playing...", "unlocked", hint "Click a blank to write and unlock:", modal "Write:", celebration "Story Unlocked!"/"You wrote all N hidden words correctly!"/"English translation:"/"Try Another Story", semua toast. Namespace `storyChallenge.page.*` (jangan bentrok dgn nav label `storyChallenge` yang sudah ada).
+- [x] **SUX-03 · i18n StoryChallenge** — `StoryChallenge.tsx` hardcoded English: "Unlock the Story", "Write characters to reveal hidden words in stories", "Select HSK Level", "No stories available..."/"Generate some stories first!", blok "How it works" (1. Read / 2. Write / 3. Unlock), header "← Back"/"Listen"/"Playing...", "unlocked", hint "Click a blank to write and unlock:", modal "Write:", celebration "Story Unlocked!"/"You wrote all N hidden words correctly!"/"English translation:"/"Try Another Story", semua toast. Namespace `storyChallenge.page.*` (jangan bentrok dgn nav label `storyChallenge` yang sudah ada).
   - *Selesai bila:* seluruh UI challenge ikut bahasa UI; build hijau.
 
 ## P1 — Bug & jebakan UX fungsional
@@ -77,3 +77,4 @@
 <!-- Iterasi menambahkan baris: `- YYYY-MM-DD SUX-xx <commit hash> ringkas` -->
 - 2026-07-26 SUX-01 4948b4a i18n StoryReader → namespace storyReader (id+en), semua string ke t(), build hijau
 - 2026-07-26 SUX-02 c09abf8 i18n StoryGenerator → namespace storyGen (id+en), opsi preset emoji+key, build hijau
+- 2026-07-27 SUX-03 4bd48ae i18n StoryChallenge → namespace storyChallengePage (id+en), landing+challenge+modal ke t(), build hijau
