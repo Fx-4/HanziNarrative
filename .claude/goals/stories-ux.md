@@ -36,7 +36,7 @@
 
 ## P1 — Bug & jebakan UX fungsional
 
-- [ ] **SUX-04 · Delete Story aman & bergaya** — Tombol "Delete Story" merah tampil untuk SEMUA cerita (termasuk curated / bukan milik user), padahal backend menolak non-pemilik → dead-end membingungkan. Dan pakai `window.confirm` native (tak bergaya, rusak di dark mode).
+- [x] **SUX-04 · Delete Story aman & bergaya** — Tombol "Delete Story" merah tampil untuk SEMUA cerita (termasuk curated / bukan milik user), padahal backend menolak non-pemilik → dead-end membingungkan. Dan pakai `window.confirm` native (tak bergaya, rusak di dark mode).
   - *Selesai bila:* tombol hanya muncul untuk cerita yang boleh dihapus user (mis. `category === 'ai_generated'` / milik user); konfirmasi pakai modal bergaya design system + i18n; build hijau.
 
 - [ ] **SUX-05 · Vocabulary sidebar bukan placeholder** — Sidebar hanya ambil 30 karakter unik pertama & setiap "Meaning" berbunyi "Click on vocabulary page to see detailed meaning...". Ini placeholder menyamar jadi fitur.
@@ -78,3 +78,4 @@
 - 2026-07-26 SUX-01 4948b4a i18n StoryReader → namespace storyReader (id+en), semua string ke t(), build hijau
 - 2026-07-26 SUX-02 c09abf8 i18n StoryGenerator → namespace storyGen (id+en), opsi preset emoji+key, build hijau
 - 2026-07-27 SUX-03 4bd48ae i18n StoryChallenge → namespace storyChallengePage (id+en), landing+challenge+modal ke t(), build hijau
+- 2026-07-27 SUX-04 0390942 Delete Story: tombol hanya pemilik/admin + modal konfirmasi bergaya (Esc/backdrop), ganti window.confirm, build hijau
