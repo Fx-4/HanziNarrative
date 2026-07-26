@@ -454,12 +454,8 @@
       "submit": "Submit Quiz",
       "retry": "Retry Quiz",
       "explanation": "Explanation:",
-      "fallbackQuestion": "What is the main topic of this story?",
-      "fallbackOpt1": "Daily life and activities",
-      "fallbackOpt2": "Historical events",
-      "fallbackOpt3": "Scientific discoveries",
-      "fallbackOpt4": "Sports and games",
-      "fallbackExplanation": "Unable to generate story-specific questions. Please try again."
+      "error": "Couldn't load the quiz for this story.",
+      "tryAgain": "Try Again"
     },
     "vocab": {
       "title": "Vocabulary List",

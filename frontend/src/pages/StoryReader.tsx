@@ -73,6 +73,7 @@ export default function StoryReader() {
   const [vocabLoading, setVocabLoading] = useState(false)
   const [questions, setQuestions] = useState<ComprehensionQuestion[]>([])
   const [loadingQuiz, setLoadingQuiz] = useState(false)
+  const [quizError, setQuizError] = useState(false)
   const [selectedWord, setSelectedWord] = useState<HanziWord | null>(null)
   const [wordPosition, setWordPosition] = useState<{ x: number; y: number } | null>(null)
   const [showWordDetails, setShowWordDetails] = useState(false)
@@ -268,27 +269,17 @@ export default function StoryReader() {
     if (!story || questions.length > 0) return
 
     setLoadingQuiz(true)
+    setQuizError(false)
     try {
       const quizData = await storiesApi.getStoryQuiz(story.id)
       setQuestions(quizData.questions)
       toast.success(t('storyReader.toast.quizLoaded'))
     } catch (error) {
+      // Show an honest error + retry — never a fake generic question that
+      // would grade the user against a made-up "correct" answer.
       storyReaderLogger.error('Failed to load quiz:', error)
       toast.error(t('storyReader.toast.quizLoadFailed'))
-      // Set fallback generic question
-      setQuestions([
-        {
-          question: t('storyReader.quiz.fallbackQuestion'),
-          options: [
-            t('storyReader.quiz.fallbackOpt1'),
-            t('storyReader.quiz.fallbackOpt2'),
-            t('storyReader.quiz.fallbackOpt3'),
-            t('storyReader.quiz.fallbackOpt4')
-          ],
-          correctAnswer: 0,
-          explanation: t('storyReader.quiz.fallbackExplanation')
-        }
-      ])
+      setQuizError(true)
     } finally {
       setLoadingQuiz(false)
     }
@@ -579,6 +570,27 @@ export default function StoryReader() {
             </h3>
           </div>
 
+          {loadingQuiz && questions.length === 0 && (
+            <div className="space-y-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="h-24 rounded-2xl bg-white/70 dark:bg-surface-card animate-pulse" />
+              ))}
+            </div>
+          )}
+
+          {quizError && questions.length === 0 && (
+            <div className="bg-white rounded-2xl p-6 text-center dark:bg-surface-card">
+              <AlertTriangle className="w-8 h-8 text-error-500 mx-auto mb-3" />
+              <p className="text-gray-700 mb-4 dark:text-gray-300">{t('storyReader.quiz.error')}</p>
+              <button
+                onClick={loadQuizQuestions}
+                className="bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-6 py-2.5 font-semibold cursor-pointer transition-colors"
+              >
+                {t('storyReader.quiz.tryAgain')}
+              </button>
+            </div>
+          )}
+
           <div className="space-y-6">
             {questions.map((question, qIdx) => (
               <div key={qIdx} className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm dark:bg-surface-card">
@@ -653,7 +665,7 @@ export default function StoryReader() {
             ))}
           </div>
 
-          {!showResults && (
+          {!showResults && questions.length > 0 && (
             <button
               onClick={handleSubmitQuiz}
               className="mt-6 w-full bg-primary-600 hover:bg-primary-700 text-white rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors"

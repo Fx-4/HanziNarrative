@@ -454,12 +454,8 @@
       "submit": "Kirim Kuis",
       "retry": "Ulangi Kuis",
       "explanation": "Penjelasan:",
-      "fallbackQuestion": "Apa topik utama cerita ini?",
-      "fallbackOpt1": "Kehidupan & aktivitas sehari-hari",
-      "fallbackOpt2": "Peristiwa sejarah",
-      "fallbackOpt3": "Penemuan ilmiah",
-      "fallbackOpt4": "Olahraga & permainan",
-      "fallbackExplanation": "Tidak dapat membuat pertanyaan spesifik untuk cerita ini. Silakan coba lagi."
+      "error": "Gagal memuat kuis untuk cerita ini.",
+      "tryAgain": "Coba Lagi"
     },
     "vocab": {
       "title": "Daftar Kosakata",
