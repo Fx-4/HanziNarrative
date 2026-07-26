@@ -62,7 +62,7 @@ const CompletionScreen = ({
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-3"
+        className="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-gray-50 mb-3"
       >
         {t('onboarding.completion.title')}
       </motion.h1>
