@@ -575,6 +575,47 @@
     }
   },
 
+  "storyChallengePage": {
+    "toast": {
+      "loadFailed": "Gagal memuat cerita",
+      "unlocked": "Terbuka: {{word}}",
+      "dailyDone": "Tantangan Harian selesai! +30 XP"
+    },
+    "landing": {
+      "title": "Buka Kunci Cerita",
+      "subtitle": "Tulis karakter untuk mengungkap kata tersembunyi dalam cerita",
+      "selectLevel": "Pilih Level HSK",
+      "noStories": "Belum ada cerita untuk HSK {{level}}.",
+      "generateFirst": "Buat cerita dulu!",
+      "howItWorks": "Cara kerja",
+      "step1Title": "1. Baca",
+      "step1Desc": "Baca cerita dengan kata kosakata yang tersembunyi",
+      "step2Title": "2. Tulis",
+      "step2Desc": "Gambar tiap karakter untuk membuka kata",
+      "step3Title": "3. Buka",
+      "step3Desc": "Ungkap kata tersembunyi dan selesaikan cerita"
+    },
+    "view": {
+      "back": "Kembali",
+      "listen": "Dengarkan",
+      "playing": "Memutar...",
+      "unlockedLabel": "terbuka",
+      "hint": "Klik bagian kosong untuk menulis dan membuka:",
+      "unknownWord": "???",
+      "storyUnlocked": "Cerita Terbuka!",
+      "allCorrect": "Kamu menulis semua {{count}} kata tersembunyi dengan benar!",
+      "englishTranslation": "Terjemahan bahasa Inggris:",
+      "tryAnother": "Coba Cerita Lain"
+    },
+    "wordTitle": {
+      "unlocked": "Terbuka!",
+      "clickToWrite": "Klik untuk menulis dan membuka"
+    },
+    "modal": {
+      "write": "Tulis:"
+    }
+  },
+
   "learningPath": {
     "title":        "📚 Kursus HSK",
     "subtitle":     "Belajar bertahap dari HSK 1 — teori, kosakata, dan latihan terintegrasi.",

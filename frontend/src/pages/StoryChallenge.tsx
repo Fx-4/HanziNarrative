@@ -17,6 +17,7 @@ import {
     Volume2
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import BlurText from '@/components/animations/BlurText'
 import { fetchTTSAudio } from '@/utils/ttsHelper'
 
@@ -32,6 +33,7 @@ interface Story {
 }
 
 export default function StoryChallenge() {
+    const { t } = useTranslation()
     const [searchParams] = useSearchParams()
     const [hskLevel, setHskLevel] = useState(1)
     const [stories, setStories] = useState<{ id: number; title: string; title_pinyin?: string; is_published: boolean; difficulty_level?: number; key_vocabulary?: { simplified: string }[] }[]>([])
@@ -111,7 +113,7 @@ export default function StoryChallenge() {
             setUnlockedWords(new Set())
         } catch {
             console.warn('[StoryChallenge] Could not load story details (server might be waking up)');
-            toast.error('Failed to load story')
+            toast.error(t('storyChallengePage.toast.loadFailed'))
         } finally {
             setOpeningStory(false)
         }
@@ -159,7 +161,7 @@ export default function StoryChallenge() {
                 setUnlockedWords(prev => new Set([...prev, writingWord]))
                 setWritingChar(null)
                 setWritingWord('')
-                toast.success(`Unlocked: ${writingWord}`)
+                toast.success(t('storyChallengePage.toast.unlocked', { word: writingWord }))
             }
         }
     }
@@ -201,7 +203,7 @@ export default function StoryChallenge() {
                                 ? 'text-success-700 font-bold bg-success-50 px-1 rounded dark:text-success-300 dark:bg-success-950/30'
                                 : 'bg-amber-100 hover:bg-amber-200 text-amber-800 px-1 rounded cursor-pointer border-b-2 border-amber-300 border-dashed dark:bg-amber-900/40 dark:text-amber-300'
                                 }`}
-                            title={isUnlocked ? 'Unlocked!' : 'Click to write and unlock'}
+                            title={isUnlocked ? t('storyChallengePage.wordTitle.unlocked') : t('storyChallengePage.wordTitle.clickToWrite')}
                         >
                             {isUnlocked ? (
                                 <span className="font-chinese text-2xl">{word}</span>
@@ -244,13 +246,13 @@ export default function StoryChallenge() {
             dailyChallengeApi.complete()
                 .then(() => {
                     setDailyChallengeCompleted(true)
-                    toast.success('Daily Challenge completed! +30 XP')
+                    toast.success(t('storyChallengePage.toast.dailyDone'))
                 })
                 .catch(() => {
                     // Already completed or error — ignore
                 })
         }
-    }, [allUnlocked, isDailyChallenge, dailyChallengeCompleted])
+    }, [allUnlocked, isDailyChallenge, dailyChallengeCompleted, t])
 
     // Landing screen
     // Story is being opened — skeleton of the reading screen (title + paragraphs + word chips)
@@ -292,11 +294,11 @@ export default function StoryChallenge() {
                                 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-50"
                                 wordDelay={0.08}
                             >
-                                Unlock the Story
+                                {t('storyChallengePage.landing.title')}
                             </BlurText>
                         </div>
                         <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">
-                            Write characters to reveal hidden words in stories
+                            {t('storyChallengePage.landing.subtitle')}
                         </p>
                     </motion.div>
 
@@ -308,7 +310,7 @@ export default function StoryChallenge() {
                         className="mb-6"
                     >
                         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:bg-surface-card dark:border-surface-border">
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 dark:text-gray-50">Select HSK Level</h3>
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 dark:text-gray-50">{t('storyChallengePage.landing.selectLevel')}</h3>
                             <div className="flex flex-wrap gap-2">
                                 {[1, 2, 3, 4, 5, 6].map((level) => (
                                     <button
@@ -341,8 +343,8 @@ export default function StoryChallenge() {
                         ) : stories.length === 0 ? (
                             <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 text-center dark:bg-surface-card dark:border-surface-border">
                                 <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                                <p className="text-gray-600 dark:text-gray-400">No stories available for HSK {hskLevel}.</p>
-                                <p className="text-sm text-gray-400 mt-1 dark:text-gray-500">Generate some stories first!</p>
+                                <p className="text-gray-600 dark:text-gray-400">{t('storyChallengePage.landing.noStories', { level: hskLevel })}</p>
+                                <p className="text-sm text-gray-400 mt-1 dark:text-gray-500">{t('storyChallengePage.landing.generateFirst')}</p>
                             </div>
                         ) : (
                             <div className="grid sm:grid-cols-2 gap-3">
@@ -390,15 +392,15 @@ export default function StoryChallenge() {
                         className="mt-8"
                     >
                         <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:border-surface-border dark:from-amber-950/30 dark:to-yellow-950/30">
-                            <h4 className="font-semibold text-gray-900 mb-3 dark:text-gray-50">How it works</h4>
+                            <h4 className="font-semibold text-gray-900 mb-3 dark:text-gray-50">{t('storyChallengePage.landing.howItWorks')}</h4>
                             <div className="grid sm:grid-cols-3 gap-4">
                                 <div className="flex items-start gap-3">
                                     <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-amber-900/40">
                                         <BookOpen className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-900 dark:text-gray-50">1. Read</p>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">Read the story with hidden vocabulary words</p>
+                                        <p className="font-medium text-gray-900 dark:text-gray-50">{t('storyChallengePage.landing.step1Title')}</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">{t('storyChallengePage.landing.step1Desc')}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
@@ -406,8 +408,8 @@ export default function StoryChallenge() {
                                         <PenTool className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-900 dark:text-gray-50">2. Write</p>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">Draw each character to unlock the word</p>
+                                        <p className="font-medium text-gray-900 dark:text-gray-50">{t('storyChallengePage.landing.step2Title')}</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">{t('storyChallengePage.landing.step2Desc')}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
@@ -415,8 +417,8 @@ export default function StoryChallenge() {
                                         <Unlock className="w-4 h-4 text-success-600 dark:text-success-400" />
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-900 dark:text-gray-50">3. Unlock</p>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">Reveal the hidden words and complete the story</p>
+                                        <p className="font-medium text-gray-900 dark:text-gray-50">{t('storyChallengePage.landing.step3Title')}</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">{t('storyChallengePage.landing.step3Desc')}</p>
                                     </div>
                                 </div>
                             </div>
@@ -437,7 +439,7 @@ export default function StoryChallenge() {
                         onClick={() => setSelectedStory(null)}
                         className="text-gray-600 hover:text-gray-900 font-medium cursor-pointer dark:text-gray-400"
                     >
-                        ← Back
+                        ← {t('storyChallengePage.view.back')}
                     </button>
                     <div className="flex items-center gap-3">
                         <button
@@ -446,10 +448,10 @@ export default function StoryChallenge() {
                             className="bg-white rounded-xl shadow-sm border px-3 py-1.5 text-sm font-medium cursor-pointer flex items-center gap-1 transition-colors hover:bg-gray-50 disabled:opacity-50 dark:bg-surface-card"
                         >
                             <Volume2 className="w-3.5 h-3.5" />
-                            {isPlaying ? 'Playing...' : 'Listen'}
+                            {isPlaying ? t('storyChallengePage.view.playing') : t('storyChallengePage.view.listen')}
                         </button>
                         <div className="bg-amber-50 rounded-xl border border-amber-200 px-3 py-1.5 text-sm font-bold text-amber-700 dark:bg-amber-950/30 dark:border-amber-800 dark:text-amber-300">
-                            {unlockedWords.size}/{hiddenWords.size} unlocked
+                            {unlockedWords.size}/{hiddenWords.size} {t('storyChallengePage.view.unlockedLabel')}
                         </div>
                     </div>
                 </div>
@@ -489,7 +491,7 @@ export default function StoryChallenge() {
                         {!allUnlocked && (
                             <div className="mt-6 pt-4 border-t border-gray-100 dark:border-surface-border">
                                 <p className="text-sm text-gray-500 mb-2 flex items-center gap-1 dark:text-gray-400">
-                                    <Lock className="w-3.5 h-3.5" /> Click a blank to write and unlock:
+                                    <Lock className="w-3.5 h-3.5" /> {t('storyChallengePage.view.hint')}
                                 </p>
                                 <div className="flex flex-wrap gap-2">
                                     {Array.from(hiddenWords).map(word => {
@@ -512,7 +514,7 @@ export default function StoryChallenge() {
                                                 ) : (
                                                     <span className="flex items-center gap-1">
                                                         <PenTool className="w-3 h-3" />
-                                                        {vocabItem?.english || '???'}
+                                                        {vocabItem?.english || t('storyChallengePage.view.unknownWord')}
                                                     </span>
                                                 )}
                                             </button>
@@ -533,12 +535,12 @@ export default function StoryChallenge() {
                         >
                             <div className="bg-gradient-to-r from-success-50 to-emerald-50 rounded-3xl shadow-xl border border-green-200 p-6 text-center dark:from-success-950/30 dark:to-emerald-950/30 dark:border-green-800">
                                 <Trophy className="w-12 h-12 text-amber-500 mx-auto mb-3" />
-                                <h3 className="text-xl font-bold text-gray-900 mb-2 dark:text-gray-50">Story Unlocked!</h3>
-                                <p className="text-gray-600 mb-1 dark:text-gray-400">You wrote all {hiddenWords.size} hidden words correctly!</p>
+                                <h3 className="text-xl font-bold text-gray-900 mb-2 dark:text-gray-50">{t('storyChallengePage.view.storyUnlocked')}</h3>
+                                <p className="text-gray-600 mb-1 dark:text-gray-400">{t('storyChallengePage.view.allCorrect', { count: hiddenWords.size })}</p>
 
                                 {/* Translation reveal */}
                                 <div className="mt-4 bg-white rounded-2xl p-4 text-left dark:bg-surface-card">
-                                    <p className="text-sm text-gray-500 mb-1 dark:text-gray-400">English translation:</p>
+                                    <p className="text-sm text-gray-500 mb-1 dark:text-gray-400">{t('storyChallengePage.view.englishTranslation')}</p>
                                     <p className="text-gray-700 italic dark:text-gray-300">{selectedStory.content_english}</p>
                                 </div>
 
@@ -546,7 +548,7 @@ export default function StoryChallenge() {
                                     onClick={() => setSelectedStory(null)}
                                     className="mt-4 bg-amber-600 hover:bg-amber-700 text-white rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors flex items-center gap-2 mx-auto"
                                 >
-                                    <BookOpen className="w-5 h-5" /> Try Another Story
+                                    <BookOpen className="w-5 h-5" /> {t('storyChallengePage.view.tryAnother')}
                                 </button>
                             </div>
                         </motion.div>
@@ -574,7 +576,7 @@ export default function StoryChallenge() {
                             <div className="flex items-center justify-between mb-4">
                                 <div>
                                     <h3 className="font-semibold text-gray-900 dark:text-gray-50">
-                                        Write: <span className="text-amber-600 dark:text-amber-400">
+                                        {t('storyChallengePage.modal.write')} <span className="text-amber-600 dark:text-amber-400">
                                             {writingWord} ({writingCharIndex + 1}/{writingWord.length})
                                         </span>
                                     </h3>

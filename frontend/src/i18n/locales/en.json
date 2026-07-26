@@ -575,6 +575,47 @@
     }
   },
 
+  "storyChallengePage": {
+    "toast": {
+      "loadFailed": "Failed to load story",
+      "unlocked": "Unlocked: {{word}}",
+      "dailyDone": "Daily Challenge completed! +30 XP"
+    },
+    "landing": {
+      "title": "Unlock the Story",
+      "subtitle": "Write characters to reveal hidden words in stories",
+      "selectLevel": "Select HSK Level",
+      "noStories": "No stories available for HSK {{level}}.",
+      "generateFirst": "Generate some stories first!",
+      "howItWorks": "How it works",
+      "step1Title": "1. Read",
+      "step1Desc": "Read the story with hidden vocabulary words",
+      "step2Title": "2. Write",
+      "step2Desc": "Draw each character to unlock the word",
+      "step3Title": "3. Unlock",
+      "step3Desc": "Reveal the hidden words and complete the story"
+    },
+    "view": {
+      "back": "Back",
+      "listen": "Listen",
+      "playing": "Playing...",
+      "unlockedLabel": "unlocked",
+      "hint": "Click a blank to write and unlock:",
+      "unknownWord": "???",
+      "storyUnlocked": "Story Unlocked!",
+      "allCorrect": "You wrote all {{count}} hidden words correctly!",
+      "englishTranslation": "English translation:",
+      "tryAnother": "Try Another Story"
+    },
+    "wordTitle": {
+      "unlocked": "Unlocked!",
+      "clickToWrite": "Click to write and unlock"
+    },
+    "modal": {
+      "write": "Write:"
+    }
+  },
+
   "learningPath": {
     "title":        "📚 HSK Course",
     "subtitle":     "Learn step by step from HSK 1 — theory, vocabulary, and practice integrated.",
