@@ -43,7 +43,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 - [x] **AUD-01 · Kartu Kosakata** — `/flashcards` · `Flashcards.tsx` (656)
 - [x] **AUD-02 · Menulis** — `/writing` · `Writing.tsx` (350) + `components/writing/WritingCanvas.tsx`
 - [x] **AUD-03 · Mengetik** — `/typing` · `Typing.tsx` (186)
-- [ ] **AUD-04 · Berbicara** — `/speaking` · `SpeakingPractice.tsx` (716) — STT, cek izin mikrofon & error state
+- [x] **AUD-04 · Berbicara** — `/speaking` · `SpeakingPractice.tsx` (716) — STT, cek izin mikrofon & error state
 - [ ] **AUD-05 · Dikte** — `/dictation` · `Dictation.tsx` (510) — TTS
 - [ ] **AUD-06 · Kuis** — `/quiz` · `Quiz.tsx` (657)
 - [ ] **AUD-07 · Nada** — `/tones` · `ToneTrainer.tsx` (301)
@@ -128,9 +128,24 @@ Diaudit: `pages/Typing.tsx` (186), `pages/typing/TypingModeSelection.tsx` (314),
 - Guard `if (!currentWord)` di 3 komponen memakai pesan "tidak ada kata" yang sama — masih generik bila penyebabnya bukan level kosong.
 - `TypingModeSelection` menerima `onNavigate={navigate}` sebagai prop alih-alih memakai `useNavigate` sendiri — pola tak biasa, tapi tak merugikan user.
 
+### AUD-04 · Berbicara — 2026-07-28 501a183
+Diaudit: `pages/SpeakingPractice.tsx` (716) + `backend/app/routers/stt.py` (untuk verifikasi format audio).
+
+**Bersih:** A (i18n menyeluruh — 48 key `speaking.*`; hanya `<kbd>Space</kbd>` yang tak dilokalkan, sama seperti Flashcards) · C (skeleton via `SessionSkeleton`, `loadFailed`/`sttFailed` ditangani) · F · G · H.
+
+**Diperbaiki (P1):**
+- *Semua kegagalan mikrofon dilaporkan sebagai "izin ditolak"* — `startRecording` memakai `catch {}` tanpa membedakan penyebab. Kini: `NotAllowedError`/`SecurityError` → ditolak · `NotFoundError` → mikrofon tak ada · `NotReadableError` → dipakai aplikasi lain · sisanya → gagal umum. Saran "izinkan mikrofon" tak menolong kalau perangkatnya memang tak ada.
+- *Browser tanpa dukungan WebM/Opus terjebak loop tanpa penjelasan* — backend STT dikonfigurasi khusus `WEBM_OPUS` 48kHz, jadi di Safari/iOS perekaman **tak akan pernah berhasil**; sebelumnya user cuma melihat "izin mikrofon ditolak" dan akan terus memberi izin sia-sia. Kini dicek `MediaRecorder.isTypeSupported` lebih dulu dengan pesan yang benar. **Sengaja tidak** menambah fallback `audio/mp4` — server tak bisa mendekodenya, itu hanya akan menukar kegagalan jelas dengan hasil transkrip salah.
+
+**Dicatat (P2, belum dikerjakan):**
+- `response.feedback` dari backend ditoast apa adanya — teks itu dihasilkan server dan kemungkinan hanya Inggris, jadi lolos dari i18n frontend. Perlu dicek di `stt.py`.
+- Ketidakcocokan codec hanya muncul sebagai toast transien; idealnya banner permanen di layar rekam untuk browser yang tak didukung.
+- `<kbd>Space</kbd>` tak dilokalkan (sama seperti AUD-01).
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
 - 2026-07-27 AUD-01 445ef06 Flashcards: layar error jaringan + Coba Lagi (dulu menyamar jadi "Tidak Ada Kata"), i18n 2 aria-label. Build hijau
 - 2026-07-27 AUD-02 b5faf8d WritingCanvas: 11 blok teks ke i18n (dulu tanpa terjemahan & satu baris campur bahasa), plural kesalahan, aria-label reveal. Kena 2 fitur. Build hijau
 - 2026-07-27 AUD-03 094bff7 Mengetik: i18n 3 komponen mode (829 baris, dulu 0 terjemahan) + error jaringan tak lagi mendarat di layar "tidak ada kata". Build hijau
+- 2026-07-28 AUD-04 501a183 Berbicara: pesan gagal mikrofon dibedakan per penyebab + deteksi browser tanpa WebM/Opus (Safari/iOS tak akan pernah bisa merekam, dulu disamarkan jadi "izin ditolak"). Build hijau
