@@ -56,7 +56,7 @@
 - [x] **SUX-09 · Read Aloud dengan highlight & kontrol** — TTS berjalan tanpa indikasi posisi. Untuk pembelajar, sorot paragraf/kalimat yang sedang dibaca; tambah tombol pause (bukan cuma stop) dan opsi kecepatan.
   - *Selesai bila:* paragraf aktif ter-highlight saat dibaca; ada pause/resume; build hijau. (Frontend-only cukup.)
 
-- [ ] **SUX-10 · Progress baca + reward** — Membaca cerita tidak memberi apa pun (beda dgn StoryChallenge yang beri XP). Tak ada tanda "sudah dibaca".
+- [x] **SUX-10 · Progress baca + reward** — Membaca cerita tidak memberi apa pun (beda dgn StoryChallenge yang beri XP). Tak ada tanda "sudah dibaca".
   - *Selesai bila:* cerita yang selesai dibaca ditandai (badge di kartu Browse) + beri XP. **Perlu endpoint backend baru** (mis. `POST /stories/{id}/complete`) — kerjakan backend + migrasi bila perlu, lalu frontend. Build hijau.
 
 - [ ] **SUX-11 · Terjemahan inline per-paragraf** — Terjemahan muncul sebagai satu blok di paling bawah, jauh dari teks. Untuk pembelajar lebih berguna per-paragraf.
@@ -84,3 +84,4 @@
 - 2026-07-27 SUX-07 b784cc4 Kuis: hapus fallback palsu → error state + retry + loading skeleton, build hijau
 - 2026-07-27 SUX-08 148a9ef Tipe Story global di StoryChallenge; perbaiki 4 field mismatch (badge HSK, terjemahan, subjudul, chip vocab yang selama ini kosong), build hijau. **P1 tuntas**
 - 2026-07-27 SUX-09 2dc537e Read Aloud: highlight paragraf aktif (chunk bawa paraIdx) + tombol pause/resume, build hijau
+- 2026-07-27 SUX-10 2ccfe2f (BE) + c29be54 (FE) XP baca: model StoryRead + migrasi 357688903f9d (SUDAH di-apply ke Supabase), POST /stories/{id}/complete idempotent 15 XP, GET /stories/reads/my-reads, tombol Selesai Baca + badge Browse. **Butuh deploy Koyeb agar endpoint live**
