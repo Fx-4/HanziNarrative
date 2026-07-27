@@ -12,7 +12,8 @@ import {
   Trophy,
   ArrowLeft,
   Shuffle,
-  Zap
+  Zap,
+  AlertTriangle
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { createLogger } from '@/utils/debugLogger'
@@ -36,6 +37,9 @@ export default function Flashcards() {
   const [words, setWords] = useState<HanziWord[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [loading, setLoading] = useState(true)
+  // Dibedakan dari "tidak ada kata": gagal jaringan butuh tombol coba lagi,
+  // bukan saran ganti mode/level yang menyesatkan.
+  const [loadError, setLoadError] = useState(false)
   const [isFlipped, setIsFlipped] = useState(false)
   const [selectedHSK, setSelectedHSK] = useState<number | undefined>()
   const [studyMode, setStudyMode] = useState<'review' | 'learn' | 'all'>('review')
@@ -63,6 +67,7 @@ export default function Flashcards() {
 
   const loadWords = async () => {
     setLoading(true)
+    setLoadError(false)
     try {
       let data: HanziWord[] = []
 
@@ -96,6 +101,7 @@ export default function Flashcards() {
     } catch (error) {
       flashcardsLogger.error('Failed to load words:', error)
       toast.error(t('flashcards.toasts.loadFailed'))
+      setLoadError(true)
       setLoading(false)
     }
   }
@@ -385,6 +391,40 @@ export default function Flashcards() {
     )
   }
 
+  // ─── Load Error State ──────────────────────────────────────────────────────
+  // Dipisah dari "No Words": sebelumnya gagal jaringan mendarat di layar
+  // "Tidak Ada Kata" — penjelasan salah, dan tanpa jalan untuk mencoba lagi.
+  if (loadError) {
+    return (
+      <div className="min-h-screen py-6 sm:py-10 px-4 sm:px-6 flex items-center justify-center">
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden max-w-md w-full dark:bg-surface-card dark:border-gray-800">
+          <div className="h-1.5 bg-gradient-to-r from-error-500 to-error-600" />
+          <div className="p-8 text-center">
+            <AlertTriangle className="w-16 h-16 text-error-400 mx-auto mb-4" />
+            <h2 className="text-xl font-extrabold text-gray-900 mb-2 dark:text-gray-50">{t('flashcards.loadErrorTitle')}</h2>
+            <p className="text-gray-500 mb-6 text-sm sm:text-base dark:text-gray-400">
+              {t('flashcards.loadErrorDesc')}
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={loadWords}
+                className="bg-primary-600 text-white rounded-2xl px-6 py-3 font-semibold hover:bg-primary-700 transition-all"
+              >
+                {t('flashcards.retry')}
+              </button>
+              <button
+                onClick={resetSession}
+                className="border-2 border-gray-200 text-gray-700 rounded-2xl px-6 py-3 font-semibold hover:bg-gray-50 transition-all dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+              >
+                {t('flashcards.backToSettings')}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // ─── No Words State ────────────────────────────────────────────────────────
   if (words.length === 0) {
     return (
@@ -494,7 +534,7 @@ export default function Flashcards() {
             <button
               onClick={resetSession}
               className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-primary-300 transition-all dark:border-gray-700 dark:text-gray-300"
-              aria-label="Back to settings"
+              aria-label={t('flashcards.ariaBack')}
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
@@ -510,7 +550,7 @@ export default function Flashcards() {
           <button
             onClick={shuffleWords}
             className="p-2 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-primary-300 transition-all dark:border-gray-700 dark:text-gray-300"
-            aria-label="Shuffle cards"
+            aria-label={t('flashcards.ariaShuffle')}
           >
             <Shuffle className="w-4 h-4" />
           </button>
