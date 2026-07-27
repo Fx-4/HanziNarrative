@@ -1032,6 +1032,7 @@
     "toasts": {
       "noStories":       "Tidak ada cerita untuk HSK {{level}}. Buat cerita dulu!",
       "loadFailed":      "Gagal memuat kalimat",
+      "audioFailed":     "Gagal memutar audio. Coba tekan putar lagi.",
       "perfect":         "Sempurna! 完美！",
       "great":           "Bagus! {{pct}}% akurat!",
       "keepPracticing":  "{{pct}}% — terus berlatih!",

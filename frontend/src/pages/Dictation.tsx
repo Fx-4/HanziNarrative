@@ -80,10 +80,17 @@ export default function Dictation() {
             const audio = await fetchTTSAudio({ text: currentSentence.text, speakingRate: 0.75 })
             audioRef.current = audio
             audio.onended = () => setIsPlaying(false)
-            audio.onerror = () => setIsPlaying(false)
+            // Audio adalah soalnya di latihan dikte — kalau gagal, user menekan putar
+            // dan tak terjadi apa-apa lalu diminta menulis apa yang "didengar".
+            // Sebelumnya kegagalan ditelan diam-diam tanpa pesan apa pun.
+            audio.onerror = () => {
+                setIsPlaying(false)
+                toast.error(t('dictation.toasts.audioFailed'))
+            }
             await audio.play()
         } catch {
             setIsPlaying(false)
+            toast.error(t('dictation.toasts.audioFailed'))
         }
     }
 

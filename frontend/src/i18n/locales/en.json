@@ -1032,6 +1032,7 @@
     "toasts": {
       "noStories":       "No stories available for HSK {{level}}. Generate some stories first!",
       "loadFailed":      "Failed to load sentences",
+      "audioFailed":     "Couldn't play the audio. Try pressing play again.",
       "perfect":         "Perfect! 完美！",
       "great":           "Great! {{pct}}% accurate!",
       "keepPracticing":  "{{pct}}% — keep practicing!",
