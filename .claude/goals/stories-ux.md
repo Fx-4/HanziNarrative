@@ -65,10 +65,10 @@
 - [x] **SUX-12 · Browse list lebih berguna** — Search hanya cocokkan judul (bukan konten); kartu tak menunjukkan status sudah-dibaca/tersimpan; tak ada sort.
   - *Selesai bila:* search mencakup konten; kartu tampilkan badge tersimpan/sudah-dibaca; ada sort (terbaru/level). Build hijau.
 
-- [ ] **SUX-13 · Story Challenge dapat ditemukan** — Halaman Stories punya tab Browse+Generate tapi tak menautkan mode Story Challenge (isi-rumpang) — dua pengalaman cerita terpisah.
+- [x] **SUX-13 · Story Challenge dapat ditemukan** — Halaman Stories punya tab Browse+Generate tapi tak menautkan mode Story Challenge (isi-rumpang) — dua pengalaman cerita terpisah.
   - *Selesai bila:* ada entri jelas dari Stories menuju Story Challenge (tab/tombol/kartu), i18n. Build hijau.
 
-- [ ] **SUX-14 · Excerpt kartu rapi** — Kartu Browse pakai `content.substring(0,100)` → memotong di tengah kalimat/karakter.
+- [x] **SUX-14 · Excerpt kartu rapi** — Kartu Browse pakai `content.substring(0,100)` → memotong di tengah kalimat/karakter.
   - *Selesai bila:* excerpt dipotong di batas kalimat (。！？) atau pakai pendekatan bersih; opsional preview pinyin. Build hijau.
 
 ---
@@ -87,3 +87,9 @@
 - 2026-07-27 SUX-10 2ccfe2f (BE) + c29be54 (FE) XP baca: model StoryRead + migrasi 357688903f9d (SUDAH di-apply ke Supabase), POST /stories/{id}/complete idempotent 15 XP, GET /stories/reads/my-reads, tombol Selesai Baca + badge Browse. **Butuh deploy Koyeb agar endpoint live**
 - 2026-07-27 SUX-11 dd693bb Terjemahan inline per-paragraf saat jumlah paragraf selaras; blok bawah jadi fallback, build hijau
 - 2026-07-27 SUX-12 7693686 Browse: search cakup isi cerita, badge Tersimpan (getMyBookmarks), sort Terbaru/Level HSK, build hijau
+- 2026-07-27 SUX-13 7aa94ed Kartu ajakan ke /story-challenge di akhir tab Jelajahi, build hijau
+- 2026-07-27 SUX-14 e99484c Excerpt kartu dipotong di batas kalimat (helper excerpt), build hijau. **SEMUA 14 TASK SELESAI**
+
+## Sisa / catatan lanjutan
+- **Deploy Koyeb** masih diperlukan agar endpoint SUX-10 (`POST /stories/{id}/complete`, `GET /stories/reads/my-reads`) hidup di produksi. Migrasi DB-nya sudah ter-apply ke Supabase.
+- Autogenerate Alembic sempat mengusulkan `uq_user_progress_user_word` + beberapa index pada `ai_usage`/`user_progress`; sengaja TIDAK diikutkan (bisa gagal bila ada baris duplikat). Kalau memang diinginkan, jadikan task tersendiri dengan cek duplikat lebih dulu.
