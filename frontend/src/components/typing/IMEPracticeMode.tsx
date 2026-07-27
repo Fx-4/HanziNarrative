@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import type { HanziWord, TypingAttempt } from '@/types'
 import { typingApi } from '@/services/api'
 import { toast } from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { Target, CheckCircle, XCircle, ArrowRight } from 'lucide-react'
 import { createLogger } from '@/utils/debugLogger'
 
@@ -42,6 +43,7 @@ function generateCandidates(word: HanziWord, allWords: HanziWord[]): string[] {
 }
 
 export default function IMEPracticeMode({ words, onBack }: Props) {
+  const { t } = useTranslation()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [inputValue, setInputValue] = useState('')
   const [candidates, setCandidates] = useState<string[]>([])
@@ -116,7 +118,7 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
         icon: newAttempts === 1 ? '🎯' : '✅'
       })
     } else {
-      toast.error('Try again!', { icon: '❌' })
+      toast.error(t('typingModes.toastTryAgain'), { icon: '❌' })
     }
   }
 
@@ -141,12 +143,12 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
   if (!currentWord) {
     return (
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center dark:bg-surface-card dark:border-gray-800">
-        <p className="text-gray-600 dark:text-gray-400">No words available for this HSK level.</p>
+        <p className="text-gray-600 dark:text-gray-400">{t('typingModes.noWords')}</p>
         <button
           onClick={onBack}
           className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors mt-4"
         >
-          Go Back
+          {t('typingModes.goBack')}
         </button>
       </div>
     )
@@ -157,7 +159,7 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Target className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-          <span className="text-lg font-semibold">IME Practice</span>
+          <span className="text-lg font-semibold">{t('typingModes.titleIme')}</span>
         </div>
         <div className="text-lg font-semibold">
           {currentIndex + 1} / {words.length}
@@ -167,7 +169,7 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 dark:bg-surface-card dark:border-gray-800">
         <div className="text-center mb-8">
           <p className="text-sm text-gray-600 mb-4 dark:text-gray-400">
-            Type pinyin and select the correct character:
+            {t('typingModes.imeInstruction')}
           </p>
           <motion.div
             key={currentWord.id}
@@ -188,7 +190,7 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
             type="text"
             value={inputValue}
             onChange={handleInputChange}
-            placeholder="Type pinyin..."
+            placeholder={t('typingModes.placeholderShort')}
             className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-primary-500 focus:outline-none transition-colors dark:border-gray-600 dark:bg-surface-card dark:text-gray-50"
             disabled={showFeedback}
             autoComplete="off"
@@ -240,7 +242,7 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
                   ) : (
                     <>
                       <XCircle className="w-8 h-8 text-error-600 dark:text-error-400" />
-                      <span className="text-2xl font-semibold text-error-900">Incorrect</span>
+                      <span className="text-2xl font-semibold text-error-900">{t('typingModes.incorrect')}</span>
                     </>
                   )}
                 </div>
@@ -271,7 +273,7 @@ export default function IMEPracticeMode({ words, onBack }: Props) {
       {/* Progress bar */}
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium">Session Progress</span>
+          <span className="text-sm font-medium">{t('typingModes.sessionProgress')}</span>
           <span className="text-sm text-gray-600 dark:text-gray-400">
             {sessionResults.length > 0
               ? `${Math.round((sessionResults.filter(r => r).length / sessionResults.length) * 100)}% accuracy`

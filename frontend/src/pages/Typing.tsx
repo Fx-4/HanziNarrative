@@ -78,8 +78,12 @@ export default function Typing() {
         toast.error(t('typing.toasts.loginRequired'))
         setMode(null)
       } else {
+        // Kembalikan ke pemilihan mode seperti jalur 401. Tanpa ini user mendarat
+        // di layar latihan kosong yang berbunyi "tidak ada kata untuk level ini" —
+        // penjelasan keliru untuk kegagalan jaringan.
         typingLogger.error('Failed to load words:', error)
         toast.error(t('typing.toasts.loadFailed'))
+        setMode(null)
       }
     } finally {
       setLoading(false)

@@ -857,6 +857,36 @@
     }
   },
 
+  "typingModes": {
+    "noWords":            "No words available for this HSK level.",
+    "goBack":             "Go Back",
+    "sessionProgress":    "Session Progress",
+    "noAttempts":         "No attempts yet",
+    "accuracySuffix":     "{{percent}}% accuracy",
+    "incorrect":          "Incorrect",
+    "youTyped":           "You typed:",
+    "correctPinyin":      "Correct pinyin:",
+    "toastCorrect":       "Correct!",
+    "toastIncorrect":     "Incorrect",
+    "toastTryAgain":      "Try again!",
+    "titlePinyin":        "Pinyin Typing",
+    "titleIme":           "IME Practice",
+    "titleSpeed":         "Speed Typing",
+    "checkAnswer":        "Check Answer",
+    "pressEnterSubmit":   "Press Enter to submit",
+    "pressEnterContinue": "Press Enter to continue",
+    "placeholderPinyin":  "Type pinyin (e.g., ni hao)",
+    "placeholderShort":   "Type pinyin...",
+    "placeholderSpeed":   "Type as fast as you can...",
+    "imeInstruction":     "Type pinyin and select the correct character:",
+    "sessionComplete":    "Session Complete!",
+    "greatJob":           "Great job on your typing practice!",
+    "avgWpm":             "Average WPM",
+    "bestWpm":            "Best WPM",
+    "accuracy":           "Accuracy",
+    "backToModes":        "Back to Modes"
+  },
+
   "writingCanvas": {
     "tapForHint":          "Tap ？ for a hint",
     "strokes":             "Strokes",

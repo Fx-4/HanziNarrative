@@ -857,6 +857,36 @@
     }
   },
 
+  "typingModes": {
+    "noWords":            "Tidak ada kata untuk level HSK ini.",
+    "goBack":             "Kembali",
+    "sessionProgress":    "Progres Sesi",
+    "noAttempts":         "Belum ada percobaan",
+    "accuracySuffix":     "{{percent}}% akurasi",
+    "incorrect":          "Salah",
+    "youTyped":           "Kamu mengetik:",
+    "correctPinyin":      "Pinyin benar:",
+    "toastCorrect":       "Benar!",
+    "toastIncorrect":     "Salah",
+    "toastTryAgain":      "Coba lagi!",
+    "titlePinyin":        "Ketik Pinyin",
+    "titleIme":           "Latihan IME",
+    "titleSpeed":         "Ketik Cepat",
+    "checkAnswer":        "Periksa Jawaban",
+    "pressEnterSubmit":   "Tekan Enter untuk mengirim",
+    "pressEnterContinue": "Tekan Enter untuk lanjut",
+    "placeholderPinyin":  "Ketik pinyin (mis. ni hao)",
+    "placeholderShort":   "Ketik pinyin...",
+    "placeholderSpeed":   "Ketik secepat mungkin...",
+    "imeInstruction":     "Ketik pinyin lalu pilih karakter yang benar:",
+    "sessionComplete":    "Sesi Selesai!",
+    "greatJob":           "Kerja bagus untuk latihan mengetikmu!",
+    "avgWpm":             "Rata-rata WPM",
+    "bestWpm":            "WPM Terbaik",
+    "accuracy":           "Akurasi",
+    "backToModes":        "Kembali ke Mode"
+  },
+
   "writingCanvas": {
     "tapForHint":          "Ketuk ？ untuk petunjuk",
     "strokes":             "Goresan",

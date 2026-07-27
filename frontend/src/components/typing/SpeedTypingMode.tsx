@@ -4,6 +4,7 @@ import type { HanziWord, TypingAttempt } from '@/types'
 import { typingApi } from '@/services/api'
 import { calculateWPM, comparePinyin, convertNumberedPinyin, normalizePinyin } from '@/utils/pinyinInput'
 import { toast } from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { Clock, Zap, Trophy, TrendingUp } from 'lucide-react'
 import { createLogger } from '@/utils/debugLogger'
 
@@ -22,6 +23,7 @@ interface WordResult {
 }
 
 export default function SpeedTypingMode({ words, onBack }: Props) {
+  const { t } = useTranslation()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [inputValue, setInputValue] = useState('')
   const [startTime, setStartTime] = useState<number>(Date.now())
@@ -138,12 +140,12 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
   if (!currentWord) {
     return (
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center dark:bg-surface-card dark:border-gray-800">
-        <p className="text-gray-600 dark:text-gray-400">No words available for this HSK level.</p>
+        <p className="text-gray-600 dark:text-gray-400">{t('typingModes.noWords')}</p>
         <button
           onClick={onBack}
           className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors mt-4"
         >
-          Go Back
+          {t('typingModes.goBack')}
         </button>
       </div>
     )
@@ -161,14 +163,14 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
               className="mb-6"
             >
               <Trophy className="w-20 h-20 mx-auto text-yellow-500 mb-4" />
-              <h2 className="text-4xl font-bold mb-2">Session Complete!</h2>
-              <p className="text-gray-600 dark:text-gray-400">Great job on your typing practice!</p>
+              <h2 className="text-4xl font-bold mb-2">{t('typingModes.sessionComplete')}</h2>
+              <p className="text-gray-600 dark:text-gray-400">{t('typingModes.greatJob')}</p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto mb-6">
               <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6 dark:from-purple-950/30">
                 <Zap className="w-8 h-8 mx-auto mb-2 text-purple-600 dark:text-purple-400" />
-                <p className="text-sm text-purple-700 font-medium mb-1 dark:text-purple-300">Average WPM</p>
+                <p className="text-sm text-purple-700 font-medium mb-1 dark:text-purple-300">{t('typingModes.avgWpm')}</p>
                 <p className="text-3xl font-bold text-purple-900">
                   {Math.round(stats.avgWpm)}
                 </p>
@@ -176,7 +178,7 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
 
               <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-6 dark:from-orange-950/30">
                 <Trophy className="w-8 h-8 mx-auto mb-2 text-orange-600 dark:text-orange-400" />
-                <p className="text-sm text-orange-700 font-medium mb-1 dark:text-orange-300">Best WPM</p>
+                <p className="text-sm text-orange-700 font-medium mb-1 dark:text-orange-300">{t('typingModes.bestWpm')}</p>
                 <p className="text-3xl font-bold text-orange-900">
                   {Math.round(stats.bestWpm)}
                 </p>
@@ -184,7 +186,7 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
 
               <div className="bg-gradient-to-br from-success-50 to-success-100 rounded-lg p-6 dark:from-success-950/30">
                 <TrendingUp className="w-8 h-8 mx-auto mb-2 text-success-600 dark:text-success-400" />
-                <p className="text-sm text-success-700 font-medium mb-1 dark:text-success-300">Accuracy</p>
+                <p className="text-sm text-success-700 font-medium mb-1 dark:text-success-300">{t('typingModes.accuracy')}</p>
                 <p className="text-3xl font-bold text-success-900">
                   {Math.round(stats.accuracy)}%
                 </p>
@@ -196,7 +198,7 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
                 onClick={onBack}
                 className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-3 font-semibold cursor-pointer transition-colors text-lg"
               >
-                Back to Modes
+                {t('typingModes.backToModes')}
               </button>
             </div>
           </div>
@@ -210,7 +212,7 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Zap className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-          <span className="text-lg font-semibold">Speed Typing</span>
+          <span className="text-lg font-semibold">{t('typingModes.titleSpeed')}</span>
         </div>
         <div className="flex gap-4">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-4 py-2 dark:bg-surface-card dark:border-gray-800">
@@ -250,7 +252,7 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
             type="text"
             value={inputValue}
             onChange={handleInputChange}
-            placeholder="Type as fast as you can..."
+            placeholder={t('typingModes.placeholderSpeed')}
             className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-primary-500 focus:outline-none transition-colors dark:border-gray-600 dark:bg-surface-card dark:text-gray-50"
             autoComplete="off"
           />
@@ -272,7 +274,7 @@ export default function SpeedTypingMode({ words, onBack }: Props) {
       {/* Progress bar */}
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium">Session Progress</span>
+          <span className="text-sm font-medium">{t('typingModes.sessionProgress')}</span>
           <span className="text-sm text-gray-600 dark:text-gray-400">
             {sessionResults.length > 0
               ? `Avg: ${Math.round(sessionResults.reduce((acc, r) => acc + r.wpm, 0) / sessionResults.length)} WPM`

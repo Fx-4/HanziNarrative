@@ -4,6 +4,7 @@ import type { HanziWord, TypingAttempt } from '@/types'
 import { typingApi } from '@/services/api'
 import { comparePinyin, convertNumberedPinyin } from '@/utils/pinyinInput'
 import { toast } from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { CheckCircle, XCircle, ArrowRight, Sparkles } from 'lucide-react'
 import { createLogger } from '@/utils/debugLogger'
 
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export default function PinyinTypingMode({ words, onBack }: Props) {
+  const { t } = useTranslation()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [inputValue, setInputValue] = useState('')
   const [showFeedback, setShowFeedback] = useState(false)
@@ -62,9 +64,9 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
     }
 
     if (correct) {
-      toast.success('Correct!', { icon: '✅' })
+      toast.success(t('typingModes.toastCorrect'), { icon: '✅' })
     } else {
-      toast.error('Incorrect', { icon: '❌' })
+      toast.error(t('typingModes.toastIncorrect'), { icon: '❌' })
     }
   }
 
@@ -104,12 +106,12 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
   if (!currentWord) {
     return (
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center dark:bg-surface-card dark:border-gray-800">
-        <p className="text-gray-600 dark:text-gray-400">No words available for this HSK level.</p>
+        <p className="text-gray-600 dark:text-gray-400">{t('typingModes.noWords')}</p>
         <button
           onClick={onBack}
           className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-2 font-semibold cursor-pointer transition-colors mt-4"
         >
-          Go Back
+          {t('typingModes.goBack')}
         </button>
       </div>
     )
@@ -120,7 +122,7 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-          <span className="text-lg font-semibold">Pinyin Typing</span>
+          <span className="text-lg font-semibold">{t('typingModes.titlePinyin')}</span>
         </div>
         <div className="text-lg font-semibold">
           {currentIndex + 1} / {words.length}
@@ -152,7 +154,7 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
                 value={inputValue}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
-                placeholder="Type pinyin (e.g., ni hao)"
+                placeholder={t('typingModes.placeholderPinyin')}
                 className="w-full px-6 py-4 text-2xl border-2 border-gray-300 rounded-lg text-center bg-white text-gray-900 focus:border-primary-500 focus:outline-none transition-colors dark:border-gray-600 dark:bg-surface-card dark:text-gray-50"
                 disabled={showFeedback}
                 autoComplete="off"
@@ -162,10 +164,10 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
               onClick={handleSubmit}
               className="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-4 py-3 font-semibold cursor-pointer transition-colors w-full text-lg"
             >
-              Check Answer
+              {t('typingModes.checkAnswer')}
             </button>
             <p className="text-xs text-gray-600 mt-2 text-center dark:text-gray-400">
-              Press Enter to submit
+              {t('typingModes.pressEnterSubmit')}
             </p>
           </div>
         ) : (
@@ -188,20 +190,20 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
                 ) : (
                   <>
                     <XCircle className="w-8 h-8 text-error-600 dark:text-error-400" />
-                    <span className="text-2xl font-semibold text-error-900">Incorrect</span>
+                    <span className="text-2xl font-semibold text-error-900">{t('typingModes.incorrect')}</span>
                   </>
                 )}
               </div>
               <div className="text-center space-y-2">
                 <p className="text-lg">
-                  <span className="font-semibold">You typed:</span>{' '}
+                  <span className="font-semibold">{t('typingModes.youTyped')}</span>{' '}
                   <span className={isCorrect ? 'text-success-700 dark:text-success-300' : 'text-error-700 dark:text-error-300'}>
                     {inputValue}
                   </span>
                 </p>
                 {!isCorrect && (
                   <p className="text-lg">
-                    <span className="font-semibold">Correct pinyin:</span>{' '}
+                    <span className="font-semibold">{t('typingModes.correctPinyin')}</span>{' '}
                     <span className="text-success-700 dark:text-success-300">{currentWord.pinyin}</span>
                   </p>
                 )}
@@ -220,7 +222,7 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
               )}
             </button>
             <p className="text-xs text-gray-600 mt-2 text-center dark:text-gray-400">
-              Press Enter to continue
+              {t('typingModes.pressEnterContinue')}
             </p>
           </motion.div>
         )}
@@ -229,11 +231,11 @@ export default function PinyinTypingMode({ words, onBack }: Props) {
       {/* Progress bar */}
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium">Session Progress</span>
+          <span className="text-sm font-medium">{t('typingModes.sessionProgress')}</span>
           <span className="text-sm text-gray-600 dark:text-gray-400">
             {sessionResults.length > 0
-              ? `${Math.round((sessionResults.filter(r => r).length / sessionResults.length) * 100)}% accuracy`
-              : 'No attempts yet'}
+              ? t('typingModes.accuracySuffix', { percent: Math.round((sessionResults.filter(r => r).length / sessionResults.length) * 100) })
+              : t('typingModes.noAttempts')}
           </span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
