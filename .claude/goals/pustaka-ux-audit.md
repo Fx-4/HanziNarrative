@@ -46,7 +46,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 - [x] **AUD-04 · Berbicara** — `/speaking` · `SpeakingPractice.tsx` (716) — STT, cek izin mikrofon & error state
 - [x] **AUD-05 · Dikte** — `/dictation` · `Dictation.tsx` (510) — TTS
 - [x] **AUD-06 · Kuis** — `/quiz` · `Quiz.tsx` (657) — **bersih, tanpa P0/P1**
-- [ ] **AUD-07 · Nada** — `/tones` · `ToneTrainer.tsx` (301)
+- [x] **AUD-07 · Nada** — `/tones` · `ToneTrainer.tsx` (301)
 - [ ] **AUD-08 · Tes Simulasi** — `/mock-test` · `MockTest.tsx` (1060) — file terbesar, kandidat split per `feedback_split_large_files`
 - [ ] **AUD-09 · Kosakata** — `/vocabulary` · `Vocabulary.tsx` (521)
 - [ ] **AUD-10 · Isi Cerita** — `/explorer` · `SentenceScramble.tsx` (327)
@@ -170,6 +170,18 @@ Diaudit: `pages/Quiz.tsx` (657) + `backend/app/routers/quiz.py` (verifikasi bent
 - `sort(() => Math.random() - 0.5)` untuk mengacak `rightItems` — shuffle bias (sama seperti Flashcards).
 - Sisi harapan pada perbandingan fill-blank tak di-`trim()` walau sisi user di-`trim()`; aman untuk sekarang, tapi asimetris.
 
+### AUD-07 · Nada — 2026-07-28 9a0168f
+Diaudit: `pages/ToneTrainer.tsx` (301).
+
+**Bersih:** A (tak ada literal user-facing) · B · C (`SessionSkeleton`; `notEnough`/`noWords`/`loadFailed` sudah dibedakan bertingkat — termasuk yang terbaik sejauh ini) · E (pintasan keyboard 1–4 dengan guard `INPUT`/`TEXTAREA`) · F · G · H.
+
+**Diperbaiki (P1):**
+- *Kegagalan audio ditelan diam-diam* — pola identik AUD-05. Di sini konsekuensinya sama beratnya: soal hanya menampilkan **karakter + arti Inggris**, sedangkan pinyin baru dibuka setelah menjawab (baris 293), jadi nada memang harus didengar. Saat TTS gagal tanpa pesan, user hanya bisa menebak buta di antara 4 nada dan tak tahu ada yang rusak. Kedua jalur (`catch` dan `onerror`) kini memunculkan toast.
+
+**Dicatat (P2, belum dikerjakan):**
+- Auto-lanjut ke soal berikutnya lewat `setTimeout(…, 1200)` — tak bisa dijeda; user yang ingin memandangi jawaban benar lebih lama tak punya kendali.
+- Tak ada opsi kecepatan audio (tetap 0.75) padahal membedakan nada 2 vs 3 justru terbantu oleh pemutaran lebih lambat.
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
@@ -179,3 +191,4 @@ Diaudit: `pages/Quiz.tsx` (657) + `backend/app/routers/quiz.py` (verifikasi bent
 - 2026-07-28 AUD-04 501a183 Berbicara: pesan gagal mikrofon dibedakan per penyebab + deteksi browser tanpa WebM/Opus (Safari/iOS tak akan pernah bisa merekam, dulu disamarkan jadi "izin ditolak"). Build hijau
 - 2026-07-28 AUD-05 7086308 Dikte: kegagalan TTS kini diberitahukan (dulu catch kosong — user menekan putar, hening, tetap disuruh menulis). Build hijau
 - 2026-07-28 AUD-06 (tanpa perubahan kode) Kuis: lolos 8 dimensi tanpa P0/P1; 2 dugaan bug diverifikasi dan ternyata salah; 3 catatan P2
+- 2026-07-28 AUD-07 9a0168f Nada: kegagalan TTS kini diberitahukan (pinyin baru dibuka setelah menjawab, jadi audio gagal = menebak buta 4 nada). Build hijau
