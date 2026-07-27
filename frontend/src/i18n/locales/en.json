@@ -417,6 +417,8 @@
       "hideTranslation": "Hide Translation",
       "readAloud": "Read Aloud",
       "stop": "Stop",
+      "pause": "Pause",
+      "resume": "Resume",
       "vocabulary": "Vocabulary",
       "takeQuiz": "Take Quiz",
       "hideQuiz": "Hide Quiz",

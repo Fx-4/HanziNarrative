@@ -34,7 +34,9 @@ import {
   Type,
   Trash2,
   Heart,
-  AlertTriangle
+  AlertTriangle,
+  Pause,
+  Play
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
@@ -65,6 +67,8 @@ export default function StoryReader() {
   const [showTranslation, setShowTranslation] = useState(false)
   const [showPinyin, setShowPinyin] = useState(() => getShowPinyinPref())
   const [isReading, setIsReading] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
+  const [activeParaIdx, setActiveParaIdx] = useState<number | null>(null)
   const [showVocabulary, setShowVocabulary] = useState(false)
   const [showQuiz, setShowQuiz] = useState(false)
   const [quizAnswers, setQuizAnswers] = useState<number[]>([])
@@ -177,13 +181,30 @@ export default function StoryReader() {
     storyAudioRef.current?.pause()
     storyAudioRef.current = null
     setIsReading(false)
+    setIsPaused(false)
+    setActiveParaIdx(null)
+  }, [])
+
+  // Pause / resume the chunk currently playing — the playback loop stays parked
+  // on its await until the audio element finishes, so no extra bookkeeping needed.
+  const togglePause = useCallback(() => {
+    const audio = storyAudioRef.current
+    if (!audio) return
+    if (audio.paused) {
+      audio.play().catch(() => { /* ignore */ })
+      setIsPaused(false)
+    } else {
+      audio.pause()
+      setIsPaused(true)
+    }
   }, [])
 
   // Play a single chunk via Edge TTS and wait until done
-  const playChunk = async (text: string): Promise<void> => {
+  const playChunk = async (text: string, paraIdx: number): Promise<void> => {
     try {
       const audio = await fetchTTSAudio({ text, speakingRate: 0.85 })
       storyAudioRef.current = audio
+      setActiveParaIdx(paraIdx)
       await new Promise<void>((resolve) => {
         audio.onended = () => resolve()
         audio.onerror = () => resolve()
@@ -194,29 +215,31 @@ export default function StoryReader() {
     }
   }
 
-  // Split story content into chunks ≤ 900 chars at sentence boundaries
-  const chunkContent = (content: string): string[] => {
+  // Split story content into chunks ≤ 900 chars at sentence boundaries.
+  // Each chunk carries the index of the paragraph it came from so playback can
+  // highlight the paragraph being read (paragraph indexing matches paragraphSlices).
+  const chunkContent = (content: string): { text: string; paraIdx: number }[] => {
     const paragraphs = content.split('\n').filter(p => p.trim())
-    const chunks: string[] = []
-    for (const para of paragraphs) {
+    const chunks: { text: string; paraIdx: number }[] = []
+    paragraphs.forEach((para, paraIdx) => {
       if (para.length <= 900) {
-        chunks.push(para)
+        chunks.push({ text: para, paraIdx })
       } else {
         // split at sentence-ending punctuation
         const parts = para.split(/(?<=[。！？])/).filter(Boolean)
         let current = ''
         for (const part of parts) {
           if (current.length + part.length > 900) {
-            if (current) chunks.push(current)
+            if (current) chunks.push({ text: current, paraIdx })
             current = part
           } else {
             current += part
           }
         }
-        if (current) chunks.push(current)
+        if (current) chunks.push({ text: current, paraIdx })
       }
-    }
-    return chunks.filter(c => c.trim())
+    })
+    return chunks.filter(c => c.text.trim())
   }
 
   const handleReadAloud = async () => {
@@ -231,16 +254,19 @@ export default function StoryReader() {
     if (!chunks.length) return
 
     setIsReading(true)
+    setIsPaused(false)
     isReadingRef.current = true
     toast.success(t('storyReader.toast.reading'))
 
     for (const chunk of chunks) {
       if (!isReadingRef.current) break
-      await playChunk(chunk)
+      await playChunk(chunk.text, chunk.paraIdx)
     }
 
     isReadingRef.current = false
     setIsReading(false)
+    setIsPaused(false)
+    setActiveParaIdx(null)
   }
 
   const handleDeleteStory = async () => {
@@ -390,7 +416,11 @@ export default function StoryReader() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: pIdx * 0.1 }}
-            className="relative"
+            className={`relative rounded-2xl transition-colors duration-300 ${
+              activeParaIdx === pIdx
+                ? 'bg-primary-50 ring-2 ring-primary-300 -mx-3 px-3 py-2 dark:bg-primary-950/30 dark:ring-primary-700'
+                : ''
+            }`}
           >
             <PinyinText
               content={paragraph}
@@ -836,6 +866,18 @@ export default function StoryReader() {
                 : <Volume2 className="w-4 h-4 shrink-0" />}
               <span>{isReading ? t('storyReader.controls.stop') : t('storyReader.controls.readAloud')}</span>
             </button>
+
+            {isReading && (
+              <button
+                onClick={togglePause}
+                className="flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm bg-white dark:bg-surface-card hover:bg-primary-50 dark:hover:bg-primary-950/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 border border-gray-200 dark:border-gray-700 dark:hover:text-primary-300"
+              >
+                {isPaused
+                  ? <Play className="w-4 h-4 shrink-0" />
+                  : <Pause className="w-4 h-4 shrink-0" />}
+                <span>{isPaused ? t('storyReader.controls.resume') : t('storyReader.controls.pause')}</span>
+              </button>
+            )}
 
             <button
               onClick={() => {
