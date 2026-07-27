@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { storiesApi, dailyChallengeApi } from '@/services/api'
 import { Skeleton } from '@/components/ui/Skeleton'
 import WritingCanvas from '@/components/writing/WritingCanvas'
-import { HanziWord, AttemptResult } from '@/types'
+import { HanziWord, AttemptResult, Story } from '@/types'
 import {
     Lock,
     Unlock,
@@ -21,23 +21,22 @@ import { useTranslation } from 'react-i18next'
 import BlurText from '@/components/animations/BlurText'
 import { fetchTTSAudio } from '@/utils/ttsHelper'
 
-interface Story {
-    id: number
-    title: string
-    title_pinyin?: string
-    content: string
-    content_pinyin?: string
-    content_english?: string
-    difficulty_level?: number
-    key_vocabulary?: { simplified: string; pinyin: string; english: string }[]
+// Vocabulary attached to a story — either fetched from the API or derived from
+// the content as a fallback. Kept in its own state instead of being stapled onto
+// the Story object, so the global Story type stays the single source of truth.
+interface StoryVocab {
+    simplified: string
+    pinyin: string
+    english: string
 }
 
 export default function StoryChallenge() {
     const { t } = useTranslation()
     const [searchParams] = useSearchParams()
     const [hskLevel, setHskLevel] = useState(1)
-    const [stories, setStories] = useState<{ id: number; title: string; title_pinyin?: string; is_published: boolean; difficulty_level?: number; key_vocabulary?: { simplified: string }[] }[]>([])
+    const [stories, setStories] = useState<Story[]>([])
     const [selectedStory, setSelectedStory] = useState<Story | null>(null)
+    const [storyVocab, setStoryVocab] = useState<StoryVocab[]>([])
     const [loading, setLoading] = useState(false)
     const [openingStory, setOpeningStory] = useState(false)
     const [hiddenWords, setHiddenWords] = useState<Set<string>>(new Set())
@@ -64,7 +63,7 @@ export default function StoryChallenge() {
         setLoading(true)
         try {
             const data = await storiesApi.getAll(hskLevel)
-            setStories(data.filter((s: { is_published: boolean }) => s.is_published))
+            setStories(data.filter(s => s.is_published))
         } catch {
             console.warn('[StoryChallenge] Could not load stories (server might be waking up)');
             // Suppress toast for background initial load failure
@@ -79,10 +78,10 @@ export default function StoryChallenge() {
             const data = await storiesApi.getById(storyId)
 
             // Fetch story words via API, or extract from content
-            let vocab: { simplified: string; pinyin: string; english: string }[] = []
+            let vocab: StoryVocab[] = []
             try {
                 const words = await storiesApi.getStoryWords(storyId)
-                vocab = words.map((w: { simplified: string; pinyin: string; english: string }) => ({ simplified: w.simplified, pinyin: w.pinyin, english: w.english }))
+                vocab = words.map(w => ({ simplified: w.simplified, pinyin: w.pinyin, english: w.english }))
             } catch {
                 // No associated words — extract 2-char substrings from content as fallback
             }
@@ -106,8 +105,7 @@ export default function StoryChallenge() {
                 .slice(0, Math.min(5, Math.max(3, vocab.length)))
                 .map(v => v.simplified)
 
-                // Store vocab on the data object for later use
-                ; (data as Story & { _vocab?: typeof vocab })._vocab = vocab
+            setStoryVocab(vocab)
             setSelectedStory(data)
             setHiddenWords(new Set(wordsToHide))
             setUnlockedWords(new Set())
@@ -123,7 +121,7 @@ export default function StoryChallenge() {
         if (unlockedWords.has(word)) return
 
         // Find vocab data for this word
-        const vocabItem = (selectedStory as Story & { _vocab?: { simplified: string; pinyin: string; english: string }[] })?._vocab?.find((v) => v.simplified === word)
+        const vocabItem = storyVocab.find(v => v.simplified === word)
 
         setWritingWord(word)
         setWritingCharIndex(0)
@@ -147,7 +145,7 @@ export default function StoryChallenge() {
             if (nextIndex < writingWord.length) {
                 setWritingCharIndex(nextIndex)
                 const char = writingWord[nextIndex]
-                const vocabItem = (selectedStory as Story & { _vocab?: { simplified: string; pinyin: string; english: string }[] })?._vocab?.find((v) => v.simplified === writingWord)
+                const vocabItem = storyVocab.find(v => v.simplified === writingWord)
                 setWritingChar({
                     id: 0,
                     simplified: char,
@@ -365,13 +363,10 @@ export default function StoryChallenge() {
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <p className="font-chinese text-lg text-gray-900 truncate dark:text-gray-50">{story.title}</p>
-                                                    <p className="text-sm text-gray-500 truncate dark:text-gray-400">{story.title_pinyin}</p>
+                                                    <p className="text-sm text-gray-500 truncate dark:text-gray-400">{story.title_english}</p>
                                                     <div className="flex items-center gap-2 mt-1">
                                                         <span className="text-xs bg-amber-50 text-amber-700 rounded-full px-2 py-0.5 dark:bg-amber-950/30 dark:text-amber-300">
-                                                            HSK {story.difficulty_level}
-                                                        </span>
-                                                        <span className="text-xs text-gray-400 dark:text-gray-500">
-                                                            {story.key_vocabulary?.length || 0} vocab
+                                                            HSK {story.hsk_level}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -472,7 +467,7 @@ export default function StoryChallenge() {
                     className="mb-4"
                 >
                     <h2 className="text-2xl font-chinese text-gray-900 mb-1 dark:text-gray-50">{selectedStory.title}</h2>
-                    <p className="text-sm text-amber-600 dark:text-amber-400">{selectedStory.title_pinyin}</p>
+                    <p className="text-sm text-amber-600 dark:text-amber-400">{selectedStory.title_english}</p>
                 </motion.div>
 
                 {/* Story content */}
@@ -496,7 +491,7 @@ export default function StoryChallenge() {
                                 <div className="flex flex-wrap gap-2">
                                     {Array.from(hiddenWords).map(word => {
                                         const isUnlocked = unlockedWords.has(word)
-                                        const vocabItem = selectedStory.key_vocabulary?.find(v => v.simplified === word)
+                                        const vocabItem = storyVocab.find(v => v.simplified === word)
                                         return (
                                             <button
                                                 key={word}
@@ -541,7 +536,7 @@ export default function StoryChallenge() {
                                 {/* Translation reveal */}
                                 <div className="mt-4 bg-white rounded-2xl p-4 text-left dark:bg-surface-card">
                                     <p className="text-sm text-gray-500 mb-1 dark:text-gray-400">{t('storyChallengePage.view.englishTranslation')}</p>
-                                    <p className="text-gray-700 italic dark:text-gray-300">{selectedStory.content_english}</p>
+                                    <p className="text-gray-700 italic dark:text-gray-300">{selectedStory.english_translation}</p>
                                 </div>
 
                                 <button
@@ -581,7 +576,7 @@ export default function StoryChallenge() {
                                         </span>
                                     </h3>
                                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                                        {selectedStory?.key_vocabulary?.find(v => v.simplified === writingWord)?.english || ''}
+                                        {storyVocab.find(v => v.simplified === writingWord)?.english || ''}
                                     </p>
                                 </div>
                                 <button
