@@ -53,7 +53,7 @@
 
 ## P2 — Peningkatan pengalaman baca
 
-- [ ] **SUX-09 · Read Aloud dengan highlight & kontrol** — TTS berjalan tanpa indikasi posisi. Untuk pembelajar, sorot paragraf/kalimat yang sedang dibaca; tambah tombol pause (bukan cuma stop) dan opsi kecepatan.
+- [x] **SUX-09 · Read Aloud dengan highlight & kontrol** — TTS berjalan tanpa indikasi posisi. Untuk pembelajar, sorot paragraf/kalimat yang sedang dibaca; tambah tombol pause (bukan cuma stop) dan opsi kecepatan.
   - *Selesai bila:* paragraf aktif ter-highlight saat dibaca; ada pause/resume; build hijau. (Frontend-only cukup.)
 
 - [ ] **SUX-10 · Progress baca + reward** — Membaca cerita tidak memberi apa pun (beda dgn StoryChallenge yang beri XP). Tak ada tanda "sudah dibaca".
@@ -83,3 +83,4 @@
 - 2026-07-27 SUX-06 aacecc3 Klik karakter: PinyinText kirim konteks tetangga, handler coba kata multi-karakter (longest-first, exact-preference), build hijau
 - 2026-07-27 SUX-07 b784cc4 Kuis: hapus fallback palsu → error state + retry + loading skeleton, build hijau
 - 2026-07-27 SUX-08 148a9ef Tipe Story global di StoryChallenge; perbaiki 4 field mismatch (badge HSK, terjemahan, subjudul, chip vocab yang selama ini kosong), build hijau. **P1 tuntas**
+- 2026-07-27 SUX-09 2dc537e Read Aloud: highlight paragraf aktif (chunk bawa paraIdx) + tombol pause/resume, build hijau
