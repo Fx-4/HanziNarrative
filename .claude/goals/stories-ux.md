@@ -48,7 +48,7 @@
 - [x] **SUX-07 · Kuis: hapus fallback palsu** — Saat generate kuis gagal, muncul pertanyaan generik Inggris "What is the main topic of this story?" dgn `correctAnswer: 0` (selalu "benar") — menyesatkan.
   - *Selesai bila:* kegagalan menampilkan pesan error jujur + tombol coba lagi (i18n), bukan pertanyaan palsu. Build hijau.
 
-- [ ] **SUX-08 · Hapus duplikasi tipe Story** — `StoryChallenge.tsx` mendefinisikan `interface Story` lokal (`difficulty_level`, `content_english`) yang beda field dari tipe global `Story` (`hsk_level`, `english_translation`) → risiko field mismatch (mis. badge `HSK {story.difficulty_level}` bisa `undefined`).
+- [x] **SUX-08 · Hapus duplikasi tipe Story** — `StoryChallenge.tsx` mendefinisikan `interface Story` lokal (`difficulty_level`, `content_english`) yang beda field dari tipe global `Story` (`hsk_level`, `english_translation`) → risiko field mismatch (mis. badge `HSK {story.difficulty_level}` bisa `undefined`).
   - *Selesai bila:* pakai tipe global `Story` dari `@/types` (atau map field secara eksplisit & konsisten); tak ada field yang salah nama. Build hijau.
 
 ## P2 — Peningkatan pengalaman baca
@@ -82,3 +82,4 @@
 - 2026-07-27 SUX-05 2f30ceb Vocabulary sidebar: definisi asli via getStoryWords + fallback jujur, backdrop/Esc/aria-label, build hijau
 - 2026-07-27 SUX-06 aacecc3 Klik karakter: PinyinText kirim konteks tetangga, handler coba kata multi-karakter (longest-first, exact-preference), build hijau
 - 2026-07-27 SUX-07 b784cc4 Kuis: hapus fallback palsu → error state + retry + loading skeleton, build hijau
+- 2026-07-27 SUX-08 148a9ef Tipe Story global di StoryChallenge; perbaiki 4 field mismatch (badge HSK, terjemahan, subjudul, chip vocab yang selama ini kosong), build hijau. **P1 tuntas**
