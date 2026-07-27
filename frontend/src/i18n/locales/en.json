@@ -857,6 +857,56 @@
     }
   },
 
+  "mockTest": {
+    "subtitle":         "Official-style 3-section exam simulation",
+    "selectLevel":      "Select HSK Level",
+    "structure":        "Test Structure — 25 Questions · ~20 min",
+    "listeningLabel":   "Listening section",
+    "audioNotice":      "uses text-to-speech to play Chinese audio. Make sure your audio is on and a Chinese voice is installed.",
+    "requirement":      "Requires ≥ 25 words in selected HSK level",
+    "cardQuestions":    "25 Questions",
+    "cardQuestionsSub": "Across 3 sections",
+    "cardMinutes":      "~20 Minutes",
+    "cardMinutesSub":   "Total exam time",
+    "cardResults":      "Instant Results",
+    "cardResultsSub":   "Pass requires 60% per section",
+    "questionsEach":    "{{total}} questions · {{sec}}s each",
+    "questions":        "Questions",
+    "perQuestion":      "Per question",
+    "passScore":        "Pass score",
+    "section":          "Section",
+    "sectionComplete":  "Complete!",
+    "sectionPassed":    "✓ Section passed — Keep going!",
+    "sectionFailed":    "✗ Below 60% — Keep practicing!",
+    "score":            "Score",
+    "accuracy":         "Accuracy",
+    "pass":             "PASS",
+    "fail":             "FAIL",
+    "needed":           "≥ 60% needed",
+    "nextSection":      "Next Section",
+    "viewFinal":        "View Final Results",
+    "testComplete":     "Test Complete!",
+    "timedOut":         "Timed out",
+    "playAudio":        "Play audio to listen",
+    "types": {
+      "pinyinSentence":  "Pinyin Sentence",
+      "listening":       "Listening",
+      "fillBlank":       "Fill in the Blank",
+      "matchMeaning":    "Match the Meaning",
+      "charRecognition": "Character Recognition",
+      "pinyinSelection": "Pinyin Selection"
+    },
+    "sections": {
+      "listening": { "label": "Listening", "desc": "Listen to the spoken word/sentence and choose the correct answer." },
+      "reading":   { "label": "Reading",   "desc": "Read the Chinese text and choose the correct word or meaning." },
+      "writing":   { "label": "Writing",   "desc": "Select the correct Chinese character or pinyin pronunciation." }
+    },
+    "toasts": {
+      "notEnough":  "Not enough vocabulary for this level. Need at least 25 words.",
+      "loadFailed": "Failed to load vocabulary"
+    }
+  },
+
   "typingModes": {
     "noWords":            "No words available for this HSK level.",
     "goBack":             "Go Back",

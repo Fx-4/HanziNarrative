@@ -22,6 +22,7 @@ import {
     Play
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import BlurText from '@/components/animations/BlurText'
 
 type TestSection = 'listening' | 'reading' | 'writing'
@@ -197,34 +198,31 @@ function generateSectionedQuestions(words: HanziWord[]): [Question[], Question[]
 // ── Section metadata ──────────────────────────────────────────────────────────
 const SECTION_META = {
     listening: {
-        label: '听力', labelEn: 'Listening', timePerQ: 45, total: 10,
+        label: '听力', timePerQ: 45, total: 10,
         color: 'indigo', gradient: 'from-primary-500 to-blue-600',
         gradientLight: 'from-primary-50 to-blue-50 dark:from-primary-950/30 dark:to-blue-950/30',
         gradientDark: 'from-primary-950/30 to-blue-950/30',
         badge: 'bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300',
         border: 'border-primary-200 dark:border-primary-800',
         accent: 'text-primary-600 dark:text-primary-400', bar: 'bg-primary-500', icon: Headphones,
-        desc: 'Listen to the spoken word/sentence and choose the correct answer.',
     },
     reading: {
-        label: '阅读', labelEn: 'Reading', timePerQ: 30, total: 10,
+        label: '阅读', timePerQ: 30, total: 10,
         color: 'emerald', gradient: 'from-success-500 to-success-600',
         gradientLight: 'from-success-50 to-success-50 dark:from-success-950/30 dark:to-success-950/30',
         gradientDark: 'from-success-950/30 to-success-950/30',
         badge: 'bg-success-100 text-success-700 dark:bg-success-900/40 dark:text-success-300',
         border: 'border-success-200 dark:border-success-800',
         accent: 'text-success-600 dark:text-success-400', bar: 'bg-success-500', icon: Eye,
-        desc: 'Read the Chinese text and choose the correct word or meaning.',
     },
     writing: {
-        label: '书写', labelEn: 'Writing', timePerQ: 60, total: 5,
+        label: '书写', timePerQ: 60, total: 5,
         color: 'purple', gradient: 'from-purple-500 to-violet-600',
         gradientLight: 'from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/30',
         gradientDark: 'from-purple-950/30 to-violet-950/30',
         badge: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
         border: 'border-purple-200 dark:border-purple-800',
         accent: 'text-purple-600 dark:text-purple-400', bar: 'bg-purple-500', icon: PenTool,
-        desc: 'Select the correct Chinese character or pinyin pronunciation.',
     },
 }
 
@@ -234,6 +232,7 @@ type PageState = 'cover' | 'section-intro' | 'question' | 'section-done' | 'resu
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function MockTest() {
+    const { t } = useTranslation()
     const [hskLevel, setHskLevel] = useState(1)
     const [loading, setLoading] = useState(false)
 
@@ -373,7 +372,7 @@ export default function MockTest() {
         try {
             const words = await vocabularyApi.getByHSKLevel(hskLevel)
             if (words.length < 25) {
-                toast.error('Not enough vocabulary for this level. Need at least 25 words.')
+                toast.error(t('mockTest.toasts.notEnough'))
                 return
             }
             const [l, r, w] = generateSectionedQuestions(words)
@@ -385,7 +384,7 @@ export default function MockTest() {
             testStartRef.current = Date.now()
             setPage('section-intro')
         } catch {
-            toast.error('Failed to load vocabulary')
+            toast.error(t('mockTest.toasts.loadFailed'))
         } finally {
             setLoading(false)
         }
@@ -530,13 +529,13 @@ export default function MockTest() {
                                 HSK Mock Test
                             </BlurText>
                         </div>
-                        <p className="text-base sm:text-lg text-gray-500 dark:text-gray-400">Official-style 3-section exam simulation</p>
+                        <p className="text-base sm:text-lg text-gray-500 dark:text-gray-400">{t('mockTest.subtitle')}</p>
                     </motion.div>
 
                     {/* HSK Level Selector */}
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.08 }} className="mb-5">
                         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Select HSK Level</h3>
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">{t('mockTest.selectLevel')}</h3>
                             <div className="flex flex-wrap gap-2">
                                 {[1, 2, 3, 4, 5, 6].map(level => (
                                     <button key={level} onClick={() => setHskLevel(level)}
@@ -551,7 +550,7 @@ export default function MockTest() {
                     {/* Test Overview */}
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.12 }} className="mb-5">
                         <div className="bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-950/40 dark:to-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
-                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 text-sm uppercase tracking-wide">Test Structure — 25 Questions · ~20 min</h4>
+                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 text-sm uppercase tracking-wide">{t('mockTest.structure')}</h4>
                             <div className="grid sm:grid-cols-3 gap-4">
                                 {SECTION_ORDER.map(sec => {
                                     const m = SECTION_META[sec]
@@ -564,11 +563,11 @@ export default function MockTest() {
                                                 </div>
                                                 <div>
                                                     <p className={`font-bold font-chinese text-lg ${m.accent}`}>{m.label}</p>
-                                                    <p className="text-xs text-gray-500">{m.labelEn}</p>
+                                                    <p className="text-xs text-gray-500">{t(`mockTest.sections.${sec}.label`)}</p>
                                                 </div>
                                             </div>
-                                            <p className="text-sm text-gray-700 dark:text-gray-300">{m.total} questions · {m.timePerQ}s each</p>
-                                            <p className="text-xs text-gray-500 mt-1">{m.desc}</p>
+                                            <p className="text-sm text-gray-700 dark:text-gray-300">{t('mockTest.questionsEach', { total: m.total, sec: m.timePerQ })}</p>
+                                            <p className="text-xs text-gray-500 mt-1">{t(`mockTest.sections.${sec}.desc`)}</p>
                                         </div>
                                     )
                                 })}
@@ -581,7 +580,7 @@ export default function MockTest() {
                         <div className="bg-primary-50 dark:bg-primary-950/30 border border-primary-200 dark:border-primary-800 rounded-2xl px-4 py-3 flex items-center gap-3">
                             <Volume2 className="w-5 h-5 text-primary-500 flex-shrink-0" />
                             <p className="text-sm text-primary-700 dark:text-primary-300">
-                                <strong>Listening section</strong> uses text-to-speech to play Chinese audio. Make sure your audio is on and a Chinese voice is installed.
+                                <strong>{t('mockTest.listeningLabel')}</strong> {t('mockTest.audioNotice')}
                             </p>
                         </div>
                     </motion.div>
@@ -590,9 +589,9 @@ export default function MockTest() {
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16 }} className="mb-7">
                         <div className="bg-white dark:bg-surface-card rounded-2xl border border-gray-100 dark:border-gray-800 p-4 flex flex-wrap gap-6 justify-center text-center">
                             {[
-                                { icon: BookOpen, label: '25 Questions', sub: 'Across 3 sections', color: 'text-primary-500' },
-                                { icon: Clock, label: '~20 Minutes', sub: 'Total exam time', color: 'text-amber-500' },
-                                { icon: BarChart3, label: 'Instant Results', sub: 'Pass requires 60% per section', color: 'text-success-500' },
+                                { icon: BookOpen, label: t('mockTest.cardQuestions'), sub: t('mockTest.cardQuestionsSub'), color: 'text-primary-500' },
+                                { icon: Clock, label: t('mockTest.cardMinutes'), sub: t('mockTest.cardMinutesSub'), color: 'text-amber-500' },
+                                { icon: BarChart3, label: t('mockTest.cardResults'), sub: t('mockTest.cardResultsSub'), color: 'text-success-500' },
                             ].map(({ icon: Icon, label, sub, color }) => (
                                 <div key={label} className="flex items-center gap-3">
                                     <Icon className={`w-5 h-5 ${color}`} />
@@ -611,7 +610,7 @@ export default function MockTest() {
                             <Target className="w-6 h-6" />
                             Start Mock Test
                         </button>
-                        <p className="text-xs text-gray-400 mt-3">Requires ≥ 25 words in selected HSK level</p>
+                        <p className="text-xs text-gray-400 mt-3">{t('mockTest.requirement')}</p>
                     </motion.div>
                 </div>
             </div>
@@ -648,7 +647,7 @@ export default function MockTest() {
                             <span className={`text-5xl sm:text-6xl font-bold font-chinese ${meta.accent}`}>{meta.label}</span>
                         </div>
                         <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">
-                            Section {sectionIndex + 1}: {meta.labelEn}
+                            {t('mockTest.section')} {sectionIndex + 1}: {t(`mockTest.sections.${currentSection}.label`)}
                         </h2>
 
                         {/* Question types in this section */}
@@ -664,15 +663,15 @@ export default function MockTest() {
                         <div className="flex items-center justify-center gap-6 mb-8">
                             <div className="bg-white/80 dark:bg-gray-800/60 rounded-2xl px-5 py-3">
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{meta.total}</p>
-                                <p className="text-xs text-gray-500">Questions</p>
+                                <p className="text-xs text-gray-500">{t('mockTest.questions')}</p>
                             </div>
                             <div className="bg-white/80 dark:bg-gray-800/60 rounded-2xl px-5 py-3">
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{meta.timePerQ}s</p>
-                                <p className="text-xs text-gray-500">Per question</p>
+                                <p className="text-xs text-gray-500">{t('mockTest.perQuestion')}</p>
                             </div>
                             <div className="bg-white/80 dark:bg-gray-800/60 rounded-2xl px-5 py-3">
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">60%</p>
-                                <p className="text-xs text-gray-500">Pass score</p>
+                                <p className="text-xs text-gray-500">{t('mockTest.passScore')}</p>
                             </div>
                         </div>
                         <button onClick={beginSection}
@@ -704,25 +703,25 @@ export default function MockTest() {
                                 : <XCircle className="w-9 h-9 text-amber-600 dark:text-amber-400" />}
                         </div>
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
-                            {meta.labelEn} Complete!
+                            {t(`mockTest.sections.${currentSection}.label`)} {t('mockTest.sectionComplete')}
                         </h2>
                         <p className={`text-sm font-semibold mb-6 ${passed ? 'text-success-600 dark:text-success-400' : 'text-amber-600 dark:text-amber-400'}`}>
-                            {passed ? '✓ Section passed — Keep going!' : '✗ Below 60% — Keep practicing!'}
+                            {passed ? t('mockTest.sectionPassed') : t('mockTest.sectionFailed')}
                         </p>
 
                         {lastResult && (
                             <div className="flex items-center justify-center gap-6 mb-8">
                                 <div className={`rounded-2xl px-6 py-4 ${meta.badge}`}>
                                     <p className="text-3xl font-bold">{lastResult.correct}/{lastResult.total}</p>
-                                    <p className="text-xs opacity-70 mt-0.5">Score</p>
+                                    <p className="text-xs opacity-70 mt-0.5">{t('mockTest.score')}</p>
                                 </div>
                                 <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl px-6 py-4">
                                     <p className="text-3xl font-bold text-gray-700 dark:text-gray-300">{pct}%</p>
-                                    <p className="text-xs text-gray-500 mt-0.5">Accuracy</p>
+                                    <p className="text-xs text-gray-500 mt-0.5">{t('mockTest.accuracy')}</p>
                                 </div>
                                 <div className={`rounded-2xl px-6 py-4 ${passed ? 'bg-success-50 dark:bg-success-950/30' : 'bg-error-50 dark:bg-error-950/30'}`}>
-                                    <p className={`text-3xl font-bold ${passed ? 'text-success-600 dark:text-success-400' : 'text-error-600 dark:text-error-400'}`}>{passed ? 'PASS' : 'FAIL'}</p>
-                                    <p className="text-xs text-gray-500 mt-0.5">≥ 60% needed</p>
+                                    <p className={`text-3xl font-bold ${passed ? 'text-success-600 dark:text-success-400' : 'text-error-600 dark:text-error-400'}`}>{passed ? t('mockTest.pass') : t('mockTest.fail')}</p>
+                                    <p className="text-xs text-gray-500 mt-0.5">{t('mockTest.needed')}</p>
                                 </div>
                             </div>
                         )}
@@ -730,9 +729,9 @@ export default function MockTest() {
                         <button onClick={goNextSection}
                             className={`bg-gradient-to-r ${meta.gradient} hover:opacity-90 text-white rounded-2xl px-10 py-4 font-bold text-lg cursor-pointer transition-all shadow-lg flex items-center gap-2 mx-auto`}>
                             {isLast ? (
-                                <><Trophy className="w-5 h-5" /> View Final Results</>
+                                <><Trophy className="w-5 h-5" /> {t('mockTest.viewFinal')}</>
                             ) : (
-                                <>Next Section <ChevronRight className="w-5 h-5" /></>
+                                <>{t('mockTest.nextSection')} <ChevronRight className="w-5 h-5" /></>
                             )}
                         </button>
                     </motion.div>
@@ -764,7 +763,7 @@ export default function MockTest() {
                         {/* Main results card */}
                         <div className={`${gradeInfo.bg} rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 sm:p-10 text-center mb-6`}>
                             <Trophy className="w-14 h-14 text-amber-500 mx-auto mb-4" />
-                            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">Test Complete!</h2>
+                            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">{t('mockTest.testComplete')}</h2>
                             <p className="text-gray-500 mb-4">HSK {hskLevel} Mock Test</p>
 
                             <div className={`text-7xl font-bold ${gradeInfo.color} mb-2`}>{gradeInfo.grade}</div>
@@ -825,8 +824,8 @@ export default function MockTest() {
                                         return (
                                             <div key={i} className="bg-error-50 dark:bg-error-950/20 rounded-xl p-3 border border-error-100 dark:border-error-900">
                                                 <div className="flex items-center gap-2 mb-1">
-                                                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${m.badge}`}>{m.labelEn}</span>
-                                                    {allAns[i] === -1 && <span className="text-xs text-amber-600 font-semibold dark:text-amber-400">Timed out</span>}
+                                                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${m.badge}`}>{t(`mockTest.sections.${q.type}.label`)}</span>
+                                                    {allAns[i] === -1 && <span className="text-xs text-amber-600 font-semibold dark:text-amber-400">{t('mockTest.timedOut')}</span>}
                                                 </div>
                                                 <p className="font-chinese text-lg text-gray-900 dark:text-gray-100">
                                                     {q.word.simplified}
@@ -876,7 +875,7 @@ export default function MockTest() {
                 <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                         <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${meta.badge}`}>
-                            <span className="font-chinese">{meta.label}</span> Section {sectionIndex + 1} · Q{currentQ + 1}/{qs.length}
+                            <span className="font-chinese">{meta.label}</span> {t('mockTest.section')} {sectionIndex + 1} · Q{currentQ + 1}/{qs.length}
                         </span>
                     </div>
                     <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-mono font-bold text-sm transition-colors ${timerUrgent ? 'bg-error-100 dark:bg-error-950/30 text-error-700 dark:text-error-400 animate-pulse' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'}`}>
@@ -915,7 +914,7 @@ export default function MockTest() {
                             <div className="flex justify-between items-center mb-6">
                                 <div className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${meta.badge}`}>
                                     <SectionIcon className="w-3.5 h-3.5" />
-                                    {meta.labelEn}
+                                    {t(`mockTest.sections.${currentSection}.label`)}
                                 </div>
                                 <span className="text-xs text-gray-400">HSK {hskLevel}</span>
                             </div>
@@ -928,7 +927,7 @@ export default function MockTest() {
                                     <div>
                                         <div className="flex items-center justify-center gap-2 mb-3">
                                             <Headphones className="w-5 h-5 text-primary-400" />
-                                            <span className="text-xs text-primary-500 font-semibold uppercase tracking-wide">Pinyin Sentence</span>
+                                            <span className="text-xs text-primary-500 font-semibold uppercase tracking-wide">{t('mockTest.types.pinyinSentence')}</span>
                                         </div>
                                         <p className="text-lg sm:text-xl text-gray-800 dark:text-gray-100 font-medium leading-relaxed bg-primary-50 dark:bg-primary-950/20 rounded-2xl px-6 py-4 inline-block mb-3">
                                             {q.prompt}
@@ -949,12 +948,12 @@ export default function MockTest() {
                                     <div>
                                         <div className="flex items-center justify-center gap-2 mb-4">
                                             <Headphones className="w-5 h-5 text-primary-400" />
-                                            <span className="text-xs text-primary-500 font-semibold uppercase tracking-wide">Listening</span>
+                                            <span className="text-xs text-primary-500 font-semibold uppercase tracking-wide">{t('mockTest.types.listening')}</span>
                                         </div>
                                         {/* Big audio button — don't show the Chinese word to force listening */}
                                         <button
                                             onClick={() => speakText(q.audioText)}
-                                            aria-label="Play audio to listen"
+                                            aria-label={t('mockTest.playAudio')}
                                             className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 transition-all shadow-lg ${isSpeaking ? 'bg-primary-600 text-white scale-110 animate-pulse' : 'bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-300 hover:bg-primary-200 hover:scale-105'}`}
                                         >
                                             {isSpeaking ? <Volume2 className="w-10 h-10" /> : <Play className="w-10 h-10" />}
@@ -981,7 +980,7 @@ export default function MockTest() {
                                     <div>
                                         <div className="flex items-center justify-center gap-2 mb-3">
                                             <Eye className="w-5 h-5 text-success-400" />
-                                            <span className="text-xs text-success-500 font-semibold uppercase tracking-wide">Fill in the Blank</span>
+                                            <span className="text-xs text-success-500 font-semibold uppercase tracking-wide">{t('mockTest.types.fillBlank')}</span>
                                         </div>
                                         <p className="text-3xl sm:text-4xl font-chinese text-gray-900 dark:text-gray-100 mb-1 leading-relaxed">{q.prompt}</p>
                                     </div>
@@ -991,7 +990,7 @@ export default function MockTest() {
                                     <div>
                                         <div className="flex items-center justify-center gap-2 mb-3">
                                             <Eye className="w-5 h-5 text-success-400" />
-                                            <span className="text-xs text-success-500 font-semibold uppercase tracking-wide">Match the Meaning</span>
+                                            <span className="text-xs text-success-500 font-semibold uppercase tracking-wide">{t('mockTest.types.matchMeaning')}</span>
                                         </div>
                                         <p className="text-5xl sm:text-6xl font-chinese text-gray-900 dark:text-gray-100 mb-2">{q.prompt}</p>
                                         <p className="text-base text-gray-500">{q.word.pinyin}</p>
@@ -1003,7 +1002,7 @@ export default function MockTest() {
                                     <div>
                                         <div className="flex items-center justify-center gap-2 mb-3">
                                             <PenTool className="w-5 h-5 text-purple-400" />
-                                            <span className="text-xs text-purple-500 font-semibold uppercase tracking-wide">Character Recognition</span>
+                                            <span className="text-xs text-purple-500 font-semibold uppercase tracking-wide">{t('mockTest.types.charRecognition')}</span>
                                         </div>
                                         <p className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-1">{q.prompt}</p>
                                     </div>
@@ -1013,7 +1012,7 @@ export default function MockTest() {
                                     <div>
                                         <div className="flex items-center justify-center gap-2 mb-3">
                                             <PenTool className="w-5 h-5 text-purple-400" />
-                                            <span className="text-xs text-purple-500 font-semibold uppercase tracking-wide">Pinyin Selection</span>
+                                            <span className="text-xs text-purple-500 font-semibold uppercase tracking-wide">{t('mockTest.types.pinyinSelection')}</span>
                                         </div>
                                         <p className="text-6xl sm:text-7xl font-chinese text-gray-900 dark:text-gray-100 mb-2">{q.prompt}</p>
                                         <p className="text-sm text-gray-500">{q.word.english}</p>

@@ -857,6 +857,56 @@
     }
   },
 
+  "mockTest": {
+    "subtitle":         "Simulasi ujian 3 bagian bergaya resmi",
+    "selectLevel":      "Pilih Level HSK",
+    "structure":        "Struktur Tes — 25 Soal · ~20 menit",
+    "listeningLabel":   "Bagian menyimak",
+    "audioNotice":      "menggunakan text-to-speech untuk memutar audio Mandarin. Pastikan suara menyala dan ada suara Mandarin terpasang.",
+    "requirement":      "Butuh ≥ 25 kata di level HSK terpilih",
+    "cardQuestions":    "25 Soal",
+    "cardQuestionsSub": "Tersebar di 3 bagian",
+    "cardMinutes":      "~20 Menit",
+    "cardMinutesSub":   "Total waktu ujian",
+    "cardResults":      "Hasil Langsung",
+    "cardResultsSub":   "Lulus butuh 60% per bagian",
+    "questionsEach":    "{{total}} soal · {{sec}}d per soal",
+    "questions":        "Soal",
+    "perQuestion":      "Per soal",
+    "passScore":        "Nilai lulus",
+    "section":          "Bagian",
+    "sectionComplete":  "Selesai!",
+    "sectionPassed":    "✓ Bagian lulus — Lanjutkan!",
+    "sectionFailed":    "✗ Di bawah 60% — Terus berlatih!",
+    "score":            "Skor",
+    "accuracy":         "Akurasi",
+    "pass":             "LULUS",
+    "fail":             "GAGAL",
+    "needed":           "≥ 60% dibutuhkan",
+    "nextSection":      "Bagian Berikutnya",
+    "viewFinal":        "Lihat Hasil Akhir",
+    "testComplete":     "Tes Selesai!",
+    "timedOut":         "Waktu habis",
+    "playAudio":        "Putar audio untuk menyimak",
+    "types": {
+      "pinyinSentence":  "Kalimat Pinyin",
+      "listening":       "Menyimak",
+      "fillBlank":       "Isi Bagian Kosong",
+      "matchMeaning":    "Cocokkan Arti",
+      "charRecognition": "Pengenalan Karakter",
+      "pinyinSelection": "Pilih Pinyin"
+    },
+    "sections": {
+      "listening": { "label": "Menyimak", "desc": "Dengarkan kata/kalimat yang diucapkan lalu pilih jawaban yang benar." },
+      "reading":   { "label": "Membaca",  "desc": "Baca teks Mandarin lalu pilih kata atau arti yang benar." },
+      "writing":   { "label": "Menulis",  "desc": "Pilih karakter Mandarin atau pelafalan pinyin yang benar." }
+    },
+    "toasts": {
+      "notEnough":  "Kosakata tidak cukup untuk level ini. Butuh minimal 25 kata.",
+      "loadFailed": "Gagal memuat kosakata"
+    }
+  },
+
   "typingModes": {
     "noWords":            "Tidak ada kata untuk level HSK ini.",
     "goBack":             "Kembali",
