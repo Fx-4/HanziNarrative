@@ -34,7 +34,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 
 ## Bagian 1 — Hub
 
-- [ ] **AUD-00 · Halaman Pustaka** (`pages/Library.tsx` + `data/practiceCatalog.ts`, 130+49 baris)
+- [x] **AUD-00 · Halaman Pustaka** (`pages/Library.tsx` + `data/practiceCatalog.ts`, 130+49 baris)
   - Sudah terlihat sebelum audit: gating `unlockAt` memakai `total_words_learning` dan **fail-open** saat fetch gagal — perlu dicek apakah itu disengaja & konsisten dengan LockedCard.
   - Cek: search hanya cocokkan label+desc (tak ada sinonim/route), tak ada state loading saat `wordsLearned` belum tiba.
 
@@ -73,5 +73,20 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 **Dicatat (P2, belum dikerjakan):** ...
 -->
 
+### AUD-00 · Halaman Pustaka — 2026-07-27 0c05474
+Diaudit: `pages/Library.tsx`, `data/practiceCatalog.ts`.
+
+**Bersih:** A (i18n — semua key `library.*`, `nav.sections.*`, `nav.items.*` lengkap di id+en, tak ada literal hardcoded) · B (LockedCard jujur menyebut ambangnya) · F (grid responsif, varian dark lengkap) · G (**dicek khusus:** `readCachedWordCount` baca `data.overallStats` sementara API pakai `res.overall` — terlihat seperti mismatch, ternyata **dua-duanya benar**; Dashboard menulis `{data:{overallStats,…}}`).
+
+**Diperbaiki (P1):**
+- *Kedip item terkunci* — untuk user baru tanpa cache, `wordsLearned` mulai `null` → 4 item bergerbang (Petualangan/Tantangan Cerita/Duel/Ular Tangga) tampil **terbuka** lalu menyentak jadi terkunci saat stats tiba; sempat bisa keburu diklik. State jadi `{words, resolved}` + `PendingCard` skeleton. Fail-open saat error jaringan **dipertahankan** (perilaku yang memang disengaja).
+- *Input pencarian tanpa nama aksesibel* — hanya `placeholder`; ditambah `aria-label` + `id` + `name` (selaras `Stories.tsx`).
+
+**Dicatat (P2, belum dikerjakan):**
+- Ikon dekoratif (`Search`, `SearchX`, `Lock`, ikon section) belum `aria-hidden="true"`.
+- Pencarian hanya cocokkan label+desc — kata kunci alternatif (mis. "SRS" → Kartu Kosakata, "pinyin" → Mengetik) tak ketemu.
+- `LockedCard` mengandalkan `title` untuk tooltip (tak muncul di sentuh), tapi teks hint sudah tampil di kartu — jadi bukan dead-end.
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
+- 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
