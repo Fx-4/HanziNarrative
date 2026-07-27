@@ -11,6 +11,7 @@ from .. import models, schemas, auth
 from ..database import get_db
 from ..rate_limit import check_rate_limit, record_ai_usage, get_usage_stats
 from ..services import gemini_service
+from ..services.gamification_service import add_xp
 
 logger = logging.getLogger(__name__)
 
@@ -608,3 +609,63 @@ async def regenerate_all_story_pinyin(
         "updated_count": updated_count,
         "total_stories_checked": len(stories_without_pinyin)
     }
+
+
+# XP granted the first time a user finishes reading a story
+STORY_READ_XP = 15
+
+
+@router.post("/{story_id}/complete")
+def complete_story(
+    story_id: int,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Mark a story as read. Idempotent — XP is awarded only on the first completion."""
+    story = db.query(models.Story).filter(models.Story.id == story_id).first()
+    if not story:
+        raise HTTPException(status_code=404, detail="Story not found")
+
+    existing = db.query(models.StoryRead).filter(
+        and_(
+            models.StoryRead.user_id == current_user.id,
+            models.StoryRead.story_id == story_id,
+        )
+    ).first()
+
+    if existing:
+        return {
+            "message": "Story already completed",
+            "already_completed": True,
+            "xp_awarded": 0,
+        }
+
+    read = models.StoryRead(
+        user_id=current_user.id,
+        story_id=story_id,
+        xp_awarded=STORY_READ_XP,
+    )
+    db.add(read)
+    db.commit()
+
+    xp_result = add_xp(db, current_user, STORY_READ_XP, reason="story_read")
+
+    return {
+        "message": "Story completed",
+        "already_completed": False,
+        "xp_awarded": STORY_READ_XP,
+        "leveled_up": xp_result.get("leveled_up", False),
+        "level": xp_result.get("level"),
+    }
+
+
+@router.get("/reads/my-reads", response_model=List[int])
+def get_my_reads(
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Return the ids of stories the current user has finished reading."""
+    rows = db.query(models.StoryRead.story_id).filter(
+        models.StoryRead.user_id == current_user.id
+    ).all()
+    return [row[0] for row in rows]

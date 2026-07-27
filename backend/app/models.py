@@ -80,6 +80,20 @@ class Story(Base):
     words = relationship("HanziWord", secondary=story_words, back_populates="stories")
 
 
+class StoryRead(Base):
+    """Marks a story as finished by a user (one row per user+story, XP awarded once)."""
+    __tablename__ = "story_reads"
+    __table_args__ = (
+        UniqueConstraint('user_id', 'story_id', name='uq_story_reads_user_story'),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    story_id = Column(Integer, ForeignKey("stories.id"), nullable=False, index=True)
+    xp_awarded = Column(Integer, default=0)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 class UserProgress(Base):
     __tablename__ = "user_progress"
 
