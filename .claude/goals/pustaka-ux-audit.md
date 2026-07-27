@@ -49,7 +49,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 - [x] **AUD-07 · Nada** — `/tones` · `ToneTrainer.tsx` (301)
 - [x] **AUD-08 · Tes Simulasi** — `/mock-test` · `MockTest.tsx` (1060) — file terbesar, kandidat split per `feedback_split_large_files`
 - [x] **AUD-09 · Kosakata** — `/vocabulary` · `Vocabulary.tsx` (521)
-- [ ] **AUD-10 · Isi Cerita** — `/explorer` · `SentenceScramble.tsx` (327)
+- [x] **AUD-10 · Isi Cerita** — `/explorer` · `SentenceScramble.tsx` (327) — **bagian Latihan tuntas**
   - **Sudah ditemukan sebelum audit:** satu fitur, **empat identitas** — route `/explorer`, LazyPage `name="HanziExplorer"`, komponen `SentenceScramble`, katalog key `storyBlanks` (label "Isi Cerita"). Membingungkan saat debug & lazy-chunk salah nama. Rapikan jadi konsisten.
 
 ## Bagian 3 — Main (PLAY_ITEMS)
@@ -208,6 +208,20 @@ Diaudit: `pages/Vocabulary.tsx` (521).
 - `loadCategories` masih menelan error diam-diam — dampaknya kecil (daftar filter kosong), tapi pola yang sama.
 - Saat gagal, kata yang sudah tampil sengaja dikosongkan (`setWords([])`) agar tak menampilkan data basi berdampingan dengan pesan error; alternatifnya menahan data lama + banner, tapi itu keputusan produk.
 
+### AUD-10 · Isi Cerita — 2026-07-28 2933708
+Diaudit: `pages/SentenceScramble.tsx` (327), `App.tsx` (baris route).
+
+**Bersih:** C (`SessionSkeleton`; `noStories`/`notEnough`/`loadFailed` sudah dibedakan bertingkat) · E · F · G · H.
+
+**Diperbaiki (P1):**
+- *Halaman tanpa i18n* — 17 string hardcoded Inggris → namespace `storyBlanks`.
+- *Judul halaman ≠ nama yang diklik user* — **identitas kelima** yang tak terlihat saat menyusun goal ini: H1 berbunyi "Fill in the Blank" sementara kartu di Pustaka berlabel "Isi Cerita". User mengklik satu nama dan mendarat di nama lain, dalam bahasa berbeda pula. Judul kini bersumber dari `storyBlanks.title` yang sama dengan label katalog.
+- *Nama LazyPage salah* — `name="HanziExplorer"` padahal komponen bernama itu **tidak pernah ada**; chunk lazy & label debug jadi menyesatkan. Diubah ke `SentenceScramble` (chunk build kini `SentenceScramble-*`). Nol risiko: nama ini tak user-facing.
+
+**Dicatat (P2, belum dikerjakan):**
+- Route tetap `/explorer` — sengaja **tidak** diubah agar tautan/bookmark lama tak putus. Kalau mau dirapikan, perlu redirect dari `/explorer` ke nama baru, bukan penggantian langsung.
+- Nama file/komponen `SentenceScramble` masih berbeda dari label produk "Isi Cerita" dan key katalog `storyBlanks`. Menyatukannya adalah refactor lintas file; kini tinggal 3 nama (route, komponen, key) dari sebelumnya 5.
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
@@ -220,3 +234,4 @@ Diaudit: `pages/Vocabulary.tsx` (521).
 - 2026-07-28 AUD-07 9a0168f Nada: kegagalan TTS kini diberitahukan (pinyin baru dibuka setelah menjawab, jadi audio gagal = menebak buta 4 nada). Build hijau
 - 2026-07-28 AUD-08 c9a144b Tes Simulasi: i18n ~35 string (1060 baris, dulu 0 terjemahan — ujian penuh berbahasa Inggris) + buang data mati labelEn/desc. Build hijau
 - 2026-07-28 AUD-09 cae3960 Kosakata: layar error + Coba Lagi (dulu gagal jaringan mengklaim "Tidak ada kosakata di HSK Level X"). Build hijau
+- 2026-07-28 AUD-10 2933708 Isi Cerita: i18n 17 string, judul H1 disamakan dengan label katalog (dulu "Fill in the Blank" vs kartu "Isi Cerita"), nama LazyPage diperbaiki. **Bagian Latihan tuntas 11/11**
