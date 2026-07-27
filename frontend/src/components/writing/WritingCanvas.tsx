@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import HanziWriter from 'hanzi-writer'
+import { useTranslation } from 'react-i18next'
 import { HanziWord, AttemptResult } from '@/types'
 
 interface HanziStrokeData {
@@ -37,6 +38,7 @@ export default function WritingCanvas({
   onComplete,
   mode = 'practice'
 }: WritingCanvasProps) {
+  const { t } = useTranslation()
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLDivElement>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -313,7 +315,8 @@ export default function WritingCanvas({
             <button
               type="button"
               onClick={() => setHanziRevealed(r => !r)}
-              title={hanziRevealed ? 'Hide character' : 'Show character (hint)'}
+              title={hanziRevealed ? t('writingCanvas.hideChar') : t('writingCanvas.showChar')}
+              aria-label={hanziRevealed ? t('writingCanvas.hideChar') : t('writingCanvas.showChar')}
               className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl border-2 flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer ${
                 hanziRevealed
                   ? 'border-primary-200 dark:border-primary-800 bg-primary-50 dark:bg-primary-950/30'
@@ -335,19 +338,19 @@ export default function WritingCanvas({
               </div>
               <div className="text-sm sm:text-base text-gray-700 dark:text-gray-300">{character.english}</div>
               {!hanziRevealed && (
-                <div className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">Tap ？ for a hint</div>
+                <div className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">{t('writingCanvas.tapForHint')}</div>
               )}
             </div>
           </div>
 
           <div className="text-right">
-            <div className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Strokes</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">{t('writingCanvas.strokes')}</div>
             <div className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
               {strokesCompleted} / {totalStrokes}
             </div>
             {mistakes > 0 && (
               <div className="text-xs text-orange-600 dark:text-orange-400">
-                {mistakes} mistake{mistakes !== 1 ? 's' : ''}
+                {t('writingCanvas.mistakes', { count: mistakes })}
               </div>
             )}
           </div>
@@ -382,7 +385,7 @@ export default function WritingCanvas({
               >
                 <span className="text-6xl font-chinese text-gray-300 dark:text-gray-600 mb-2">{character.simplified}</span>
                 <p className="text-xs text-gray-500 dark:text-gray-400 text-center px-4">
-                  Data karakter tidak tersedia
+                  {t('writingCanvas.charDataUnavailable')}
                 </p>
               </div>
             )}
@@ -400,7 +403,7 @@ export default function WritingCanvas({
               }`}
             >
               <Play className="w-4 h-4" />
-              {isAnimating ? 'Playing...' : 'Stroke Guide'}
+              {isAnimating ? t('writingCanvas.playing') : t('writingCanvas.strokeGuide')}
             </button>
 
             <button
@@ -408,7 +411,7 @@ export default function WritingCanvas({
               className="flex-1 sm:flex-none bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl px-3 sm:px-4 py-2.5 font-semibold cursor-pointer transition-colors flex items-center justify-center gap-2 text-sm"
             >
               <RotateCcw className="w-4 h-4" />
-              Reset
+              {t('writingCanvas.reset')}
             </button>
 
             <button
@@ -418,12 +421,12 @@ export default function WritingCanvas({
               {showHints ? (
                 <>
                   <EyeOff className="w-4 h-4" />
-                  <span className="hidden xs:inline">Hide</span> Hints
+                  <span className="hidden xs:inline">{t('writingCanvas.hide')}&nbsp;</span>{t('writingCanvas.hints')}
                 </>
               ) : (
                 <>
                   <Eye className="w-4 h-4" />
-                  <span className="hidden xs:inline">Show</span> Hints
+                  <span className="hidden xs:inline">{t('writingCanvas.show')}&nbsp;</span>{t('writingCanvas.hints')}
                 </>
               )}
             </button>
@@ -460,11 +463,15 @@ export default function WritingCanvas({
 
                 <div>
                   <h4 className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
-                    {accuracy >= 80 ? 'Excellent!' : accuracy >= 60 ? 'Good Job!' : 'Keep Practicing!'}
+                    {accuracy >= 80
+                      ? t('writingCanvas.excellent')
+                      : accuracy >= 60
+                        ? t('writingCanvas.goodJob')
+                        : t('writingCanvas.keepPracticing')}
                   </h4>
                   <p className="text-sm text-gray-700 dark:text-gray-300">
-                    Accuracy: <span className="font-semibold">{accuracy}%</span>
-                    {mistakes > 0 && ` • ${mistakes} mistake${mistakes !== 1 ? 's' : ''}`}
+                    {t('writingCanvas.accuracy')} <span className="font-semibold">{accuracy}%</span>
+                    {mistakes > 0 && ` • ${t('writingCanvas.mistakes', { count: mistakes })}`}
                   </p>
                 </div>
               </div>
@@ -479,7 +486,7 @@ export default function WritingCanvas({
           <div className="flex items-start gap-2.5">
             <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
             <p className="text-xs sm:text-sm text-blue-900 dark:text-blue-200">
-              <strong>Tip:</strong> Tulis setiap goresan dengan benar. Toggle hints untuk latihan lebih menantang!
+              <strong>{t('writingCanvas.tipLabel')}</strong> {t('writingCanvas.tipBody')}
             </p>
           </div>
         </div>

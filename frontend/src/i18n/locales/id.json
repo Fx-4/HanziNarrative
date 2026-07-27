@@ -857,6 +857,28 @@
     }
   },
 
+  "writingCanvas": {
+    "tapForHint":          "Ketuk ？ untuk petunjuk",
+    "strokes":             "Goresan",
+    "mistakes_one":        "{{count}} kesalahan",
+    "mistakes_other":      "{{count}} kesalahan",
+    "charDataUnavailable": "Data karakter tidak tersedia",
+    "playing":             "Memutar...",
+    "strokeGuide":         "Panduan Goresan",
+    "reset":               "Ulangi",
+    "show":                "Tampilkan",
+    "hide":                "Sembunyikan",
+    "hints":               "Petunjuk",
+    "excellent":           "Luar Biasa!",
+    "goodJob":             "Bagus!",
+    "keepPracticing":      "Terus Berlatih!",
+    "accuracy":            "Akurasi:",
+    "tipLabel":            "Tips:",
+    "tipBody":             "Tulis setiap goresan dengan benar. Matikan petunjuk untuk latihan lebih menantang!",
+    "hideChar":            "Sembunyikan karakter",
+    "showChar":            "Tampilkan karakter (petunjuk)"
+  },
+
   "writing": {
     "title":         "Latihan Menulis",
     "subtitle":      "Kuasai karakter Mandarin lewat latihan",

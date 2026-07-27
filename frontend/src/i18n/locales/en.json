@@ -857,6 +857,28 @@
     }
   },
 
+  "writingCanvas": {
+    "tapForHint":          "Tap ？ for a hint",
+    "strokes":             "Strokes",
+    "mistakes_one":        "{{count}} mistake",
+    "mistakes_other":      "{{count}} mistakes",
+    "charDataUnavailable": "Character data unavailable",
+    "playing":             "Playing...",
+    "strokeGuide":         "Stroke Guide",
+    "reset":               "Reset",
+    "show":                "Show",
+    "hide":                "Hide",
+    "hints":               "Hints",
+    "excellent":           "Excellent!",
+    "goodJob":             "Good Job!",
+    "keepPracticing":      "Keep Practicing!",
+    "accuracy":            "Accuracy:",
+    "tipLabel":            "Tip:",
+    "tipBody":             "Write each stroke correctly. Turn hints off for a tougher practice.",
+    "hideChar":            "Hide character",
+    "showChar":            "Show character (hint)"
+  },
+
   "writing": {
     "title":         "Writing Practice",
     "subtitle":      "Master Chinese characters through practice",
