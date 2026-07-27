@@ -1133,6 +1133,11 @@
     "toasts": {
       "loadFailed":      "Gagal memuat kosakata",
       "micDenied":       "Akses mikrofon ditolak. Mohon izinkan akses mikrofon.",
+      "micNotFound":     "Mikrofon tidak terdeteksi. Sambungkan mikrofon lalu coba lagi.",
+      "micBusy":         "Mikrofon sedang dipakai aplikasi lain. Tutup aplikasi itu lalu coba lagi.",
+      "micFailed":       "Gagal memulai perekaman. Coba lagi.",
+      "recordingUnsupported": "Browser ini tidak mendukung perekaman suara. Coba Chrome atau Firefox.",
+      "codecUnsupported":     "Browser ini belum mendukung format rekaman yang dibutuhkan (WebM/Opus). Coba Chrome atau Firefox di perangkat lain.",
       "sttFailed":       "Pengenalan suara gagal",
       "sessionComplete": "Sesi selesai! Skor: {{score}}/{{total}}"
     }

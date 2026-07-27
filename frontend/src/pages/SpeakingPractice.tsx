@@ -120,6 +120,20 @@ export default function SpeakingPractice() {
     }
 
     const startRecording = async () => {
+        // Backend STT dikonfigurasi khusus WEBM_OPUS 48kHz (backend/app/routers/stt.py),
+        // jadi format lain tak bisa didekode server. Kalau browser tak mendukungnya,
+        // katakan apa adanya — sebelumnya semua kegagalan dilaporkan sebagai "izin
+        // mikrofon ditolak", sehingga di Safari/iOS user memberi izin berulang kali
+        // tapi perekaman tetap gagal tanpa penjelasan.
+        if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') {
+            toast.error(t('speaking.toasts.recordingUnsupported'))
+            return
+        }
+        if (!MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+            toast.error(t('speaking.toasts.codecUnsupported'))
+            return
+        }
+
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
             const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' })
@@ -139,8 +153,19 @@ export default function SpeakingPractice() {
 
             mediaRecorder.start()
             setIsRecording(true)
-        } catch {
-            toast.error(t('speaking.toasts.micDenied'))
+        } catch (err) {
+            // Bedakan penyebabnya: "izinkan mikrofon" tak menolong kalau perangkatnya
+            // memang tak ada atau sedang dipakai aplikasi lain.
+            const name = (err as DOMException)?.name
+            if (name === 'NotAllowedError' || name === 'SecurityError') {
+                toast.error(t('speaking.toasts.micDenied'))
+            } else if (name === 'NotFoundError' || name === 'OverconstrainedError') {
+                toast.error(t('speaking.toasts.micNotFound'))
+            } else if (name === 'NotReadableError' || name === 'AbortError') {
+                toast.error(t('speaking.toasts.micBusy'))
+            } else {
+                toast.error(t('speaking.toasts.micFailed'))
+            }
         }
     }
 

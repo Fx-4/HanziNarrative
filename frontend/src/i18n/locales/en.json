@@ -1133,6 +1133,11 @@
     "toasts": {
       "loadFailed":      "Failed to load vocabulary",
       "micDenied":       "Microphone access denied. Please allow microphone access.",
+      "micNotFound":     "No microphone detected. Connect one and try again.",
+      "micBusy":         "Your microphone is in use by another app. Close it and try again.",
+      "micFailed":       "Couldn't start recording. Please try again.",
+      "recordingUnsupported": "This browser doesn't support audio recording. Try Chrome or Firefox.",
+      "codecUnsupported":     "This browser can't record in the required format (WebM/Opus). Try Chrome or Firefox on another device.",
       "sttFailed":       "Speech recognition failed",
       "sessionComplete": "Session complete! Score: {{score}}/{{total}}"
     }
