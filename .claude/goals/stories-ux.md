@@ -62,7 +62,7 @@
 - [x] **SUX-11 · Terjemahan inline per-paragraf** — Terjemahan muncul sebagai satu blok di paling bawah, jauh dari teks. Untuk pembelajar lebih berguna per-paragraf.
   - *Selesai bila:* saat "Show Translation" aktif, terjemahan tampil selaras per paragraf (interlinear/di bawah tiap paragraf), bukan satu blok terpisah. Build hijau.
 
-- [ ] **SUX-12 · Browse list lebih berguna** — Search hanya cocokkan judul (bukan konten); kartu tak menunjukkan status sudah-dibaca/tersimpan; tak ada sort.
+- [x] **SUX-12 · Browse list lebih berguna** — Search hanya cocokkan judul (bukan konten); kartu tak menunjukkan status sudah-dibaca/tersimpan; tak ada sort.
   - *Selesai bila:* search mencakup konten; kartu tampilkan badge tersimpan/sudah-dibaca; ada sort (terbaru/level). Build hijau.
 
 - [ ] **SUX-13 · Story Challenge dapat ditemukan** — Halaman Stories punya tab Browse+Generate tapi tak menautkan mode Story Challenge (isi-rumpang) — dua pengalaman cerita terpisah.
@@ -86,3 +86,4 @@
 - 2026-07-27 SUX-09 2dc537e Read Aloud: highlight paragraf aktif (chunk bawa paraIdx) + tombol pause/resume, build hijau
 - 2026-07-27 SUX-10 2ccfe2f (BE) + c29be54 (FE) XP baca: model StoryRead + migrasi 357688903f9d (SUDAH di-apply ke Supabase), POST /stories/{id}/complete idempotent 15 XP, GET /stories/reads/my-reads, tombol Selesai Baca + badge Browse. **Butuh deploy Koyeb agar endpoint live**
 - 2026-07-27 SUX-11 dd693bb Terjemahan inline per-paragraf saat jumlah paragraf selaras; blok bawah jadi fallback, build hijau
+- 2026-07-27 SUX-12 7693686 Browse: search cakup isi cerita, badge Tersimpan (getMyBookmarks), sort Terbaru/Level HSK, build hijau
