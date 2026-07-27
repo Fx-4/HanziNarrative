@@ -45,7 +45,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 - [x] **AUD-03 · Mengetik** — `/typing` · `Typing.tsx` (186)
 - [x] **AUD-04 · Berbicara** — `/speaking` · `SpeakingPractice.tsx` (716) — STT, cek izin mikrofon & error state
 - [x] **AUD-05 · Dikte** — `/dictation` · `Dictation.tsx` (510) — TTS
-- [ ] **AUD-06 · Kuis** — `/quiz` · `Quiz.tsx` (657)
+- [x] **AUD-06 · Kuis** — `/quiz` · `Quiz.tsx` (657) — **bersih, tanpa P0/P1**
 - [ ] **AUD-07 · Nada** — `/tones` · `ToneTrainer.tsx` (301)
 - [ ] **AUD-08 · Tes Simulasi** — `/mock-test` · `MockTest.tsx` (1060) — file terbesar, kandidat split per `feedback_split_large_files`
 - [ ] **AUD-09 · Kosakata** — `/vocabulary` · `Vocabulary.tsx` (521)
@@ -154,6 +154,22 @@ Diaudit: `pages/Dictation.tsx` (510).
 - Petunjuk terjemahan Inggris (`english_hint`) tersedia sebagai jalan keluar sebagian, tapi tak ditawarkan saat audio gagal — idealnya saat gagal berulang, tawarkan lihat teksnya.
 - Tak ada tombol "ulangi audio lambat" — hanya satu kecepatan tetap (0.75).
 
+### AUD-06 · Kuis — 2026-07-28 (tanpa perubahan kode)
+Diaudit: `pages/Quiz.tsx` (657) + `backend/app/routers/quiz.py` (verifikasi bentuk data).
+
+**Fitur pertama yang lolos delapan dimensi tanpa temuan P0/P1.** Tidak ada perubahan kode — mengarang perbaikan di sini hanya akan menambah risiko tanpa manfaat.
+
+**Bersih:** A (tak ada literal user-facing) · B (penilaian ketiga mode benar; `correct_answer:int` backend cocok dengan indeks opsi frontend) · C (`SessionSkeleton` saat memuat) · D (gagal generate menyisakan layar setup utuh sehingga bisa langsung diulang — bukan dead-end) · E (8 tombol semuanya bertekstualisasi, jadi tak butuh `aria-label`; ada handler Enter per-tahap yang **benar** menjaga `INPUT`/`TEXTAREA` agar tak submit saat mengetik) · F (varian dark lengkap; target sentuh eksplisit `min-h-[44px]`) · G · H.
+
+**Hipotesis yang diperiksa dan ternyata SALAH** (dicatat supaya tak diaudit ulang):
+- Diduga skor `character_match` selalu 0 karena penilaian membaca `answers` sementara pasangan disimpan di `matches` — ternyata `setAnswers` **ikut** dipanggil di kedua jalur pemasangan (baris 330 & 342). Bukan bug.
+- Diduga `blank_word` bisa mengandung spasi dari AI sehingga jawaban benar dinilai salah — ternyata nilainya dari `word.simplified` (DB), bukan keluaran AI. Hanya nit teoretis.
+
+**Dicatat (P2, belum dikerjakan):**
+- State ganda: `matches` dan `answers` menyimpan data character-match yang sama dan selalu di-set berbarengan — salah satunya bisa diturunkan dari yang lain.
+- `sort(() => Math.random() - 0.5)` untuk mengacak `rightItems` — shuffle bias (sama seperti Flashcards).
+- Sisi harapan pada perbandingan fill-blank tak di-`trim()` walau sisi user di-`trim()`; aman untuk sekarang, tapi asimetris.
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
@@ -162,3 +178,4 @@ Diaudit: `pages/Dictation.tsx` (510).
 - 2026-07-27 AUD-03 094bff7 Mengetik: i18n 3 komponen mode (829 baris, dulu 0 terjemahan) + error jaringan tak lagi mendarat di layar "tidak ada kata". Build hijau
 - 2026-07-28 AUD-04 501a183 Berbicara: pesan gagal mikrofon dibedakan per penyebab + deteksi browser tanpa WebM/Opus (Safari/iOS tak akan pernah bisa merekam, dulu disamarkan jadi "izin ditolak"). Build hijau
 - 2026-07-28 AUD-05 7086308 Dikte: kegagalan TTS kini diberitahukan (dulu catch kosong — user menekan putar, hening, tetap disuruh menulis). Build hijau
+- 2026-07-28 AUD-06 (tanpa perubahan kode) Kuis: lolos 8 dimensi tanpa P0/P1; 2 dugaan bug diverifikasi dan ternyata salah; 3 catatan P2
