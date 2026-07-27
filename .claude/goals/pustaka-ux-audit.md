@@ -41,7 +41,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 ## Bagian 2 — Latihan (PRACTICE_ITEMS)
 
 - [x] **AUD-01 · Kartu Kosakata** — `/flashcards` · `Flashcards.tsx` (656)
-- [ ] **AUD-02 · Menulis** — `/writing` · `Writing.tsx` (350) + `components/writing/WritingCanvas.tsx`
+- [x] **AUD-02 · Menulis** — `/writing` · `Writing.tsx` (350) + `components/writing/WritingCanvas.tsx`
 - [ ] **AUD-03 · Mengetik** — `/typing` · `Typing.tsx` (186)
 - [ ] **AUD-04 · Berbicara** — `/speaking` · `SpeakingPractice.tsx` (716) — STT, cek izin mikrofon & error state
 - [ ] **AUD-05 · Dikte** — `/dictation` · `Dictation.tsx` (510) — TTS
@@ -101,7 +101,22 @@ Diaudit: `pages/Flashcards.tsx` (656), `components/flashcard/FlashcardContainer.
 - `data.sort(() => Math.random() - 0.5)` (2 tempat) — shuffle bias; idealnya Fisher–Yates.
 - `<kbd>Space</kbd>` di petunjuk keyboard tak dilokalkan.
 
+### AUD-02 · Menulis — 2026-07-27 b5faf8d
+Diaudit: `pages/Writing.tsx` (350), `pages/writing/WritingSession.tsx` (338), `components/writing/WritingCanvas.tsx` (489).
+
+**Bersih:** `Writing.tsx` (18× `t()`, penanganan error per-status sudah ada) · `WritingSession.tsx` (murni orkestrasi, **tak ada** string user-facing — jadi 0 `useTranslation` di sini wajar, bukan temuan) · F (varian dark lengkap di canvas) · G (tipe `HanziWord`/`AttemptResult` cocok).
+
+**Diperbaiki (P1):**
+- *`WritingCanvas.tsx` sama sekali tanpa i18n* — 11 blok teks hardcoded di komponen yang dipakai **dua fitur** (Menulis + Tantangan Cerita). Termasuk baris Tips yang **campur bahasa**: `<strong>Tip:</strong> Tulis setiap goresan… Toggle hints…` → user Inggris melihat kalimat Indonesia, user Indonesia melihat "Tip:"/"hints". Semua ke namespace `writingCanvas`.
+- Hitungan kesalahan memakai pluralisasi Inggris manual (`mistake{s}`) → plural i18next (`mistakes_one`/`_other`).
+- Tombol reveal karakter hanya punya `title` hardcoded → `title` + `aria-label` ter-i18n.
+
+**Dicatat (P2, belum dikerjakan):**
+- Ambang umpan balik (80/60) tertanam di dua tempat (`WritingCanvas` untuk teks, `StoryChallenge` pakai `accuracy >= 60` untuk membuka kata) — tak sinkron secara eksplisit.
+- Kelas `xs:inline` dipakai untuk menyembunyikan kata "Sembunyikan/Tampilkan"; perlu dicek breakpoint `xs` memang terdefinisi di `tailwind.config.js`.
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
 - 2026-07-27 AUD-01 445ef06 Flashcards: layar error jaringan + Coba Lagi (dulu menyamar jadi "Tidak Ada Kata"), i18n 2 aria-label. Build hijau
+- 2026-07-27 AUD-02 b5faf8d WritingCanvas: 11 blok teks ke i18n (dulu tanpa terjemahan & satu baris campur bahasa), plural kesalahan, aria-label reveal. Kena 2 fitur. Build hijau
