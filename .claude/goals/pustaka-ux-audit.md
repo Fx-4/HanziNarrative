@@ -44,7 +44,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 - [x] **AUD-02 · Menulis** — `/writing` · `Writing.tsx` (350) + `components/writing/WritingCanvas.tsx`
 - [x] **AUD-03 · Mengetik** — `/typing` · `Typing.tsx` (186)
 - [x] **AUD-04 · Berbicara** — `/speaking` · `SpeakingPractice.tsx` (716) — STT, cek izin mikrofon & error state
-- [ ] **AUD-05 · Dikte** — `/dictation` · `Dictation.tsx` (510) — TTS
+- [x] **AUD-05 · Dikte** — `/dictation` · `Dictation.tsx` (510) — TTS
 - [ ] **AUD-06 · Kuis** — `/quiz` · `Quiz.tsx` (657)
 - [ ] **AUD-07 · Nada** — `/tones` · `ToneTrainer.tsx` (301)
 - [ ] **AUD-08 · Tes Simulasi** — `/mock-test` · `MockTest.tsx` (1060) — file terbesar, kandidat split per `feedback_split_large_files`
@@ -142,6 +142,18 @@ Diaudit: `pages/SpeakingPractice.tsx` (716) + `backend/app/routers/stt.py` (untu
 - Ketidakcocokan codec hanya muncul sebagai toast transien; idealnya banner permanen di layar rekam untuk browser yang tak didukung.
 - `<kbd>Space</kbd>` tak dilokalkan (sama seperti AUD-01).
 
+### AUD-05 · Dikte — 2026-07-28 7086308
+Diaudit: `pages/Dictation.tsx` (510).
+
+**Bersih:** A (tak ada literal user-facing tersisa; `dictation.*` lengkap di id+en) · B · C (`noStories` vs `loadFailed` sudah dibedakan — lebih baik dari Flashcards sebelum AUD-01) · E · F · G · H.
+
+**Diperbaiki (P1):**
+- *Kegagalan audio ditelan diam-diam* — `playAudio` punya `catch {}` kosong dan `audio.onerror` yang hanya mereset `isPlaying`. Di latihan dikte **audio itu soalnya**: user menekan putar, tak terjadi apa-apa, tanpa pesan, lalu tetap diminta mengetik apa yang "didengar". Kedua jalur kini memunculkan toast `audioFailed`.
+
+**Dicatat (P2, belum dikerjakan):**
+- Petunjuk terjemahan Inggris (`english_hint`) tersedia sebagai jalan keluar sebagian, tapi tak ditawarkan saat audio gagal — idealnya saat gagal berulang, tawarkan lihat teksnya.
+- Tak ada tombol "ulangi audio lambat" — hanya satu kecepatan tetap (0.75).
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
@@ -149,3 +161,4 @@ Diaudit: `pages/SpeakingPractice.tsx` (716) + `backend/app/routers/stt.py` (untu
 - 2026-07-27 AUD-02 b5faf8d WritingCanvas: 11 blok teks ke i18n (dulu tanpa terjemahan & satu baris campur bahasa), plural kesalahan, aria-label reveal. Kena 2 fitur. Build hijau
 - 2026-07-27 AUD-03 094bff7 Mengetik: i18n 3 komponen mode (829 baris, dulu 0 terjemahan) + error jaringan tak lagi mendarat di layar "tidak ada kata". Build hijau
 - 2026-07-28 AUD-04 501a183 Berbicara: pesan gagal mikrofon dibedakan per penyebab + deteksi browser tanpa WebM/Opus (Safari/iOS tak akan pernah bisa merekam, dulu disamarkan jadi "izin ditolak"). Build hijau
+- 2026-07-28 AUD-05 7086308 Dikte: kegagalan TTS kini diberitahukan (dulu catch kosong — user menekan putar, hening, tetap disuruh menulis). Build hijau
