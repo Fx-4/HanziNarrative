@@ -42,7 +42,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 
 - [x] **AUD-01 · Kartu Kosakata** — `/flashcards` · `Flashcards.tsx` (656)
 - [x] **AUD-02 · Menulis** — `/writing` · `Writing.tsx` (350) + `components/writing/WritingCanvas.tsx`
-- [ ] **AUD-03 · Mengetik** — `/typing` · `Typing.tsx` (186)
+- [x] **AUD-03 · Mengetik** — `/typing` · `Typing.tsx` (186)
 - [ ] **AUD-04 · Berbicara** — `/speaking` · `SpeakingPractice.tsx` (716) — STT, cek izin mikrofon & error state
 - [ ] **AUD-05 · Dikte** — `/dictation` · `Dictation.tsx` (510) — TTS
 - [ ] **AUD-06 · Kuis** — `/quiz` · `Quiz.tsx` (657)
@@ -115,8 +115,22 @@ Diaudit: `pages/Writing.tsx` (350), `pages/writing/WritingSession.tsx` (338), `c
 - Ambang umpan balik (80/60) tertanam di dua tempat (`WritingCanvas` untuk teks, `StoryChallenge` pakai `accuracy >= 60` untuk membuka kata) — tak sinkron secara eksplisit.
 - Kelas `xs:inline` dipakai untuk menyembunyikan kata "Sembunyikan/Tampilkan"; perlu dicek breakpoint `xs` memang terdefinisi di `tailwind.config.js`.
 
+### AUD-03 · Mengetik — 2026-07-27 094bff7
+Diaudit: `pages/Typing.tsx` (186), `pages/typing/TypingModeSelection.tsx` (314), `components/typing/{PinyinTypingMode,IMEPracticeMode,SpeedTypingMode}.tsx` (248+290+291).
+
+**Bersih:** `Typing.tsx` & `TypingModeSelection.tsx` (i18n dipakai, skeleton loading ada, 401 ditangani dengan fallback stats nol) · F · G · H.
+
+**Diperbaiki (P1):**
+- *Ketiga komponen mode ketik tanpa i18n* (829 baris) — judul mode, tombol, placeholder input, toast benar/salah, layar "Session Complete" (Average/Best WPM, Accuracy), label "You typed/Correct pinyin", teks progres akurasi. Semua ke namespace `typingModes`.
+- *Error jaringan mendarat di layar latihan kosong* — `handleModeSelect` mengembalikan ke pemilihan mode untuk 401 tapi **tidak** untuk error lain, sehingga user melihat layar bertuliskan "tidak ada kata untuk level HSK ini" padahal masalahnya jaringan (pola sama seperti AUD-01). Kini kedua jalur konsisten.
+
+**Dicatat (P2, belum dikerjakan):**
+- Guard `if (!currentWord)` di 3 komponen memakai pesan "tidak ada kata" yang sama — masih generik bila penyebabnya bukan level kosong.
+- `TypingModeSelection` menerima `onNavigate={navigate}` sebagai prop alih-alih memakai `useNavigate` sendiri — pola tak biasa, tapi tak merugikan user.
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
 - 2026-07-27 AUD-01 445ef06 Flashcards: layar error jaringan + Coba Lagi (dulu menyamar jadi "Tidak Ada Kata"), i18n 2 aria-label. Build hijau
 - 2026-07-27 AUD-02 b5faf8d WritingCanvas: 11 blok teks ke i18n (dulu tanpa terjemahan & satu baris campur bahasa), plural kesalahan, aria-label reveal. Kena 2 fitur. Build hijau
+- 2026-07-27 AUD-03 094bff7 Mengetik: i18n 3 komponen mode (829 baris, dulu 0 terjemahan) + error jaringan tak lagi mendarat di layar "tidak ada kata". Build hijau
