@@ -396,7 +396,11 @@
     "catAll":            "All Stories",
     "catCurated":        "📚 Curated",
     "catAi":             "✨ AI Generated",
-    "searchPlaceholder": "Search stories by title...",
+    "searchPlaceholder": "Search stories by title or content...",
+    "sortLabel":         "Sort by",
+    "sortNewest":        "Newest",
+    "sortLevel":         "HSK level",
+    "savedBadge":        "Saved",
     "noMatch":           "No stories match \"{{query}}\".",
     "empty":             "No stories found for this level. Check back soon!",
     "readBadge":         "Read"

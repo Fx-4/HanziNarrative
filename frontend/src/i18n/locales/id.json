@@ -396,7 +396,11 @@
     "catAll":            "Semua Cerita",
     "catCurated":        "📚 Kurasi",
     "catAi":             "✨ Buatan AI",
-    "searchPlaceholder": "Cari cerita berdasarkan judul...",
+    "searchPlaceholder": "Cari cerita berdasarkan judul atau isi...",
+    "sortLabel":         "Urutkan",
+    "sortNewest":        "Terbaru",
+    "sortLevel":         "Level HSK",
+    "savedBadge":        "Tersimpan",
     "noMatch":           "Tidak ada cerita yang cocok dengan \"{{query}}\".",
     "empty":             "Belum ada cerita untuk level ini. Cek lagi nanti!",
     "readBadge":         "Sudah dibaca"

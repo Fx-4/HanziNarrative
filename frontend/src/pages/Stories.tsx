@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { storiesApi } from '@/services/api'
 import { Story } from '@/types'
-import { BookOpen, Calendar, Sparkles, Search, CheckCircle } from 'lucide-react'
+import { BookOpen, Calendar, Sparkles, Search, CheckCircle, Heart } from 'lucide-react'
 import StoryGenerator from '@/components/StoryGenerator'
 import { createLogger } from '@/utils/debugLogger'
 import { useTranslation } from 'react-i18next'
@@ -41,6 +41,8 @@ export default function Stories() {
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'curated' | 'ai_generated'>('all')
   const [readIds, setReadIds] = useState<Set<number>>(new Set())
+  const [savedIds, setSavedIds] = useState<Set<number>>(new Set())
+  const [sortBy, setSortBy] = useState<'newest' | 'level'>('newest')
 
   const loadStories = useCallback(async () => {
     setLoading(true)
@@ -58,10 +60,13 @@ export default function Stories() {
     loadStories()
   }, [loadStories])
 
-  // Which stories has the user already finished? (drives the "read" badge)
+  // Which stories has the user already finished / saved? (drives the card badges)
   useEffect(() => {
     storiesApi.getMyReads()
       .then(ids => setReadIds(new Set(ids)))
+      .catch(() => { /* ignore — user might not be logged in */ })
+    storiesApi.getMyBookmarks()
+      .then(list => setSavedIds(new Set(list.map(s => s.id))))
       .catch(() => { /* ignore — user might not be logged in */ })
   }, [])
 
@@ -95,16 +100,28 @@ export default function Stories() {
 
   // Client-side filter — no extra API call on every keystroke
   const filteredStories = stories
-    .filter(s =>
-      !searchQuery.trim() ||
-      s.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.title_english?.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    .filter(s => {
+      const q = searchQuery.trim().toLowerCase()
+      if (!q) return true
+      // Search titles and the story body, so a remembered phrase finds the story
+      return (
+        s.title?.toLowerCase().includes(q) ||
+        s.title_english?.toLowerCase().includes(q) ||
+        s.content?.toLowerCase().includes(q)
+      )
+    })
     .filter(s => {
       if (categoryFilter === 'all') return true
       // Treat null/undefined category as 'curated' for backward compatibility
       const storyCategory = s.category ?? 'curated'
       return storyCategory === categoryFilter
+    })
+    .sort((a, b) => {
+      if (sortBy === 'level') {
+        // Lowest HSK level first; newest first within the same level
+        if (a.hsk_level !== b.hsk_level) return a.hsk_level - b.hsk_level
+      }
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     })
 
   const levels = [
@@ -228,6 +245,29 @@ export default function Stories() {
               ))}
             </div>
 
+            {/* Sort */}
+            <p className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+              {t('stories.sortLabel')}
+            </p>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {([
+                { value: 'newest', label: t('stories.sortNewest') },
+                { value: 'level', label: t('stories.sortLevel') },
+              ] as const).map(opt => (
+                <button
+                  key={opt.value}
+                  onClick={() => setSortBy(opt.value)}
+                  className={`px-3 py-1.5 rounded-xl text-sm font-semibold cursor-pointer transition-colors ${
+                    sortBy === opt.value
+                      ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                      : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+
             {/* Client-side search — filters already-loaded stories with no extra API call */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
@@ -292,6 +332,12 @@ export default function Stories() {
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-success-100 dark:bg-success-950/40 text-success-700 dark:text-success-300">
                             <CheckCircle className="w-3 h-3" />
                             {t('stories.readBadge')}
+                          </span>
+                        )}
+                        {savedIds.has(story.id) && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300">
+                            <Heart className="w-3 h-3 fill-current" />
+                            {t('stories.savedBadge')}
                           </span>
                         )}
                         {(story.category ?? 'curated') === 'ai_generated' ? (
