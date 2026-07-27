@@ -20,14 +20,22 @@ function readCachedWordCount(): number | null {
 export default function Library() {
   const { t } = useTranslation()
   const [query, setQuery] = useState('')
-  // null = belum diketahui → fail-open (semua terbuka) sampai data tiba.
-  const [wordsLearned, setWordsLearned] = useState<number | null>(readCachedWordCount)
+  // `resolved` memisahkan "belum tahu" (masih menunggu) dari "sudah tahu".
+  // Tanpa ini, user baru tanpa cache melihat item bergerbang tampil TERBUKA sesaat
+  // lalu menyentak jadi terkunci saat stats tiba — sempat bisa keburu diklik.
+  // Saat gagal fetch tetap fail-open (resolved=true, words=null) supaya error
+  // jaringan tidak mengunci apa pun.
+  const [stats, setStats] = useState<{ words: number | null; resolved: boolean }>(() => {
+    const cached = readCachedWordCount()
+    return { words: cached, resolved: cached !== null }
+  })
+  const { words: wordsLearned, resolved: statsResolved } = stats
 
   useEffect(() => {
     let cancelled = false
     learningApi.getAllStats()
-      .then(res => { if (!cancelled) setWordsLearned(res.overall.total_words_learning) })
-      .catch(() => { /* biarkan fail-open — jangan kunci gara-gara error jaringan */ })
+      .then(res => { if (!cancelled) setStats({ words: res.overall.total_words_learning, resolved: true }) })
+      .catch(() => { if (!cancelled) setStats(s => ({ ...s, resolved: true })) })
     return () => { cancelled = true }
   }, [])
 
@@ -55,10 +63,13 @@ export default function Library() {
         <div className="relative max-w-md">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
           <input
+            id="library-search"
+            name="library-search"
             type="search"
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder={t('library.searchPlaceholder')}
+            aria-label={t('library.searchPlaceholder')}
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-card text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:border-primary-400 dark:focus:border-primary-600 transition-colors"
           />
         </div>
@@ -74,10 +85,10 @@ export default function Library() {
       ) : (
         <>
           {practice.length > 0 && (
-            <CatalogSection label={t('nav.sections.practice')} icon={GraduationCap} items={practice} wordsLearned={wordsLearned} />
+            <CatalogSection label={t('nav.sections.practice')} icon={GraduationCap} items={practice} wordsLearned={wordsLearned} statsResolved={statsResolved} />
           )}
           {play.length > 0 && (
-            <CatalogSection label={t('nav.sections.play')} icon={Zap} items={play} wordsLearned={wordsLearned} />
+            <CatalogSection label={t('nav.sections.play')} icon={Zap} items={play} wordsLearned={wordsLearned} statsResolved={statsResolved} />
           )}
         </>
       )}
@@ -86,11 +97,12 @@ export default function Library() {
   )
 }
 
-function CatalogSection({ label, icon: Icon, items, wordsLearned }: {
+function CatalogSection({ label, icon: Icon, items, wordsLearned, statsResolved }: {
   label: string
   icon: FC<{ className?: string }>
   items: CatalogItem[]
   wordsLearned: number | null
+  statsResolved: boolean
 }) {
   return (
     <section className="mb-10">
@@ -100,6 +112,11 @@ function CatalogSection({ label, icon: Icon, items, wordsLearned }: {
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {items.map(item => {
+          // Item bergerbang yang statusnya belum diketahui: tampilkan placeholder,
+          // jangan tampilkan sebagai terbuka lalu menyentak jadi terkunci.
+          if (item.unlockAt != null && !statsResolved) {
+            return <PendingCard key={item.to} />
+          }
           // Terkunci hanya jika ambang ada DAN kita tahu jumlahnya DAN masih kurang.
           const locked = item.unlockAt != null && wordsLearned != null && wordsLearned < item.unlockAt
           return locked
@@ -131,6 +148,19 @@ function ToolCard({ item }: { item: CatalogItem }) {
         </p>
       </div>
     </Link>
+  )
+}
+
+/** Placeholder selagi status kunci belum diketahui (hindari kedip terbuka→terkunci). */
+function PendingCard() {
+  return (
+    <div className="flex items-start gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-surface-card/50 border border-gray-200 dark:border-gray-800">
+      <div className="w-9 h-9 rounded-xl bg-gray-200 dark:bg-gray-700 animate-pulse flex-shrink-0" />
+      <div className="min-w-0 flex-1 space-y-2 py-1">
+        <div className="h-3 w-2/3 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+        <div className="h-2.5 w-1/2 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+      </div>
+    </div>
   )
 }
 
