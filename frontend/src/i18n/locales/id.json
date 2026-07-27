@@ -403,7 +403,9 @@
     "savedBadge":        "Tersimpan",
     "noMatch":           "Tidak ada cerita yang cocok dengan \"{{query}}\".",
     "empty":             "Belum ada cerita untuk level ini. Cek lagi nanti!",
-    "readBadge":         "Sudah dibaca"
+    "readBadge":         "Sudah dibaca",
+    "challengeTitle":    "Tantangan Cerita",
+    "challengeDesc":     "Tulis karakter untuk membuka kata tersembunyi dalam cerita"
   },
 
   "storyReader": {

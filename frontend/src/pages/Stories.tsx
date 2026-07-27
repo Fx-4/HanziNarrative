@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { storiesApi } from '@/services/api'
 import { Story } from '@/types'
-import { BookOpen, Calendar, Sparkles, Search, CheckCircle, Heart } from 'lucide-react'
+import { BookOpen, Calendar, Sparkles, Search, CheckCircle, Heart, Lock, ArrowRight } from 'lucide-react'
 import StoryGenerator from '@/components/StoryGenerator'
 import { createLogger } from '@/utils/debugLogger'
 import { useTranslation } from 'react-i18next'
@@ -363,6 +363,32 @@ export default function Stories() {
               ))}
             </div>
           )}
+
+          {/* Story Challenge entry point — the fill-in-the-blank mode lives on its
+              own route and was previously unreachable from here. */}
+          <motion.div
+            className="mt-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+          >
+            <Link to="/story-challenge" className="block">
+              <div className="group flex items-center gap-4 rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 p-5 hover:shadow-md transition-shadow dark:border-amber-800 dark:from-amber-950/30 dark:to-yellow-950/30">
+                <div className="w-11 h-11 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 dark:bg-amber-900/40">
+                  <Lock className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-gray-900 dark:text-gray-100">
+                    {t('stories.challengeTitle')}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {t('stories.challengeDesc')}
+                  </p>
+                </div>
+                <ArrowRight className="w-5 h-5 text-amber-500 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
+              </div>
+            </Link>
+          </motion.div>
         </motion.div>
       )}
 

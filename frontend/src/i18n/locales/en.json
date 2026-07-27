@@ -403,7 +403,9 @@
     "savedBadge":        "Saved",
     "noMatch":           "No stories match \"{{query}}\".",
     "empty":             "No stories found for this level. Check back soon!",
-    "readBadge":         "Read"
+    "readBadge":         "Read",
+    "challengeTitle":    "Story Challenge",
+    "challengeDesc":     "Write characters to unlock hidden words in stories"
   },
 
   "storyReader": {
