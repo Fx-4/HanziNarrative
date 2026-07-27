@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { storiesApi } from '@/services/api'
 import { SessionSkeleton } from '@/components/ui/Skeleton'
+import { useTranslation } from 'react-i18next'
 import {
     BookOpen,
     CheckCircle,
@@ -86,6 +87,7 @@ function extractQuestions(stories: { content: string; title_english?: string; ti
 }
 
 export default function FillBlank() {
+    const { t } = useTranslation()
     const [hskLevel, setHskLevel] = useState(1)
     const [questions, setQuestions] = useState<BlankQuestion[]>([])
     const [currentQ, setCurrentQ] = useState(0)
@@ -100,12 +102,12 @@ export default function FillBlank() {
             const stories = await storiesApi.getAll(hskLevel)
             const published = stories.filter((s: { is_published: boolean }) => s.is_published)
             if (published.length === 0) {
-                toast.error('No stories available for this level.')
+                toast.error(t('storyBlanks.toasts.noStories'))
                 return
             }
             const qs = extractQuestions(published)
             if (qs.length < 3) {
-                toast.error('Not enough content to generate questions.')
+                toast.error(t('storyBlanks.toasts.notEnough'))
                 return
             }
             setQuestions(qs)
@@ -114,7 +116,7 @@ export default function FillBlank() {
             setSelected(null)
             setStarted(true)
         } catch {
-            toast.error('Failed to load stories')
+            toast.error(t('storyBlanks.toasts.loadFailed'))
         } finally {
             setLoading(false)
         }
@@ -168,15 +170,15 @@ export default function FillBlank() {
                         <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                             <Lightbulb className="w-8 h-8 sm:w-10 sm:h-10 text-amber-600 dark:text-amber-400" />
                             <BlurText as="h1" className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100" wordDelay={0.08}>
-                                Fill in the Blank
+                                {t('storyBlanks.title')}
                             </BlurText>
                         </div>
-                        <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">Read story sentences and choose the missing word</p>
+                        <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">{t('storyBlanks.subtitle')}</p>
                     </motion.div>
 
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="mb-6">
                         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Select HSK Level</h3>
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">{t('storyBlanks.selectLevel')}</h3>
                             <div className="flex flex-wrap gap-2">
                                 {[1, 2, 3, 4, 5, 6].map(level => (
                                     <button key={level} onClick={() => setHskLevel(level)}
@@ -190,19 +192,19 @@ export default function FillBlank() {
 
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="mb-6">
                         <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
-                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">How It Works</h4>
+                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">{t('storyBlanks.howItWorks')}</h4>
                             <div className="grid sm:grid-cols-3 gap-4">
                                 <div className="flex items-start gap-3">
                                     <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-amber-900/40"><BookOpen className="w-4 h-4 text-amber-600 dark:text-amber-400" /></div>
-                                    <div><p className="font-medium text-gray-900 dark:text-gray-100">Read</p><p className="text-sm text-gray-600 dark:text-gray-400">See a sentence from a real story</p></div>
+                                    <div><p className="font-medium text-gray-900 dark:text-gray-100">{t('storyBlanks.step1')}</p><p className="text-sm text-gray-600 dark:text-gray-400">{t('storyBlanks.step1Desc')}</p></div>
                                 </div>
                                 <div className="flex items-start gap-3">
                                     <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-orange-900/40"><Target className="w-4 h-4 text-orange-600 dark:text-orange-400" /></div>
-                                    <div><p className="font-medium text-gray-900 dark:text-gray-100">Choose</p><p className="text-sm text-gray-600 dark:text-gray-400">Pick the missing word from 4 options</p></div>
+                                    <div><p className="font-medium text-gray-900 dark:text-gray-100">{t('storyBlanks.step2')}</p><p className="text-sm text-gray-600 dark:text-gray-400">{t('storyBlanks.step2Desc')}</p></div>
                                 </div>
                                 <div className="flex items-start gap-3">
                                     <div className="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center flex-shrink-0 dark:bg-success-900/40"><CheckCircle className="w-4 h-4 text-success-600 dark:text-success-400" /></div>
-                                    <div><p className="font-medium text-gray-900 dark:text-gray-100">Learn</p><p className="text-sm text-gray-600 dark:text-gray-400">Build reading comprehension skills</p></div>
+                                    <div><p className="font-medium text-gray-900 dark:text-gray-100">{t('storyBlanks.step3')}</p><p className="text-sm text-gray-600 dark:text-gray-400">{t('storyBlanks.step3Desc')}</p></div>
                                 </div>
                             </div>
                         </div>
@@ -229,16 +231,16 @@ export default function FillBlank() {
                     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
                         <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-3xl shadow-xl border border-amber-200 dark:border-amber-800 p-6 sm:p-8 text-center">
                             <Trophy className="w-12 h-12 text-amber-500 mx-auto mb-3" />
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Reading Complete!</h2>
-                            <p className="text-xl text-gray-700 dark:text-gray-300">{score}/{questions.length} correct ({pct}%)</p>
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('storyBlanks.complete')}</h2>
+                            <p className="text-xl text-gray-700 dark:text-gray-300">{t('storyBlanks.scoreLine', { score, total: questions.length, pct })}</p>
                             <div className="flex justify-center gap-3 mt-6">
                                 <button onClick={() => { setQuestions([]); setStarted(false) }}
                                     className="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl px-5 py-3 font-semibold cursor-pointer transition-colors inline-flex items-center gap-2">
-                                    <RotateCcw className="w-5 h-5" /> New Session
+                                    <RotateCcw className="w-5 h-5" /> {t('storyBlanks.newSession')}
                                 </button>
                                 <button onClick={startSession}
                                     className="bg-amber-600 hover:bg-amber-700 text-white rounded-2xl px-5 py-3 font-semibold cursor-pointer transition-colors inline-flex items-center gap-2">
-                                    <ArrowRight className="w-5 h-5" /> Continue
+                                    <ArrowRight className="w-5 h-5" /> {t('storyBlanks.continue')}
                                 </button>
                             </div>
                         </div>

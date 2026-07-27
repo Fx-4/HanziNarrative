@@ -860,6 +860,28 @@
     }
   },
 
+  "storyBlanks": {
+    "title":        "Isi Cerita",
+    "subtitle":     "Baca kalimat dari cerita lalu pilih kata yang hilang",
+    "selectLevel":  "Pilih Level HSK",
+    "howItWorks":   "Cara Kerja",
+    "step1":        "Baca",
+    "step1Desc":    "Lihat satu kalimat dari cerita sungguhan",
+    "step2":        "Pilih",
+    "step2Desc":    "Pilih kata yang hilang dari 4 opsi",
+    "step3":        "Pelajari",
+    "step3Desc":    "Bangun kemampuan memahami bacaan",
+    "complete":     "Sesi Selesai!",
+    "scoreLine":    "{{score}}/{{total}} benar ({{pct}}%)",
+    "newSession":   "Sesi Baru",
+    "continue":     "Lanjut",
+    "toasts": {
+      "noStories":  "Tidak ada cerita untuk level ini.",
+      "notEnough":  "Konten belum cukup untuk membuat soal.",
+      "loadFailed": "Gagal memuat cerita"
+    }
+  },
+
   "mockTest": {
     "subtitle":         "Simulasi ujian 3 bagian bergaya resmi",
     "selectLevel":      "Pilih Level HSK",

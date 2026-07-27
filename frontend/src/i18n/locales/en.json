@@ -860,6 +860,28 @@
     }
   },
 
+  "storyBlanks": {
+    "title":        "Story Blanks",
+    "subtitle":     "Read story sentences and choose the missing word",
+    "selectLevel":  "Select HSK Level",
+    "howItWorks":   "How It Works",
+    "step1":        "Read",
+    "step1Desc":    "See a sentence from a real story",
+    "step2":        "Choose",
+    "step2Desc":    "Pick the missing word from 4 options",
+    "step3":        "Learn",
+    "step3Desc":    "Build reading comprehension skills",
+    "complete":     "Reading Complete!",
+    "scoreLine":    "{{score}}/{{total}} correct ({{pct}}%)",
+    "newSession":   "New Session",
+    "continue":     "Continue",
+    "toasts": {
+      "noStories":  "No stories available for this level.",
+      "notEnough":  "Not enough content to generate questions.",
+      "loadFailed": "Failed to load stories"
+    }
+  },
+
   "mockTest": {
     "subtitle":         "Official-style 3-section exam simulation",
     "selectLevel":      "Select HSK Level",

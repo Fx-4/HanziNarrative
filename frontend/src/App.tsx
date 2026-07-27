@@ -295,7 +295,10 @@ function App() {
           <Route path="speaking" element={<LazyPage name="SpeakingPractice"><SpeakingPractice /></LazyPage>} />
           <Route path="story-challenge" element={<LazyPage name="StoryChallenge"><StoryChallenge /></LazyPage>} />
           <Route path="mock-test" element={<LazyPage name="MockTest"><MockTest /></LazyPage>} />
-          <Route path="explorer" element={<LazyPage name="HanziExplorer"><SentenceScramble /></LazyPage>} />
+          {/* Route dipertahankan sebagai /explorer demi tautan lama; nama LazyPage
+              disamakan dengan komponen yang benar-benar dirender (sebelumnya
+              "HanziExplorer" — komponen dengan nama itu tidak ada). */}
+          <Route path="explorer" element={<LazyPage name="SentenceScramble"><SentenceScramble /></LazyPage>} />
           <Route path="matching" element={<LazyPage name="MatchingGame"><MatchingGame /></LazyPage>} />
           <Route path="tones" element={<LazyPage name="ToneTrainer"><ToneTrainer /></LazyPage>} />
           <Route path="profile" element={<LazyPage name="Profile"><Profile /></LazyPage>} />
