@@ -48,7 +48,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 - [x] **AUD-06 · Kuis** — `/quiz` · `Quiz.tsx` (657) — **bersih, tanpa P0/P1**
 - [x] **AUD-07 · Nada** — `/tones` · `ToneTrainer.tsx` (301)
 - [x] **AUD-08 · Tes Simulasi** — `/mock-test` · `MockTest.tsx` (1060) — file terbesar, kandidat split per `feedback_split_large_files`
-- [ ] **AUD-09 · Kosakata** — `/vocabulary` · `Vocabulary.tsx` (521)
+- [x] **AUD-09 · Kosakata** — `/vocabulary` · `Vocabulary.tsx` (521)
 - [ ] **AUD-10 · Isi Cerita** — `/explorer` · `SentenceScramble.tsx` (327)
   - **Sudah ditemukan sebelum audit:** satu fitur, **empat identitas** — route `/explorer`, LazyPage `name="HanziExplorer"`, komponen `SentenceScramble`, katalog key `storyBlanks` (label "Isi Cerita"). Membingungkan saat debug & lazy-chunk salah nama. Rapikan jadi konsisten.
 
@@ -196,6 +196,18 @@ Diaudit: `pages/MockTest.tsx` (1060 — file terbesar di Pustaka).
 - *Tak ada persistensi* — muat ulang halaman di tengah tes menghilangkan seluruh progres 25 soal. Untuk ujian bertimer ini menyakitkan, tapi menambah penyimpanan adalah fitur baru, bukan perbaikan bug.
 - File 1060 baris; kandidat split per `feedback_split_large_files` (setup / sesi / hasil).
 
+### AUD-09 · Kosakata — 2026-07-28 cae3960
+Diaudit: `pages/Vocabulary.tsx` (521).
+
+**Bersih:** A (tak ada literal user-facing; `vocabulary.*` lengkap) · B · E · F · G · H. Skeleton-nya termasuk yang paling rapi — ada varian terpisah untuk tampilan grid dan daftar (`VocabGridSkeleton`/`VocabListRowSkeleton`).
+
+**Diperbaiki (P1):**
+- *Gagal jaringan mengklaim level HSK kosong* — varian paling menyesatkan dari pola yang berulang di audit ini. `loadVocabulary`/`handleSearch` hanya nge-log lalu user mendarat di empty state yang menyatakan dengan yakin **"Tidak ada kosakata di HSK Level X"**. Klaim itu selalu salah — level HSK memang selalu berisi kata. Tak ada tombol coba lagi; satu-satunya tombol adalah "hapus filter" yang tak menolong. Kini `loadError` punya layar sendiri + Coba Lagi yang memanggil ulang jalur yang tepat (pencarian vs daftar level).
+
+**Dicatat (P2, belum dikerjakan):**
+- `loadCategories` masih menelan error diam-diam — dampaknya kecil (daftar filter kosong), tapi pola yang sama.
+- Saat gagal, kata yang sudah tampil sengaja dikosongkan (`setWords([])`) agar tak menampilkan data basi berdampingan dengan pesan error; alternatifnya menahan data lama + banner, tapi itu keputusan produk.
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
@@ -207,3 +219,4 @@ Diaudit: `pages/MockTest.tsx` (1060 — file terbesar di Pustaka).
 - 2026-07-28 AUD-06 (tanpa perubahan kode) Kuis: lolos 8 dimensi tanpa P0/P1; 2 dugaan bug diverifikasi dan ternyata salah; 3 catatan P2
 - 2026-07-28 AUD-07 9a0168f Nada: kegagalan TTS kini diberitahukan (pinyin baru dibuka setelah menjawab, jadi audio gagal = menebak buta 4 nada). Build hijau
 - 2026-07-28 AUD-08 c9a144b Tes Simulasi: i18n ~35 string (1060 baris, dulu 0 terjemahan — ujian penuh berbahasa Inggris) + buang data mati labelEn/desc. Build hijau
+- 2026-07-28 AUD-09 cae3960 Kosakata: layar error + Coba Lagi (dulu gagal jaringan mengklaim "Tidak ada kosakata di HSK Level X"). Build hijau
