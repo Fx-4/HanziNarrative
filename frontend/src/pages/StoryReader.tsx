@@ -434,6 +434,17 @@ export default function StoryReader() {
     }
   }, [t])
 
+  // Translation split into paragraphs. When its paragraph count matches the story's,
+  // we can interleave them (far more useful for a learner than one block at the end);
+  // otherwise we fall back to the standalone block so nothing gets mis-aligned.
+  const translationParas = React.useMemo(() => {
+    if (!story?.english_translation) return []
+    return story.english_translation.split('\n').filter(p => p.trim())
+  }, [story])
+
+  const canInterleaveTranslation =
+    translationParas.length > 0 && translationParas.length === paragraphSlices.length
+
   const renderStoryContent = () => {
     if (!story) return null
 
@@ -458,6 +469,19 @@ export default function StoryReader() {
               onCharClick={handleCharacterClick}
               getPinyinFallback={getPinyinFallback}
             />
+
+            <AnimatePresence>
+              {showTranslation && canInterleaveTranslation && (
+                <motion.p
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-2 text-sm sm:text-base italic text-gray-600 border-l-2 border-blue-300 pl-3 dark:text-gray-400 dark:border-blue-700"
+                >
+                  {translationParas[pIdx]}
+                </motion.p>
+              )}
+            </AnimatePresence>
           </motion.div>
         ))}
       </div>
@@ -466,6 +490,9 @@ export default function StoryReader() {
 
   const renderTranslation = () => {
     if (!story) return null
+
+    // Interleaved per paragraph already (see renderStoryContent) — skip the block
+    if (canInterleaveTranslation) return null
 
     // Get translation from story data
     const translation = story.english_translation ||
