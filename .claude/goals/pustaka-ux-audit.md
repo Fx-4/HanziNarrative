@@ -40,7 +40,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 
 ## Bagian 2 — Latihan (PRACTICE_ITEMS)
 
-- [ ] **AUD-01 · Kartu Kosakata** — `/flashcards` · `Flashcards.tsx` (656)
+- [x] **AUD-01 · Kartu Kosakata** — `/flashcards` · `Flashcards.tsx` (656)
 - [ ] **AUD-02 · Menulis** — `/writing` · `Writing.tsx` (350) + `components/writing/WritingCanvas.tsx`
 - [ ] **AUD-03 · Mengetik** — `/typing` · `Typing.tsx` (186)
 - [ ] **AUD-04 · Berbicara** — `/speaking` · `SpeakingPractice.tsx` (716) — STT, cek izin mikrofon & error state
@@ -87,6 +87,21 @@ Diaudit: `pages/Library.tsx`, `data/practiceCatalog.ts`.
 - Pencarian hanya cocokkan label+desc — kata kunci alternatif (mis. "SRS" → Kartu Kosakata, "pinyin" → Mengetik) tak ketemu.
 - `LockedCard` mengandalkan `title` untuk tooltip (tak muncul di sentuh), tapi teks hint sudah tampil di kartu — jadi bukan dead-end.
 
+### AUD-01 · Kartu Kosakata — 2026-07-27 445ef06
+Diaudit: `pages/Flashcards.tsx` (656), `components/flashcard/FlashcardContainer.tsx`.
+
+**Bersih:** A (49 pemakaian `t()`, tak ada teks JSX hardcoded — hanya 2 `aria-label` yang lolos, lihat bawah) · B (tak ada placeholder palsu) · C (skeleton loading lengkap; empty state punya jalan keluar) · F (varian dark lengkap, grid responsif) · G (bentuk `response.reviews[].word` & `response.words` cocok dengan pemakaian) · H (token desain konsisten).
+
+**Diperbaiki (P1):**
+- *Error jaringan menyamar jadi "Tidak Ada Kata"* — `catch` hanya toast (transien) lalu `words.length === 0` menjatuhkan user ke layar "Tidak Ada Kata" yang menyarankan ganti mode/level. Penjelasan salah + tak ada tombol coba lagi. Sekarang ada state `loadError` dengan layar sendiri + tombol Coba Lagi.
+- *2 `aria-label` hardcoded Inggris* ("Back to settings", "Shuffle cards") di app dwibahasa → `t()`.
+
+**Dicatat (P2, belum dikerjakan):**
+- Kartu flip adalah `<div onClick>` tanpa `role="button"`/`tabIndex`/`aria-pressed`. Keyboard tetap jalan lewat handler global (Space/Enter), tapi semantik screen-reader lemah. Menambah `tabIndex` perlu hati-hati agar tak dobel-picu dengan handler global.
+- `data.sort(() => Math.random() - 0.5)` (2 tempat) — shuffle bias; idealnya Fisher–Yates.
+- `<kbd>Space</kbd>` di petunjuk keyboard tak dilokalkan.
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
+- 2026-07-27 AUD-01 445ef06 Flashcards: layar error jaringan + Coba Lagi (dulu menyamar jadi "Tidak Ada Kata"), i18n 2 aria-label. Build hijau
