@@ -968,7 +968,8 @@
     "toasts": {
       "notEnough":  "Kosakata tidak cukup untuk latihan nada.",
       "noWords":    "Tidak ada kata yang cocok.",
-      "loadFailed": "Gagal memuat kosakata"
+      "loadFailed": "Gagal memuat kosakata",
+      "audioFailed": "Gagal memutar audio. Coba tekan putar lagi."
     }
   },
 

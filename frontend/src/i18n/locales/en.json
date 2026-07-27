@@ -968,7 +968,8 @@
     "toasts": {
       "notEnough":  "Not enough vocabulary for tone practice.",
       "noWords":    "No suitable words found.",
-      "loadFailed": "Failed to load vocabulary"
+      "loadFailed": "Failed to load vocabulary",
+      "audioFailed": "Couldn't play the audio. Try pressing play again."
     }
   },
 

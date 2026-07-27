@@ -123,10 +123,17 @@ export default function ToneTrainer() {
             const audio = await fetchTTSAudio({ text, speakingRate: 0.75 })
             audioRef.current = audio
             audio.onended = () => setIsPlaying(false)
-            audio.onerror = () => setIsPlaying(false)
+            // Soal hanya menampilkan karakter + arti; pinyin baru dibuka setelah
+            // menjawab, jadi nadanya memang harus didengar. Kalau audio gagal diam-diam,
+            // user tinggal menebak buta di antara 4 nada tanpa tahu apa yang salah.
+            audio.onerror = () => {
+                setIsPlaying(false)
+                toast.error(t('toneTrainer.toasts.audioFailed'))
+            }
             await audio.play()
         } catch {
             setIsPlaying(false)
+            toast.error(t('toneTrainer.toasts.audioFailed'))
         }
     }
 
