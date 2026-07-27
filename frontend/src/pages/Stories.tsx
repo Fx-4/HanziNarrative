@@ -12,6 +12,26 @@ const storiesLogger = createLogger('Stories')
 
 type TabType = 'browse' | 'generate'
 
+// Card preview: cut at a sentence boundary (。！？…) instead of mid-sentence, so the
+// excerpt reads as complete thoughts. Falls back to a hard cut for run-on text.
+const EXCERPT_MAX = 110
+
+function excerpt(content: string): string {
+  const text = content.replace(/\s*\n\s*/g, ' ').trim()
+  if (text.length <= EXCERPT_MAX) return text
+
+  const window = text.slice(0, EXCERPT_MAX)
+  // Last sentence end within the window — keep it only if it isn't uselessly short
+  const lastEnd = Math.max(
+    window.lastIndexOf('。'),
+    window.lastIndexOf('！'),
+    window.lastIndexOf('？'),
+  )
+  if (lastEnd >= EXCERPT_MAX * 0.4) return window.slice(0, lastEnd + 1)
+
+  return window.trimEnd() + '…'
+}
+
 function StoryCardSkeleton() {
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 h-full p-5">
@@ -351,7 +371,7 @@ export default function Stories() {
                         )}
                       </div>
                       <p className="text-gray-600 dark:text-gray-400 line-clamp-3 mb-4 text-sm sm:text-base">
-                        {story.content.substring(0, 100)}...
+                        {excerpt(story.content)}
                       </p>
                       <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                         <Calendar className="w-4 h-4" />
