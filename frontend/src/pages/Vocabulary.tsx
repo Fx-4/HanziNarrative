@@ -8,7 +8,7 @@ import WordDetailsModal from '@/components/WordDetailsModal'
 import { motion, AnimatePresence } from 'framer-motion'
 import BlurText from '@/components/animations/BlurText'
 import CountUp from '@/components/animations/CountUp'
-import { Search, X, LayoutGrid, List, BookOpen, SlidersHorizontal } from 'lucide-react'
+import { Search, X, LayoutGrid, List, BookOpen, SlidersHorizontal, AlertTriangle } from 'lucide-react'
 import { createLogger } from '@/utils/debugLogger'
 import { useTranslation } from 'react-i18next'
 
@@ -72,6 +72,9 @@ export default function Vocabulary() {
   const [words, setWords]                       = useState<HanziWord[]>([])
   const [selectedLevel, setSelectedLevel]       = useState(1)
   const [loading, setLoading]                   = useState(true)
+  // Dibedakan dari "memang tak ada kata": gagal jaringan butuh tombol coba lagi,
+  // bukan klaim bahwa level HSK-nya kosong.
+  const [loadError, setLoadError]               = useState(false)
   const [searchQuery, setSearchQuery]           = useState(searchParams.get('search') || '')
   const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [categories, setCategories]             = useState<{ value: string; label: string }[]>([])
@@ -94,12 +97,17 @@ export default function Vocabulary() {
 
   const loadVocabulary = useCallback(async () => {
     setLoading(true)
+    setLoadError(false)
     setIsSearchMode(false)
     try {
       const data = await vocabularyApi.getByHSKLevel(selectedLevel, selectedCategory || undefined)
       setWords(data)
     } catch (error) {
+      // Tanpa ini, kegagalan jaringan jatuh ke empty state yang menyatakan
+      // "Tidak ada kosakata di HSK Level X" — klaim yang salah dan tanpa jalan keluar.
       vocabularyLogger.error('Failed to load vocabulary:', error)
+      setWords([])
+      setLoadError(true)
     } finally {
       setLoading(false)
     }
@@ -108,12 +116,15 @@ export default function Vocabulary() {
   const handleSearch = useCallback(async () => {
     if (!searchQuery.trim()) { loadVocabulary(); return }
     setLoading(true)
+    setLoadError(false)
     setIsSearchMode(true)
     try {
       const data = await vocabularyApi.searchWords(searchQuery, selectedLevel)
       setWords(data)
     } catch (error) {
       vocabularyLogger.error('Failed to search vocabulary:', error)
+      setWords([])
+      setLoadError(true)
     } finally {
       setLoading(false)
     }
@@ -367,6 +378,26 @@ export default function Vocabulary() {
               ))}
             </motion.div>
           )
+
+        ) : loadError ? (
+          /* Load error — dipisah dari empty state supaya tak mengklaim level HSK kosong */
+          <motion.div
+            key="load-error"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col items-center justify-center py-20 text-center gap-3"
+          >
+            <AlertTriangle className="w-12 h-12 text-error-400" />
+            <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">{t('vocabulary.loadErrorTitle')}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 max-w-sm">{t('vocabulary.loadErrorDesc')}</p>
+            <button
+              onClick={() => (isSearchMode ? handleSearch() : loadVocabulary())}
+              className="mt-2 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors cursor-pointer"
+            >
+              {t('vocabulary.retry')}
+            </button>
+          </motion.div>
 
         ) : words.length === 0 ? (
           /* Empty state */
