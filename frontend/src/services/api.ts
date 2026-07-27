@@ -286,6 +286,21 @@ export const storiesApi = {
     const response = await api.get(`/stories/${storyId}/is-bookmarked`)
     return response.data
   },
+
+  completeStory: async (storyId: number): Promise<{
+    already_completed: boolean
+    xp_awarded: number
+    leveled_up?: boolean
+    level?: number
+  }> => {
+    const response = await api.post(`/stories/${storyId}/complete`)
+    return response.data
+  },
+
+  getMyReads: async (): Promise<number[]> => {
+    const response = await api.get('/stories/reads/my-reads')
+    return response.data
+  },
 }
 
 export const vocabularyApi = {

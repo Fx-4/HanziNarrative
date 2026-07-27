@@ -84,6 +84,8 @@ export default function StoryReader() {
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [bookmarkLoading, setBookmarkLoading] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [isCompleted, setIsCompleted] = useState(false)
+  const [completing, setCompleting] = useState(false)
 
   // Refs for story audio playback (Google TTS, sequential)
   const isReadingRef = useRef(false)
@@ -111,6 +113,33 @@ export default function StoryReader() {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [showVocabulary])
+
+  // Has the user already finished this story? (drives the "read" badge + XP award)
+  useEffect(() => {
+    if (!id) return
+    const storyId = parseInt(id)
+    storiesApi.getMyReads()
+      .then(ids => setIsCompleted(ids.includes(storyId)))
+      .catch(() => { /* ignore — user might not be logged in */ })
+  }, [id])
+
+  const handleComplete = async () => {
+    if (!story || completing || isCompleted) return
+    setCompleting(true)
+    try {
+      const res = await storiesApi.completeStory(story.id)
+      setIsCompleted(true)
+      if (res.already_completed) {
+        toast.success(t('storyReader.toast.alreadyRead'))
+      } else {
+        toast.success(t('storyReader.toast.completed', { xp: res.xp_awarded }))
+      }
+    } catch {
+      toast.error(t('storyReader.toast.completeFailed'))
+    } finally {
+      setCompleting(false)
+    }
+  }
 
   // Fetch the story's linked vocabulary (real definitions) — lazily, on first open
   const loadVocab = useCallback(async () => {
@@ -924,6 +953,19 @@ export default function StoryReader() {
             >
               <Heart className={`w-4 h-4 shrink-0 ${isBookmarked ? 'fill-current' : ''}`} />
               <span>{isBookmarked ? t('storyReader.controls.saved') : t('storyReader.controls.save')}</span>
+            </button>
+
+            <button
+              onClick={handleComplete}
+              disabled={completing || isCompleted}
+              className={`flex items-center gap-1.5 rounded-2xl px-3 sm:px-4 py-2 font-semibold cursor-pointer transition-colors text-sm disabled:cursor-default ${
+                isCompleted
+                  ? 'bg-success-600 text-white'
+                  : 'bg-white dark:bg-surface-card hover:bg-success-50 dark:hover:bg-success-950/30 text-gray-700 dark:text-gray-300 hover:text-success-700 border border-gray-200 dark:border-gray-700 dark:hover:text-success-300 disabled:opacity-60'
+              }`}
+            >
+              <CheckCircle className={`w-4 h-4 shrink-0 ${isCompleted ? 'fill-current' : ''}`} />
+              <span>{isCompleted ? t('storyReader.controls.read') : t('storyReader.controls.markRead')}</span>
             </button>
           </div>
         </div>

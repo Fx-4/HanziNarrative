@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { storiesApi } from '@/services/api'
 import { Story } from '@/types'
-import { BookOpen, Calendar, Sparkles, Search } from 'lucide-react'
+import { BookOpen, Calendar, Sparkles, Search, CheckCircle } from 'lucide-react'
 import StoryGenerator from '@/components/StoryGenerator'
 import { createLogger } from '@/utils/debugLogger'
 import { useTranslation } from 'react-i18next'
@@ -40,6 +40,7 @@ export default function Stories() {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'curated' | 'ai_generated'>('all')
+  const [readIds, setReadIds] = useState<Set<number>>(new Set())
 
   const loadStories = useCallback(async () => {
     setLoading(true)
@@ -56,6 +57,13 @@ export default function Stories() {
   useEffect(() => {
     loadStories()
   }, [loadStories])
+
+  // Which stories has the user already finished? (drives the "read" badge)
+  useEffect(() => {
+    storiesApi.getMyReads()
+      .then(ids => setReadIds(new Set(ids)))
+      .catch(() => { /* ignore — user might not be logged in */ })
+  }, [])
 
   // Called by StoryGenerator when a story finishes generating — adds it to the
   // top of the list instantly without re-fetching the full list.
@@ -279,7 +287,13 @@ export default function Stories() {
                         </span>
                       </div>
                       {/* Category badge */}
-                      <div className="mb-3">
+                      <div className="mb-3 flex items-center gap-2 flex-wrap">
+                        {readIds.has(story.id) && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-success-100 dark:bg-success-950/40 text-success-700 dark:text-success-300">
+                            <CheckCircle className="w-3 h-3" />
+                            {t('stories.readBadge')}
+                          </span>
+                        )}
                         {(story.category ?? 'curated') === 'ai_generated' ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300">
                             {t('stories.catAi')}

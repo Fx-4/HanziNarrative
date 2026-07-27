@@ -398,7 +398,8 @@
     "catAi":             "✨ Buatan AI",
     "searchPlaceholder": "Cari cerita berdasarkan judul...",
     "noMatch":           "Tidak ada cerita yang cocok dengan \"{{query}}\".",
-    "empty":             "Belum ada cerita untuk level ini. Cek lagi nanti!"
+    "empty":             "Belum ada cerita untuk level ini. Cek lagi nanti!",
+    "readBadge":         "Sudah dibaca"
   },
 
   "storyReader": {
@@ -424,7 +425,9 @@
       "hideQuiz": "Sembunyikan Kuis",
       "loadingQuiz": "Memuat Kuis...",
       "save": "Simpan",
-      "saved": "Tersimpan"
+      "saved": "Tersimpan",
+      "markRead": "Selesai Baca",
+      "read": "Sudah Dibaca"
     },
     "toast": {
       "loadFailed": "Gagal memuat cerita",
@@ -443,7 +446,10 @@
       "answerAll": "Jawab semua pertanyaan dulu",
       "scoreGreat": "Kerja bagus! Skormu {{score}}%",
       "scoreGood": "Usaha bagus! Skor: {{score}}%",
-      "scoreKeep": "Terus berlatih! Skor: {{score}}%"
+      "scoreKeep": "Terus berlatih! Skor: {{score}}%",
+      "completed": "Cerita selesai! +{{xp}} XP",
+      "alreadyRead": "Cerita ini sudah kamu selesaikan",
+      "completeFailed": "Gagal menandai cerita selesai"
     },
     "deleteConfirm": "Yakin ingin menghapus cerita ini? Tindakan ini tidak bisa dibatalkan.",
     "deleteCancel": "Batal",
