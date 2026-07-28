@@ -56,7 +56,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 
 - [x] **AUD-11 · Tantangan Harian** — `/daily-challenge` · `DailyChallenge.tsx` (333)
 - [x] **AUD-12 · Chat AI** — `/conversation` · `Conversation.tsx` (483)
-- [ ] **AUD-13 · Cocokkan** — `/matching` · `MatchingGame.tsx` (272)
+- [x] **AUD-13 · Cocokkan** — `/matching` · `MatchingGame.tsx` (272)
 - [ ] **AUD-14 · Susun Kalimat** — `/sentence-builder` · `SentenceBuilder.tsx` (515)
 - [ ] **AUD-15 · Petualangan** — `/adventure` · `Adventure.tsx` (547) · unlock 20 kata
 - [ ] **AUD-16 · Tantangan Cerita** — `/story-challenge` · `StoryChallenge.tsx` (602) · unlock 30 kata
@@ -248,6 +248,29 @@ Diaudit: `pages/Conversation.tsx` (483).
 - Riwayat percakapan hilang saat berpindah halaman/muat ulang — tak ada persistensi (pola sama seperti MockTest).
 - Tombol suara per-pesan (`speakText`) tak punya penanganan gagal; kalau TTS mati, tak ada umpan balik (pola sama seperti AUD-05/07, tapi di sini audio bukan soal jadi dampaknya kecil).
 
+### AUD-13 · Cocokkan — 2026-07-28 0d2b6a3
+Diaudit: `pages/MatchingGame.tsx` (272). Berujung ke `pages/MockTest.tsx` (lihat bawah).
+
+**Bersih:** A (i18n lengkap, 13 key `matchingGame.*`) · B · C (skeleton meniru grid kartu) · D · E · F · G.
+
+**Diperbaiki (P1) — shuffle bias, dan ternyata sistemik:**
+Pola `arr.sort(() => Math.random() - 0.5)` dipakai **24 kali di 10+ file**. Itu bukan pengacakan adil: komparatornya tak konsisten, dan V8 memakai binary insertion sort untuk array kecil sehingga hasil condong ke urutan semula. Sebelumnya sudah dicatat sebagai P2 di AUD-01 & AUD-06; di sini diukur (200k–300k percobaan) dan ternyata berdampak nyata:
+
+| Konteks | Shuffle lama | Adil |
+|---|---|---|
+| Opsi jawaban 4 pilihan (benar mulai di indeks 0) | A **36%** · B 17% · C 16% · D **31%** | ~25% merata |
+| 12 kartu memori (pasangan awalnya bersebelahan) | 1.22 pasangan tetap berdampingan | 1.00 |
+
+- *`MatchingGame`* — kartu dibuat berpasangan bersebelahan lalu diacak, jadi 22% lebih sering pasangan tertinggal berdampingan → permainan memori lebih mudah dari seharusnya.
+- *`MockTest` (revisit AUD-08)* — **keenam** generator soal menyusun opsi sebagai `[correct, ...wrongs]` lalu mengacak, sehingga jawaban benar condong ke posisi A/D. Menebak "A" memberi 36% alih-alih 25% — keuntungan yang bisa dipelajari di fitur yang justru bertujuan mensimulasikan ujian. Diperbaiki sekalian karena dampaknya paling besar di sana, meski ditemukan saat mengaudit fitur lain.
+- Dibuat `utils/shuffle.ts` (Fisher–Yates + `sample()`), angka bias terukur didokumentasikan di komentarnya.
+
+**Catatan proses:** regex penggantian sempat menghapus `.sort(...)` di dua tempat MockTest tanpa membungkusnya ke `shuffle()` — pemilihan kata soal & distraktor jadi **tak teracak sama sekali**. Ketahuan saat meninjau diff sebelum commit dan langsung diperbaiki; tak ada yang ter-commit dalam kondisi itu.
+
+**Dicatat (P2, belum dikerjakan):**
+- Masih ada ~16 pemakaian `sort(() => Math.random() - 0.5)` di file **di luar** lingkup Pustaka (`Review.tsx`, `ReviewExercise.tsx`, `LearningSession.tsx`, `Battle.tsx` — Battle akan kena di AUD-17). Yang paling perlu dilihat: `Review.tsx` memakainya untuk memilih distraktor. Layak jadi task tersendiri memakai `utils/shuffle.ts` yang kini tersedia.
+- `Flashcards.tsx` & `Quiz.tsx` (P2 dari AUD-01/06) kini bisa mengadopsi util yang sama.
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
@@ -263,3 +286,4 @@ Diaudit: `pages/Conversation.tsx` (483).
 - 2026-07-28 AUD-10 2933708 Isi Cerita: i18n 17 string, judul H1 disamakan dengan label katalog (dulu "Fill in the Blank" vs kartu "Isi Cerita"), nama LazyPage diperbaiki. **Bagian Latihan tuntas 11/11**
 - 2026-07-28 AUD-11 3fb1620 Tantangan Harian: i18n 14 string (dulu campur ID+EN dalam satu layar) + tanggal ikut bahasa UI (dulu dipaku en-US). Build hijau
 - 2026-07-28 AUD-12 cc66931 Chat AI: i18n 14 string, aria-label 3 tombol ikon, teks dipulihkan saat balasan gagal (dulu harus mengetik ulang). Build hijau
+- 2026-07-28 AUD-13 0d2b6a3 Cocokkan: shuffle bias -> Fisher-Yates (utils/shuffle.ts). Terukur: jawaban benar MockTest condong ke A 36%/D 31%; kartu memori 22% lebih sering berpasangan. Ikut memperbaiki MockTest (revisit AUD-08). Build hijau
