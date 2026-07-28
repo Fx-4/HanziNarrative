@@ -860,6 +860,26 @@
     }
   },
 
+  "dailyChallenge": {
+    "badge":           "Tantangan Harian",
+    "loadFailed":      "Gagal memuat tantangan harian.",
+    "streakBadge":     "{{count}}h beruntun",
+    "doneToday":       "Tantangan hari ini selesai!",
+    "pinyin":          "Pinyin",
+    "pinyinOn":        "Pinyin ✓",
+    "saving":          "Menyimpan…",
+    "markDone":        "Tandai Selesai · +30 XP",
+    "doneTodayBtn":    "Selesai Hari Ini · +30 XP",
+    "statStreak":      "Hari Beruntun",
+    "statCompleted":   "Selesai",
+    "statTotalXp":     "Total XP",
+    "toasts": {
+      "completed":      "+30 XP! Tantangan harian selesai 🎉",
+      "completeFailed": "Gagal menyelesaikan tantangan",
+      "audioMissing":   "Audio tidak tersedia"
+    }
+  },
+
   "storyBlanks": {
     "title":        "Isi Cerita",
     "subtitle":     "Baca kalimat dari cerita lalu pilih kata yang hilang",

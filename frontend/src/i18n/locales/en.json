@@ -860,6 +860,26 @@
     }
   },
 
+  "dailyChallenge": {
+    "badge":           "Daily Challenge",
+    "loadFailed":      "Couldn't load the daily challenge.",
+    "streakBadge":     "{{count}}d streak",
+    "doneToday":       "Today's challenge is done!",
+    "pinyin":          "Pinyin",
+    "pinyinOn":        "Pinyin ✓",
+    "saving":          "Saving…",
+    "markDone":        "Mark Complete · +30 XP",
+    "doneTodayBtn":    "Completed Today · +30 XP",
+    "statStreak":      "Day Streak",
+    "statCompleted":   "Completed",
+    "statTotalXp":     "Total XP",
+    "toasts": {
+      "completed":      "+30 XP! Daily challenge complete 🎉",
+      "completeFailed": "Couldn't complete the challenge",
+      "audioMissing":   "Audio unavailable"
+    }
+  },
+
   "storyBlanks": {
     "title":        "Story Blanks",
     "subtitle":     "Read story sentences and choose the missing word",

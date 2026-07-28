@@ -9,6 +9,7 @@ import {
 import toast from 'react-hot-toast'
 import { playTTS } from '@/utils/ttsHelper'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { useTranslation } from 'react-i18next'
 
 interface ChallengeData {
   story: {
@@ -31,6 +32,7 @@ interface ChallengeStats {
 }
 
 export default function DailyChallenge() {
+  const { t, i18n } = useTranslation()
   const [challenge, setChallenge] = useState<ChallengeData | null>(null)
   const [stats, setStats]         = useState<ChallengeStats | null>(null)
   const [loading, setLoading]     = useState(true)
@@ -69,10 +71,10 @@ export default function DailyChallenge() {
       setCompleted(true)
       const s = await dailyChallengeApi.getStats()
       setStats(s)
-      toast.success('+30 XP! Daily challenge selesai 🎉', { duration: 4000 })
+      toast.success(t('dailyChallenge.toasts.completed'), { duration: 4000 })
     } catch (err: unknown) {
       const e = err as { response?: { data?: { detail?: string } } }
-      toast.error(e.response?.data?.detail ?? 'Gagal menyelesaikan challenge')
+      toast.error(e.response?.data?.detail ?? t('dailyChallenge.toasts.completeFailed'))
     } finally {
       setCompleting(false)
     }
@@ -85,7 +87,7 @@ export default function DailyChallenge() {
       const firstSentence = challenge.story.content.split(/[。！？]/)[0]
       await playTTS({ text: firstSentence })
     } catch {
-      toast.error('Audio tidak tersedia')
+      toast.error(t('dailyChallenge.toasts.audioMissing'))
     } finally {
       setIsPlayingAudio(false)
     }
@@ -144,7 +146,7 @@ export default function DailyChallenge() {
   if (error || !challenge) {
     return (
       <div className="max-w-xl mx-auto px-4 py-20 text-center space-y-4">
-        <p className="text-gray-500 dark:text-gray-400">Gagal memuat daily challenge.</p>
+        <p className="text-gray-500 dark:text-gray-400">{t('dailyChallenge.loadFailed')}</p>
         <button
           onClick={load}
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-primary-600 border border-primary-200 rounded-xl hover:bg-primary-50 transition-colors dark:text-primary-400 dark:border-primary-800 dark:hover:bg-primary-950/30"
@@ -156,7 +158,7 @@ export default function DailyChallenge() {
   }
 
   const { story, date } = challenge
-  const dateLabel = new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
+  const dateLabel = new Date(date + 'T00:00:00').toLocaleDateString(i18n.language?.startsWith('id') ? 'id-ID' : 'en-US', {
     weekday: 'long', month: 'long', day: 'numeric',
   })
   const displayContent = (showPinyin && story.content_pinyin)
@@ -172,7 +174,7 @@ export default function DailyChallenge() {
           <div>
             <div className="flex items-center gap-1.5 mb-1">
               <Calendar className="w-4 h-4 text-amber-500" />
-              <span className="text-xs font-bold text-amber-600 uppercase tracking-widest dark:text-amber-400">Daily Challenge</span>
+              <span className="text-xs font-bold text-amber-600 uppercase tracking-widest dark:text-amber-400">{t('dailyChallenge.badge')}</span>
             </div>
             <h1 className="text-2xl font-extrabold text-gray-900 dark:text-gray-50">{dateLabel}</h1>
           </div>
@@ -181,7 +183,7 @@ export default function DailyChallenge() {
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5 bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 px-3 py-1.5 rounded-full text-sm font-bold">
                 <Flame className="w-4 h-4" />
-                {stats.challenge_streak}d streak
+                {t('dailyChallenge.streakBadge', { count: stats.challenge_streak })}
               </div>
               <div className="flex items-center gap-1.5 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 px-3 py-1.5 rounded-full text-sm font-bold">
                 <Star className="w-3.5 h-3.5" />
@@ -205,7 +207,7 @@ export default function DailyChallenge() {
             <CheckCircle className="w-5 h-5 text-success-500 flex-shrink-0" />
             <div>
               <p className="font-semibold text-success-800 dark:text-success-300 text-sm">
-                Challenge selesai hari ini!
+                {t('dailyChallenge.doneToday')}
               </p>
               <p className="text-xs text-success-600 dark:text-success-400">
                 Kembali besok untuk story baru. Konsistensi adalah kunci.
@@ -248,7 +250,7 @@ export default function DailyChallenge() {
                     : 'bg-white/25 text-white hover:bg-white/40'
                 }`}
               >
-                {showPinyin ? 'Pinyin ✓' : 'Pinyin'}
+                {showPinyin ? t('dailyChallenge.pinyinOn') : t('dailyChallenge.pinyin')}
               </button>
             </div>
           </div>
@@ -289,7 +291,7 @@ export default function DailyChallenge() {
         {completed ? (
           <div className="flex items-center justify-center gap-2 py-4 bg-success-600 dark:bg-success-700 rounded-2xl text-white font-bold shadow-lg shadow-success-500/20">
             <CheckCircle className="w-5 h-5" />
-            Selesai Hari Ini · +30 XP
+            {t('dailyChallenge.doneTodayBtn')}
           </div>
         ) : (
           <button
@@ -298,8 +300,8 @@ export default function DailyChallenge() {
             className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-2xl shadow-lg shadow-amber-500/20 transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {completing
-              ? <><Loader2 className="w-5 h-5 animate-spin" /> Menyimpan…</>
-              : <><Zap className="w-5 h-5" /> Tandai Selesai · +30 XP</>
+              ? <><Loader2 className="w-5 h-5 animate-spin" /> {t('dailyChallenge.saving')}</>
+              : <><Zap className="w-5 h-5" /> {t('dailyChallenge.markDone')}</>
             }
           </button>
         )}
@@ -314,9 +316,9 @@ export default function DailyChallenge() {
           className="grid grid-cols-3 gap-3"
         >
           {[
-            { label: 'Day Streak',  value: stats.challenge_streak,  Icon: Flame,        color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-950/30' },
-            { label: 'Completed',   value: stats.total_completions,  Icon: CheckCircle,  color: 'text-success-500', bg: 'bg-success-50 dark:bg-success-950/30' },
-            { label: 'Total XP',    value: stats.total_xp_earned,    Icon: Star,         color: 'text-primary-500', bg: 'bg-primary-50 dark:bg-primary-950/30' },
+            { label: t('dailyChallenge.statStreak'),  value: stats.challenge_streak,  Icon: Flame,        color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-950/30' },
+            { label: t('dailyChallenge.statCompleted'),   value: stats.total_completions,  Icon: CheckCircle,  color: 'text-success-500', bg: 'bg-success-50 dark:bg-success-950/30' },
+            { label: t('dailyChallenge.statTotalXp'),    value: stats.total_xp_earned,    Icon: Star,         color: 'text-primary-500', bg: 'bg-primary-50 dark:bg-primary-950/30' },
           ].map(({ label, value, Icon, color, bg }) => (
             <div key={label} className={`${bg} rounded-2xl p-4 text-center`}>
               <Icon className={`w-5 h-5 ${color} mx-auto mb-1`} />
