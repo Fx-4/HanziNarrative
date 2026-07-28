@@ -59,7 +59,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 - [x] **AUD-13 · Cocokkan** — `/matching` · `MatchingGame.tsx` (272)
 - [x] **AUD-14 · Susun Kalimat** — `/sentence-builder` · `SentenceBuilder.tsx` (515)
 - [x] **AUD-15 · Petualangan** — `/adventure` · `Adventure.tsx` (547) · unlock 20 kata
-- [ ] **AUD-16 · Tantangan Cerita** — `/story-challenge` · `StoryChallenge.tsx` (602) · unlock 30 kata
+- [x] **AUD-16 · Tantangan Cerita** — `/story-challenge` · `StoryChallenge.tsx` (602) · unlock 30 kata
   - Catatan: sudah tersentuh di SUX-03 (i18n) & SUX-08 (tipe). Audit sisanya (a11y, state, mobile).
 - [ ] **AUD-17 · Duel** — `/battle` · `Battle.tsx` (894) · unlock 50 kata — realtime, cek state koneksi terputus
 - [ ] **AUD-18 · Ular Tangga HSK** — `/ladder` · `LadderRace.tsx` (423) · unlock 50 kata
@@ -300,6 +300,20 @@ Diaudit: `pages/Adventure.tsx` (547).
 **Dicatat (P2, belum dikerjakan):**
 - `loadUsageStats` menelan error diam-diam ("Ignore — will show default"), jadi saat gagal panel kuota bisa tampil seolah masih penuh. Pola sama seperti `SentenceBuilder`.
 
+### AUD-16 · Tantangan Cerita — 2026-07-28 40486fe
+Diaudit: `pages/StoryChallenge.tsx` (602). i18n & tipe sudah dibereskan di SUX-03/SUX-08, jadi fokus ke dimensi sisanya.
+
+**Bersih:** A (terverifikasi masih bersih pasca SUX-03) · B · F · G (tipe global `Story` dari SUX-08 masih konsisten) · H.
+
+**Diperbaiki (P1):**
+- *Gagal muat daftar cerita menyuruh user membuat cerita* — `catch` sengaja membungkam toast ("Suppress toast for background initial load failure"), sehingga kegagalan jaringan mendarat di empty state **"Belum ada cerita untuk HSK X. Buat cerita dulu!"**. Persis pola AUD-09: saran yang keliru dan tak bisa ditindaklanjuti. Kini `listError` punya pesan sendiri + tombol Coba Lagi.
+- *Shuffle bias menentukan kata yang disembunyikan* — kata tertentu jauh lebih sering terpilih, jadi latihan mengulang kata yang itu-itu saja. Kini `shuffle()` Fisher–Yates.
+- *Modal menulis tak bisa ditutup dengan keyboard* — hanya klik backdrop. Ditambah handler Escape (pola sama seperti `StoryReader`), dan tombol tutup ikon-saja dapat `aria-label` (file ini sebelumnya punya **nol** `aria-label`).
+- *Kegagalan TTS senyap* — pola AUD-05/07/15, kini bertoast.
+
+**Dicatat (P2, belum dikerjakan):**
+- `selectStory` punya `catch` bersarang yang mengabaikan kegagalan `getStoryWords` lalu diam-diam jatuh ke ekstraksi 2-karakter dari konten. Hasilnya kata "kosakata" tanpa pinyin/arti — latihan tetap jalan tapi petunjuknya kosong, tanpa penjelasan kenapa.
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
@@ -318,3 +332,4 @@ Diaudit: `pages/Adventure.tsx` (547).
 - 2026-07-28 AUD-13 0d2b6a3 Cocokkan: shuffle bias -> Fisher-Yates (utils/shuffle.ts). Terukur: jawaban benar MockTest condong ke A 36%/D 31%; kartu memori 22% lebih sering berpasangan. Ikut memperbaiki MockTest (revisit AUD-08). Build hijau
 - 2026-07-28 AUD-14 42d81f5 Susun Kalimat: bank kata kosong senyap -> pesan + Coba Lagi (toast-nya dulu dikomentari); shuffle bias varian 0.5-Math.random() yang luput di AUD-13. Build hijau
 - 2026-07-28 AUD-15 6ab6c0e Petualangan: i18n 16 string + audio gagal diberitahukan. Build hijau
+- 2026-07-28 AUD-16 40486fe Tantangan Cerita: error daftar jujur + Coba Lagi (dulu menyuruh "buat cerita dulu"), shuffle adil, Escape + aria-label modal, TTS gagal bertoast. Build hijau
