@@ -864,6 +864,123 @@
     }
   },
 
+  "battle": {
+      "title": "Arena Duel",
+      "subtitle": "Bertanding kosakata HSK secara real-time",
+      "gameMode": "Mode Permainan",
+      "joinRoom": "Gabung Ruang",
+      "roomCode": "Kode Ruang",
+      "copy": "Salin",
+      "copied": "Tersalin!",
+      "waiting": "Menunggu…",
+      "noPlayers": "Belum ada pemain",
+      "gameSettings": "Pengaturan Permainan",
+      "hskLevel": "Level HSK",
+      "questions": "Soal",
+      "timePerQuestion": "Waktu per Soal",
+      "lives": "Nyawa",
+      "questionType": "Jenis Soal",
+      "getReady": "Bersiap!",
+      "waitingOthers": "Menunggu pemain lain…",
+      "eliminated": "☠️ Kamu tersingkir — menonton sebagai penonton",
+      "correctAnswer": "Jawaban Benar",
+      "roundResults": "Hasil Ronde",
+      "winner": "Pemenang",
+      "thatsYou": "🎉 Itu kamu!",
+      "finalScores": "Skor Akhir",
+      "voted": "Sudah vote ✅",
+      "voteRematch": "Vote Tanding Ulang!",
+      "yourItems": "🎒 Item Kamu",
+      "target": "Sasaran:",
+      "cancel": "Batal",
+      "buffsPositive": "✨ Buff (positif)",
+      "debuffsNegative": "☠️ Debuff (negatif)",
+      "effectsHint": "Buff/debuff diberikan acak setelah tiap soal. Jawaban benar memberi item yang bisa kamu pakai secara strategis!",
+      "connected": "Terhubung",
+      "reconnecting": "Menyambung ulang…",
+      "disconnected": "Terputus",
+      "connecting": "Menghubungkan…",
+      "room": "Ruang",
+      "modeBattleRoyale": "Battle Royale",
+      "modeBattleRoyaleDesc": "Yang bertahan terakhir menang",
+      "modeTeam": "Tim vs Tim",
+      "modeTeamDesc": "Bertanding sebagai tim",
+      "promptMeaning": "Apa artinya?",
+      "promptChar": "Karakter mana yang berarti ini?",
+      "promptPinyin": "Pelafalan mana yang benar?",
+      "promptTone": "Pilih nada yang benar:",
+      "promptBlank": "Isi bagian kosong:",
+      "promptDefinition": "Karakter mana yang cocok dengan definisi ini?",
+      "createFailed": "Gagal membuat ruang",
+      "codeLength": "Masukkan kode ruang 6 karakter",
+      "effects": {
+        "double_points": {
+          "name": "Poin Ganda",
+          "desc": "Benar berikutnya = +20 poin"
+        },
+        "shield": {
+          "name": "Perisai",
+          "desc": "Menyerap satu jawaban salah"
+        },
+        "time_bonus": {
+          "name": "Bonus Waktu",
+          "desc": "+7d di timer"
+        },
+        "score_boost": {
+          "name": "Dorongan Skor",
+          "desc": "+10 poin langsung"
+        },
+        "extra_life": {
+          "name": "Nyawa Tambahan",
+          "desc": "+1 nyawa (khusus BR)"
+        },
+        "answer_reveal": {
+          "name": "Petunjuk",
+          "desc": "Menyorot opsi yang benar"
+        },
+        "steal_points": {
+          "name": "Curi Poin",
+          "desc": "Curi 5 poin dari pemain teratas"
+        },
+        "skip_immunity": {
+          "name": "Kekebalan",
+          "desc": "Menangkal debuff berikutnya"
+        },
+        "blind": {
+          "name": "Buta",
+          "desc": "Acak opsi jawaban lawan"
+        },
+        "time_cut": {
+          "name": "Potong Waktu",
+          "desc": "-7d di timer lawan"
+        },
+        "freeze": {
+          "name": "Beku",
+          "desc": "Kunci tombol lawan 4 detik"
+        },
+        "point_leak": {
+          "name": "Bocor Poin",
+          "desc": "-5 poin dari skor lawan"
+        },
+        "double_damage": {
+          "name": "Damage Ganda",
+          "desc": "Salah berikutnya makan 2 nyawa"
+        },
+        "reverse_controls": {
+          "name": "Balik",
+          "desc": "Balik urutan jawaban lawan"
+        },
+        "answer_hidden": {
+          "name": "Sembunyikan Opsi",
+          "desc": "Hapus satu opsi lawan"
+        },
+        "score_leech": {
+          "name": "Lintah Skor",
+          "desc": "Benar berikutnya lawan = 0 poin"
+        }
+      }
+    },
+
   "adventure": {
     "title":            "Cerita Petualangan",
     "hskLevel":         "Level HSK",

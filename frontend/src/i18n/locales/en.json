@@ -864,6 +864,123 @@
     }
   },
 
+  "battle": {
+      "title": "Battle Arena",
+      "subtitle": "Compete in real-time HSK vocabulary battles",
+      "gameMode": "Game Mode",
+      "joinRoom": "Join a Room",
+      "roomCode": "Room Code",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "waiting": "Waiting…",
+      "noPlayers": "No players yet",
+      "gameSettings": "Game Settings",
+      "hskLevel": "HSK Level",
+      "questions": "Questions",
+      "timePerQuestion": "Time per Question",
+      "lives": "Lives",
+      "questionType": "Question Type",
+      "getReady": "Get ready!",
+      "waitingOthers": "Waiting for others…",
+      "eliminated": "☠️ You've been eliminated — watching as spectator",
+      "correctAnswer": "Correct Answer",
+      "roundResults": "Round Results",
+      "winner": "Winner",
+      "thatsYou": "🎉 That's you!",
+      "finalScores": "Final Scores",
+      "voted": "Voted ✅",
+      "voteRematch": "Vote Rematch!",
+      "yourItems": "🎒 Your Items",
+      "target": "Target:",
+      "cancel": "Cancel",
+      "buffsPositive": "✨ Buffs (positive)",
+      "debuffsNegative": "☠️ Debuffs (negative)",
+      "effectsHint": "Buffs/debuffs are randomly awarded after each question. Correct answers earn inventory items you can use strategically!",
+      "connected": "Connected",
+      "reconnecting": "Reconnecting…",
+      "disconnected": "Disconnected",
+      "connecting": "Connecting…",
+      "room": "Room",
+      "modeBattleRoyale": "Battle Royale",
+      "modeBattleRoyaleDesc": "Last one standing wins",
+      "modeTeam": "Team vs Team",
+      "modeTeamDesc": "Compete as a team",
+      "promptMeaning": "What is the meaning?",
+      "promptChar": "Which character means this?",
+      "promptPinyin": "Which pronunciation is correct?",
+      "promptTone": "Choose the correct tone:",
+      "promptBlank": "Fill in the blank:",
+      "promptDefinition": "Which character matches this definition?",
+      "createFailed": "Failed to create room",
+      "codeLength": "Enter a 6-character room code",
+      "effects": {
+        "double_points": {
+          "name": "Double Points",
+          "desc": "Next correct = +20 pts"
+        },
+        "shield": {
+          "name": "Shield",
+          "desc": "Absorb next wrong answer"
+        },
+        "time_bonus": {
+          "name": "Time Bonus",
+          "desc": "+7s on the timer"
+        },
+        "score_boost": {
+          "name": "Score Boost",
+          "desc": "+10 instant points"
+        },
+        "extra_life": {
+          "name": "Extra Life",
+          "desc": "+1 life (BR only)"
+        },
+        "answer_reveal": {
+          "name": "Hint",
+          "desc": "Highlights correct option"
+        },
+        "steal_points": {
+          "name": "Steal Points",
+          "desc": "Steal 5pts from top player"
+        },
+        "skip_immunity": {
+          "name": "Immunity",
+          "desc": "Block the next debuff"
+        },
+        "blind": {
+          "name": "Blind",
+          "desc": "Shuffle their answer options"
+        },
+        "time_cut": {
+          "name": "Time Cut",
+          "desc": "-7s on their timer"
+        },
+        "freeze": {
+          "name": "Freeze",
+          "desc": "Lock their buttons for 4s"
+        },
+        "point_leak": {
+          "name": "Point Leak",
+          "desc": "-5pts from their score"
+        },
+        "double_damage": {
+          "name": "Double Damage",
+          "desc": "Next wrong costs 2 lives"
+        },
+        "reverse_controls": {
+          "name": "Reverse",
+          "desc": "Flip their answer order"
+        },
+        "answer_hidden": {
+          "name": "Hide Option",
+          "desc": "Remove one of their options"
+        },
+        "score_leech": {
+          "name": "Score Leech",
+          "desc": "Their next correct = 0pts"
+        }
+      }
+    },
+
   "adventure": {
     "title":            "Adventure Stories",
     "hskLevel":         "HSK Level",

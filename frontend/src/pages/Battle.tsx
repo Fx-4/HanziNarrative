@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '@/store/authStore'
 import { useBattleWebSocket, PlayerInfo, BuffEvent } from '@/hooks/useBattleWebSocket'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'react-hot-toast'
 import { Swords, Users, Copy, Check, Crown, Heart, Trophy, Shield, Zap, LogOut, Play, ArrowRight, Star, X, BookOpen, Timer, Flame, Volume2 } from 'lucide-react'
 import axios from 'axios'
@@ -26,23 +27,25 @@ function TeamBadge({ team }: { team: 'A' | 'B' | null }) {
 // ── EFFECT SYSTEM CONSTANTS ───────────────────────────────────────────────────
 const BUFF_IDS = new Set(['double_points', 'shield', 'time_bonus', 'score_boost', 'extra_life', 'answer_reveal', 'steal_points', 'skip_immunity'])
 
-const EFFECT_META: Record<string, { name: string; emoji: string; desc: string }> = {
-  double_points: { name: 'Double Points', emoji: '⚡', desc: 'Next correct = +20 pts' },
-  shield: { name: 'Shield', emoji: '🛡️', desc: 'Absorb next wrong answer' },
-  time_bonus: { name: 'Time Bonus', emoji: '⏰', desc: '+7s on the timer' },
-  score_boost: { name: 'Score Boost', emoji: '🌟', desc: '+10 instant points' },
-  extra_life: { name: 'Extra Life', emoji: '💖', desc: '+1 life (BR only)' },
-  answer_reveal: { name: 'Hint', emoji: '🔍', desc: 'Highlights correct option' },
-  steal_points: { name: 'Steal Points', emoji: '🦊', desc: 'Steal 5pts from top player' },
-  skip_immunity: { name: 'Immunity', emoji: '🌀', desc: 'Block the next debuff' },
-  blind: { name: 'Blind', emoji: '🙈', desc: 'Shuffle their answer options' },
-  time_cut: { name: 'Time Cut', emoji: '⏱️', desc: '-7s on their timer' },
-  freeze: { name: 'Freeze', emoji: '❄️', desc: 'Lock their buttons for 4s' },
-  point_leak: { name: 'Point Leak', emoji: '💸', desc: '-5pts from their score' },
-  double_damage: { name: 'Double Damage', emoji: '💥', desc: 'Next wrong costs 2 lives' },
-  reverse_controls: { name: 'Reverse', emoji: '🔀', desc: 'Flip their answer order' },
-  answer_hidden: { name: 'Hide Option', emoji: '🫣', desc: 'Remove one of their options' },
-  score_leech: { name: 'Score Leech', emoji: '🧛', desc: 'Their next correct = 0pts' },
+// Nama & deskripsi efek hidup di i18n (battle.effects.<id>), di sini hanya emoji
+// supaya tak ada dua sumber kebenaran.
+const EFFECT_META: Record<string, { emoji: string }> = {
+  double_points: { emoji: '⚡' },
+  shield: { emoji: '🛡️' },
+  time_bonus: { emoji: '⏰' },
+  score_boost: { emoji: '🌟' },
+  extra_life: { emoji: '💖' },
+  answer_reveal: { emoji: '🔍' },
+  steal_points: { emoji: '🦊' },
+  skip_immunity: { emoji: '🌀' },
+  blind: { emoji: '🙈' },
+  time_cut: { emoji: '⏱️' },
+  freeze: { emoji: '❄️' },
+  point_leak: { emoji: '💸' },
+  double_damage: { emoji: '💥' },
+  reverse_controls: { emoji: '🔀' },
+  answer_hidden: { emoji: '🫣' },
+  score_leech: { emoji: '🧛' },
 }
 
 const EFFECT_EMOJIS: Record<string, string> = Object.fromEntries(
@@ -65,6 +68,7 @@ function EffectBadges({ effects }: { effects: Record<string, number> }) {
 
 // ── EFFECT REFERENCE PANEL ────────────────────────────────────────────────────
 function EffectReferencePanel() {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const buffs = Object.entries(EFFECT_META).filter(([id]) => BUFF_IDS.has(id))
   const debuffs = Object.entries(EFFECT_META).filter(([id]) => !BUFF_IDS.has(id))
@@ -81,34 +85,34 @@ function EffectReferencePanel() {
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
             <div className="px-4 pb-4 space-y-3">
               <div>
-                <p className="text-[11px] font-bold uppercase tracking-wider text-success-600 dark:text-success-400 mb-2 flex items-center gap-1">✨ Buffs (positive)</p>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-success-600 dark:text-success-400 mb-2 flex items-center gap-1">{t('battle.buffsPositive')}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                   {buffs.map(([id, meta]) => (
                     <div key={id} className="flex items-start gap-2 p-2 rounded-xl bg-success-50 dark:bg-success-950/30 border border-success-100 dark:border-success-900/50">
                       <span className="text-lg leading-none mt-0.5 flex-shrink-0">{meta.emoji}</span>
                       <div>
-                        <p className="text-xs font-bold text-success-800 dark:text-success-300">{meta.name}</p>
-                        <p className="text-[10px] text-success-700 dark:text-success-400 opacity-80 leading-snug">{meta.desc}</p>
+                        <p className="text-xs font-bold text-success-800 dark:text-success-300">{t(`battle.effects.${id}.name`)}</p>
+                        <p className="text-[10px] text-success-700 dark:text-success-400 opacity-80 leading-snug">{t(`battle.effects.${id}.desc`)}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
               <div>
-                <p className="text-[11px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-1">☠️ Debuffs (negative)</p>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-1">{t('battle.debuffsNegative')}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                   {debuffs.map(([id, meta]) => (
                     <div key={id} className="flex items-start gap-2 p-2 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50">
                       <span className="text-lg leading-none mt-0.5 flex-shrink-0">{meta.emoji}</span>
                       <div>
-                        <p className="text-xs font-bold text-rose-800 dark:text-rose-300">{meta.name}</p>
-                        <p className="text-[10px] text-rose-700 dark:text-rose-400 opacity-80 leading-snug">{meta.desc}</p>
+                        <p className="text-xs font-bold text-rose-800 dark:text-rose-300">{t(`battle.effects.${id}.name`)}</p>
+                        <p className="text-[10px] text-rose-700 dark:text-rose-400 opacity-80 leading-snug">{t(`battle.effects.${id}.desc`)}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400 text-center">Buffs/debuffs are randomly awarded after each question. Correct answers earn inventory items you can use strategically!</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 text-center">{t('battle.effectsHint')}</p>
             </div>
           </motion.div>
         )}
@@ -124,6 +128,7 @@ function InventoryPanel({ inventory, players, currentUserId, sendMessage }: {
   currentUserId: number
   sendMessage: (m: Record<string, unknown>) => void
 }) {
+  const { t } = useTranslation()
   const [activeItem, setActiveItem] = useState<string | null>(null)
   if (!inventory.length) return null
 
@@ -154,7 +159,7 @@ function InventoryPanel({ inventory, players, currentUserId, sendMessage }: {
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow border border-primary-100 dark:border-primary-900/40 p-3">
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-primary-500 mb-2">🎒 Your Items</p>
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-primary-500 mb-2">{t('battle.yourItems')}</p>
       <div className="flex flex-wrap gap-1.5">
         {unique.map(([id, count]) => {
           const meta = EFFECT_META[id]
@@ -164,7 +169,7 @@ function InventoryPanel({ inventory, players, currentUserId, sendMessage }: {
               <motion.button
                 whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.93 }}
                 onClick={() => handleClick(id)}
-                title={meta ? `${meta.name}: ${meta.desc}` : id}
+                title={meta ? `${t(`battle.effects.${id}.name`)}: ${t(`battle.effects.${id}.desc`)}` : id}
                 className={`flex items-center gap-1 px-2 py-1.5 rounded-xl text-xs font-bold border-2 transition-all ${activeItem === id
                   ? 'border-primary-500 ring-2 ring-primary-300 bg-primary-50 dark:bg-primary-950/40'
                   : isBuff
@@ -172,7 +177,7 @@ function InventoryPanel({ inventory, players, currentUserId, sendMessage }: {
                     : 'border-rose-300 dark:border-rose-700 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300'
                   }`}>
                 <span className="text-base leading-none">{meta?.emoji ?? '?'}</span>
-                <span className="hidden sm:inline">{meta?.name ?? id}</span>
+                <span className="hidden sm:inline">{meta ? t(`battle.effects.${id}.name`) : id}</span>
                 {count > 1 && <span className="bg-white dark:bg-gray-800 rounded-full w-4 h-4 text-[10px] flex items-center justify-center font-black text-gray-700 dark:text-gray-300">{count}</span>}
               </motion.button>
 
@@ -182,7 +187,7 @@ function InventoryPanel({ inventory, players, currentUserId, sendMessage }: {
                   <motion.div
                     initial={{ opacity: 0, y: 6, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
                     className="absolute bottom-full mb-1.5 left-0 z-40 bg-white dark:bg-gray-900 border-2 border-rose-300 dark:border-rose-700 rounded-xl shadow-xl p-2 min-w-[140px]">
-                    <p className="text-[10px] font-bold text-rose-500 mb-1.5 uppercase tracking-wide">Target:</p>
+                    <p className="text-[10px] font-bold text-rose-500 mb-1.5 uppercase tracking-wide">{t('battle.target')}</p>
                     <div className="space-y-1">
                       {opponents.map(op => (
                         <button key={op.user_id} onClick={() => applyItem(id, op.user_id)}
@@ -192,7 +197,7 @@ function InventoryPanel({ inventory, players, currentUserId, sendMessage }: {
                         </button>
                       ))}
                     </div>
-                    <button onClick={() => setActiveItem(null)} className="mt-1 w-full text-[10px] text-gray-400 hover:text-gray-600 transition-colors">Cancel</button>
+                    <button onClick={() => setActiveItem(null)} className="mt-1 w-full text-[10px] text-gray-400 hover:text-gray-600 transition-colors">{t('battle.cancel')}</button>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -233,30 +238,31 @@ function BuffEventBanner({ event, currentUserId }: { event: BuffEvent; currentUs
 
 // ── HOME VIEW ─────────────────────────────────────────────────────────────────
 function HomeView({ onCreated, onJoined }: { onCreated: (c: string) => void; onJoined: (c: string) => void }) {
+  const { t } = useTranslation()
   const [mode, setMode] = useState<'battle_royale' | 'team_vs_team'>('battle_royale')
   const [joinCode, setJoinCode] = useState('')
   const [creating, setCreating] = useState(false)
   const handleCreate = async () => {
     setCreating(true)
     try { const r = await axios.post(`${API}/battle/rooms`, { mode }, { headers: authHeaders() }); onCreated(r.data.room_code) }
-    catch (e) { const err = e as { response?: { data?: { detail?: string } } }; toast.error(err.response?.data?.detail || 'Failed to create room') }
+    catch (e) { const err = e as { response?: { data?: { detail?: string } } }; toast.error(err.response?.data?.detail || t('battle.createFailed')) }
     finally { setCreating(false) }
   }
-  const handleJoin = () => { const c = joinCode.trim().toUpperCase(); if (c.length !== 6) { toast.error('Enter a 6-character room code'); return } onJoined(c) }
+  const handleJoin = () => { const c = joinCode.trim().toUpperCase(); if (c.length !== 6) { toast.error(t('battle.codeLength')); return } onJoined(c) }
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-lg mx-auto space-y-4 sm:space-y-6">
       <div className="text-center">
         <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center shadow-lg shadow-primary-500/30">
           <Swords className="w-7 h-7 text-white" />
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Battle Arena</h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Compete in real-time HSK vocabulary battles</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{t('battle.title')}</h1>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t('battle.subtitle')}</p>
       </div>
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-4 sm:p-5">
-        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Game Mode</p>
+        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{t('battle.gameMode')}</p>
         <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-4">
-          {([{ value: 'battle_royale', label: 'Battle Royale', desc: 'Last one standing wins', icon: Swords, color: 'indigo' },
-          { value: 'team_vs_team', label: 'Team vs Team', desc: 'Compete as a team', icon: Users, color: 'rose' }] as const
+          {([{ value: 'battle_royale', label: t('battle.modeBattleRoyale'), desc: t('battle.modeBattleRoyaleDesc'), icon: Swords, color: 'indigo' },
+          { value: 'team_vs_team', label: t('battle.modeTeam'), desc: t('battle.modeTeamDesc'), icon: Users, color: 'rose' }] as const
           ).map(({ value, label, desc, icon: Icon, color }) => (
             <button key={value} onClick={() => setMode(value)} className={`p-3 sm:p-4 rounded-xl border-2 text-left transition-all ${mode === value ? color === 'indigo' ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30' : 'border-rose-500 bg-rose-50 dark:bg-rose-950/30' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 dark:bg-surface-card bg-white'}`}>
               <Icon className={`w-4 h-4 sm:w-5 sm:h-5 mb-1.5 ${mode === value ? color === 'indigo' ? 'text-primary-600 dark:text-primary-400' : 'text-rose-500' : 'text-gray-400 dark:text-gray-500'}`} />
@@ -271,7 +277,7 @@ function HomeView({ onCreated, onJoined }: { onCreated: (c: string) => void; onJ
         </button>
       </div>
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-4 sm:p-5">
-        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Join a Room</p>
+        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{t('battle.joinRoom')}</p>
         <div className="flex gap-2">
           <input value={joinCode} onChange={e => setJoinCode(e.target.value.toUpperCase())} maxLength={6} placeholder="ABC123"
             className="flex-1 px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl text-center text-xl font-mono font-bold tracking-widest bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-primary-400 uppercase" />
@@ -289,6 +295,7 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
   gameState: ReturnType<typeof useBattleWebSocket>['gameState']
   currentUserId: number; sendMessage: (m: Record<string, unknown>) => void; onLeave: () => void
 }) {
+  const { t } = useTranslation()
   const [copied, setCopied] = useState(false)
   const [hskLevel, setHskLevel] = useState(1)
   const [numQ, setNumQ] = useState(10)
@@ -327,7 +334,7 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-3 sm:p-5">
         <div className="flex items-start sm:items-center justify-between flex-wrap gap-2">
           <div>
-            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Room Code</p>
+            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('battle.roomCode')}</p>
             <p className="text-3xl sm:text-4xl font-black tracking-widest text-primary-600 dark:text-primary-400 font-mono">{gameState.roomCode}</p>
           </div>
           <div className="flex gap-2 items-center flex-wrap">
@@ -336,7 +343,7 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
             </span>
             <button onClick={copyCode} className="flex items-center gap-1.5 px-3 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl text-xs font-medium text-gray-700 dark:text-gray-300 transition-all">
               {copied ? <Check className="w-3.5 h-3.5 text-success-500" /> : <Copy className="w-3.5 h-3.5" />}
-              {copied ? 'Copied!' : 'Copy'}
+              {copied ? t('battle.copied') : t('battle.copy')}
             </button>
           </div>
         </div>
@@ -346,7 +353,7 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-3 sm:p-5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-gray-100">Players ({gameState.players.length}/20)</h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Waiting…</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{t('battle.waiting')}</p>
         </div>
         <div className="space-y-2">
           {gameState.players.map(p => (
@@ -368,36 +375,36 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
               )}
             </div>
           ))}
-          {gameState.players.length === 0 && <p className="text-center py-4 text-gray-500 dark:text-gray-400 text-sm">No players yet</p>}
+          {gameState.players.length === 0 && <p className="text-center py-4 text-gray-500 dark:text-gray-400 text-sm">{t('battle.noPlayers')}</p>}
         </div>
       </div>
 
       {/* Game settings (host only) */}
       {isHost && (
         <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-3 sm:p-5 space-y-4">
-          <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-gray-100 flex items-center gap-2"><Flame className="w-4 h-4 text-orange-500" /> Game Settings</h3>
+          <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-gray-100 flex items-center gap-2"><Flame className="w-4 h-4 text-orange-500" /> {t('battle.gameSettings')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <p className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">HSK Level</p>
+              <p className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">{t('battle.hskLevel')}</p>
               <div className="flex flex-wrap gap-1.5">{[1, 2, 3, 4, 5, 6].map(l => <button key={l} onClick={() => setHskLevel(l)} className={`w-9 h-9 rounded-xl text-sm font-semibold transition-all ${hskLevel === l ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}>{l}</button>)}</div>
             </div>
             <div>
-              <p className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Questions</p>
+              <p className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">{t('battle.questions')}</p>
               <div className="flex flex-wrap gap-1.5">{[5, 10, 15, 20].map(n => <button key={n} onClick={() => setNumQ(n)} className={`px-3 h-9 rounded-xl text-sm font-semibold transition-all ${numQ === n ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}>{n}</button>)}</div>
             </div>
             <div>
-              <p className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1"><Timer className="w-3 h-3" /> Time per Question</p>
+              <p className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1"><Timer className="w-3 h-3" /> {t('battle.timePerQuestion')}</p>
               <div className="flex flex-wrap gap-1.5">{[10, 15, 20, 30].map(s => <button key={s} onClick={() => setTimeLimitSec(s)} className={`px-3 h-9 rounded-xl text-sm font-semibold transition-all ${timeLimitSec === s ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}>{s}s</button>)}</div>
             </div>
             {gameState.mode === 'battle_royale' && (
               <div>
-                <p className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1"><Heart className="w-3 h-3" /> Lives</p>
+                <p className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1"><Heart className="w-3 h-3" /> {t('battle.lives')}</p>
                 <div className="flex flex-wrap gap-1.5">{[1, 2, 3].map(n => <button key={n} onClick={() => setStartingLivesLocal(n)} className={`px-3 h-9 rounded-xl text-sm font-semibold transition-all ${startingLives === n ? 'bg-rose-500 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}>{'❤️'.repeat(n)}</button>)}</div>
               </div>
             )}
           </div>
           <div>
-            <p className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1"><BookOpen className="w-3 h-3" /> Question Type</p>
+            <p className="flex text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 items-center gap-1"><BookOpen className="w-3 h-3" /> {t('battle.questionType')}</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
               {QTYPES.map(({ value, label, desc }) => (
                 <button key={value} onClick={() => setQType(value)} className={`p-2 rounded-xl text-center transition-all border-2 ${qType === value ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300'}`}>
@@ -452,12 +459,13 @@ function LobbyView({ gameState, currentUserId, sendMessage, onLeave }: {
 
 // ── COUNTDOWN VIEW ────────────────────────────────────────────────────────────
 function CountdownView({ seconds }: { seconds: number | null }) {
+  const { t } = useTranslation()
   return (
     <div className="flex items-center justify-center min-h-[60vh]">
       <AnimatePresence mode="wait">
         <motion.div key={seconds} initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.6, opacity: 0 }} transition={{ duration: 0.4 }} className="text-center">
           <p className="text-8xl sm:text-9xl font-black text-primary-600 dark:text-primary-400">{seconds}</p>
-          <p className="mt-4 text-xl font-semibold text-gray-600 dark:text-gray-400">Get ready!</p>
+          <p className="mt-4 text-xl font-semibold text-gray-600 dark:text-gray-400">{t('battle.getReady')}</p>
         </motion.div>
       </AnimatePresence>
     </div>
@@ -469,6 +477,7 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
   gameState: ReturnType<typeof useBattleWebSocket>['gameState']
   currentUserId: number; sendMessage: (m: Record<string, unknown>) => void
 }) {
+  const { t } = useTranslation()
   const q = gameState.currentQuestion
   const me = gameState.players.find(p => p.user_id === currentUserId)
   const myFx = me?.active_effects ?? {}
@@ -621,7 +630,7 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
         {/* Prompt */}
         {q.question_type === 'character_match' && (
           <div className="text-center mb-4">
-            <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || 'What is the meaning?'}</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || t('battle.promptMeaning')}</p>
             <div className="flex items-center justify-center gap-3">
               <motion.p initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-6xl sm:text-7xl font-bold font-chinese text-gray-900 dark:text-gray-100">{q.chinese}</motion.p>
               <button onClick={() => speakChinese(q.chinese)} className="p-2 rounded-xl bg-primary-50 dark:bg-primary-950/30 text-primary-500 hover:bg-primary-100 transition-all dark:hover:bg-primary-900/40" title="Hear pronunciation"><Volume2 className="w-5 h-5" /></button>
@@ -631,13 +640,13 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
         )}
         {q.question_type === 'multiple_choice' && (
           <div className="text-center mb-4">
-            <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || 'Which character means this?'}</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || t('battle.promptChar')}</p>
             <motion.p initial={{ y: 8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">&ldquo;{q.english}&rdquo;</motion.p>
           </div>
         )}
         {q.question_type === 'pinyin_match' && (
           <div className="text-center mb-4">
-            <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || 'Which pronunciation is correct?'}</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || t('battle.promptPinyin')}</p>
             <div className="flex items-center justify-center gap-3">
               <motion.p initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-6xl sm:text-7xl font-bold font-chinese text-gray-900 dark:text-gray-100">{q.chinese}</motion.p>
               <button onClick={() => speakChinese(q.chinese)} className="p-2 rounded-xl bg-primary-50 dark:bg-primary-950/30 text-primary-500 hover:bg-primary-100 transition-all dark:hover:bg-primary-900/40" title="Hear pronunciation"><Volume2 className="w-5 h-5" /></button>
@@ -647,7 +656,7 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
         )}
         {q.question_type === 'tone_select' && (
           <div className="text-center mb-4">
-            <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || 'Choose the correct tone:'}</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || t('battle.promptTone')}</p>
             <div className="inline-flex items-center gap-3 bg-amber-50 dark:bg-amber-950/30 border-2 border-amber-300 dark:border-amber-700 rounded-2xl px-5 py-3">
               <span className="text-2xl">🎵</span>
               <motion.p initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-3xl sm:text-4xl font-bold text-amber-700 dark:text-amber-400 tracking-wider">{q.bare_syllable || q.pinyin}</motion.p>
@@ -658,7 +667,7 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
         )}
         {q.question_type === 'sentence_blank' && (
           <div className="text-center mb-4">
-            <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || 'Fill in the blank:'}</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || t('battle.promptBlank')}</p>
             <div className="bg-blue-50 dark:bg-blue-950/30 border-2 border-blue-200 dark:border-blue-800 rounded-2xl p-4">
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-xl sm:text-2xl font-bold font-chinese text-gray-900 dark:text-gray-100 leading-relaxed">
                 {(q.display_sentence || `___ (${q.pinyin})`).split('___').map((part: string, i: number, arr: string[]) => (
@@ -671,7 +680,7 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
         )}
         {q.question_type === 'definition_match' && (
           <div className="text-center mb-4">
-            <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || 'Which character matches this definition?'}</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{q.prompt_label || t('battle.promptDefinition')}</p>
             <div className="bg-purple-50 dark:bg-purple-950/30 border-2 border-purple-200 dark:border-purple-800 rounded-2xl p-4">
               <span className="text-2xl mb-2 block">📖</span>
               <motion.p initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="text-base sm:text-lg font-medium text-purple-900 dark:text-purple-200 italic">
@@ -703,8 +712,8 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
             )
           })}
         </div>
-        {selected !== null && <p className="text-center text-sm text-gray-500 mt-3 animate-pulse">Waiting for others…</p>}
-        {me?.eliminated && <p className="text-center text-sm text-error-500 mt-3 font-semibold">☠️ You've been eliminated — watching as spectator</p>}
+        {selected !== null && <p className="text-center text-sm text-gray-500 mt-3 animate-pulse">{t('battle.waitingOthers')}</p>}
+        {me?.eliminated && <p className="text-center text-sm text-error-500 mt-3 font-semibold">{t('battle.eliminated')}</p>}
       </div>
     </motion.div>
   )
@@ -712,6 +721,7 @@ function QuestionView({ gameState, currentUserId, sendMessage }: {
 
 // ── REVEAL VIEW ───────────────────────────────────────────────────────────────
 function RevealView({ gameState, currentUserId }: { gameState: ReturnType<typeof useBattleWebSocket>['gameState']; currentUserId: number }) {
+  const { t } = useTranslation()
   const reveal = gameState.revealData
   const q = gameState.currentQuestion
   const maxLives = gameState.startingLives
@@ -727,7 +737,7 @@ function RevealView({ gameState, currentUserId }: { gameState: ReturnType<typeof
         </motion.div>
       )}
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-success-300 dark:border-success-700 p-4 sm:p-5 text-center">
-        <p className="text-xs text-gray-500 uppercase tracking-wide mb-1.5">Correct Answer</p>
+        <p className="text-xs text-gray-500 uppercase tracking-wide mb-1.5">{t('battle.correctAnswer')}</p>
         <p className={`font-bold text-success-700 dark:text-success-400 ${q.question_type === 'multiple_choice' ? 'text-3xl sm:text-4xl font-chinese' : q.question_type === 'pinyin_match' ? 'text-2xl sm:text-3xl tracking-wide' : 'text-xl sm:text-2xl'}`}>{reveal.correctText}</p>
         {q.question_type === 'character_match' && <p className="text-2xl sm:text-3xl font-chinese text-gray-700 dark:text-gray-300 mt-1">{q.chinese}</p>}
         {q.question_type === 'pinyin_match' && <p className="text-3xl sm:text-4xl font-chinese text-gray-700 dark:text-gray-300 mt-1">{q.chinese}</p>}
@@ -735,7 +745,7 @@ function RevealView({ gameState, currentUserId }: { gameState: ReturnType<typeof
         <p className="text-gray-400 text-xs mt-1">{q.english}</p>
       </div>
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-3 sm:p-4">
-        <h3 className="font-semibold text-gray-700 dark:text-gray-300 mb-2 text-xs sm:text-sm">Round Results</h3>
+        <h3 className="font-semibold text-gray-700 dark:text-gray-300 mb-2 text-xs sm:text-sm">{t('battle.roundResults')}</h3>
         <div className="space-y-1.5">
           {reveal.players.map(p => (
             <div key={p.user_id} className={`flex items-center gap-2 sm:gap-3 p-2 rounded-xl ${p.result === 'correct' ? 'bg-success-50 dark:bg-success-950/20' : p.result === 'wrong' ? 'bg-error-50 dark:bg-error-950/20' : 'bg-gray-50 dark:bg-gray-800 opacity-50'}`}>
@@ -758,6 +768,7 @@ function GameOverView({ gameState, currentUserId, onPlayAgain, onNewGame }: {
   gameState: ReturnType<typeof useBattleWebSocket>['gameState']
   currentUserId: number; onPlayAgain: () => void; onNewGame: () => void
 }) {
+  const { t } = useTranslation()
   const over = gameState.gameOverData
   if (!over) return null
   const isBR = over.mode === 'battle_royale'
@@ -770,11 +781,11 @@ function GameOverView({ gameState, currentUserId, onPlayAgain, onNewGame }: {
         </motion.div>
         {isBR && over.winner ? (
           <>
-            <p className="text-xs uppercase tracking-widest text-gray-500 mb-1">Winner</p>
+            <p className="text-xs uppercase tracking-widest text-gray-500 mb-1">{t('battle.winner')}</p>
             <div className="flex justify-center"><Avatar player={over.winner} size="lg" /></div>
             <p className="mt-3 text-xl sm:text-2xl font-black text-gray-900 dark:text-gray-100">{over.winner.username}</p>
             <p className="text-primary-600 dark:text-primary-400 font-semibold">{over.winner.score} points</p>
-            {isWinner && <motion.p initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ delay: 0.4 }} className="mt-2 text-yellow-500 font-bold text-lg">🎉 That's you!</motion.p>}
+            {isWinner && <motion.p initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ delay: 0.4 }} className="mt-2 text-yellow-500 font-bold text-lg">{t('battle.thatsYou')}</motion.p>}
           </>
         ) : (
           <>
@@ -793,7 +804,7 @@ function GameOverView({ gameState, currentUserId, onPlayAgain, onNewGame }: {
         )}
       </div>
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-3 sm:p-5">
-        <h3 className="font-semibold text-gray-700 dark:text-gray-300 mb-3 text-sm">Final Scores</h3>
+        <h3 className="font-semibold text-gray-700 dark:text-gray-300 mb-3 text-sm">{t('battle.finalScores')}</h3>
         <div className="space-y-2">
           {over.finalScores.map((p, rank) => (
             <div key={p.user_id} className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl ${rank === 0 ? 'bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800' : 'bg-gray-50 dark:bg-gray-800'}`}>
@@ -837,7 +848,7 @@ function GameOverView({ gameState, currentUserId, onPlayAgain, onNewGame }: {
         )}
         <div className="grid grid-cols-2 gap-2">
           <button onClick={onPlayAgain} disabled={gameState.playAgainVotes.includes(currentUserId)} className="flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-xl transition-all text-sm">
-            <Swords className="w-4 h-4" />{gameState.playAgainVotes.includes(currentUserId) ? 'Voted ✅' : 'Vote Rematch!'}
+            <Swords className="w-4 h-4" />{gameState.playAgainVotes.includes(currentUserId) ? t('battle.voted') : t('battle.voteRematch')}
           </button>
           <button onClick={onNewGame} className="flex items-center justify-center gap-2 border-2 border-gray-200 dark:border-gray-700 hover:border-gray-400 text-gray-700 dark:text-gray-300 font-semibold py-2.5 rounded-xl transition-all text-sm">
             <LogOut className="w-4 h-4" /> Leave
@@ -850,6 +861,7 @@ function GameOverView({ gameState, currentUserId, onPlayAgain, onNewGame }: {
 
 // ── MAIN BATTLE PAGE ──────────────────────────────────────────────────────────
 export default function Battle() {
+  const { t } = useTranslation()
   const { user } = useAuthStore()
   const [roomCode, setRoomCode] = useState<string | null>(null)
   const { connectionStatus, gameState, sendMessage, disconnect } = useBattleWebSocket(roomCode)
@@ -870,11 +882,11 @@ export default function Battle() {
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 mb-6 sm:mb-8">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center shadow-md shadow-primary-500/30"><Swords className="w-5 h-5 text-white" /></div>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Battle Arena</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{t('battle.title')}</h1>
           {roomCode && (
             <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
               <span className={`w-2 h-2 rounded-full ${connectionStatus === 'connected' ? 'bg-success-500' : connectionStatus === 'failed' ? 'bg-error-500' : 'bg-yellow-400 animate-pulse'}`} />
-              {connectionStatus === 'connected' ? 'Connected' : connectionStatus === 'reconnecting' ? 'Reconnecting…' : connectionStatus === 'failed' ? 'Disconnected' : 'Connecting…'} · Room {roomCode}
+              {connectionStatus === 'connected' ? t('battle.connected') : connectionStatus === 'reconnecting' ? t('battle.reconnecting') : connectionStatus === 'failed' ? t('battle.disconnected') : t('battle.connecting')} · {t('battle.room')} {roomCode}
             </p>
           )}
         </div>
