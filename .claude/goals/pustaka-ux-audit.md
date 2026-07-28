@@ -61,7 +61,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 - [x] **AUD-15 · Petualangan** — `/adventure` · `Adventure.tsx` (547) · unlock 20 kata
 - [x] **AUD-16 · Tantangan Cerita** — `/story-challenge` · `StoryChallenge.tsx` (602) · unlock 30 kata
   - Catatan: sudah tersentuh di SUX-03 (i18n) & SUX-08 (tipe). Audit sisanya (a11y, state, mobile).
-- [ ] **AUD-17 · Duel** — `/battle` · `Battle.tsx` (894) · unlock 50 kata — realtime, cek state koneksi terputus
+- [x] **AUD-17 · Duel** — `/battle` · `Battle.tsx` (894) · unlock 50 kata — realtime, cek state koneksi terputus
 - [ ] **AUD-18 · Ular Tangga HSK** — `/ladder` · `LadderRace.tsx` (423) · unlock 50 kata
 
 ---
@@ -314,6 +314,19 @@ Diaudit: `pages/StoryChallenge.tsx` (602). i18n & tipe sudah dibereskan di SUX-0
 **Dicatat (P2, belum dikerjakan):**
 - `selectStory` punya `catch` bersarang yang mengabaikan kegagalan `getStoryWords` lalu diam-diam jatuh ke ekstraksi 2-karakter dari konten. Hasilnya kata "kosakata" tanpa pinyin/arti — latihan tetap jalan tapi petunjuknya kosong, tanpa penjelasan kenapa.
 
+### AUD-17 · Duel — 2026-07-28 b18f5f5
+Diaudit: `pages/Battle.tsx` (894), `hooks/useBattleWebSocket.ts`.
+
+**Bersih — dan ini yang terbaik di Pustaka untuk dimensi D:** penanganan koneksi terputus **tidak diubah sama sekali** karena memang sudah benar. Hook punya 5 state (`idle`/`connecting`/`connected`/`reconnecting`/`failed`) dengan logika retry, `onclose` membedakan "akan mencoba lagi" dari "menyerah", dan UI menampilkan titik status berwarna + label. Bandingkan dengan mayoritas fitur lain yang justru menelan kegagalan diam-diam. · B · C · F · G.
+
+**Diperbaiki (P1):**
+- *Seluruh fitur tanpa i18n* — 894 baris, **nol** `useTranslation`. ~49 string UI + 16 efek (nama & deskripsi) → namespace `battle`. Mencakup lobi, pengaturan permainan, panel item, 6 label pertanyaan, layar reveal & skor akhir, tombol vote tanding ulang, sampai indikator koneksi.
+- *`EFFECT_META` menyimpan nama & deskripsi yang kini juga ada di i18n* — dirampingkan jadi hanya `emoji`, sehingga 16 buff/debuff punya **sumber tunggal**. Sama seperti pembersihan `SECTION_META` di AUD-08; membiarkan dua sumber untuk teks yang sama adalah jebakan yang sudah terbukti di SUX-08.
+
+**Dicatat (P2, belum dikerjakan):**
+- `Battle.tsx` masih memakai `sort(() => Math.random() - 0.5)` untuk mengacak opsi jawaban (baris ~492, di dalam pemetaan `origIdx`). Berbeda dari MockTest, di sini indeks aslinya dilacak sehingga penilaian tetap benar — tapi **sebaran posisi jawaban benar tetap bias** seperti yang diukur di AUD-13. Perlu `shuffle()` dari `utils/shuffle.ts`; tidak dikerjakan di iterasi ini karena menyentuh alur skoring realtime yang butuh pengujian dua pemain.
+- File 894 baris dengan 14 komponen dalam satu berkas — kandidat split per `feedback_split_large_files`.
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
@@ -333,3 +346,4 @@ Diaudit: `pages/StoryChallenge.tsx` (602). i18n & tipe sudah dibereskan di SUX-0
 - 2026-07-28 AUD-14 42d81f5 Susun Kalimat: bank kata kosong senyap -> pesan + Coba Lagi (toast-nya dulu dikomentari); shuffle bias varian 0.5-Math.random() yang luput di AUD-13. Build hijau
 - 2026-07-28 AUD-15 6ab6c0e Petualangan: i18n 16 string + audio gagal diberitahukan. Build hijau
 - 2026-07-28 AUD-16 40486fe Tantangan Cerita: error daftar jujur + Coba Lagi (dulu menyuruh "buat cerita dulu"), shuffle adil, Escape + aria-label modal, TTS gagal bertoast. Build hijau
+- 2026-07-28 AUD-17 b18f5f5 Duel: i18n ~49 string + 16 efek (894 baris, dulu 0 terjemahan), EFFECT_META jadi sumber tunggal. Penanganan koneksi terputus sudah benar, tak diubah. Build hijau
