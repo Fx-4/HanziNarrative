@@ -58,7 +58,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 - [x] **AUD-12 · Chat AI** — `/conversation` · `Conversation.tsx` (483)
 - [x] **AUD-13 · Cocokkan** — `/matching` · `MatchingGame.tsx` (272)
 - [x] **AUD-14 · Susun Kalimat** — `/sentence-builder` · `SentenceBuilder.tsx` (515)
-- [ ] **AUD-15 · Petualangan** — `/adventure` · `Adventure.tsx` (547) · unlock 20 kata
+- [x] **AUD-15 · Petualangan** — `/adventure` · `Adventure.tsx` (547) · unlock 20 kata
 - [ ] **AUD-16 · Tantangan Cerita** — `/story-challenge` · `StoryChallenge.tsx` (602) · unlock 30 kata
   - Catatan: sudah tersentuh di SUX-03 (i18n) & SUX-08 (tipe). Audit sisanya (a11y, state, mobile).
 - [ ] **AUD-17 · Duel** — `/battle` · `Battle.tsx` (894) · unlock 50 kata — realtime, cek state koneksi terputus
@@ -286,6 +286,20 @@ Diaudit: `pages/SentenceBuilder.tsx` (515).
 - `components/onboarding/AdaptiveAssessment.tsx` memakai varian bias yang sama. Itu **asesmen penempatan level HSK**, jadi bias di sana bisa memengaruhi level awal user — di luar lingkup Pustaka, tapi layak diprioritaskan tersendiri.
 - `loadUsageStats` mengeset `{}` saat gagal agar tak "Loading…" selamanya — jujur, tapi batas kuota AI lalu tampil seolah belum terpakai.
 
+### AUD-15 · Petualangan — 2026-07-28 6ab6c0e
+Diaudit: `pages/Adventure.tsx` (547).
+
+**Bersih:** B · C (`SessionSkeleton` + skeleton streaming terpisah) · F · G · H. Penanganan stream setara `Conversation`: `AbortController` + `AbortError` diabaikan, dan **batas kuota 429 dibedakan** dari kegagalan umum.
+
+**Diperbaiki (P1):**
+- *Halaman tanpa i18n* — 16 string → namespace `adventure`, termasuk panel kuota harian dan tombol yang berubah jadi "Kuota habis — coba lagi besok".
+- *Audio narasi gagal senyap* — pola AUD-05/07 lagi (`catch` kosong + `onerror` hanya mereset flag). Di sini dampaknya lebih ringan karena teks cerita tetap terbaca, tapi tombol yang tak bereaksi tanpa penjelasan tetap membingungkan.
+
+**Catatan proses:** pesan batas kuota muncul **dua kali** di file (jalur mulai & jalur lanjut), tapi skrip penggantian saya memakai `replace(..., 1)` sehingga hanya yang pertama tergantikan. Ketahuan dari sapuan verifikasi setelah commit; diperbaiki lalu commit di-*amend* sebelum push, jadi tak ada commit setengah jadi yang terkirim.
+
+**Dicatat (P2, belum dikerjakan):**
+- `loadUsageStats` menelan error diam-diam ("Ignore — will show default"), jadi saat gagal panel kuota bisa tampil seolah masih penuh. Pola sama seperti `SentenceBuilder`.
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
@@ -303,3 +317,4 @@ Diaudit: `pages/SentenceBuilder.tsx` (515).
 - 2026-07-28 AUD-12 cc66931 Chat AI: i18n 14 string, aria-label 3 tombol ikon, teks dipulihkan saat balasan gagal (dulu harus mengetik ulang). Build hijau
 - 2026-07-28 AUD-13 0d2b6a3 Cocokkan: shuffle bias -> Fisher-Yates (utils/shuffle.ts). Terukur: jawaban benar MockTest condong ke A 36%/D 31%; kartu memori 22% lebih sering berpasangan. Ikut memperbaiki MockTest (revisit AUD-08). Build hijau
 - 2026-07-28 AUD-14 42d81f5 Susun Kalimat: bank kata kosong senyap -> pesan + Coba Lagi (toast-nya dulu dikomentari); shuffle bias varian 0.5-Math.random() yang luput di AUD-13. Build hijau
+- 2026-07-28 AUD-15 6ab6c0e Petualangan: i18n 16 string + audio gagal diberitahukan. Build hijau
