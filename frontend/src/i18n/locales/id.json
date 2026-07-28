@@ -860,6 +860,26 @@
     }
   },
 
+  "conversation": {
+    "title":          "Teman Ngobrol AI",
+    "subtitle":       "Latih percakapan Mandarin dengan AI sesuai level HSK-mu",
+    "selectLevel":    "Pilih Levelmu",
+    "chooseTopic":    "Pilih Topik",
+    "togglePinyin":   "Tampilkan/sembunyikan pinyin",
+    "toggleEnglish":  "Tampilkan/sembunyikan terjemahan",
+    "newConversation":"Percakapan baru",
+    "speak":          "Dengarkan pesan ini",
+    "corrections":    "Koreksi",
+    "newWords":       "Kata Baru",
+    "inputPlaceholder": "用中文说点什么... (Ketik dalam bahasa Mandarin)",
+    "toasts": {
+      "topicsFailed": "Gagal memuat topik",
+      "selectTopic":  "Pilih topik dulu",
+      "startFailed":  "Gagal memulai percakapan",
+      "replyFailed":  "Gagal mendapat balasan"
+    }
+  },
+
   "dailyChallenge": {
     "badge":           "Tantangan Harian",
     "loadFailed":      "Gagal memuat tantangan harian.",

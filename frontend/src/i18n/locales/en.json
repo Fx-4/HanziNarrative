@@ -860,6 +860,26 @@
     }
   },
 
+  "conversation": {
+    "title":          "AI Conversation Partner",
+    "subtitle":       "Practice Chinese conversation with AI at your HSK level",
+    "selectLevel":    "Select Your Level",
+    "chooseTopic":    "Choose a Topic",
+    "togglePinyin":   "Toggle pinyin",
+    "toggleEnglish":  "Toggle English",
+    "newConversation":"New conversation",
+    "speak":          "Listen to this message",
+    "corrections":    "Corrections",
+    "newWords":       "New Words",
+    "inputPlaceholder": "用中文说点什么... (Type in Chinese)",
+    "toasts": {
+      "topicsFailed": "Failed to load topics",
+      "selectTopic":  "Please select a topic",
+      "startFailed":  "Failed to start conversation",
+      "replyFailed":  "Failed to get reply"
+    }
+  },
+
   "dailyChallenge": {
     "badge":           "Daily Challenge",
     "loadFailed":      "Couldn't load the daily challenge.",

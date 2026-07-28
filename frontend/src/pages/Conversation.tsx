@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { conversationApi } from '@/services/api'
 import { TileGridSkeleton } from '@/components/ui/Skeleton'
+import { useTranslation } from 'react-i18next'
 import {
   MessageCircle, Send, ArrowLeft, Eye, EyeOff,
   AlertCircle, BookOpen, Volume2, RotateCcw,
@@ -28,6 +29,7 @@ interface Topic {
 }
 
 export default function Conversation() {
+  const { t } = useTranslation()
   const [stage, setStage] = useState<'setup' | 'chat'>('setup')
   const [hskLevel, setHskLevel] = useState(2)
   const [topics, setTopics] = useState<Topic[]>([])
@@ -49,7 +51,7 @@ export default function Conversation() {
         if (isNetworkError) {
           console.warn('[Conversation] Could not load topics (server might be waking up)');
         } else {
-          toast.error('Failed to load topics');
+          toast.error(t('conversation.toasts.topicsFailed'));
         }
       })
       .finally(() => setTopicsLoading(false))
@@ -68,7 +70,7 @@ export default function Conversation() {
 
   const startConversation = async () => {
     if (!selectedTopic) {
-      toast.error('Please select a topic')
+      toast.error(t('conversation.toasts.selectTopic'))
       return
     }
     setLoading(true)
@@ -127,7 +129,7 @@ export default function Conversation() {
     } catch (err) {
       const e = err as { name?: string; message?: string }
       if (e?.name === 'AbortError') return
-      toast.error(e?.message || 'Failed to start conversation')
+      toast.error(e?.message || t('conversation.toasts.startFailed'))
       // Remove the empty placeholder on error
       setMessages([])
       setStage('setup')
@@ -204,13 +206,17 @@ export default function Conversation() {
     } catch (err) {
       const e = err as { name?: string; message?: string }
       if (e?.name === 'AbortError') return
-      toast.error(e?.message || 'Failed to get reply')
-      // Remove the empty streaming placeholder on error
+      toast.error(e?.message || t('conversation.toasts.replyFailed'))
+      // Buang placeholder streaming DAN pesan user yang tak jadi terjawab, lalu
+      // kembalikan teksnya ke input — sebelumnya teks sudah terhapus sehingga
+      // user harus mengetik ulang seluruh kalimat hanya untuk mencoba lagi.
       setMessages(prev => {
-        const last = prev[prev.length - 1]
-        if (last?.isStreaming) return prev.slice(0, -1)
-        return prev
+        let next = prev
+        if (next[next.length - 1]?.isStreaming) next = next.slice(0, -1)
+        if (next[next.length - 1]?.role === 'user') next = next.slice(0, -1)
+        return next
       })
+      setInput(text)
     } finally {
       setLoading(false)
     }
@@ -243,8 +249,8 @@ export default function Conversation() {
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mx-auto mb-4 shadow-xl shadow-blue-500/25">
             <MessageCircle className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 dark:text-gray-50">AI Conversation Partner</h1>
-          <p className="text-gray-500 text-sm dark:text-gray-400">Practice Chinese conversation with AI at your HSK level</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 dark:text-gray-50">{t('conversation.title')}</h1>
+          <p className="text-gray-500 text-sm dark:text-gray-400">{t('conversation.subtitle')}</p>
         </motion.div>
 
         {/* HSK Level Selection */}
@@ -254,7 +260,7 @@ export default function Conversation() {
           transition={{ delay: 0.1 }}
           className="bg-white rounded-2xl border border-gray-200 p-5 mb-4 shadow-sm dark:bg-surface-card dark:border-surface-border"
         >
-          <h2 className="font-bold text-gray-900 text-sm mb-3 dark:text-gray-50">Select Your Level</h2>
+          <h2 className="font-bold text-gray-900 text-sm mb-3 dark:text-gray-50">{t('conversation.selectLevel')}</h2>
           <div className="grid grid-cols-6 gap-2">
             {[1, 2, 3, 4, 5, 6].map(level => (
               <button
@@ -279,7 +285,7 @@ export default function Conversation() {
           transition={{ delay: 0.2 }}
           className="bg-white rounded-2xl border border-gray-200 p-5 mb-6 shadow-sm dark:bg-surface-card dark:border-surface-border"
         >
-          <h2 className="font-bold text-gray-900 text-sm mb-3 dark:text-gray-50">Choose a Topic</h2>
+          <h2 className="font-bold text-gray-900 text-sm mb-3 dark:text-gray-50">{t('conversation.chooseTopic')}</h2>
           {topicsLoading ? (
             <TileGridSkeleton tiles={6} />
           ) : (
@@ -340,7 +346,8 @@ export default function Conversation() {
             className={`p-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
               showPinyin ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' : 'bg-gray-100 text-gray-500'
             }`}
-            title="Toggle pinyin"
+            title={t('conversation.togglePinyin')}
+            aria-label={t('conversation.togglePinyin')}
           >
             拼
           </button>
@@ -349,14 +356,16 @@ export default function Conversation() {
             className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
               showEnglish ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' : 'bg-gray-100 text-gray-500'
             }`}
-            title="Toggle English"
+            title={t('conversation.toggleEnglish')}
+            aria-label={t('conversation.toggleEnglish')}
           >
             {showEnglish ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
           </button>
           <button
             onClick={resetConversation}
             className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors cursor-pointer dark:bg-surface-card dark:text-gray-400"
-            title="New conversation"
+            title={t('conversation.newConversation')}
+            aria-label={t('conversation.newConversation')}
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
@@ -418,7 +427,7 @@ export default function Conversation() {
                 {!msg.isStreaming && msg.corrections && msg.corrections.length > 0 && (
                   <div className="mt-2 p-2 bg-amber-50 rounded-xl border border-amber-200 dark:bg-amber-950/30 dark:border-amber-800">
                     <p className="text-[10px] font-bold text-amber-700 mb-1 flex items-center gap-1 dark:text-amber-300">
-                      <AlertCircle className="w-3 h-3" /> Corrections
+                      <AlertCircle className="w-3 h-3" /> {t('conversation.corrections')}
                     </p>
                     {msg.corrections.map((c, ci) => (
                       <div key={ci} className="text-xs text-gray-700 mb-1 dark:text-gray-300">
@@ -437,7 +446,7 @@ export default function Conversation() {
                 {!msg.isStreaming && msg.new_vocabulary && msg.new_vocabulary.length > 0 && (
                   <div className="mt-2 p-2 bg-blue-50 rounded-xl border border-blue-200 dark:bg-blue-950/30 dark:border-blue-800">
                     <p className="text-[10px] font-bold text-blue-700 mb-1 flex items-center gap-1 dark:text-blue-300">
-                      <BookOpen className="w-3 h-3" /> New Words
+                      <BookOpen className="w-3 h-3" /> {t('conversation.newWords')}
                     </p>
                     {msg.new_vocabulary.map((v, vi) => (
                       <div key={vi} className="text-xs text-gray-700 dark:text-gray-300">
@@ -465,7 +474,7 @@ export default function Conversation() {
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-          placeholder="用中文说点什么... (Type in Chinese)"
+          placeholder={t('conversation.inputPlaceholder')}
           className="flex-1 px-3 py-2.5 text-sm outline-none bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
           disabled={loading}
         />
