@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { adventureApi } from '@/services/api'
 import { Skeleton, SessionSkeleton } from '@/components/ui/Skeleton'
+import { useTranslation } from 'react-i18next'
 import {
     Map,
     Sparkles,
@@ -68,6 +69,7 @@ const TOPICS = [
 ]
 
 export default function Adventure() {
+    const { t } = useTranslation()
     const [hskLevel, setHskLevel] = useState(1)
     const [topic, setTopic] = useState('daily life')
     const [storySteps, setStorySteps] = useState<StoryStep[]>([])
@@ -121,9 +123,9 @@ export default function Adventure() {
             const err = error as { name?: string; message?: string; response?: { status?: number } }
             if (err.name === 'AbortError') return
             if (err.message?.includes('429') || err.response?.status === 429) {
-                toast.error('Rate limit reached! Try again later.')
+                toast.error(t('adventure.toasts.rateLimit'))
             } else {
-                toast.error('Failed to start adventure')
+                toast.error(t('adventure.toasts.startFailed'))
             }
         } finally {
             setLoading(false)
@@ -160,9 +162,9 @@ export default function Adventure() {
             const err = error as { name?: string; message?: string; response?: { status?: number } }
             if (err.name === 'AbortError') return
             if (err.message?.includes('429') || err.response?.status === 429) {
-                toast.error('Rate limit reached! Try again later.')
+                toast.error(t('adventure.toasts.rateLimit'))
             } else {
-                toast.error('Failed to continue story')
+                toast.error(t('adventure.toasts.continueFailed'))
             }
         } finally {
             setLoading(false)
@@ -183,10 +185,14 @@ export default function Adventure() {
             const audio = await fetchTTSAudio({ text, speakingRate: 0.85 })
             setAudioRef(audio)
             audio.onended = () => setIsPlaying(false)
-            audio.onerror = () => setIsPlaying(false)
+            audio.onerror = () => {
+                setIsPlaying(false)
+                toast.error(t('adventure.toasts.audioFailed'))
+            }
             await audio.play()
         } catch {
             setIsPlaying(false)
+            toast.error(t('adventure.toasts.audioFailed'))
         }
     }
 
@@ -227,7 +233,7 @@ export default function Adventure() {
                                 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-50"
                                 wordDelay={0.08}
                             >
-                                Adventure Stories
+                                {t('adventure.title')}
                             </BlurText>
                         </div>
                         <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">
@@ -243,7 +249,7 @@ export default function Adventure() {
                         className="mb-6"
                     >
                         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:bg-surface-card dark:border-surface-border">
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 dark:text-gray-50">HSK Level</h3>
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 dark:text-gray-50">{t('adventure.hskLevel')}</h3>
                             <div className="flex flex-wrap gap-2">
                                 {[1, 2, 3, 4, 5, 6].map((level) => (
                                     <button
@@ -269,7 +275,7 @@ export default function Adventure() {
                         className="mb-6"
                     >
                         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:bg-surface-card dark:border-surface-border">
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 dark:text-gray-50">Choose a Topic</h3>
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 dark:text-gray-50">{t('adventure.chooseTopic')}</h3>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                 {TOPICS.map((t) => (
                                     <button
@@ -299,17 +305,17 @@ export default function Adventure() {
                             <div className="bg-gradient-to-r from-success-50 to-success-50 rounded-3xl shadow border border-success-200 p-4 sm:p-5 dark:from-success-950/30 dark:to-success-950/30 dark:border-success-800">
                                 <div className="flex items-center gap-2 mb-2">
                                     <AlertCircle className="w-4 h-4 text-success-600 dark:text-success-400" />
-                                    <h4 className="text-sm font-semibold text-success-800 dark:text-success-300">Today's Quota</h4>
+                                    <h4 className="text-sm font-semibold text-success-800 dark:text-success-300">{t('adventure.quotaTitle')}</h4>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3">
                                     <div>
-                                        <p className="text-xs text-success-700 dark:text-success-300">Adventures remaining</p>
+                                        <p className="text-xs text-success-700 dark:text-success-300">{t('adventure.adventuresLeft')}</p>
                                         <p className="text-lg font-bold text-success-800 dark:text-success-300">
                                             {startQuota ? `${startQuota.remaining_daily}/${startQuota.limit_daily}` : '—'}
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-success-700 dark:text-success-300">Choices remaining</p>
+                                        <p className="text-xs text-success-700 dark:text-success-300">{t('adventure.choicesLeft')}</p>
                                         <p className="text-lg font-bold text-success-800 dark:text-success-300">
                                             {continueQuota ? `${continueQuota.remaining_daily}/${continueQuota.limit_daily}` : '—'}
                                         </p>
@@ -332,7 +338,7 @@ export default function Adventure() {
                             className="bg-gradient-to-r from-success-600 to-success-600 hover:from-success-700 hover:to-success-700 text-white rounded-2xl px-8 py-4 font-semibold text-lg cursor-pointer transition-all flex items-center gap-3 mx-auto disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <Map className="w-6 h-6" />
-                            {canStart ? 'Start Adventure' : 'Quota exhausted — try tomorrow'}
+                            {canStart ? t('adventure.start') : t('adventure.quotaExhausted')}
                         </button>
                     </motion.div>
                 </div>
@@ -353,7 +359,7 @@ export default function Adventure() {
                         onClick={resetAdventure}
                         className="text-gray-600 hover:text-gray-900 font-medium cursor-pointer flex items-center gap-1 dark:text-gray-400"
                     >
-                        <RotateCcw className="w-4 h-4" /> New Adventure
+                        <RotateCcw className="w-4 h-4" /> {t('adventure.newAdventure')}
                     </button>
                     <div className="flex items-center gap-2">
                         <button
@@ -486,7 +492,7 @@ export default function Adventure() {
                     >
                         <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-3xl shadow-xl border border-amber-200 p-6 text-center dark:from-amber-950/30 dark:to-yellow-950/30 dark:border-amber-800">
                             <Trophy className="w-12 h-12 text-amber-500 mx-auto mb-3" />
-                            <h3 className="text-xl font-bold text-gray-900 mb-2 dark:text-gray-50">Adventure Complete!</h3>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2 dark:text-gray-50">{t('adventure.complete')}</h3>
                             {currentStep.moral && (
                                 <p className="text-gray-700 italic mb-4 dark:text-gray-300">"{currentStep.moral}"</p>
                             )}
@@ -495,7 +501,7 @@ export default function Adventure() {
                                 onClick={resetAdventure}
                                 className="bg-success-600 hover:bg-success-700 text-white rounded-2xl px-6 py-3 font-semibold cursor-pointer transition-colors flex items-center gap-2 mx-auto"
                             >
-                                <Map className="w-5 h-5" /> Start New Adventure
+                                <Map className="w-5 h-5" /> {t('adventure.startNew')}
                             </button>
                         </div>
                     </motion.div>
@@ -509,7 +515,7 @@ export default function Adventure() {
                         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 dark:bg-surface-card dark:border-surface-border">
                             <div className="flex items-center gap-2 mb-4">
                                 <Sparkles className="w-5 h-5 text-success-600 dark:text-success-400" />
-                                <h3 className="font-semibold text-gray-900 dark:text-gray-50">What do you do?</h3>
+                                <h3 className="font-semibold text-gray-900 dark:text-gray-50">{t('adventure.whatDoYouDo')}</h3>
                             </div>
                             <div className="space-y-3">
                                 {currentStep.choices.map((choice) => (

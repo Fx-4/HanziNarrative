@@ -860,6 +860,27 @@
     }
   },
 
+  "adventure": {
+    "title":            "Adventure Stories",
+    "hskLevel":         "HSK Level",
+    "chooseTopic":      "Choose a Topic",
+    "quotaTitle":       "Today's Quota",
+    "adventuresLeft":   "Adventures remaining",
+    "choicesLeft":      "Choices remaining",
+    "start":            "Start Adventure",
+    "quotaExhausted":   "Quota exhausted — try tomorrow",
+    "newAdventure":     "New Adventure",
+    "complete":         "Adventure Complete!",
+    "startNew":         "Start New Adventure",
+    "whatDoYouDo":      "What do you do?",
+    "toasts": {
+      "rateLimit":      "Rate limit reached! Try again later.",
+      "startFailed":    "Failed to start adventure",
+      "continueFailed": "Failed to continue story",
+      "audioFailed":    "Couldn't play the audio. Try pressing play again."
+    }
+  },
+
   "conversation": {
     "title":          "AI Conversation Partner",
     "subtitle":       "Practice Chinese conversation with AI at your HSK level",

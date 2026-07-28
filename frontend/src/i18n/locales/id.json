@@ -860,6 +860,27 @@
     }
   },
 
+  "adventure": {
+    "title":            "Cerita Petualangan",
+    "hskLevel":         "Level HSK",
+    "chooseTopic":      "Pilih Topik",
+    "quotaTitle":       "Kuota Hari Ini",
+    "adventuresLeft":   "Petualangan tersisa",
+    "choicesLeft":      "Pilihan tersisa",
+    "start":            "Mulai Petualangan",
+    "quotaExhausted":   "Kuota habis — coba lagi besok",
+    "newAdventure":     "Petualangan Baru",
+    "complete":         "Petualangan Selesai!",
+    "startNew":         "Mulai Petualangan Baru",
+    "whatDoYouDo":      "Apa yang kamu lakukan?",
+    "toasts": {
+      "rateLimit":      "Batas pemakaian tercapai! Coba lagi nanti.",
+      "startFailed":    "Gagal memulai petualangan",
+      "continueFailed": "Gagal melanjutkan cerita",
+      "audioFailed":    "Gagal memutar audio. Coba tekan putar lagi."
+    }
+  },
+
   "conversation": {
     "title":          "Teman Ngobrol AI",
     "subtitle":       "Latih percakapan Mandarin dengan AI sesuai level HSK-mu",
