@@ -22,6 +22,7 @@ import {
     Play
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { shuffle } from '@/utils/shuffle'
 import { useTranslation } from 'react-i18next'
 import BlurText from '@/components/animations/BlurText'
 
@@ -88,7 +89,7 @@ function buildListeningQuestion(word: HanziWord, others: HanziWord[], idx: numbe
         const promptSub = 'Listen to the word, then choose the correct Chinese character'
         const correct = word.simplified
         const wrongs = others.slice(0, 3).map(o => o.simplified)
-        const options = [correct, ...wrongs].sort(() => Math.random() - 0.5)
+        const options = shuffle([correct, ...wrongs])
         return {
             subtype: 'listen-pinyin-pick-chinese',
             prompt, promptSub,
@@ -100,7 +101,7 @@ function buildListeningQuestion(word: HanziWord, others: HanziWord[], idx: numbe
         const promptSub = 'Listen carefully and choose the correct English meaning'
         const correct = word.english
         const wrongs = others.slice(0, 3).map(o => o.english)
-        const options = [correct, ...wrongs].sort(() => Math.random() - 0.5)
+        const options = shuffle([correct, ...wrongs])
         return {
             subtype: 'listen-chinese-pick-english',
             prompt: '',
@@ -119,7 +120,7 @@ function buildReadingQuestion(word: HanziWord, others: HanziWord[], idx: number)
         const promptSub = `Meaning of the missing word: "${word.english}"`
         const correct = word.simplified
         const wrongs = others.slice(0, 3).map(o => o.simplified)
-        const options = [correct, ...wrongs].sort(() => Math.random() - 0.5)
+        const options = shuffle([correct, ...wrongs])
         return {
             subtype: 'read-fill-blank',
             prompt, promptSub, audioText: '',
@@ -131,7 +132,7 @@ function buildReadingQuestion(word: HanziWord, others: HanziWord[], idx: number)
         const promptSub = 'Choose the correct English meaning for this word'
         const correct = word.english
         const wrongs = others.slice(0, 3).map(o => o.english)
-        const options = [correct, ...wrongs].sort(() => Math.random() - 0.5)
+        const options = shuffle([correct, ...wrongs])
         return {
             subtype: 'read-match-meaning',
             prompt, promptSub, audioText: '',
@@ -147,7 +148,7 @@ function buildWritingQuestion(word: HanziWord, others: HanziWord[], idx: number)
         const promptSub = `Pinyin: ${word.pinyin}`
         const correct = word.simplified
         const wrongs = others.slice(0, 3).map(o => o.simplified)
-        const options = [correct, ...wrongs].sort(() => Math.random() - 0.5)
+        const options = shuffle([correct, ...wrongs])
         return {
             subtype: 'write-pick-character',
             prompt, promptSub, audioText: '',
@@ -163,7 +164,7 @@ function buildWritingQuestion(word: HanziWord, others: HanziWord[], idx: number)
             .filter(p => p !== correct)
         // Ensure exactly 3 unique wrong options
         while (wrongs.length < 3) wrongs.push(others[wrongs.length + 3]?.pinyin ?? `x${wrongs.length}`)
-        const options = [correct, ...wrongs.slice(0, 3)].sort(() => Math.random() - 0.5)
+        const options = shuffle([correct, ...wrongs.slice(0, 3)])
         return {
             subtype: 'write-pick-pinyin',
             prompt, promptSub, audioText: '',
@@ -173,12 +174,12 @@ function buildWritingQuestion(word: HanziWord, others: HanziWord[], idx: number)
 }
 
 function generateSectionedQuestions(words: HanziWord[]): [Question[], Question[], Question[]] {
-    const shuffled = [...words].sort(() => Math.random() - 0.5)
+    const shuffled = shuffle(words)
     const listeningWords = shuffled.slice(0, 10)
     const readingWords = shuffled.slice(10, 20)
     const writingWords = shuffled.slice(20, 25)
     const getOthers = (word: HanziWord) =>
-        words.filter(w => w.id !== word.id).sort(() => Math.random() - 0.5)
+        shuffle(words.filter(w => w.id !== word.id))
 
     const listening: Question[] = listeningWords.map((w, i) => ({
         type: 'listening' as TestSection,
