@@ -54,7 +54,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 
 ## Bagian 3 — Main (PLAY_ITEMS)
 
-- [ ] **AUD-11 · Tantangan Harian** — `/daily-challenge` · `DailyChallenge.tsx` (333)
+- [x] **AUD-11 · Tantangan Harian** — `/daily-challenge` · `DailyChallenge.tsx` (333)
 - [ ] **AUD-12 · Chat AI** — `/conversation` · `Conversation.tsx` (483)
 - [ ] **AUD-13 · Cocokkan** — `/matching` · `MatchingGame.tsx` (272)
 - [ ] **AUD-14 · Susun Kalimat** — `/sentence-builder` · `SentenceBuilder.tsx` (515)
@@ -222,6 +222,18 @@ Diaudit: `pages/SentenceScramble.tsx` (327), `App.tsx` (baris route).
 - Route tetap `/explorer` — sengaja **tidak** diubah agar tautan/bookmark lama tak putus. Kalau mau dirapikan, perlu redirect dari `/explorer` ke nama baru, bukan penggantian langsung.
 - Nama file/komponen `SentenceScramble` masih berbeda dari label produk "Isi Cerita" dan key katalog `storyBlanks`. Menyatukannya adalah refactor lintas file; kini tinggal 3 nama (route, komponen, key) dari sebelumnya 5.
 
+### AUD-11 · Tantangan Harian — 2026-07-28 3fb1620
+Diaudit: `pages/DailyChallenge.tsx` (333).
+
+**Bersih:** C (skeleton rinci meniru bentuk layar; `loadFailed` punya layar sendiri) · D (tombol selesai punya state menyimpan + state "sudah selesai") · E · F · G · H.
+
+**Diperbaiki (P1):**
+- *Teks campur dua bahasa dalam satu layar* — kebalikan sekaligus pelengkap temuan AUD-02. Di sini bukan "semua Inggris", melainkan **campur dua arah**: Indonesia ("Tandai Selesai", "Menyimpan…", "Gagal memuat daily challenge.") berdampingan dengan Inggris ("Daily Challenge", "Day Streak", "Completed"), ditambah satu toast yang mencampur keduanya dalam satu kalimat ("+30 XP! Daily challenge selesai"). Akibatnya **tak ada satu pun bahasa yang utuh** — user Indonesia maupun Inggris sama-sama melihat teks asing. 14 string → namespace `dailyChallenge`.
+- *Judul tanggal dipaku ke `en-US`* — `toLocaleDateString('en-US', …)` membuat H1 halaman (mis. "Tuesday, July 28") selalu Inggris walau UI berbahasa Indonesia. Kini mengikuti `i18n.language` memakai pola yang sudah ada di `App.tsx`.
+
+**Dicatat (P2, belum dikerjakan):**
+- `toLocaleDateString('en-US')` yang dipaku adalah **pola se-codebase**, bukan khusus fitur ini — ada 4 pemakaian eksplisit `'en-US'` plus 8 pemakaian tanpa argumen locale di `pages/`+`components/`. Yang berada di dalam lingkup Pustaka akan tertangkap di AUD berikutnya; sisanya (Dashboard, Profile, dll) di luar lingkup goal ini dan layak jadi task tersendiri.
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
@@ -235,3 +247,4 @@ Diaudit: `pages/SentenceScramble.tsx` (327), `App.tsx` (baris route).
 - 2026-07-28 AUD-08 c9a144b Tes Simulasi: i18n ~35 string (1060 baris, dulu 0 terjemahan — ujian penuh berbahasa Inggris) + buang data mati labelEn/desc. Build hijau
 - 2026-07-28 AUD-09 cae3960 Kosakata: layar error + Coba Lagi (dulu gagal jaringan mengklaim "Tidak ada kosakata di HSK Level X"). Build hijau
 - 2026-07-28 AUD-10 2933708 Isi Cerita: i18n 17 string, judul H1 disamakan dengan label katalog (dulu "Fill in the Blank" vs kartu "Isi Cerita"), nama LazyPage diperbaiki. **Bagian Latihan tuntas 11/11**
+- 2026-07-28 AUD-11 3fb1620 Tantangan Harian: i18n 14 string (dulu campur ID+EN dalam satu layar) + tanggal ikut bahasa UI (dulu dipaku en-US). Build hijau
