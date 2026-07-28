@@ -1170,6 +1170,8 @@
     "hint":         "Petunjuk ({{n}}/3)",
     "newWords":     "Kata Baru",
     "wordBank":     "Bank Kata",
+    "wordsError":   "Gagal memuat kata untuk latihan ini.",
+    "wordsRetry":   "Coba Lagi",
     "tipsTitle":    "Tips:",
     "tip1":         "Seret kata dari bank kata untuk menyusun kalimatmu",
     "tip2":         "Kamu bisa mengurutkan ulang kata dengan menyeretnya",

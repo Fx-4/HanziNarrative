@@ -1170,6 +1170,8 @@
     "hint":         "Hint ({{n}}/3)",
     "newWords":     "New Words",
     "wordBank":     "Word Bank",
+    "wordsError":   "Couldn't load the words for this exercise.",
+    "wordsRetry":   "Try Again",
     "tipsTitle":    "Tips:",
     "tip1":         "Drag words from the word bank to build your sentence",
     "tip2":         "You can reorder words in your sentence by dragging them",

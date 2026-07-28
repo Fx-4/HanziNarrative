@@ -4,6 +4,7 @@ import { SortableContext, arrayMove } from '@dnd-kit/sortable';
 import { useAuthStore } from '../store/authStore';
 import { vocabularyApi, storiesApi } from '@/services/api';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { sample } from '@/utils/shuffle';
 import DraggableWord from '../components/sentencebuilder/DraggableWord';
 import SentenceDropZone from '../components/sentencebuilder/SentenceDropZone';
 import ValidationResult from '../components/sentencebuilder/ValidationResult';
@@ -59,6 +60,9 @@ export default function SentenceBuilder() {
   const [targetSentence, setTargetSentence] = useState<string>(''); // For example sentence
   const [usageStats, setUsageStats] = useState<UsageStats | null>(null);
   const [wordsLoading, setWordsLoading] = useState(true);
+  // Kegagalan muat kata dulu dibiarkan senyap (toast-nya dikomentari), sehingga
+  // bank kata tampil kosong melompong tanpa penjelasan maupun jalan keluar.
+  const [wordsError, setWordsError] = useState(false);
 
   // Fetch vocabulary for the selected HSK level
   useEffect(() => {
@@ -91,11 +95,12 @@ export default function SentenceBuilder() {
 
   const fetchVocabulary = async () => {
     setWordsLoading(true);
+    setWordsError(false);
     try {
       const allWords = await vocabularyApi.getByHSKLevel(hskLevel);
-      // Randomly select 10-15 words for the exercise
-      const shuffled = allWords.sort(() => 0.5 - Math.random());
-      const words = shuffled.slice(0, 12);
+      // Pilih 12 kata acak. Dulu memakai sort(() => 0.5 - Math.random()) yang bukan
+      // pengacakan adil, sehingga sebagian kata jauh lebih sering muncul.
+      const words = sample(allWords, 12);
       setSelectedWords(words);
 
       // Generate a simple example sentence using some of the words
@@ -104,8 +109,7 @@ export default function SentenceBuilder() {
       }
     } catch (error) {
       sentenceBuilderLogger.warn('Could not fetch vocabulary (server might be waking up)');
-      // Only show toast for manual refreshes, not on initial mount if network error
-      // toast.error('Failed to load vocabulary');
+      setWordsError(true);
     } finally {
       setWordsLoading(false);
     }
@@ -460,6 +464,17 @@ export default function SentenceBuilder() {
             <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
               {`${t('sentenceBuilder.wordBank')} 词库`}
             </h2>
+            {!wordsLoading && wordsError && selectedWords.length === 0 && (
+              <div className="flex flex-col items-center gap-3 py-8 text-center">
+                <p className="text-sm text-gray-600 dark:text-gray-400">{t('sentenceBuilder.wordsError')}</p>
+                <button
+                  onClick={fetchVocabulary}
+                  className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors cursor-pointer"
+                >
+                  {t('sentenceBuilder.wordsRetry')}
+                </button>
+              </div>
+            )}
             {wordsLoading && selectedWords.length === 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                 {Array.from({ length: 12 }).map((_, i) => (
