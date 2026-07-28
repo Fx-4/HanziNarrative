@@ -57,7 +57,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 - [x] **AUD-11 · Tantangan Harian** — `/daily-challenge` · `DailyChallenge.tsx` (333)
 - [x] **AUD-12 · Chat AI** — `/conversation` · `Conversation.tsx` (483)
 - [x] **AUD-13 · Cocokkan** — `/matching` · `MatchingGame.tsx` (272)
-- [ ] **AUD-14 · Susun Kalimat** — `/sentence-builder` · `SentenceBuilder.tsx` (515)
+- [x] **AUD-14 · Susun Kalimat** — `/sentence-builder` · `SentenceBuilder.tsx` (515)
 - [ ] **AUD-15 · Petualangan** — `/adventure` · `Adventure.tsx` (547) · unlock 20 kata
 - [ ] **AUD-16 · Tantangan Cerita** — `/story-challenge` · `StoryChallenge.tsx` (602) · unlock 30 kata
   - Catatan: sudah tersentuh di SUX-03 (i18n) & SUX-08 (tipe). Audit sisanya (a11y, state, mobile).
@@ -271,6 +271,21 @@ Pola `arr.sort(() => Math.random() - 0.5)` dipakai **24 kali di 10+ file**. Itu 
 - Masih ada ~16 pemakaian `sort(() => Math.random() - 0.5)` di file **di luar** lingkup Pustaka (`Review.tsx`, `ReviewExercise.tsx`, `LearningSession.tsx`, `Battle.tsx` — Battle akan kena di AUD-17). Yang paling perlu dilihat: `Review.tsx` memakainya untuk memilih distraktor. Layak jadi task tersendiri memakai `utils/shuffle.ts` yang kini tersedia.
 - `Flashcards.tsx` & `Quiz.tsx` (P2 dari AUD-01/06) kini bisa mengadopsi util yang sama.
 
+### AUD-14 · Susun Kalimat — 2026-07-28 42d81f5
+Diaudit: `pages/SentenceBuilder.tsx` (515).
+
+**Bersih:** A (i18n lengkap) · B · F · G · H. Penanganan error pada **validasi kalimat** justru teladan — dibedakan per status (401/403 auth, 429 rate limit, lainnya) dengan pesan masing-masing.
+
+**Diperbaiki (P1):**
+- *Bank kata kosong senyap* — bentuk paling disengaja dari pola yang berulang di audit ini: `toast.error` di `fetchVocabulary` **dikomentari** dengan catatan "hanya tampilkan untuk refresh manual, bukan saat mount" — niat yang tak pernah diimplementasikan, jadi efeknya membungkam semua kegagalan. Karena skeleton bersyarat `wordsLoading && …` dan `wordsLoading` sudah `false` di `finally`, user melihat judul "Bank Kata 词库" dengan **area kosong melompong**: tanpa kata, tanpa skeleton, tanpa pesan, tanpa jalan keluar. Kini ada `wordsError` + pesan + tombol Coba Lagi.
+- *Shuffle bias varian lain* — `sort(() => 0.5 - Math.random())`. Penulisannya terbalik dari yang disapu di AUD-13 sehingga **luput dari grep saya**; dampaknya sama: sebagian kata jauh lebih sering terpilih untuk latihan. Kini `sample()` Fisher–Yates.
+
+**Koreksi angka AUD-13:** laporan "24 pemakaian" itu hitungan **sebelum** perbaikan dan hanya mencakup satu varian penulisan. Kondisi terkini: **18 tersisa** di seluruh codebase, 3 di antaranya varian `0.5 - Math.random()`.
+
+**Dicatat (P2, belum dikerjakan):**
+- `components/onboarding/AdaptiveAssessment.tsx` memakai varian bias yang sama. Itu **asesmen penempatan level HSK**, jadi bias di sana bisa memengaruhi level awal user — di luar lingkup Pustaka, tapi layak diprioritaskan tersendiri.
+- `loadUsageStats` mengeset `{}` saat gagal agar tak "Loading…" selamanya — jujur, tapi batas kuota AI lalu tampil seolah belum terpakai.
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
@@ -287,3 +302,4 @@ Pola `arr.sort(() => Math.random() - 0.5)` dipakai **24 kali di 10+ file**. Itu 
 - 2026-07-28 AUD-11 3fb1620 Tantangan Harian: i18n 14 string (dulu campur ID+EN dalam satu layar) + tanggal ikut bahasa UI (dulu dipaku en-US). Build hijau
 - 2026-07-28 AUD-12 cc66931 Chat AI: i18n 14 string, aria-label 3 tombol ikon, teks dipulihkan saat balasan gagal (dulu harus mengetik ulang). Build hijau
 - 2026-07-28 AUD-13 0d2b6a3 Cocokkan: shuffle bias -> Fisher-Yates (utils/shuffle.ts). Terukur: jawaban benar MockTest condong ke A 36%/D 31%; kartu memori 22% lebih sering berpasangan. Ikut memperbaiki MockTest (revisit AUD-08). Build hijau
+- 2026-07-28 AUD-14 42d81f5 Susun Kalimat: bank kata kosong senyap -> pesan + Coba Lagi (toast-nya dulu dikomentari); shuffle bias varian 0.5-Math.random() yang luput di AUD-13. Build hijau
