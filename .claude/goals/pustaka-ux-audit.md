@@ -62,7 +62,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 - [x] **AUD-16 · Tantangan Cerita** — `/story-challenge` · `StoryChallenge.tsx` (602) · unlock 30 kata
   - Catatan: sudah tersentuh di SUX-03 (i18n) & SUX-08 (tipe). Audit sisanya (a11y, state, mobile).
 - [x] **AUD-17 · Duel** — `/battle` · `Battle.tsx` (894) · unlock 50 kata — realtime, cek state koneksi terputus
-- [ ] **AUD-18 · Ular Tangga HSK** — `/ladder` · `LadderRace.tsx` (423) · unlock 50 kata
+- [x] **AUD-18 · Ular Tangga HSK** — `/ladder` · `LadderRace.tsx` (423) · unlock 50 kata — **audit tuntas 19/19**
 
 ---
 
@@ -327,6 +327,36 @@ Diaudit: `pages/Battle.tsx` (894), `hooks/useBattleWebSocket.ts`.
 - `Battle.tsx` masih memakai `sort(() => Math.random() - 0.5)` untuk mengacak opsi jawaban (baris ~492, di dalam pemetaan `origIdx`). Berbeda dari MockTest, di sini indeks aslinya dilacak sehingga penilaian tetap benar — tapi **sebaran posisi jawaban benar tetap bias** seperti yang diukur di AUD-13. Perlu `shuffle()` dari `utils/shuffle.ts`; tidak dikerjakan di iterasi ini karena menyentuh alur skoring realtime yang butuh pengujian dua pemain.
 - File 894 baris dengan 14 komponen dalam satu berkas — kandidat split per `feedback_split_large_files`.
 
+### AUD-18 · Ular Tangga HSK — 2026-07-28 1fca2cc
+Diaudit: `pages/LadderRace.tsx` (423), `hooks/useLadderWebSocket.ts`.
+
+**Bersih:** A (36 key selaras di kedua locale, tak ada literal) · B · C (skeleton + layar khusus `connecting`/`failed`) · D (dadu dihitung **server**, jadi tak kena bias shuffle klien) · F · G · H.
+
+**Diperbaiki (P1 — a11y):**
+- *Dua tombol kembali ikon-saja* (`<ArrowLeft/>` tanpa teks) tanpa nama aksesibel → `aria-label`.
+- *Indikator menyambung ulang hanya spinner* — user screen-reader tak diberi tahu koneksinya putus, padahal ini fitur realtime. Kini ada teks "Menyambung ulang…" + `role="status"`. Bandingkan `Battle` yang sudah punya label eksplisit sejak awal.
+
+---
+
+## Rekap audit (19/19 selesai, 2026-07-28)
+
+**Tiga akar masalah yang berulang, bukan kosmetik:**
+
+1. **Kegagalan tak dijelaskan ke user — 10 fitur.** Bentuknya bervariasi tapi akibatnya sama: user diberi penjelasan yang salah, atau tak diberi apa pun.
+   - Klaim keliru: "Tidak ada kosakata di HSK Level X" (Kosakata), "Belum ada cerita — buat dulu!" (Tantangan Cerita), "Tidak Ada Kata" (Flashcards), "tidak ada kata untuk level ini" (Mengetik)
+   - Hening total: Dikte & Nada (**audio adalah soalnya** — user menebak buta), Bank Kata kosong melompong (Susun Kalimat, toast-nya sengaja dikomentari)
+   - Satu pesan untuk semua sebab: Berbicara ("izin mikrofon ditolak" bahkan saat browser tak mendukung perekaman)
+2. **i18n — 9 fitur.** ~2.900 baris tanpa `useTranslation` sama sekali (MockTest 1060, Battle 894, komponen ketik 829). Termasuk **campur bahasa dalam satu layar** (Tantangan Harian) dan judul halaman ≠ nama yang diklik user (Isi Cerita).
+3. **Shuffle bias — terukur.** `sort(() => Math.random() - 0.5)` membuat jawaban benar mendarat di posisi A **36%** (adil: 25%) di simulasi ujian HSK.
+
+**Yang sudah baik dan sengaja tak diubah:** penanganan koneksi realtime (`Battle`, `LadderRace`), penanganan stream ber-`AbortController` (`Conversation`, `Adventure`), error per-status (`SentenceBuilder`), dan `Quiz` yang lolos 8 dimensi tanpa satu pun temuan.
+
+**Sisa pekerjaan di luar lingkup goal ini:**
+- `sort(() => Math.random() - 0.5)` masih ada di `Review.tsx`, `ReviewExercise.tsx`, `LearningSession.tsx`, dan **`AdaptiveAssessment.tsx`** (asesmen penempatan level HSK — prioritaskan). `utils/shuffle.ts` sudah tersedia.
+- `Battle.tsx` shuffle opsi jawaban: penilaian tetap benar (indeks asli dilacak) tapi sebaran posisi bias; butuh uji dua pemain.
+- `toLocaleDateString('en-US')` yang dipaku di beberapa halaman luar Pustaka.
+- Timer `MockTest` berbasis `setInterval` (melambat saat tab dilatarbelakangkan) & tak ada persistensi progres tes.
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
@@ -347,3 +377,4 @@ Diaudit: `pages/Battle.tsx` (894), `hooks/useBattleWebSocket.ts`.
 - 2026-07-28 AUD-15 6ab6c0e Petualangan: i18n 16 string + audio gagal diberitahukan. Build hijau
 - 2026-07-28 AUD-16 40486fe Tantangan Cerita: error daftar jujur + Coba Lagi (dulu menyuruh "buat cerita dulu"), shuffle adil, Escape + aria-label modal, TTS gagal bertoast. Build hijau
 - 2026-07-28 AUD-17 b18f5f5 Duel: i18n ~49 string + 16 efek (894 baris, dulu 0 terjemahan), EFFECT_META jadi sumber tunggal. Penanganan koneksi terputus sudah benar, tak diubah. Build hijau
+- 2026-07-28 AUD-18 1fca2cc Ular Tangga: aria-label 2 tombol kembali + indikator reconnecting bertekst (role=status). **AUDIT TUNTAS 19/19**
