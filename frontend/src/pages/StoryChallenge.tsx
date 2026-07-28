@@ -20,6 +20,7 @@ import { toast } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import BlurText from '@/components/animations/BlurText'
 import { fetchTTSAudio } from '@/utils/ttsHelper'
+import { shuffle } from '@/utils/shuffle'
 
 // Vocabulary attached to a story — either fetched from the API or derived from
 // the content as a fallback. Kept in its own state instead of being stapled onto
@@ -39,6 +40,9 @@ export default function StoryChallenge() {
     const [storyVocab, setStoryVocab] = useState<StoryVocab[]>([])
     const [loading, setLoading] = useState(false)
     const [openingStory, setOpeningStory] = useState(false)
+    // Dibedakan dari "belum ada cerita": gagal jaringan tak boleh menyuruh user
+    // pergi membuat cerita baru.
+    const [listError, setListError] = useState(false)
     const [hiddenWords, setHiddenWords] = useState<Set<string>>(new Set())
     const [unlockedWords, setUnlockedWords] = useState<Set<string>>(new Set())
     const [writingChar, setWritingChar] = useState<HanziWord | null>(null)
@@ -61,12 +65,14 @@ export default function StoryChallenge() {
 
     const loadStories = async () => {
         setLoading(true)
+        setListError(false)
         try {
             const data = await storiesApi.getAll(hskLevel)
             setStories(data.filter(s => s.is_published))
         } catch {
             console.warn('[StoryChallenge] Could not load stories (server might be waking up)');
-            // Suppress toast for background initial load failure
+            setStories([])
+            setListError(true)
         } finally {
             setLoading(false)
         }
@@ -99,9 +105,10 @@ export default function StoryChallenge() {
                 }
             }
 
-            const wordsToHide = vocab
-                .filter(v => v.simplified.length <= 2)
-                .sort(() => Math.random() - 0.5)
+            // Pemilihan kata yang disembunyikan: dulu memakai sort(() => Math.random() - 0.5)
+            // yang bukan pengacakan adil, sehingga kata tertentu jauh lebih sering
+            // terpilih dan latihan cenderung mengulang kata yang itu-itu saja.
+            const wordsToHide = shuffle(vocab.filter(v => v.simplified.length <= 2))
                 .slice(0, Math.min(5, Math.max(3, vocab.length)))
                 .map(v => v.simplified)
 
@@ -164,6 +171,15 @@ export default function StoryChallenge() {
         }
     }
 
+    // Modal menulis bisa ditutup lewat backdrop, tapi keyboard sebelumnya tak punya
+    // jalan keluar. Pola sama seperti StoryReader.
+    useEffect(() => {
+        if (!writingChar) return
+        const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setWritingChar(null) }
+        window.addEventListener('keydown', onKey)
+        return () => window.removeEventListener('keydown', onKey)
+    }, [writingChar])
+
     const playStory = async () => {
         if (!selectedStory || isPlaying) return
         setIsPlaying(true)
@@ -172,10 +188,14 @@ export default function StoryChallenge() {
         try {
             const audio = await fetchTTSAudio({ text, speakingRate: 0.8 })
             audio.onended = () => setIsPlaying(false)
-            audio.onerror = () => setIsPlaying(false)
+            audio.onerror = () => {
+                setIsPlaying(false)
+                toast.error(t('storyChallengePage.toast.audioFailed'))
+            }
             await audio.play()
         } catch {
             setIsPlaying(false)
+            toast.error(t('storyChallengePage.toast.audioFailed'))
         }
     }
 
@@ -341,8 +361,22 @@ export default function StoryChallenge() {
                         ) : stories.length === 0 ? (
                             <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 text-center dark:bg-surface-card dark:border-surface-border">
                                 <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                                <p className="text-gray-600 dark:text-gray-400">{t('storyChallengePage.landing.noStories', { level: hskLevel })}</p>
-                                <p className="text-sm text-gray-400 mt-1 dark:text-gray-500">{t('storyChallengePage.landing.generateFirst')}</p>
+                                {listError ? (
+                                    <>
+                                        <p className="text-gray-600 dark:text-gray-400">{t('storyChallengePage.landing.listError')}</p>
+                                        <button
+                                            onClick={loadStories}
+                                            className="mt-3 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-semibold cursor-pointer transition-colors"
+                                        >
+                                            {t('storyChallengePage.landing.retry')}
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p className="text-gray-600 dark:text-gray-400">{t('storyChallengePage.landing.noStories', { level: hskLevel })}</p>
+                                        <p className="text-sm text-gray-400 mt-1 dark:text-gray-500">{t('storyChallengePage.landing.generateFirst')}</p>
+                                    </>
+                                )}
                             </div>
                         ) : (
                             <div className="grid sm:grid-cols-2 gap-3">
@@ -581,6 +615,7 @@ export default function StoryChallenge() {
                                 </div>
                                 <button
                                     onClick={() => setWritingChar(null)}
+                                    aria-label={t('storyChallengePage.modal.close')}
                                     className="p-1 rounded-lg hover:bg-gray-100 cursor-pointer"
                                 >
                                     <X className="w-5 h-5 text-gray-400 dark:text-gray-500" />

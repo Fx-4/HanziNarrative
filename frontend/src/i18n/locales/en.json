@@ -437,6 +437,7 @@
     },
     "toast": {
       "loadFailed": "Failed to load story",
+      "audioFailed": "Couldn't play the audio. Try pressing play again.",
       "bookmarkRemoved": "Bookmark removed",
       "bookmarked": "Story bookmarked!",
       "bookmarkFailed": "Failed to update bookmark",
@@ -603,6 +604,8 @@
       "selectLevel": "Select HSK Level",
       "noStories": "No stories available for HSK {{level}}.",
       "generateFirst": "Generate some stories first!",
+      "listError": "Couldn't load the story list.",
+      "retry": "Try Again",
       "howItWorks": "How it works",
       "step1Title": "1. Read",
       "step1Desc": "Read the story with hidden vocabulary words",
@@ -628,7 +631,8 @@
       "clickToWrite": "Click to write and unlock"
     },
     "modal": {
-      "write": "Write:"
+      "write": "Write:",
+      "close": "Close"
     }
   },
 

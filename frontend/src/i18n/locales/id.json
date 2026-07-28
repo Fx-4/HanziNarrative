@@ -437,6 +437,7 @@
     },
     "toast": {
       "loadFailed": "Gagal memuat cerita",
+      "audioFailed": "Gagal memutar audio. Coba tekan putar lagi.",
       "bookmarkRemoved": "Bookmark dihapus",
       "bookmarked": "Cerita disimpan!",
       "bookmarkFailed": "Gagal memperbarui bookmark",
@@ -603,6 +604,8 @@
       "selectLevel": "Pilih Level HSK",
       "noStories": "Belum ada cerita untuk HSK {{level}}.",
       "generateFirst": "Buat cerita dulu!",
+      "listError": "Gagal memuat daftar cerita.",
+      "retry": "Coba Lagi",
       "howItWorks": "Cara kerja",
       "step1Title": "1. Baca",
       "step1Desc": "Baca cerita dengan kata kosakata yang tersembunyi",
@@ -628,7 +631,8 @@
       "clickToWrite": "Klik untuk menulis dan membuka"
     },
     "modal": {
-      "write": "Tulis:"
+      "write": "Tulis:",
+      "close": "Tutup"
     }
   },
 
