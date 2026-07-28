@@ -55,7 +55,7 @@ Rubrik ini disusun dari temuan nyata audit Stories (SUX-01..14), bukan checklist
 ## Bagian 3 — Main (PLAY_ITEMS)
 
 - [x] **AUD-11 · Tantangan Harian** — `/daily-challenge` · `DailyChallenge.tsx` (333)
-- [ ] **AUD-12 · Chat AI** — `/conversation` · `Conversation.tsx` (483)
+- [x] **AUD-12 · Chat AI** — `/conversation` · `Conversation.tsx` (483)
 - [ ] **AUD-13 · Cocokkan** — `/matching` · `MatchingGame.tsx` (272)
 - [ ] **AUD-14 · Susun Kalimat** — `/sentence-builder` · `SentenceBuilder.tsx` (515)
 - [ ] **AUD-15 · Petualangan** — `/adventure` · `Adventure.tsx` (547) · unlock 20 kata
@@ -234,6 +234,20 @@ Diaudit: `pages/DailyChallenge.tsx` (333).
 **Dicatat (P2, belum dikerjakan):**
 - `toLocaleDateString('en-US')` yang dipaku adalah **pola se-codebase**, bukan khusus fitur ini — ada 4 pemakaian eksplisit `'en-US'` plus 8 pemakaian tanpa argumen locale di `pages/`+`components/`. Yang berada di dalam lingkup Pustaka akan tertangkap di AUD berikutnya; sisanya (Dashboard, Profile, dll) di luar lingkup goal ini dan layak jadi task tersendiri.
 
+### AUD-12 · Chat AI — 2026-07-28 cc66931
+Diaudit: `pages/Conversation.tsx` (483).
+
+**Bersih:** C (`TileGridSkeleton`; toast error di semua jalur) · F · G · H. **Penanganan stream-nya termasuk yang terbaik di Pustaka**: `AbortController` membatalkan permintaan sebelumnya, `AbortError` sengaja diabaikan agar pembatalan tak dilaporkan sebagai kegagalan, dan placeholder streaming dibersihkan saat error.
+
+**Diperbaiki (P1):**
+- *Halaman tanpa i18n* — 14 string → namespace `conversation`.
+- *Teks hilang saat balasan gagal* — input dikosongkan sebelum request (`setInput('')`), jadi ketika balasan gagal user melihat pesannya menggantung tanpa jawaban dan **harus mengetik ulang seluruh kalimat** hanya untuk mencoba lagi. Kini pesan user yang tak terjawab dibuang bersama placeholder dan teksnya dikembalikan ke input — cukup tekan kirim lagi.
+- *3 tombol ikon hanya punya `title`* (pinyin, terjemahan, percakapan baru) → ditambah `aria-label`.
+
+**Dicatat (P2, belum dikerjakan):**
+- Riwayat percakapan hilang saat berpindah halaman/muat ulang — tak ada persistensi (pola sama seperti MockTest).
+- Tombol suara per-pesan (`speakText`) tak punya penanganan gagal; kalau TTS mati, tak ada umpan balik (pola sama seperti AUD-05/07, tapi di sini audio bukan soal jadi dampaknya kecil).
+
 ## Log
 <!-- `- YYYY-MM-DD AUD-xx <hash> ringkas` -->
 - 2026-07-27 AUD-00 0c05474 Pustaka: hilangkan kedip terbuka→terkunci (PendingCard), aria-label pencarian; i18n & tipe bersih. Build hijau
@@ -248,3 +262,4 @@ Diaudit: `pages/DailyChallenge.tsx` (333).
 - 2026-07-28 AUD-09 cae3960 Kosakata: layar error + Coba Lagi (dulu gagal jaringan mengklaim "Tidak ada kosakata di HSK Level X"). Build hijau
 - 2026-07-28 AUD-10 2933708 Isi Cerita: i18n 17 string, judul H1 disamakan dengan label katalog (dulu "Fill in the Blank" vs kartu "Isi Cerita"), nama LazyPage diperbaiki. **Bagian Latihan tuntas 11/11**
 - 2026-07-28 AUD-11 3fb1620 Tantangan Harian: i18n 14 string (dulu campur ID+EN dalam satu layar) + tanggal ikut bahasa UI (dulu dipaku en-US). Build hijau
+- 2026-07-28 AUD-12 cc66931 Chat AI: i18n 14 string, aria-label 3 tombol ikon, teks dipulihkan saat balasan gagal (dulu harus mengetik ulang). Build hijau
