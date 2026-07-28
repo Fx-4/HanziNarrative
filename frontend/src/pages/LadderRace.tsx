@@ -220,7 +220,7 @@ export default function LadderRace() {
     return (
       <div className="max-w-md mx-auto px-4 pb-16 pt-6 space-y-5">
         <div className="flex items-center justify-between">
-          <button onClick={leaveRoom} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+          <button onClick={leaveRoom} aria-label={t('ladder.back')} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
             <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
           </button>
           <button onClick={copyCode}
@@ -302,7 +302,7 @@ export default function LadderRace() {
     <div className="max-w-2xl mx-auto px-4 pb-16 pt-4 space-y-4">
       {/* Turn banner */}
       <div className="flex items-center justify-between gap-3">
-        <button onClick={leaveRoom} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex-shrink-0">
+        <button onClick={leaveRoom} aria-label={t('ladder.back')} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex-shrink-0">
           <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
         </button>
         <div className={`flex-1 text-center py-2 px-3 rounded-xl text-sm font-bold ${
@@ -315,7 +315,13 @@ export default function LadderRace() {
             ? t('ladder.yourTurn')
             : t('ladder.playerTurn', { name: currentTurnPlayer?.username ?? '…' })}
         </div>
-        {connectionStatus === 'reconnecting' && <Loader2 className="w-4 h-4 animate-spin text-amber-500 flex-shrink-0" />}
+        {connectionStatus === 'reconnecting' && (
+          // Sebelumnya hanya spinner: user screen-reader tak tahu koneksinya putus.
+          <span role="status" className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 flex-shrink-0">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            {t('ladder.reconnecting')}
+          </span>
+        )}
       </div>
 
       {/* Board */}
