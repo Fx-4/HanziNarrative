@@ -22,7 +22,7 @@ const LevelSelector = ({ onTakeAssessment, onSkipAssessment }: LevelSelectorProp
         <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-50 mb-2">
           {t('onboarding.level.title')}
         </h2>
-        <p className="text-gray-500 text-sm">
+        <p className="text-gray-500 dark:text-gray-400 text-sm">
           {t('onboarding.level.subtitle')}
         </p>
       </motion.div>
@@ -36,7 +36,7 @@ const LevelSelector = ({ onTakeAssessment, onSkipAssessment }: LevelSelectorProp
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.15 }}
           onClick={onTakeAssessment}
-          className="group relative p-6 bg-primary-50 border-2 border-primary-200 rounded-2xl text-left hover:border-primary-400 hover:shadow-lg transition-all"
+          className="group relative p-6 bg-primary-50 dark:bg-primary-500/10 border-2 border-primary-200 dark:border-primary-500/30 rounded-2xl text-left hover:border-primary-400 dark:hover:border-primary-500/50 hover:shadow-lg transition-all"
         >
           {/* Recommended badge */}
           <div className="absolute -top-3 left-5 px-3 py-0.5 bg-primary-600 text-white text-xs font-semibold rounded-full shadow">
@@ -47,10 +47,10 @@ const LevelSelector = ({ onTakeAssessment, onSkipAssessment }: LevelSelectorProp
             <GraduationCap className="w-6 h-6 text-white" />
           </div>
 
-          <h3 className="text-lg font-bold text-gray-900 mb-1">{t('onboarding.level.testTitle')}</h3>
-          <p className="text-sm text-gray-500 mb-4">{t('onboarding.level.testMeta')}</p>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-gray-50 mb-1">{t('onboarding.level.testTitle')}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{t('onboarding.level.testMeta')}</p>
 
-          <ul className="space-y-1.5 text-sm text-gray-700">
+          <ul className="space-y-1.5 text-sm text-gray-700 dark:text-gray-300">
             {testBenefits.map(b => (
               <li key={b} className="flex items-center gap-2">
                 <Check className="w-3.5 h-3.5 text-primary-500 shrink-0" />
@@ -77,9 +77,9 @@ const LevelSelector = ({ onTakeAssessment, onSkipAssessment }: LevelSelectorProp
           </div>
 
           <h3 className="text-lg font-bold text-gray-900 dark:text-gray-50 mb-1">{t('onboarding.level.scratchTitle')}</h3>
-          <p className="text-sm text-gray-500 mb-4">{t('onboarding.level.scratchMeta')}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{t('onboarding.level.scratchMeta')}</p>
 
-          <ul className="space-y-1.5 text-sm text-gray-700">
+          <ul className="space-y-1.5 text-sm text-gray-700 dark:text-gray-300">
             {scratchBenefits.map(b => (
               <li key={b} className="flex items-center gap-2">
                 <Check className="w-3.5 h-3.5 text-gray-400 shrink-0" />
@@ -88,7 +88,7 @@ const LevelSelector = ({ onTakeAssessment, onSkipAssessment }: LevelSelectorProp
             ))}
           </ul>
 
-          <div className="mt-5 px-4 py-2 bg-gray-200 text-gray-700 text-sm font-semibold rounded-lg text-center group-hover:bg-gray-300 transition-colors">
+          <div className="mt-5 px-4 py-2 bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200 text-sm font-semibold rounded-lg text-center group-hover:bg-gray-300 dark:group-hover:bg-gray-600 transition-colors">
             {t('onboarding.level.skipToHsk1')}
           </div>
         </motion.button>

@@ -29,7 +29,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
         <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-50 mb-2">
           {t('onboarding.goals.title')}
         </h2>
-        <p className="text-gray-500 text-sm">{t('onboarding.goals.subtitle')}</p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm">{t('onboarding.goals.subtitle')}</p>
       </motion.div>
 
       {/* Goal Cards */}
@@ -43,7 +43,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
           className="p-5 bg-white dark:bg-surface-elevated border border-gray-200 dark:border-surface-border rounded-2xl shadow-sm"
         >
           <div className="flex items-center gap-2.5 mb-4">
-            <div className="w-9 h-9 bg-sky-50 rounded-xl flex items-center justify-center">
+            <div className="w-9 h-9 bg-sky-50 dark:bg-sky-500/10 rounded-xl flex items-center justify-center">
               <Clock className="w-4.5 h-4.5 text-sky-500" />
             </div>
             <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('onboarding.goals.dailyTime')}</span>
@@ -56,7 +56,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
           />
           <div className="mt-3 text-center">
             <span className="text-2xl font-extrabold text-primary-600">{goals.daily_time_minutes}</span>
-            <span className="ml-1.5 text-sm text-gray-500">{t('onboarding.goals.minPerDay')}</span>
+            <span className="ml-1.5 text-sm text-gray-500 dark:text-gray-400">{t('onboarding.goals.minPerDay')}</span>
           </div>
         </motion.div>
 
@@ -68,7 +68,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
           className="p-5 bg-white dark:bg-surface-elevated border border-gray-200 dark:border-surface-border rounded-2xl shadow-sm"
         >
           <div className="flex items-center gap-2.5 mb-4">
-            <div className="w-9 h-9 bg-violet-50 rounded-xl flex items-center justify-center">
+            <div className="w-9 h-9 bg-violet-50 dark:bg-violet-500/10 rounded-xl flex items-center justify-center">
               <BookMarked className="w-4.5 h-4.5 text-violet-500" />
             </div>
             <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('onboarding.goals.dailyWords')}</span>
@@ -81,7 +81,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
           />
           <div className="mt-3 text-center">
             <span className="text-2xl font-extrabold text-primary-600">{goals.daily_words}</span>
-            <span className="ml-1.5 text-sm text-gray-500">{t('onboarding.goals.wordsPerDay')}</span>
+            <span className="ml-1.5 text-sm text-gray-500 dark:text-gray-400">{t('onboarding.goals.wordsPerDay')}</span>
           </div>
         </motion.div>
 
@@ -93,7 +93,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
           className="p-5 bg-white dark:bg-surface-elevated border border-gray-200 dark:border-surface-border rounded-2xl shadow-sm"
         >
           <div className="flex items-center gap-2.5 mb-4">
-            <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center">
+            <div className="w-9 h-9 bg-amber-50 dark:bg-amber-500/10 rounded-xl flex items-center justify-center">
               <Trophy className="w-4.5 h-4.5 text-amber-500" />
             </div>
             <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('onboarding.goals.targetHsk')}</span>
@@ -106,14 +106,14 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
                 className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${
                   goals.target_hsk_level === level
                     ? 'bg-primary-600 text-white shadow-md scale-105'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
                 {level}
               </button>
             ))}
           </div>
-          <p className="mt-2 text-xs text-center text-gray-400">
+          <p className="mt-2 text-xs text-center text-gray-400 dark:text-gray-500">
             HSK {goals.target_hsk_level} — {t(`onboarding.goals.levelLabels.${goals.target_hsk_level || 3}`)}
           </p>
         </motion.div>
@@ -126,7 +126,7 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
           className="p-5 bg-white dark:bg-surface-elevated border border-gray-200 dark:border-surface-border rounded-2xl shadow-sm"
         >
           <div className="flex items-center gap-2.5 mb-4">
-            <div className="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center">
+            <div className="w-9 h-9 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center">
               <Zap className="w-4.5 h-4.5 text-emerald-500" />
             </div>
             <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('onboarding.goals.weeklyXp')}</span>
@@ -139,14 +139,14 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
                 className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
                   goals.weekly_xp === xp
                     ? 'bg-primary-600 text-white shadow-md scale-105'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
                 {xp}
               </button>
             ))}
           </div>
-          <p className="mt-2 text-xs text-center text-gray-400">
+          <p className="mt-2 text-xs text-center text-gray-400 dark:text-gray-500">
             {t(`onboarding.goals.xpLabels.${goals.weekly_xp || 300}`)}
           </p>
         </motion.div>
