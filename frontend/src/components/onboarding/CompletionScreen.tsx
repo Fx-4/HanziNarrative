@@ -116,7 +116,7 @@ const CompletionScreen = ({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
-        onClick={() => navigate('/dashboard')}
+        onClick={() => navigate('/')}
         className="inline-flex items-center gap-2 px-10 py-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl shadow-xl shadow-primary-500/25 transition-colors text-base"
       >
         {t('onboarding.completion.cta')}

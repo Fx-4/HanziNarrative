@@ -44,7 +44,7 @@ const Onboarding = () => {
       if (status.onboarding_completed) {
         // Sync store flag in background — don't block navigation
         useAuthStore.setState({ onboardingCompleted: true })
-        navigate('/dashboard')
+        navigate('/')
         return
       }
 
@@ -123,7 +123,7 @@ const Onboarding = () => {
       leveled_up: false,
       initial_words_count: 10,
       achievement_unlocked: true,
-      redirect_to: '/dashboard',
+      redirect_to: '/',
     })
     useAuthStore.setState({ onboardingCompleted: true })
     setCurrentStep(6)

@@ -418,5 +418,5 @@ def complete_onboarding(
         "leveled_up": leveled_up,
         "initial_words_count": len(initial_words),
         "achievement_unlocked": achievement_just_unlocked,
-        "redirect_to": "/dashboard"
+        "redirect_to": "/"
     }
