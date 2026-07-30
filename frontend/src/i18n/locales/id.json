@@ -346,6 +346,15 @@
       "scratchBenefits":["Tanpa tes", "Mulai dari dasar", "Bangun fondasi yang kuat", "Cocok untuk pemula"],
       "skipToHsk1":     "Lewati ke HSK 1"
     },
+    "assessment": {
+      "questionCounter": "Soal {{n}} / ~30",
+      "prompt":          "Apa arti kata ini?",
+      "loadError":       "Gagal memuat soal asesmen. Periksa koneksimu lalu coba lagi.",
+      "tryAgain":        "Coba Lagi",
+      "saveError":       "Jawabanmu belum tersimpan. Ketuk Ulangi untuk mengirim hasilmu.",
+      "retry":           "Ulangi",
+      "toastSaveFailed": "Gagal menyimpan hasil. Ketuk \"Ulangi\" untuk mencoba lagi."
+    },
     "preferences": {
       "title":          "Personalisasi pengalamanmu",
       "subtitle":       "Ini membantu kami menyesuaikan konten dengan cara belajarmu.",

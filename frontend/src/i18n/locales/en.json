@@ -346,6 +346,15 @@
       "scratchBenefits":["No testing required", "Start from the basics", "Build a strong foundation", "Perfect for beginners"],
       "skipToHsk1":     "Skip to HSK 1"
     },
+    "assessment": {
+      "questionCounter": "Question {{n}} / ~30",
+      "prompt":          "What does this mean?",
+      "loadError":       "Could not load assessment questions. Please check your connection and try again.",
+      "tryAgain":        "Try Again",
+      "saveError":       "Your answers couldn't be saved. Tap Retry to submit your results.",
+      "retry":           "Retry",
+      "toastSaveFailed": "Failed to save results. Tap \"Retry\" to try again."
+    },
     "preferences": {
       "title":          "Personalize your experience",
       "subtitle":       "These help us tailor content to how you learn best.",

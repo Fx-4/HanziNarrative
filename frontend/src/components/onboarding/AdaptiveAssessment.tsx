@@ -4,6 +4,7 @@ import { onboardingApi } from '@/services/api'
 import type { QuestionData, AssessmentAnswer } from '@/types'
 import { Award, Check, X, AlertCircle, RefreshCw } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { createLogger } from '@/utils/debugLogger'
 
 const adaptiveAssessmentLogger = createLogger('AdaptiveAssessment')
@@ -23,6 +24,7 @@ interface GeneratedQuestion {
 }
 
 const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
   const [questionsPool, setQuestionsPool] = useState<QuestionData[]>([])
@@ -159,7 +161,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
     } catch (error) {
       adaptiveAssessmentLogger.error('Failed to submit assessment:', error)
       submittedRef.current = false // Allow retry
-      toast.error('Failed to save results. Tap "Retry" to try again.')
+      toast.error(t('onboarding.assessment.toastSaveFailed'))
     }
   }
 
@@ -185,14 +187,14 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
         <AlertCircle className="w-10 h-10 text-error-400" />
         <p className="text-sm text-gray-600 text-center max-w-xs">
-          Could not load assessment questions. Please check your connection and try again.
+          {t('onboarding.assessment.loadError')}
         </p>
         <button
           onClick={loadQuestions}
           className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
-          Try Again
+          {t('onboarding.assessment.tryAgain')}
         </button>
       </div>
     )
@@ -204,14 +206,14 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
         <AlertCircle className="w-10 h-10 text-amber-400" />
         <p className="text-sm text-gray-600 text-center max-w-xs">
-          Your answers couldn't be saved. Tap Retry to submit your results.
+          {t('onboarding.assessment.saveError')}
         </p>
         <button
           onClick={retrySubmit}
           className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
-          Retry
+          {t('onboarding.assessment.retry')}
         </button>
       </div>
     )
@@ -226,7 +228,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
       {/* Header */}
       <div className="w-full flex items-center justify-between mb-4">
         <span className="text-sm font-medium text-gray-500">
-          Question {questionIndex + 1} / ~30
+          {t('onboarding.assessment.questionCounter', { n: questionIndex + 1 })}
         </span>
         <motion.div
           key={totalXP}
@@ -271,7 +273,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
             <p className="text-base text-gray-500 dark:text-gray-400">{currentQuestion.pinyin}</p>
           </div>
 
-          <p className="text-sm text-center text-gray-500 mb-3">What does this mean?</p>
+          <p className="text-sm text-center text-gray-500 mb-3">{t('onboarding.assessment.prompt')}</p>
 
           {/* Options */}
           <div className="grid grid-cols-1 gap-2.5">
