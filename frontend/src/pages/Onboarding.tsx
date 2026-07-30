@@ -156,12 +156,12 @@ const Onboarding = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-primary-50 via-white to-violet-50 px-4">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-primary-50 via-white to-violet-50 dark:from-surface-page dark:via-surface-page dark:to-surface-page px-4">
         <div className="w-full max-w-lg space-y-4">
-          <div className="animate-pulse bg-gray-200 rounded-lg h-8 w-2/3 mx-auto" />
-          <div className="animate-pulse bg-gray-200 rounded-3xl h-48" />
-          <div className="animate-pulse bg-gray-200 rounded-2xl h-12 w-40 mx-auto" />
-          <p className="text-sm text-center text-gray-500">{t('onboarding.loading')}</p>
+          <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-lg h-8 w-2/3 mx-auto" />
+          <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-3xl h-48" />
+          <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-2xl h-12 w-40 mx-auto" />
+          <p className="text-sm text-center text-gray-500 dark:text-gray-400">{t('onboarding.loading')}</p>
         </div>
       </div>
     )
