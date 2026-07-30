@@ -38,7 +38,7 @@ const ProgressIndicator = ({
           {showBackButton && onBack && (
             <button
               onClick={onBack}
-              className="flex items-center gap-1 px-2 py-1.5 text-sm text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              className="flex items-center gap-1 px-2 py-1.5 text-sm text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
               {t('onboarding.back')}
@@ -58,10 +58,10 @@ const ProgressIndicator = ({
                 <div
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${
                     isCompleted
-                      ? 'bg-primary-100 text-primary-600'
+                      ? 'bg-primary-100 text-primary-600 dark:bg-primary-500/15 dark:text-primary-300'
                       : isCurrent
                       ? 'bg-primary-600 text-white shadow-sm'
-                      : 'bg-gray-100 text-gray-400'
+                      : 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500'
                   }`}
                 >
                   {isCompleted
@@ -71,7 +71,7 @@ const ProgressIndicator = ({
                   {t(`onboarding.steps.${s.key}`)}
                 </div>
                 {idx < STEPS.length - 1 && (
-                  <div className={`h-px w-3 transition-colors ${stepVisual < visual ? 'bg-primary-300' : 'bg-gray-200'}`} />
+                  <div className={`h-px w-3 transition-colors ${stepVisual < visual ? 'bg-primary-300 dark:bg-primary-500/40' : 'bg-gray-200 dark:bg-gray-700'}`} />
                 )}
               </div>
             )
@@ -82,7 +82,7 @@ const ProgressIndicator = ({
       </div>
 
       {/* Progress bar */}
-      <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+      <div className="h-1 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
         <motion.div
           className="h-full bg-primary-600 rounded-full"
           initial={{ width: 0 }}

@@ -186,7 +186,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
         <AlertCircle className="w-10 h-10 text-error-400" />
-        <p className="text-sm text-gray-600 text-center max-w-xs">
+        <p className="text-sm text-gray-600 dark:text-gray-300 text-center max-w-xs">
           {t('onboarding.assessment.loadError')}
         </p>
         <button
@@ -205,7 +205,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
         <AlertCircle className="w-10 h-10 text-amber-400" />
-        <p className="text-sm text-gray-600 text-center max-w-xs">
+        <p className="text-sm text-gray-600 dark:text-gray-300 text-center max-w-xs">
           {t('onboarding.assessment.saveError')}
         </p>
         <button
@@ -227,7 +227,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
     <div className="flex flex-col items-center max-w-2xl mx-auto w-full px-2">
       {/* Header */}
       <div className="w-full flex items-center justify-between mb-4">
-        <span className="text-sm font-medium text-gray-500">
+        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
           {t('onboarding.assessment.questionCounter', { n: questionIndex + 1 })}
         </span>
         <motion.div
@@ -242,7 +242,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
       </div>
 
       {/* Progress bar */}
-      <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mb-6">
+      <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden mb-6">
         <motion.div
           className="h-full bg-primary-600 rounded-full"
           animate={{ width: `${progress}%` }}
@@ -252,7 +252,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
 
       {/* HSK level badge */}
       <div className="mb-4">
-        <span className="px-3 py-1 bg-primary-50 text-primary-600 text-xs font-semibold rounded-full border border-primary-100">
+        <span className="px-3 py-1 bg-primary-50 text-primary-600 text-xs font-semibold rounded-full border border-primary-100 dark:bg-primary-500/10 dark:text-primary-400 dark:border-primary-500/20">
           HSK {currentQuestion.hsk_level}
         </span>
       </div>
@@ -273,7 +273,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
             <p className="text-base text-gray-500 dark:text-gray-400">{currentQuestion.pinyin}</p>
           </div>
 
-          <p className="text-sm text-center text-gray-500 mb-3">{t('onboarding.assessment.prompt')}</p>
+          <p className="text-sm text-center text-gray-500 dark:text-gray-400 mb-3">{t('onboarding.assessment.prompt')}</p>
 
           {/* Options */}
           <div className="grid grid-cols-1 gap-2.5">
@@ -283,13 +283,13 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
 
               let cls = 'w-full px-4 py-3 text-left rounded-xl border-2 transition-all font-medium text-sm flex items-center justify-between '
               if (showFeedback) {
-                if (isCorrect)            cls += 'bg-success-50 border-success-400 text-success-900'
-                else if (isSelected)       cls += 'bg-error-50 border-error-400 text-error-900'
-                else                       cls += 'bg-white border-gray-200 text-gray-400'
+                if (isCorrect)            cls += 'bg-success-50 border-success-400 text-success-900 dark:bg-success-500/10 dark:text-success-300'
+                else if (isSelected)       cls += 'bg-error-50 border-error-400 text-error-900 dark:bg-error-500/10 dark:text-error-300'
+                else                       cls += 'bg-white border-gray-200 text-gray-400 dark:bg-surface-elevated dark:border-surface-border dark:text-gray-500'
               } else {
                 cls += isSelected
-                  ? 'bg-primary-50 border-primary-400 text-primary-900'
-                  : 'bg-white border-gray-200 text-gray-800 hover:border-primary-300 hover:bg-primary-50'
+                  ? 'bg-primary-50 border-primary-400 text-primary-900 dark:bg-primary-500/10 dark:text-primary-200'
+                  : 'bg-white border-gray-200 text-gray-800 hover:border-primary-300 hover:bg-primary-50 dark:bg-surface-elevated dark:border-surface-border dark:text-gray-100 dark:hover:border-primary-500/40 dark:hover:bg-primary-500/10'
               }
 
               return (

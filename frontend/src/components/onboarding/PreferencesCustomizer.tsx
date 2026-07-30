@@ -10,9 +10,9 @@ interface PreferencesCustomizerProps {
 }
 
 const LEARNING_STYLES = [
-  { id: 'visual',   Icon: Eye,      color: 'text-sky-500',    bg: 'bg-sky-50',    border: 'border-sky-200' },
-  { id: 'auditory', Icon: Volume2,  color: 'text-violet-500', bg: 'bg-violet-50', border: 'border-violet-200' },
-  { id: 'reading',  Icon: BookText, color: 'text-emerald-500',bg: 'bg-emerald-50',border: 'border-emerald-200' },
+  { id: 'visual',   Icon: Eye,      color: 'text-sky-500',    bg: 'bg-sky-50 dark:bg-sky-500/10',       border: 'border-sky-200 dark:border-sky-500/30' },
+  { id: 'auditory', Icon: Volume2,  color: 'text-violet-500', bg: 'bg-violet-50 dark:bg-violet-500/10', border: 'border-violet-200 dark:border-violet-500/30' },
+  { id: 'reading',  Icon: BookText, color: 'text-emerald-500',bg: 'bg-emerald-50 dark:bg-emerald-500/10',border: 'border-emerald-200 dark:border-emerald-500/30' },
 ] as const
 
 const DIFFICULTIES = [
@@ -42,13 +42,13 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
         <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-50 mb-2">
           {t('onboarding.preferences.title')}
         </h2>
-        <p className="text-gray-500 text-sm">{t('onboarding.preferences.subtitle')}</p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm">{t('onboarding.preferences.subtitle')}</p>
       </motion.div>
 
       <div className="w-full space-y-6">
         {/* Learning style */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <p className="text-sm font-semibold text-gray-700 mb-3">{t('onboarding.preferences.learningStyle')}</p>
+          <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{t('onboarding.preferences.learningStyle')}</p>
           <div className="grid grid-cols-3 gap-3">
             {LEARNING_STYLES.map(({ id, Icon, color, bg, border }) => (
               <button
@@ -60,11 +60,11 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
                     : 'bg-white dark:bg-surface-elevated border-gray-200 dark:border-surface-border hover:border-gray-300 dark:hover:border-gray-500'
                 }`}
               >
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2 ${prefs.learning_style === id ? bg : 'bg-gray-100'}`}>
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2 ${prefs.learning_style === id ? bg : 'bg-gray-100 dark:bg-gray-800'}`}>
                   <Icon className={`w-4 h-4 ${prefs.learning_style === id ? color : 'text-gray-400'}`} />
                 </div>
-                <p className="font-semibold text-gray-900 text-sm">{t(`onboarding.preferences.styles.${id}.label`)}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{t(`onboarding.preferences.styles.${id}.desc`)}</p>
+                <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t(`onboarding.preferences.styles.${id}.label`)}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{t(`onboarding.preferences.styles.${id}.desc`)}</p>
               </button>
             ))}
           </div>
@@ -72,7 +72,7 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
 
         {/* Difficulty */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <p className="text-sm font-semibold text-gray-700 mb-3">{t('onboarding.preferences.difficulty')}</p>
+          <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{t('onboarding.preferences.difficulty')}</p>
           <div className="grid grid-cols-3 gap-3">
             {DIFFICULTIES.map(({ id }) => (
               <button
@@ -80,12 +80,12 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
                 onClick={() => setPrefs({ ...prefs, difficulty_preference: id })}
                 className={`p-4 rounded-xl border-2 transition-all text-center ${
                   prefs.difficulty_preference === id
-                    ? 'bg-primary-50 border-primary-300 shadow-sm'
+                    ? 'bg-primary-50 border-primary-300 shadow-sm dark:bg-primary-500/10 dark:border-primary-500/40'
                     : 'bg-white dark:bg-surface-elevated border-gray-200 dark:border-surface-border hover:border-gray-300 dark:hover:border-gray-500'
                 }`}
               >
-                <p className={`font-semibold text-sm ${prefs.difficulty_preference === id ? 'text-primary-700' : 'text-gray-900'}`}>{t(`onboarding.preferences.difficulties.${id}.label`)}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{t(`onboarding.preferences.difficulties.${id}.desc`)}</p>
+                <p className={`font-semibold text-sm ${prefs.difficulty_preference === id ? 'text-primary-700 dark:text-primary-300' : 'text-gray-900 dark:text-gray-100'}`}>{t(`onboarding.preferences.difficulties.${id}.label`)}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{t(`onboarding.preferences.difficulties.${id}.desc`)}</p>
               </button>
             ))}
           </div>
@@ -102,11 +102,11 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
           <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-surface-elevated rounded-xl border border-gray-200 dark:border-surface-border">
             <div>
               <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('onboarding.preferences.showPinyin')}</p>
-              <p className="text-xs text-gray-500">{t('onboarding.preferences.showPinyinDesc')}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t('onboarding.preferences.showPinyinDesc')}</p>
             </div>
             <button
               onClick={() => setPrefs({ ...prefs, show_pinyin_by_default: !prefs.show_pinyin_by_default })}
-              className={`relative w-12 h-6 rounded-full transition-colors shrink-0 ${prefs.show_pinyin_by_default ? 'bg-primary-600' : 'bg-gray-300'}`}
+              className={`relative w-12 h-6 rounded-full transition-colors shrink-0 ${prefs.show_pinyin_by_default ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'}`}
             >
               <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${prefs.show_pinyin_by_default ? 'translate-x-6' : 'translate-x-0.5'}`} />
             </button>
@@ -119,12 +119,12 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
                 <Bell className="w-4 h-4 text-gray-500" />
                 <div>
                   <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('onboarding.preferences.reminders')}</p>
-                  <p className="text-xs text-gray-500">{t('onboarding.preferences.remindersDesc')}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{t('onboarding.preferences.remindersDesc')}</p>
                 </div>
               </div>
               <button
                 onClick={() => setPrefs({ ...prefs, reminder_enabled: !prefs.reminder_enabled })}
-                className={`relative w-12 h-6 rounded-full transition-colors shrink-0 ${prefs.reminder_enabled ? 'bg-primary-600' : 'bg-gray-300'}`}
+                className={`relative w-12 h-6 rounded-full transition-colors shrink-0 ${prefs.reminder_enabled ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'}`}
               >
                 <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${prefs.reminder_enabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
               </button>
@@ -141,7 +141,7 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
                   type="time"
                   value={prefs.reminder_time}
                   onChange={(e) => setPrefs({ ...prefs, reminder_time: e.target.value })}
-                  className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:border-primary-400 focus:outline-none bg-white"
+                  className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:border-primary-400 focus:outline-none bg-white dark:border-surface-border dark:bg-surface-elevated dark:text-gray-100"
                 />
               </motion.div>
             )}
