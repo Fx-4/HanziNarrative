@@ -9,6 +9,17 @@ import { createLogger } from '@/utils/debugLogger'
 
 const adaptiveAssessmentLogger = createLogger('AdaptiveAssessment')
 
+// Fisher-Yates shuffle — distribusi seragam. `Array.sort(() => 0.5 - Math.random())`
+// bias (posisi jawaban benar bisa ditebak), jadi jangan dipakai untuk mengacak opsi.
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
 interface AdaptiveAssessmentProps {
   onComplete: (determinedLevel: number, xpEarned: number) => void
 }
@@ -86,11 +97,18 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
     if (available.length === 0) { submitAssessment(); return }
 
     const q = available[Math.floor(Math.random() * available.length)]
-    const wrongs = questionsPool
-      .filter(x => x.hsk_level === currentLevel && x.word_id !== q.word_id)
-      .sort(() => 0.5 - Math.random()).slice(0, 3).map(x => x.english)
+    // Distraktor: level sama, kata beda, dan teks arti != jawaban benar.
+    // Dedupe by english supaya tak ada dua opsi bertuliskan sama.
+    const seen = new Set<string>([q.english])
+    const wrongs: string[] = []
+    for (const x of shuffle(questionsPool.filter(x => x.hsk_level === currentLevel && x.word_id !== q.word_id))) {
+      if (seen.has(x.english)) continue
+      seen.add(x.english)
+      wrongs.push(x.english)
+      if (wrongs.length === 3) break
+    }
 
-    const options = [q.english, ...wrongs].sort(() => 0.5 - Math.random())
+    const options = shuffle([q.english, ...wrongs])
     setCurrentQuestion({ ...q, options, correctIndex: options.indexOf(q.english) })
     setQuestionStartTime(Date.now())
   }
