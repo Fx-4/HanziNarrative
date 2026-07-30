@@ -309,6 +309,7 @@
     "toastGoals": "Tujuan mungkin belum tersimpan — cek koneksimu.",
     "toastSaved": "Pengaturan tersimpan lokal — beberapa hadiah mungkin butuh waktu sebentar.",
     "back":       "Kembali",
+    "progressLabel": "Progres pengaturan",
     "steps":      { "goals": "Tujuan", "level": "Level", "preferences": "Preferensi" },
     "welcome": {
       "title":    "Selamat datang di",
@@ -374,6 +375,7 @@
       "showPinyinDesc": "Tampilkan romanisasi bersama karakter Mandarin",
       "reminders":      "Pengingat harian",
       "remindersDesc":  "Segera hadir — pilihanmu disimpan dan aktif saat notifikasi dirilis",
+      "reminderTime":   "Waktu pengingat",
       "complete":       "Selesaikan Pengaturan"
     },
     "completion": {

@@ -309,6 +309,7 @@
     "toastGoals": "Goals may not have saved — check your connection.",
     "toastSaved": "Setup saved locally — some rewards may take a moment to apply.",
     "back":       "Back",
+    "progressLabel": "Setup progress",
     "steps":      { "goals": "Goals", "level": "Level", "preferences": "Preferences" },
     "welcome": {
       "title":    "Welcome to",
@@ -374,6 +375,7 @@
       "showPinyinDesc": "Display romanization with Chinese characters",
       "reminders":      "Daily reminders",
       "remindersDesc":  "Coming soon — we'll remember your choice and enable it when notifications launch",
+      "reminderTime":   "Reminder time",
       "complete":       "Complete Setup"
     },
     "completion": {

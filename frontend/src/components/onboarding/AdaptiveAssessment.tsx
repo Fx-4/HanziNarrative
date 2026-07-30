@@ -260,7 +260,14 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
       </div>
 
       {/* Progress bar */}
-      <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden mb-6">
+      <div
+        role="progressbar"
+        aria-valuenow={Math.round(progress)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={t('onboarding.assessment.questionCounter', { n: questionIndex + 1 })}
+        className="w-full h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden mb-6"
+      >
         <motion.div
           className="h-full bg-primary-600 rounded-full"
           animate={{ width: `${progress}%` }}

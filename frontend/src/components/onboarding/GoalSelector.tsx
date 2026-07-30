@@ -52,6 +52,8 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
             type="range" min="5" max="60" step="5"
             value={goals.daily_time_minutes}
             onChange={(e) => setGoals({ ...goals, daily_time_minutes: parseInt(e.target.value) })}
+            aria-label={t('onboarding.goals.dailyTime')}
+            aria-valuetext={`${goals.daily_time_minutes} ${t('onboarding.goals.minPerDay')}`}
             className="w-full h-1.5 accent-primary-600 rounded-full cursor-pointer"
           />
           <div className="mt-3 text-center">
@@ -77,6 +79,8 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
             type="range" min="5" max="50" step="5"
             value={goals.daily_words}
             onChange={(e) => setGoals({ ...goals, daily_words: parseInt(e.target.value) })}
+            aria-label={t('onboarding.goals.dailyWords')}
+            aria-valuetext={`${goals.daily_words} ${t('onboarding.goals.wordsPerDay')}`}
             className="w-full h-1.5 accent-primary-600 rounded-full cursor-pointer"
           />
           <div className="mt-3 text-center">
@@ -103,6 +107,8 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
               <button
                 key={level}
                 onClick={() => setGoals({ ...goals, target_hsk_level: level })}
+                aria-pressed={goals.target_hsk_level === level}
+                aria-label={`HSK ${level}`}
                 className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${
                   goals.target_hsk_level === level
                     ? 'bg-primary-600 text-white shadow-md scale-105'
@@ -136,6 +142,8 @@ const GoalSelector = ({ initialGoals, onNext }: GoalSelectorProps) => {
               <button
                 key={xp}
                 onClick={() => setGoals({ ...goals, weekly_xp: xp })}
+                aria-pressed={goals.weekly_xp === xp}
+                aria-label={`${xp} XP`}
                 className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
                   goals.weekly_xp === xp
                     ? 'bg-primary-600 text-white shadow-md scale-105'

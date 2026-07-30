@@ -54,6 +54,7 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
               <button
                 key={id}
                 onClick={() => setPrefs({ ...prefs, learning_style: id })}
+                aria-pressed={prefs.learning_style === id}
                 className={`p-4 rounded-xl border-2 transition-all text-center ${
                   prefs.learning_style === id
                     ? `${bg} ${border} shadow-sm`
@@ -78,6 +79,7 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
               <button
                 key={id}
                 onClick={() => setPrefs({ ...prefs, difficulty_preference: id })}
+                aria-pressed={prefs.difficulty_preference === id}
                 className={`p-4 rounded-xl border-2 transition-all text-center ${
                   prefs.difficulty_preference === id
                     ? 'bg-primary-50 border-primary-300 shadow-sm dark:bg-primary-500/10 dark:border-primary-500/40'
@@ -106,6 +108,9 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
             </div>
             <button
               onClick={() => setPrefs({ ...prefs, show_pinyin_by_default: !prefs.show_pinyin_by_default })}
+              role="switch"
+              aria-checked={prefs.show_pinyin_by_default}
+              aria-label={t('onboarding.preferences.showPinyin')}
               className={`relative w-12 h-6 rounded-full transition-colors shrink-0 ${prefs.show_pinyin_by_default ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'}`}
             >
               <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${prefs.show_pinyin_by_default ? 'translate-x-6' : 'translate-x-0.5'}`} />
@@ -124,6 +129,9 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
               </div>
               <button
                 onClick={() => setPrefs({ ...prefs, reminder_enabled: !prefs.reminder_enabled })}
+                role="switch"
+                aria-checked={prefs.reminder_enabled}
+                aria-label={t('onboarding.preferences.reminders')}
                 className={`relative w-12 h-6 rounded-full transition-colors shrink-0 ${prefs.reminder_enabled ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'}`}
               >
                 <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${prefs.reminder_enabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
@@ -141,6 +149,7 @@ const PreferencesCustomizer = ({ initialPreferences, onNext }: PreferencesCustom
                   type="time"
                   value={prefs.reminder_time}
                   onChange={(e) => setPrefs({ ...prefs, reminder_time: e.target.value })}
+                  aria-label={t('onboarding.preferences.reminderTime')}
                   className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:border-primary-400 focus:outline-none bg-white dark:border-surface-border dark:bg-surface-elevated dark:text-gray-100"
                 />
               </motion.div>
