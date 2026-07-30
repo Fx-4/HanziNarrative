@@ -46,6 +46,8 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
   const [totalXP, setTotalXP] = useState(0)
+  // Set saat tes akan berakhir (termasuk finish dini via hasStableLevel) → progress bar penuh
+  const [finishing, setFinishing] = useState(false)
   const [startTime] = useState(Date.now())
   const [questionStartTime, setQuestionStartTime] = useState(Date.now())
 
@@ -141,6 +143,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
     }
 
     const shouldFinish = questionIndex >= 29 || hasStableLevel([...answers, answer])
+    if (shouldFinish) setFinishing(true)
 
     if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current)
     feedbackTimerRef.current = setTimeout(() => {
@@ -239,7 +242,7 @@ const AdaptiveAssessment = ({ onComplete }: AdaptiveAssessmentProps) => {
 
   if (!currentQuestion) return null
 
-  const progress = ((questionIndex + 1) / 30) * 100
+  const progress = finishing ? 100 : Math.min(100, ((questionIndex + 1) / 30) * 100)
 
   return (
     <div className="flex flex-col items-center max-w-2xl mx-auto w-full px-2">

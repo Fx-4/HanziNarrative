@@ -118,7 +118,10 @@ const Onboarding = () => {
     // Optimistic: show completion screen immediately with sensible defaults
     setCompletionData({
       message: 'Setup complete!',
-      xp_earned: 150,
+      // 150 XP dasar + 100 bonus achievement (achievement_unlocked=true di bawah).
+      // User yang sudah onboarded di-redirect sebelum sampai sini, jadi complete()
+      // selalu first-time → total 250; nilai optimistik ini menghindari angka "lompat".
+      xp_earned: 250,
       level: 1,
       leveled_up: false,
       initial_words_count: 10,
