@@ -7,9 +7,9 @@ interface WelcomeScreenProps {
 }
 
 const FEATURES = [
-  { icon: BookOpen, key: 'vocab',   color: 'text-sky-500',     bg: 'bg-sky-50' },
-  { icon: Sparkles, key: 'stories', color: 'text-violet-500',  bg: 'bg-violet-50' },
-  { icon: Zap,      key: 'srs',     color: 'text-emerald-500', bg: 'bg-emerald-50' },
+  { icon: BookOpen, key: 'vocab',   color: 'text-sky-500',     bg: 'bg-sky-50 dark:bg-sky-500/10' },
+  { icon: Sparkles, key: 'stories', color: 'text-violet-500',  bg: 'bg-violet-50 dark:bg-violet-500/10' },
+  { icon: Zap,      key: 'srs',     color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-500/10' },
 ] as const
 
 const WelcomeScreen = ({ onNext }: WelcomeScreenProps) => {
@@ -43,7 +43,7 @@ const WelcomeScreen = ({ onNext }: WelcomeScreenProps) => {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25 }}
-        className="text-lg text-gray-500 max-w-md mb-10 leading-relaxed"
+        className="text-lg text-gray-500 dark:text-gray-400 max-w-md mb-10 leading-relaxed"
       >
         {t('onboarding.welcome.subtitle')}
       </motion.p>
@@ -60,13 +60,13 @@ const WelcomeScreen = ({ onNext }: WelcomeScreenProps) => {
           return (
             <div
               key={f.key}
-              className={`${f.bg} rounded-2xl p-4 border border-gray-100 text-left`}
+              className={`${f.bg} rounded-2xl p-4 border border-gray-100 dark:border-gray-800 text-left`}
             >
-              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center mb-3 shadow-sm">
+              <div className="w-8 h-8 bg-white dark:bg-gray-900 rounded-lg flex items-center justify-center mb-3 shadow-sm">
                 <Icon className={`w-4 h-4 ${f.color}`} />
               </div>
-              <p className="font-semibold text-gray-900 text-sm mb-1">{t(`onboarding.welcome.features.${f.key}.title`)}</p>
-              <p className="text-xs text-gray-500 leading-relaxed">{t(`onboarding.welcome.features.${f.key}.desc`)}</p>
+              <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm mb-1">{t(`onboarding.welcome.features.${f.key}.title`)}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{t(`onboarding.welcome.features.${f.key}.desc`)}</p>
             </div>
           )
         })}

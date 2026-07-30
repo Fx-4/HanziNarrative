@@ -71,7 +71,7 @@ const CompletionScreen = ({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="text-gray-500 text-lg mb-10"
+        className="text-gray-500 dark:text-gray-400 text-lg mb-10"
       >
         {t('onboarding.completion.subtitle')}
       </motion.p>
@@ -103,7 +103,7 @@ const CompletionScreen = ({
         <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm mb-3">{t('onboarding.completion.whatsNext')}</p>
         <ul className="space-y-2">
           {NEXT_STEPS.map(step => (
-            <li key={step} className="flex items-start gap-2 text-sm text-gray-600">
+            <li key={step} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
               <Check className="w-4 h-4 text-primary-500 shrink-0 mt-0.5" />
               {step}
             </li>
