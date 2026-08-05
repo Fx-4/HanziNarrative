@@ -5,6 +5,9 @@ import { MotionConfig } from 'framer-motion'
 import App from './App.tsx'
 import './index.css'
 import './i18n/config'
+// Inisialisasi tema app-wide (terapkan kelas .dark + daftarkan listener OS theme),
+// bukan cuma saat Navbar/Dashboard mount — jaga konsistensi di Landing/Login/onboarding.
+import './store/themeStore'
 
 // Auto-reload when a lazy-loaded chunk 404s after a new deployment.
 // Vite fires this event before React even sees the error, so the page

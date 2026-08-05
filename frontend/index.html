@@ -7,6 +7,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- color-scheme: tells browser to use OS-native dark styles for scrollbars, inputs, etc. -->
     <meta name="color-scheme" content="light dark" />
+    <!-- Terapkan kelas .dark SEBELUM bundle load, di SEMUA halaman (termasuk Landing/Login
+         yang tak memuat themeStore) → cegah tema "loncat" light↔dark tanpa di-switch.
+         Default LIGHT: hanya gelap bila user sudah memilih dark (tersimpan), tak ikut OS. -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('theme-storage');
+          if (saved) {
+            var s = JSON.parse(saved);
+            if (s && s.state && s.state.isDarkMode === true) {
+              document.documentElement.classList.add('dark');
+            }
+          }
+        } catch (e) {}
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Inter (UI), Noto Sans SC (Chinese), JetBrains Mono (pinyin/code) -->

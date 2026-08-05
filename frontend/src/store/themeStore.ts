@@ -7,8 +7,6 @@ interface ThemeState {
   userOverride: boolean
   toggleDarkMode: () => void
   setDarkMode: (isDark: boolean) => void
-  /** Follow the OS theme — only applies while the user hasn't manually overridden. */
-  syncSystemTheme: (isDark: boolean) => void
 }
 
 const applyTheme = (isDark: boolean) => {
@@ -39,7 +37,8 @@ const getSavedState = (): { isDarkMode: boolean; userOverride: boolean } | null 
 const getInitialTheme = () => {
   const saved = getSavedState()
   if (saved) return saved.isDarkMode
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
+  // Default: light. Tema hanya gelap bila user memilihnya sendiri (tidak ikut OS).
+  return false
 }
 
 const getInitialOverride = () => getSavedState()?.userOverride ?? false
@@ -63,12 +62,6 @@ export const useThemeStore = create<ThemeState>()(
         applyTheme(isDark)
         return { isDarkMode: isDark, userOverride: true }
       }),
-
-      syncSystemTheme: (isDark: boolean) => set((state) => {
-        if (state.userOverride) return state
-        applyTheme(isDark)
-        return { isDarkMode: isDark }
-      }),
     }),
     {
       name: 'theme-storage',
@@ -80,8 +73,3 @@ export const useThemeStore = create<ThemeState>()(
     }
   )
 )
-
-// Follow OS theme changes, but never override a manual user choice.
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-  useThemeStore.getState().syncSystemTheme(e.matches)
-})
