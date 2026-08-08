@@ -4,7 +4,7 @@ Onboarding routes for new user setup and level assessment
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Literal
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime, date, timezone as dt_timezone
@@ -26,8 +26,8 @@ class GoalsCreate(BaseModel):
 
 
 class PreferencesCreate(BaseModel):
-    learning_style: Optional[str] = None
-    difficulty_preference: Optional[str] = "medium"
+    learning_style: Optional[Literal["visual", "auditory", "reading"]] = None
+    difficulty_preference: Optional[Literal["easy", "medium", "hard"]] = "medium"
     reminder_enabled: bool = False
     reminder_time: Optional[str] = None
     show_pinyin_by_default: bool = True
@@ -187,32 +187,52 @@ def submit_assessment(
     - Default to HSK 1 if score too low
     - Award XP for completing assessment
     """
-    # Group answers by HSK level
-    level_performance = {}
-    for answer in submission.answers:
-        level = answer.hsk_level
-        if level not in level_performance:
-            level_performance[level] = {"correct": 0, "total": 0}
+    # Re-grade SERVER-SIDE — jangan percaya is_correct/hsk_level dari klien.
+    # Cocokkan user_answer dengan english kata sebenarnya & kelompokkan pakai
+    # hsk_level asli kata. Menutup celah klien mengirim jawaban benar palsu di
+    # level tinggi (integritas XP & penempatan).
+    word_ids = [a.word_id for a in submission.answers]
+    words = {
+        w.id: w
+        for w in db.query(models.HanziWord).filter(models.HanziWord.id.in_(word_ids)).all()
+    } if word_ids else {}
 
-        level_performance[level]["total"] += 1
-        if answer.is_correct:
-            level_performance[level]["correct"] += 1
+    def _is_correct(a) -> bool:
+        w = words.get(a.word_id)
+        if w is None:
+            return bool(a.is_correct)  # fallback bila kata tak ada di DB
+        return str(a.user_answer).strip().lower() == (w.english or "").strip().lower()
+
+    def _level_of(a) -> int:
+        w = words.get(a.word_id)
+        return w.hsk_level if w is not None else a.hsk_level
+
+    # Group by server-verified HSK level
+    level_performance = {}
+    total_correct = 0
+    for answer in submission.answers:
+        grp = level_performance.setdefault(_level_of(answer), {"correct": 0, "total": 0})
+        grp["total"] += 1
+        if _is_correct(answer):
+            grp["correct"] += 1
+            total_correct += 1
 
     # Determine recommended level
     # Cap at HSK 4: the course (/path) only has content up to HSK 4 — recommending
     # 5/6 would land new users on locked units with nothing to study
     MAX_COURSE_LEVEL = 4
+    MIN_SAMPLES = 3  # jangan tentukan level dari 1–2 jawaban beruntung
     determined_level = 1
     for level in sorted(level_performance.keys(), reverse=True):
         perf = level_performance[level]
-        accuracy = perf["correct"] / perf["total"] if perf["total"] > 0 else 0
-
+        if perf["total"] < MIN_SAMPLES:
+            continue
+        accuracy = perf["correct"] / perf["total"]
         if accuracy >= 0.7:  # 70% threshold
             determined_level = min(level + 1, MAX_COURSE_LEVEL)  # Start one level above mastery
             break
 
-    # Calculate overall score
-    total_correct = sum(1 for a in submission.answers if a.is_correct)
+    # Calculate overall score (server-graded)
     total_questions = len(submission.answers)
     score_percentage = (total_correct / total_questions * 100) if total_questions > 0 else 0
 
@@ -225,6 +245,9 @@ def submit_assessment(
         onboarding = models.UserOnboarding(user_id=current_user.id)
         db.add(onboarding)
 
+    # Idempotency: beri XP hanya saat submit pertama (cegah XP dobel bila di-retry)
+    already_assessed = bool(onboarding.took_assessment)
+
     onboarding.took_assessment = True
     onboarding.assessment_score = score_percentage
     onboarding.assessment_questions_answered = total_questions
@@ -235,14 +258,17 @@ def submit_assessment(
     db.commit()
     db.refresh(onboarding)
 
-    # Award XP for completing assessment
-    from ..services.gamification_service import add_xp
-    xp_result = add_xp(
-        db,
-        current_user,
-        50 + (total_correct * 5),  # 50 base + 5 per correct
-        f"Completed placement assessment: {total_correct}/{total_questions} correct"
-    )
+    # Award XP for completing assessment (sekali saja)
+    xp_earned = 0
+    if not already_assessed:
+        from ..services.gamification_service import add_xp
+        xp_result = add_xp(
+            db,
+            current_user,
+            50 + (total_correct * 5),  # 50 base + 5 per correct
+            f"Completed placement assessment: {total_correct}/{total_questions} correct"
+        )
+        xp_earned = xp_result["xp_gained"]
 
     # Generate personalized message
     if score_percentage >= 90:
@@ -260,7 +286,7 @@ def submit_assessment(
         "total_correct": total_correct,
         "total_questions": total_questions,
         "level_performance": level_performance,
-        "xp_earned": xp_result["xp_gained"],
+        "xp_earned": xp_earned,
         "message": message
     }
 
