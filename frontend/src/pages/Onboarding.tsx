@@ -53,7 +53,7 @@ const Onboarding = () => {
       // Frontend step numbers: 1=welcome, 2=goals, 3=levelSelector, 4=assessment, 5=preferences, 6=completion
       if (status.current_step > 0) {
         const BACKEND_TO_FRONTEND_STEP: Record<number, number> = {
-          1: 2, // goals screen
+          // backend tak pernah emit step 1; save_goals set current_step >= 2
           2: 3, // level selector (goals already saved)
           3: 5, // preferences (assessment done)
           4: 5, // preferences (assessment skipped)
